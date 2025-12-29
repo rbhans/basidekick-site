@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, ReactNode } from "react";
+import { VIEW_LOADING_TEXT } from "@/lib/constants";
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -8,29 +9,13 @@ interface PageTransitionProps {
   viewTitle: string;
 }
 
-// Map view IDs to loading text
-const viewLoadingText: Record<string, string> = {
-  home: "HOME",
-  tools: "TOOLS",
-  nsk: "NIAGARA_SIDEKICK",
-  ssk: "SIMULATOR_SIDEKICK",
-  msk: "METASYS_SIDEKICK",
-  resources: "RESOURCES",
-  wiki: "WIKI",
-  forum: "FORUM",
-  psk: "PSK",
-  account: "ACCOUNT",
-  signin: "AUTH",
-  signup: "AUTH",
-};
-
 export function PageTransition({ children, viewId, viewTitle }: PageTransitionProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [displayText, setDisplayText] = useState("");
   const prevViewIdRef = useRef(viewId);
   const isFirstRender = useRef(true);
 
-  const loadingText = viewLoadingText[viewId] || viewTitle.toUpperCase();
+  const loadingText = VIEW_LOADING_TEXT[viewId] || viewTitle.toUpperCase();
   const fullText = `> LOADING ${loadingText}...`;
 
   useEffect(() => {

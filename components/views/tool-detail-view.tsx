@@ -1,182 +1,79 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { SectionLabel } from "@/components/section-label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { KbdHint } from "@/components/kbd-hint";
 import { CircuitBackground } from "@/components/circuit-background";
-import {
-  Play,
-  Download,
-  Browser,
-  FileMagnifyingGlass,
-  TextAa,
-  CheckCircle,
-  FileText,
-  WaveTriangle,
-  Plugs,
-  Cpu,
-  Buildings,
-} from "@phosphor-icons/react";
-import { ReactNode } from "react";
+import { Play, Download, Browser, ShoppingCart, SignIn } from "@phosphor-icons/react";
+import { TOOL_DETAILS } from "@/lib/constants";
+import { getIcon } from "@/lib/icons";
+import { useAuth } from "@/hooks/use-auth";
+import { createClient } from "@/lib/supabase/client";
+import { generateCheckoutUrl, isCheckoutConfigured } from "@/lib/lemonsqueezy";
+import { License, VIEW_IDS } from "@/lib/types";
 
 interface ToolDetailViewProps {
   toolId: "nsk" | "ssk" | "msk";
+  onNavigate?: (viewId: string) => void;
 }
 
-interface Feature {
-  icon: ReactNode;
-  title: string;
-  description: string;
-}
+export function ToolDetailView({ toolId, onNavigate }: ToolDetailViewProps) {
+  const tool = TOOL_DETAILS[toolId];
+  const { user, loading: authLoading } = useAuth();
+  const [license, setLicense] = useState<License | null>(null);
+  const [licenseLoading, setLicenseLoading] = useState(true);
 
-interface Step {
-  number: number;
-  title: string;
-  description: string;
-}
+  // Check if user owns this tool
+  useEffect(() => {
+    async function checkLicense() {
+      if (!user) {
+        setLicenseLoading(false);
+        return;
+      }
 
-interface ToolData {
-  id: string;
-  name: string;
-  tagline: string;
-  description: string;
-  price: string;
-  status: "ready" | "dev";
-  features: Feature[];
-  steps: Step[];
-  requirements: { label: string; value: string }[];
-  webVersion?: boolean;
-}
+      const supabase = createClient();
+      if (!supabase) {
+        setLicenseLoading(false);
+        return;
+      }
 
-const toolsData: Record<string, ToolData> = {
-  nsk: {
-    id: "nsk",
-    name: "NiagaraSidekick",
-    tagline: "QA tool for Niagara stations",
-    description: "Finds typos, compares templates, verifies points, generates clean reports.",
-    price: "$79",
-    status: "ready",
-    webVersion: true,
-    features: [
-      {
-        icon: <FileMagnifyingGlass className="size-8 text-primary" />,
-        title: "Template Comparison",
-        description: "Compare points against templates to find inconsistencies and deviations instantly.",
-      },
-      {
-        icon: <TextAa className="size-8 text-primary" />,
-        title: "Typo Detection",
-        description: "Smart analysis finds naming errors, misspellings, and formatting issues.",
-      },
-      {
-        icon: <CheckCircle className="size-8 text-primary" />,
-        title: "Point Verification",
-        description: "Validate point configurations against standards and best practices.",
-      },
-      {
-        icon: <FileText className="size-8 text-primary" />,
-        title: "Report Generation",
-        description: "Generate clean, professional PDF reports to share with customers.",
-      },
-    ],
-    steps: [
-      { number: 1, title: "Export or Connect", description: "Export station CSV or connect live to your Niagara station" },
-      { number: 2, title: "Analyze", description: "NSK analyzes and groups points by template automatically" },
-      { number: 3, title: "Review & Report", description: "Review findings, fix issues, and generate clean reports" },
-    ],
-    requirements: [
-      { label: "Platform", value: "Windows 10+" },
-      { label: "For live connection", value: "Niagara 4.x" },
-      { label: "CSV works with", value: "Any Niagara version" },
-    ],
-  },
-  ssk: {
-    id: "ssk",
-    name: "SimulatorSidekick",
-    tagline: "BACnet/Modbus simulator",
-    description: "Create virtual devices in seconds for testing and development.",
-    price: "$75",
-    status: "ready",
-    webVersion: false,
-    features: [
-      {
-        icon: <WaveTriangle className="size-8 text-primary" />,
-        title: "BACnet Simulation",
-        description: "Create virtual BACnet devices with customizable object types and properties.",
-      },
-      {
-        icon: <Plugs className="size-8 text-primary" />,
-        title: "Modbus Simulation",
-        description: "Simulate Modbus TCP/RTU devices with configurable registers.",
-      },
-      {
-        icon: <Cpu className="size-8 text-primary" />,
-        title: "Multiple Devices",
-        description: "Run multiple virtual devices simultaneously for complex testing scenarios.",
-      },
-      {
-        icon: <FileText className="size-8 text-primary" />,
-        title: "Templates",
-        description: "Save and load device templates for quick setup on future projects.",
-      },
-    ],
-    steps: [
-      { number: 1, title: "Create Device", description: "Define your virtual device type and properties" },
-      { number: 2, title: "Configure Points", description: "Add and configure simulated points" },
-      { number: 3, title: "Start Simulation", description: "Run the simulator and connect your BAS" },
-    ],
-    requirements: [
-      { label: "Platform", value: "Windows 10+" },
-      { label: "BACnet", value: "BACnet/IP" },
-      { label: "Modbus", value: "TCP & RTU" },
-    ],
-  },
-  msk: {
-    id: "msk",
-    name: "MetasysSidekick",
-    tagline: "QA tool for Metasys systems",
-    description: "Same power as NSK, built for JCI environments.",
-    price: "$79",
-    status: "dev",
-    webVersion: false,
-    features: [
-      {
-        icon: <Buildings className="size-8 text-primary" />,
-        title: "Metasys Integration",
-        description: "Native support for Metasys system exports and configurations.",
-      },
-      {
-        icon: <FileMagnifyingGlass className="size-8 text-primary" />,
-        title: "Template Comparison",
-        description: "Compare points against templates to find inconsistencies.",
-      },
-      {
-        icon: <TextAa className="size-8 text-primary" />,
-        title: "Typo Detection",
-        description: "Smart analysis finds naming errors and formatting issues.",
-      },
-      {
-        icon: <FileText className="size-8 text-primary" />,
-        title: "Report Generation",
-        description: "Generate clean, professional PDF reports.",
-      },
-    ],
-    steps: [
-      { number: 1, title: "Export Data", description: "Export your Metasys system configuration" },
-      { number: 2, title: "Analyze", description: "MSK analyzes and groups points automatically" },
-      { number: 3, title: "Review & Report", description: "Review findings and generate reports" },
-    ],
-    requirements: [
-      { label: "Platform", value: "Windows 10+" },
-      { label: "Metasys Version", value: "10.x+" },
-      { label: "Export Format", value: "CSV/XML" },
-    ],
-  },
-};
+      const { data } = await supabase
+        .from("licenses")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("product_id", toolId)
+        .eq("is_active", true)
+        .single();
 
-export function ToolDetailView({ toolId }: ToolDetailViewProps) {
-  const tool = toolsData[toolId];
+      if (data) {
+        setLicense(data as License);
+      }
+      setLicenseLoading(false);
+    }
+
+    if (!authLoading) {
+      checkLicense();
+    }
+  }, [user, authLoading, toolId]);
+
+  const handlePurchase = () => {
+    if (!user) {
+      onNavigate?.(VIEW_IDS.SIGNIN);
+      return;
+    }
+
+    const checkoutUrl = generateCheckoutUrl(toolId, user.id);
+    if (checkoutUrl) {
+      window.open(checkoutUrl, "_blank");
+    }
+  };
+
+  const handleDownload = () => {
+    // TODO: Implement actual download logic
+    console.log(`Downloading ${toolId}...`);
+  };
 
   if (!tool) {
     return (
@@ -185,6 +82,55 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       </div>
     );
   }
+
+  // Determine button state
+  const ownsProduct = !!license;
+  const isLoading = authLoading || licenseLoading;
+  const checkoutReady = isCheckoutConfigured(toolId);
+
+  const renderPurchaseButton = (size: "default" | "lg" = "lg") => {
+    if (tool.status !== "ready") {
+      return (
+        <Button size={size}>
+          Get Notified When Ready
+        </Button>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <Button size={size} disabled>
+          Loading...
+        </Button>
+      );
+    }
+
+    if (ownsProduct) {
+      return (
+        <Button size={size} onClick={handleDownload}>
+          <Download className="size-4 mr-2" />
+          Download for Windows
+          {size === "lg" && <KbdHint keys="D" />}
+        </Button>
+      );
+    }
+
+    if (!user) {
+      return (
+        <Button size={size} onClick={() => onNavigate?.(VIEW_IDS.SIGNIN)}>
+          <SignIn className="size-4 mr-2" />
+          Sign in to Purchase
+        </Button>
+      );
+    }
+
+    return (
+      <Button size={size} onClick={handlePurchase} disabled={!checkoutReady}>
+        <ShoppingCart className="size-4 mr-2" />
+        {checkoutReady ? "Buy Now" : "Coming Soon"}
+      </Button>
+    );
+  };
 
   return (
     <div className="min-h-full">
@@ -214,23 +160,11 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            {tool.status === "ready" ? (
-              <>
-                <Button size="lg">
-                  <Download className="size-4 mr-2" />
-                  Download for Windows
-                  <KbdHint keys="D" />
-                </Button>
-                {tool.webVersion && (
-                  <Button variant="outline" size="lg">
-                    <Browser className="size-4 mr-2" />
-                    Try Free (Web)
-                  </Button>
-                )}
-              </>
-            ) : (
-              <Button size="lg">
-                Get Notified When Ready
+            {renderPurchaseButton("lg")}
+            {tool.status === "ready" && tool.webVersion && (
+              <Button variant="outline" size="lg">
+                <Browser className="size-4 mr-2" />
+                Try Free (Web)
               </Button>
             )}
           </div>
@@ -261,12 +195,12 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
           <SectionLabel>features</SectionLabel>
 
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            {tool.features.map((feature) => (
+            {tool.detailedFeatures.map((feature) => (
               <div
                 key={feature.title}
                 className="p-5 border border-border bg-card"
               >
-                {feature.icon}
+                {getIcon(feature.iconName, "size-8 text-primary")}
                 <h3 className="text-base font-semibold mt-3 mb-1">{feature.title}</h3>
                 <p className="text-sm text-muted-foreground">
                   {feature.description}
@@ -333,16 +267,9 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
               one-time &middot; 1 year updates
             </span>
           </p>
-          {tool.status === "ready" ? (
-            <Button size="lg" className="mt-4">
-              <Download className="size-4 mr-2" />
-              Download for Windows
-            </Button>
-          ) : (
-            <Button size="lg" className="mt-4">
-              Get Notified When Ready
-            </Button>
-          )}
+          <div className="mt-4">
+            {renderPurchaseButton("lg")}
+          </div>
         </div>
       </section>
     </div>

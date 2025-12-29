@@ -9,6 +9,8 @@ import { StatusBar } from "./status-bar";
 import { SidebarStatus } from "./sidebar-status";
 import { SidebarFooter } from "./sidebar-footer";
 import { Button } from "./ui/button";
+import { VIEW_TITLES } from "@/lib/constants";
+import { VIEW_IDS } from "@/lib/types";
 
 interface SidebarLayoutProps {
   children: ReactNode;
@@ -16,32 +18,17 @@ interface SidebarLayoutProps {
   onViewChange: (viewId: string) => void;
 }
 
-// Map view IDs to display titles
-const viewTitles: Record<string, string> = {
-  home: "Home",
-  tools: "Tools",
-  nsk: "NiagaraSidekick",
-  ssk: "SimulatorSidekick",
-  msk: "MetasysSidekick",
-  resources: "Resources",
-  wiki: "Wiki",
-  forum: "Forum",
-  psk: "PSK",
-  account: "Account",
-  signin: "Sign In",
-  signup: "Sign Up",
-};
-
 export function SidebarLayout({ children, activeView, onViewChange }: SidebarLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const pageTitle = viewTitles[activeView] || "Home";
+  const pageTitle = VIEW_TITLES[activeView] || "Home";
 
   return (
     <div className="h-screen flex flex-col bg-background">
       {/* Toolbar */}
       <WorkbenchToolbar
         onMenuClick={() => setSidebarOpen(true)}
-        onHomeClick={() => onViewChange("home")}
+        onHomeClick={() => onViewChange(VIEW_IDS.HOME)}
+        onNavigate={onViewChange}
         pageTitle={pageTitle}
       />
 

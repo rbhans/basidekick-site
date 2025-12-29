@@ -1,14 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Circle, List, Moon, Sun, Drop, Thermometer } from "@phosphor-icons/react";
+import { Circle, List, Moon, Sun, Drop, Thermometer, User, SignOut, Gear } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { Logo } from "./logo";
 import { Button } from "./ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { useAuth } from "@/hooks/use-auth";
 
 interface WorkbenchToolbarProps {
   onMenuClick?: () => void;
   onHomeClick?: () => void;
+  onNavigate?: (viewId: string) => void;
   pageTitle?: string;
 }
 
@@ -18,8 +27,9 @@ interface WeatherData {
   loading: boolean;
 }
 
-export function WorkbenchToolbar({ onMenuClick, onHomeClick, pageTitle = "Home" }: WorkbenchToolbarProps) {
+export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTitle = "Home" }: WorkbenchToolbarProps) {
   const { theme, setTheme } = useTheme();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [weather, setWeather] = useState<WeatherData>({ temp: 72, humidity: 45, loading: true });
 
   useEffect(() => {
@@ -52,6 +62,16 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, pageTitle = "Home" 
       setWeather({ temp: 72, humidity: 45, loading: false });
     }
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (!user?.email) return "U";
+    return user.email.charAt(0).toUpperCase();
+  };
 
   return (
     <header className="h-12 px-4 border-b border-border bg-card flex items-center justify-between">
@@ -105,6 +125,51 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, pageTitle = "Home" 
           <Sun className="w-4 h-4 hidden dark:block" />
           <Moon className="w-4 h-4 dark:hidden" />
         </Button>
+
+        {/* User menu */}
+        {!authLoading && (
+          user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="relative"
+                  aria-label="User menu"
+                >
+                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                    {getUserInitials()}
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <div className="px-2 py-1.5">
+                  <p className="text-sm font-medium truncate">{user.email}</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onNavigate?.("account")}>
+                  <Gear className="w-4 h-4 mr-2" />
+                  Account
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                  <SignOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onNavigate?.("signin")}
+              className="text-xs"
+            >
+              <User className="w-4 h-4 mr-1.5" />
+              Sign In
+            </Button>
+          )
+        )}
       </div>
     </header>
   );

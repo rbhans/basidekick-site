@@ -6,49 +6,24 @@ import { Button } from "@/components/ui/button";
 import { CircuitBackground } from "@/components/circuit-background";
 import { BuildingWireframe } from "@/components/building-wireframe";
 import { ArrowRight, GithubLogo, Chats, BookOpen } from "@phosphor-icons/react";
+import { TOOLS_LIST } from "@/lib/constants";
+import { VIEW_IDS } from "@/lib/types";
 
 interface HomeViewProps {
   onNavigate: (viewId: string) => void;
 }
 
-const products = [
-  {
-    name: "NiagaraSidekick",
-    shortName: "NSK",
-    description: "QA tool for Niagara stations. Finds typos, compares templates, verifies points, generates clean reports.",
-    price: "$79",
-    status: "ready" as const,
-    href: "#",
-    ctaText: "View",
-    onClick: () => {},
-  },
-  {
-    name: "SimulatorSidekick",
-    shortName: "SSK",
-    description: "BACnet/Modbus simulator for testing and development. Create virtual devices in seconds.",
-    price: "$75",
-    status: "ready" as const,
-    href: "#",
-    ctaText: "View",
-    onClick: () => {},
-  },
-  {
-    name: "MetasysSidekick",
-    shortName: "MSK",
-    description: "QA tool for Metasys systems. Same power as NSK, built for JCI environments.",
-    price: "$79",
-    status: "dev" as const,
-    href: "#",
-    ctaText: "Notify",
-    onClick: () => {},
-  },
-];
-
 export function HomeView({ onNavigate }: HomeViewProps) {
-  // Add click handlers to products
-  const productsWithNav = products.map(p => ({
-    ...p,
-    onClick: () => onNavigate(p.shortName.toLowerCase()),
+  // Map tools to product card format
+  const products = TOOLS_LIST.map(tool => ({
+    name: tool.name,
+    shortName: tool.shortName,
+    description: tool.description,
+    price: tool.price,
+    status: tool.status,
+    href: "#",
+    ctaText: tool.status === "ready" ? "View" : "Notify",
+    onClick: () => onNavigate(tool.id),
   }));
 
   return (
@@ -70,7 +45,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
-                <Button size="lg" onClick={() => onNavigate("tools")}>
+                <Button size="lg" onClick={() => onNavigate(VIEW_IDS.TOOLS)}>
                   Browse Tools
                   <ArrowRight className="size-4 ml-2" />
                 </Button>
@@ -102,7 +77,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
           <SectionLabel>tools</SectionLabel>
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-            {productsWithNav.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.shortName} {...product} />
             ))}
           </div>
@@ -116,7 +91,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
             {/* Forum CTA */}
             <button
-              onClick={() => onNavigate("forum")}
+              onClick={() => onNavigate(VIEW_IDS.FORUM)}
               className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left"
             >
               <Chats className="size-8 text-primary mb-4" />
@@ -133,7 +108,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
 
             {/* Wiki CTA */}
             <button
-              onClick={() => onNavigate("wiki")}
+              onClick={() => onNavigate(VIEW_IDS.WIKI)}
               className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left"
             >
               <BookOpen className="size-8 text-primary mb-4" />
