@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { WikiCategory, WikiTag } from "@/lib/types";
 import { getIcon } from "@/lib/icons";
+import { ROUTES } from "@/lib/routes";
 import { BookOpen, Tag, CaretRight, House } from "@phosphor-icons/react";
 
 interface WikiSidebarProps {
@@ -9,7 +11,6 @@ interface WikiSidebarProps {
   popularTags: WikiTag[];
   selectedCategoryId: string | null;
   onCategorySelect: (category: WikiCategory | null) => void;
-  onTagSelect: (tag: WikiTag) => void;
 }
 
 export function WikiSidebar({
@@ -17,7 +18,6 @@ export function WikiSidebar({
   popularTags,
   selectedCategoryId,
   onCategorySelect,
-  onTagSelect,
 }: WikiSidebarProps) {
   const renderCategory = (cat: WikiCategory, depth = 0) => {
     const isSelected = selectedCategoryId === cat.id;
@@ -90,14 +90,14 @@ export function WikiSidebar({
             </div>
             <div className="p-3 pt-0 flex flex-wrap gap-1">
               {popularTags.map((tag) => (
-                <button
+                <Link
                   key={tag.id}
-                  onClick={() => onTagSelect(tag)}
+                  href={ROUTES.WIKI_TAG(tag.slug)}
                   className="px-2 py-1 text-xs border border-border hover:bg-accent/50 transition-colors flex items-center gap-1"
                 >
                   <Tag className="size-3" />
                   {tag.name}
-                </button>
+                </Link>
               ))}
             </div>
           </>
