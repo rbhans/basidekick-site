@@ -1,82 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { KbdHint } from "@/components/kbd-hint";
 import { CircuitBackground } from "@/components/circuit-background";
-import { Play, Download, Browser, ShoppingCart, SignIn } from "@phosphor-icons/react";
+import { Play } from "@phosphor-icons/react";
 import { TOOL_DETAILS } from "@/lib/constants";
 import { getIcon } from "@/lib/icons";
-import { useAuth } from "@/hooks/use-auth";
-import { createClient } from "@/lib/supabase/client";
-import { generateCheckoutUrl, isCheckoutConfigured } from "@/lib/lemonsqueezy";
-import { License } from "@/lib/types";
-import { ROUTES } from "@/lib/routes";
 
 interface ToolDetailViewProps {
   toolId: "nsk" | "ssk" | "msk";
 }
 
 export function ToolDetailView({ toolId }: ToolDetailViewProps) {
-  const router = useRouter();
   const tool = TOOL_DETAILS[toolId];
-  const { user, loading: authLoading } = useAuth();
-  const [license, setLicense] = useState<License | null>(null);
-  const [licenseLoading, setLicenseLoading] = useState(true);
-
-  // Check if user owns this tool
-  useEffect(() => {
-    async function checkLicense() {
-      if (!user) {
-        setLicenseLoading(false);
-        return;
-      }
-
-      const supabase = createClient();
-      if (!supabase) {
-        setLicenseLoading(false);
-        return;
-      }
-
-      const { data } = await supabase
-        .from("licenses")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("product_id", toolId)
-        .eq("is_active", true)
-        .single();
-
-      if (data) {
-        setLicense(data as License);
-      }
-      setLicenseLoading(false);
-    }
-
-    if (!authLoading) {
-      checkLicense();
-    }
-  }, [user, authLoading, toolId]);
-
-  const handlePurchase = () => {
-    if (!user) {
-      router.push(ROUTES.SIGNIN);
-      return;
-    }
-
-    const checkoutUrl = generateCheckoutUrl(toolId, user.id);
-    if (checkoutUrl) {
-      window.open(checkoutUrl, "_blank");
-    }
-  };
-
-  const handleDownload = () => {
-    // TODO: Implement actual download logic
-    console.log(`Downloading ${toolId}...`);
-  };
 
   if (!tool) {
     return (
@@ -86,53 +23,11 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
     );
   }
 
-  // Determine button state
-  const ownsProduct = !!license;
-  const isLoading = authLoading || licenseLoading;
-  const checkoutReady = isCheckoutConfigured(toolId);
-
   const renderPurchaseButton = (size: "default" | "lg" = "lg") => {
-    if (tool.status !== "ready") {
-      return (
-        <Button size={size}>
-          Get Notified When Ready
-        </Button>
-      );
-    }
-
-    if (isLoading) {
-      return (
-        <Button size={size} disabled>
-          Loading...
-        </Button>
-      );
-    }
-
-    if (ownsProduct) {
-      return (
-        <Button size={size} onClick={handleDownload}>
-          <Download className="size-4 mr-2" />
-          Download for Windows
-          {size === "lg" && <KbdHint keys="D" />}
-        </Button>
-      );
-    }
-
-    if (!user) {
-      return (
-        <Button size={size} asChild>
-          <Link href={ROUTES.SIGNIN}>
-            <SignIn className="size-4 mr-2" />
-            Sign in to Purchase
-          </Link>
-        </Button>
-      );
-    }
-
+    // All tools are "Coming Soon" for now
     return (
-      <Button size={size} onClick={handlePurchase} disabled={!checkoutReady}>
-        <ShoppingCart className="size-4 mr-2" />
-        {checkoutReady ? "Buy Now" : "Coming Soon"}
+      <Button size={size}>
+        Get Notified When Ready
       </Button>
     );
   };
@@ -145,8 +40,8 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <SectionLabel>{tool.id}</SectionLabel>
-            <Badge variant={tool.status === "ready" ? "default" : "secondary"}>
-              {tool.status === "ready" ? "Ready" : "In Development"}
+            <Badge variant="outline">
+              Coming Soon
             </Badge>
           </div>
 
@@ -159,12 +54,6 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
 
           <div className="mt-6 flex flex-wrap gap-3">
             {renderPurchaseButton("lg")}
-            {tool.status === "ready" && tool.webVersion && (
-              <Button variant="outline" size="lg">
-                <Browser className="size-4 mr-2" />
-                Try Free (Web)
-              </Button>
-            )}
           </div>
         </div>
       </section>

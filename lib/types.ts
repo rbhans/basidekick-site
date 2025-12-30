@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 // Tool status
-export type ToolStatus = "ready" | "dev";
+export type ToolStatus = "coming";
 
 // Base tool info (used in listings)
 export interface Tool {

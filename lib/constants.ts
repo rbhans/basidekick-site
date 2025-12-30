@@ -52,7 +52,7 @@ export const TOOLS: Record<string, Tool> = {
     shortName: "NSK",
     tagline: "QA tool for Niagara stations",
     description: "Finds typos, compares templates, verifies points, generates clean reports.",
-    status: "ready",
+    status: "coming",
     iconName: "Desktop",
     webVersion: true,
     features: [
@@ -68,7 +68,7 @@ export const TOOLS: Record<string, Tool> = {
     shortName: "SSK",
     tagline: "BACnet/Modbus simulator",
     description: "Create virtual devices in seconds for testing and development.",
-    status: "ready",
+    status: "coming",
     iconName: "WaveTriangle",
     webVersion: false,
     features: [
@@ -84,7 +84,7 @@ export const TOOLS: Record<string, Tool> = {
     shortName: "MSK",
     tagline: "QA tool for Metasys systems",
     description: "Same power as NSK, built for JCI environments.",
-    status: "dev",
+    status: "coming",
     iconName: "Buildings",
     webVersion: false,
     features: [

@@ -40,9 +40,8 @@ export function HomeView({ recentArticles, recentThreads }: HomeViewProps) {
     name: tool.name,
     shortName: tool.shortName,
     description: tool.description,
-    status: tool.status,
     href: ROUTES.TOOL(tool.id),
-    ctaText: tool.status === "ready" ? "View" : "Notify",
+    ctaText: "Learn More",
   }));
 
   const formatDate = (dateString: string) => {

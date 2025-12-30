@@ -46,8 +46,8 @@ export function ToolsView() {
                       {tool.shortName}
                     </span>
                   </div>
-                  <Badge variant={tool.status === "ready" ? "default" : "secondary"}>
-                    {tool.status === "ready" ? "Ready" : "In Dev"}
+                  <Badge variant="outline">
+                    Coming Soon
                   </Badge>
                 </div>
 
@@ -69,7 +69,7 @@ export function ToolsView() {
                 <div className="flex items-center justify-end mt-6 pt-4 border-t border-border">
                   <Button size="sm" asChild>
                     <Link href={ROUTES.TOOL(tool.id)}>
-                      {tool.status === "ready" ? "View Details" : "Get Notified"}
+                      Get Notified
                       <ArrowRight className="size-3 ml-1" />
                     </Link>
                   </Button>
