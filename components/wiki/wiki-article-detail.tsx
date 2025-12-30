@@ -18,6 +18,7 @@ import {
   ChatCircle,
   SignIn,
 } from "@phosphor-icons/react";
+import { MarkdownContent } from "@/components/markdown-content";
 
 interface WikiArticleDetailProps {
   article: WikiArticle;
@@ -200,9 +201,7 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
       {/* Article Content */}
       <section className="py-8">
         <div className="container mx-auto px-4">
-          <article className="prose prose-sm max-w-none dark:prose-invert">
-            <div className="whitespace-pre-wrap">{article.content}</div>
-          </article>
+          <MarkdownContent content={article.content || ""} />
         </div>
       </section>
 
