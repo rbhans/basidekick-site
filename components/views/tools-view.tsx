@@ -68,8 +68,7 @@ export function ToolsView({ onNavigate }: ToolsViewProps) {
                 </ul>
 
                 {/* Footer */}
-                <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
-                  <span className="font-mono text-lg">{tool.price}</span>
+                <div className="flex items-center justify-end mt-6 pt-4 border-t border-border">
                   <Button size="sm" onClick={() => onNavigate(tool.id)}>
                     {tool.status === "ready" ? "View Details" : "Get Notified"}
                     <ArrowRight className="size-3 ml-1" />

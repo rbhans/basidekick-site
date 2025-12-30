@@ -152,13 +152,6 @@ export function ToolDetailView({ toolId, onNavigate }: ToolDetailViewProps) {
             {tool.tagline}. {tool.description}
           </p>
 
-          <p className="mt-4 font-mono text-2xl">
-            {tool.price}{" "}
-            <span className="text-base text-muted-foreground">
-              one-time &middot; 1 year updates
-            </span>
-          </p>
-
           <div className="mt-6 flex flex-wrap gap-3">
             {renderPurchaseButton("lg")}
             {tool.status === "ready" && tool.webVersion && (
@@ -261,13 +254,7 @@ export function ToolDetailView({ toolId, onNavigate }: ToolDetailViewProps) {
       {/* CTA */}
       <section className="py-12 bg-card/30">
         <div className="container mx-auto px-4 text-center">
-          <p className="font-mono text-2xl">
-            {tool.price}{" "}
-            <span className="text-base text-muted-foreground">
-              one-time &middot; 1 year updates
-            </span>
-          </p>
-          <div className="mt-4">
+          <div>
             {renderPurchaseButton("lg")}
           </div>
         </div>

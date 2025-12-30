@@ -10,7 +10,6 @@ export interface Tool {
   shortName: string;
   tagline: string;
   description: string;
-  price: string;
   status: ToolStatus;
   iconName: string;
   features: string[];

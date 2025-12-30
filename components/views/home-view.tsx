@@ -19,7 +19,6 @@ export function HomeView({ onNavigate }: HomeViewProps) {
     name: tool.name,
     shortName: tool.shortName,
     description: tool.description,
-    price: tool.price,
     status: tool.status,
     href: "#",
     ctaText: tool.status === "ready" ? "View" : "Notify",

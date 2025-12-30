@@ -5,7 +5,6 @@ interface ProductCardProps {
   name: string;
   shortName: string;
   description: string;
-  price: string;
   status: "ready" | "dev" | "coming";
   href: string;
   ctaText?: string;
@@ -15,7 +14,6 @@ export function ProductCard({
   name,
   shortName,
   description,
-  price,
   status,
   href,
   ctaText = "Learn",
@@ -40,8 +38,7 @@ export function ProductCard({
       <h3 className="text-xl font-semibold mb-2">{name}</h3>
       <p className="text-muted-foreground text-sm flex-grow mb-4">{description}</p>
 
-      <div className="flex items-center justify-between mt-auto pt-4 border-t border-border">
-        <span className="font-mono text-lg">{price}</span>
+      <div className="flex items-center justify-end mt-auto pt-4 border-t border-border">
         <Link
           href={href}
           className="text-sm font-medium text-primary hover:underline underline-offset-4"
