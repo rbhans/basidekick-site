@@ -1,12 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import { BookOpen, Chats, Kanban, ArrowRight } from "@phosphor-icons/react";
-
-interface ResourcesViewProps {
-  onNavigate: (viewId: string) => void;
-}
+import { ROUTES } from "@/lib/routes";
 
 const resources = [
   {
@@ -15,6 +13,7 @@ const resources = [
     description: "Guides, tutorials, and reference documentation for BAS professionals. Learn best practices and troubleshooting tips.",
     icon: BookOpen,
     cta: "Browse Wiki",
+    href: ROUTES.WIKI,
   },
   {
     id: "forum",
@@ -22,6 +21,7 @@ const resources = [
     description: "Community discussion board. Ask questions, share knowledge, and connect with other BAS professionals.",
     icon: Chats,
     cta: "Join Discussion",
+    href: ROUTES.FORUM,
   },
   {
     id: "psk",
@@ -29,10 +29,11 @@ const resources = [
     description: "Free project management tool built for BAS projects. Track points, schedules, and commissioning progress.",
     icon: Kanban,
     cta: "Open PSK",
+    href: ROUTES.PSK,
   },
 ];
 
-export function ResourcesView({ onNavigate }: ResourcesViewProps) {
+export function ResourcesView() {
   return (
     <div className="min-h-full">
       {/* Header */}
@@ -55,10 +56,10 @@ export function ResourcesView({ onNavigate }: ResourcesViewProps) {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {resources.map((resource) => (
-              <button
+              <Link
                 key={resource.id}
-                onClick={() => onNavigate(resource.id)}
-                className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left"
+                href={resource.href}
+                className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left block"
               >
                 <resource.icon className="size-8 text-primary mb-4" />
                 <h3 className="text-lg font-semibold mb-2">{resource.title}</h3>
@@ -69,7 +70,7 @@ export function ResourcesView({ onNavigate }: ResourcesViewProps) {
                   {resource.cta}
                   <ArrowRight className="size-3" />
                 </span>
-              </button>
+              </Link>
             ))}
           </div>
         </div>

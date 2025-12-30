@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,8 @@ import { Pagination } from "@/components/ui/pagination";
 import { WikiArticleRow, WikiFilterBar, WikiSidebar, SortOption } from "@/components/wiki";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
-import { WikiCategory, WikiArticle, WikiTag, WikiComment, VIEW_IDS } from "@/lib/types";
+import { WikiCategory, WikiArticle, WikiTag, WikiComment } from "@/lib/types";
+import { ROUTES } from "@/lib/routes";
 import {
   BookOpen,
   ArrowLeft,
@@ -22,10 +24,6 @@ import {
   List,
 } from "@phosphor-icons/react";
 
-interface WikiViewProps {
-  onNavigate: (viewId: string) => void;
-}
-
 type WikiViewState =
   | { view: "browse" }
   | { view: "article"; articleId: string; articleSlug: string }
@@ -33,7 +31,7 @@ type WikiViewState =
 
 const ARTICLES_PER_PAGE = 20;
 
-export function WikiView({ onNavigate }: WikiViewProps) {
+export function WikiView() {
   const { user } = useAuth();
   const [viewState, setViewState] = useState<WikiViewState>({ view: "browse" });
 
@@ -776,9 +774,11 @@ export function WikiView({ onNavigate }: WikiViewProps) {
             ) : (
               <div className="text-center py-6 border border-dashed border-border">
                 <p className="text-muted-foreground mb-4">Sign in to leave a comment.</p>
-                <Button onClick={() => onNavigate(VIEW_IDS.SIGNIN)}>
-                  <SignIn className="size-4 mr-2" />
-                  Sign In
+                <Button asChild>
+                  <Link href={ROUTES.SIGNIN}>
+                    <SignIn className="size-4 mr-2" />
+                    Sign In
+                  </Link>
                 </Button>
               </div>
             )}

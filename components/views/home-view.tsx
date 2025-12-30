@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
@@ -7,22 +8,17 @@ import { CircuitBackground } from "@/components/circuit-background";
 import { BuildingWireframe } from "@/components/building-wireframe";
 import { ArrowRight, GithubLogo, Chats, BookOpen } from "@phosphor-icons/react";
 import { TOOLS_LIST } from "@/lib/constants";
-import { VIEW_IDS } from "@/lib/types";
+import { ROUTES } from "@/lib/routes";
 
-interface HomeViewProps {
-  onNavigate: (viewId: string) => void;
-}
-
-export function HomeView({ onNavigate }: HomeViewProps) {
+export function HomeView() {
   // Map tools to product card format
   const products = TOOLS_LIST.map(tool => ({
     name: tool.name,
     shortName: tool.shortName,
     description: tool.description,
     status: tool.status,
-    href: "#",
+    href: ROUTES.TOOL(tool.id),
     ctaText: tool.status === "ready" ? "View" : "Notify",
-    onClick: () => onNavigate(tool.id),
   }));
 
   return (
@@ -44,9 +40,11 @@ export function HomeView({ onNavigate }: HomeViewProps) {
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
-                <Button size="lg" onClick={() => onNavigate(VIEW_IDS.TOOLS)}>
-                  Browse Tools
-                  <ArrowRight className="size-4 ml-2" />
+                <Button size="lg" asChild>
+                  <Link href={ROUTES.TOOLS}>
+                    Browse Tools
+                    <ArrowRight className="size-4 ml-2" />
+                  </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild>
                   <a href="https://github.com/basidekick" target="_blank" rel="noopener noreferrer">
@@ -89,9 +87,9 @@ export function HomeView({ onNavigate }: HomeViewProps) {
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
             {/* Forum CTA */}
-            <button
-              onClick={() => onNavigate(VIEW_IDS.FORUM)}
-              className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left"
+            <Link
+              href={ROUTES.FORUM}
+              className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left block"
             >
               <Chats className="size-8 text-primary mb-4" />
               <SectionLabel>forum</SectionLabel>
@@ -103,12 +101,12 @@ export function HomeView({ onNavigate }: HomeViewProps) {
                 Join Discussion
                 <ArrowRight className="size-3" />
               </span>
-            </button>
+            </Link>
 
             {/* Wiki CTA */}
-            <button
-              onClick={() => onNavigate(VIEW_IDS.WIKI)}
-              className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left"
+            <Link
+              href={ROUTES.WIKI}
+              className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left block"
             >
               <BookOpen className="size-8 text-primary mb-4" />
               <SectionLabel>wiki</SectionLabel>
@@ -120,7 +118,7 @@ export function HomeView({ onNavigate }: HomeViewProps) {
                 Browse Wiki
                 <ArrowRight className="size-3" />
               </span>
-            </button>
+            </Link>
           </div>
         </div>
       </section>

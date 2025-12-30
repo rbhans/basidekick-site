@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
@@ -8,7 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { License, Profile } from "@/lib/types";
 import { TOOLS } from "@/lib/constants";
-import { VIEW_IDS } from "@/lib/types";
+import { ROUTES } from "@/lib/routes";
 import {
   User,
   Package,
@@ -20,11 +22,8 @@ import {
   SignIn,
 } from "@phosphor-icons/react";
 
-interface AccountViewProps {
-  onNavigate: (viewId: string) => void;
-}
-
-export function AccountView({ onNavigate }: AccountViewProps) {
+export function AccountView() {
+  const router = useRouter();
   const { user, loading: authLoading, signOut } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [licenses, setLicenses] = useState<License[]>([]);
@@ -67,7 +66,7 @@ export function AccountView({ onNavigate }: AccountViewProps) {
 
   const handleSignOut = async () => {
     await signOut();
-    onNavigate(VIEW_IDS.HOME);
+    router.push(ROUTES.HOME);
   };
 
   // Not logged in
@@ -87,12 +86,16 @@ export function AccountView({ onNavigate }: AccountViewProps) {
             </p>
 
             <div className="mt-8 flex gap-4">
-              <Button onClick={() => onNavigate(VIEW_IDS.SIGNIN)}>
-                <SignIn className="size-4 mr-2" />
-                Sign In
+              <Button asChild>
+                <Link href={ROUTES.SIGNIN}>
+                  <SignIn className="size-4 mr-2" />
+                  Sign In
+                </Link>
               </Button>
-              <Button variant="outline" onClick={() => onNavigate(VIEW_IDS.SIGNUP)}>
-                Create Account
+              <Button variant="outline" asChild>
+                <Link href={ROUTES.SIGNUP}>
+                  Create Account
+                </Link>
               </Button>
             </div>
           </div>
@@ -152,8 +155,8 @@ export function AccountView({ onNavigate }: AccountViewProps) {
               <p className="text-muted-foreground mb-4">
                 You haven&apos;t purchased any software yet.
               </p>
-              <Button onClick={() => onNavigate(VIEW_IDS.TOOLS)}>
-                Browse Tools
+              <Button asChild>
+                <Link href={ROUTES.TOOLS}>Browse Tools</Link>
               </Button>
             </div>
           ) : (

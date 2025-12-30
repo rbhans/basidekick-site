@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,14 +14,15 @@ import { getIcon } from "@/lib/icons";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { generateCheckoutUrl, isCheckoutConfigured } from "@/lib/lemonsqueezy";
-import { License, VIEW_IDS } from "@/lib/types";
+import { License } from "@/lib/types";
+import { ROUTES } from "@/lib/routes";
 
 interface ToolDetailViewProps {
   toolId: "nsk" | "ssk" | "msk";
-  onNavigate?: (viewId: string) => void;
 }
 
-export function ToolDetailView({ toolId, onNavigate }: ToolDetailViewProps) {
+export function ToolDetailView({ toolId }: ToolDetailViewProps) {
+  const router = useRouter();
   const tool = TOOL_DETAILS[toolId];
   const { user, loading: authLoading } = useAuth();
   const [license, setLicense] = useState<License | null>(null);
@@ -60,7 +63,7 @@ export function ToolDetailView({ toolId, onNavigate }: ToolDetailViewProps) {
 
   const handlePurchase = () => {
     if (!user) {
-      onNavigate?.(VIEW_IDS.SIGNIN);
+      router.push(ROUTES.SIGNIN);
       return;
     }
 
@@ -117,9 +120,11 @@ export function ToolDetailView({ toolId, onNavigate }: ToolDetailViewProps) {
 
     if (!user) {
       return (
-        <Button size={size} onClick={() => onNavigate?.(VIEW_IDS.SIGNIN)}>
-          <SignIn className="size-4 mr-2" />
-          Sign in to Purchase
+        <Button size={size} asChild>
+          <Link href={ROUTES.SIGNIN}>
+            <SignIn className="size-4 mr-2" />
+            Sign in to Purchase
+          </Link>
         </Button>
       );
     }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,12 +8,9 @@ import { CircuitBackground } from "@/components/circuit-background";
 import { ArrowRight, CheckCircle } from "@phosphor-icons/react";
 import { TOOLS_LIST, USE_CASES } from "@/lib/constants";
 import { getIcon } from "@/lib/icons";
+import { ROUTES } from "@/lib/routes";
 
-interface ToolsViewProps {
-  onNavigate: (viewId: string) => void;
-}
-
-export function ToolsView({ onNavigate }: ToolsViewProps) {
+export function ToolsView() {
   return (
     <div className="min-h-full">
       {/* Header */}
@@ -69,9 +67,11 @@ export function ToolsView({ onNavigate }: ToolsViewProps) {
 
                 {/* Footer */}
                 <div className="flex items-center justify-end mt-6 pt-4 border-t border-border">
-                  <Button size="sm" onClick={() => onNavigate(tool.id)}>
-                    {tool.status === "ready" ? "View Details" : "Get Notified"}
-                    <ArrowRight className="size-3 ml-1" />
+                  <Button size="sm" asChild>
+                    <Link href={ROUTES.TOOL(tool.id)}>
+                      {tool.status === "ready" ? "View Details" : "Get Notified"}
+                      <ArrowRight className="size-3 ml-1" />
+                    </Link>
                   </Button>
                 </div>
               </div>

@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
-import { ForumCategory, ForumThread, ForumPost, VIEW_IDS } from "@/lib/types";
+import { ForumCategory, ForumThread, ForumPost } from "@/lib/types";
 import { getIcon } from "@/lib/icons";
+import { ROUTES } from "@/lib/routes";
 import {
   Chats,
   ChatCircle,
@@ -20,16 +22,12 @@ import {
   SignIn,
 } from "@phosphor-icons/react";
 
-interface ForumViewProps {
-  onNavigate: (viewId: string) => void;
-}
-
 type ForumViewState =
   | { view: "categories" }
   | { view: "threads"; categoryId: string; categoryName: string }
   | { view: "thread"; threadId: string; threadTitle: string };
 
-export function ForumView({ onNavigate }: ForumViewProps) {
+export function ForumView() {
   const { user, loading: authLoading } = useAuth();
   const [viewState, setViewState] = useState<ForumViewState>({ view: "categories" });
   const [categories, setCategories] = useState<ForumCategory[]>([]);
@@ -398,9 +396,11 @@ export function ForumView({ onNavigate }: ForumViewProps) {
                   New Thread
                 </Button>
               ) : (
-                <Button onClick={() => onNavigate(VIEW_IDS.SIGNIN)}>
-                  <SignIn className="size-4 mr-2" />
-                  Sign in to Post
+                <Button asChild>
+                  <Link href={ROUTES.SIGNIN}>
+                    <SignIn className="size-4 mr-2" />
+                    Sign in to Post
+                  </Link>
                 </Button>
               )}
             </div>
@@ -628,9 +628,11 @@ export function ForumView({ onNavigate }: ForumViewProps) {
                   <p className="text-muted-foreground mb-4">
                     Sign in to reply to this thread.
                   </p>
-                  <Button onClick={() => onNavigate(VIEW_IDS.SIGNIN)}>
-                    <SignIn className="size-4 mr-2" />
-                    Sign In
+                  <Button asChild>
+                    <Link href={ROUTES.SIGNIN}>
+                      <SignIn className="size-4 mr-2" />
+                      Sign In
+                    </Link>
                   </Button>
                 </div>
               )}
