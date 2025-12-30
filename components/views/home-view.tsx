@@ -6,11 +6,35 @@ import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { CircuitBackground } from "@/components/circuit-background";
 import { BuildingWireframe } from "@/components/building-wireframe";
-import { ArrowRight, GithubLogo, Chats, BookOpen } from "@phosphor-icons/react";
+import { ArrowRight, GithubLogo, Chats, BookOpen, ChatCircle } from "@phosphor-icons/react";
 import { TOOLS_LIST } from "@/lib/constants";
 import { ROUTES } from "@/lib/routes";
 
-export function HomeView() {
+interface RecentArticle {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string | null;
+  created_at: string;
+  category: { name: string; slug: string } | null;
+}
+
+interface RecentThread {
+  id: string;
+  title: string;
+  slug: string;
+  created_at: string;
+  reply_count: number | null;
+  category: { name: string; slug: string } | null;
+  author: { display_name: string | null } | null;
+}
+
+interface HomeViewProps {
+  recentArticles: RecentArticle[];
+  recentThreads: RecentThread[];
+}
+
+export function HomeView({ recentArticles, recentThreads }: HomeViewProps) {
   // Map tools to product card format
   const products = TOOLS_LIST.map(tool => ({
     name: tool.name,
@@ -20,6 +44,14 @@ export function HomeView() {
     href: ROUTES.TOOL(tool.id),
     ctaText: tool.status === "ready" ? "View" : "Notify",
   }));
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   return (
     <div className="min-h-full">
@@ -81,50 +113,127 @@ export function HomeView() {
         </div>
       </section>
 
-      {/* Community Section - Forum & Wiki CTAs */}
+      {/* Wiki Section - Recent Articles */}
       <section className="relative py-12 overflow-hidden">
         <CircuitBackground opacity={0.12} />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
-            {/* Forum CTA */}
-            <Link
-              href={ROUTES.FORUM}
-              className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left block"
-            >
-              <Chats className="size-8 text-primary mb-4" />
-              <SectionLabel>forum</SectionLabel>
-              <h3 className="mt-4 text-lg font-semibold">Join the Community</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Connect with other BAS professionals. Ask questions, share knowledge.
-              </p>
-              <span className="inline-flex items-center gap-1 mt-4 text-sm font-medium text-primary group-hover:underline underline-offset-4">
-                Join Discussion
-                <ArrowRight className="size-3" />
-              </span>
-            </Link>
-
-            {/* Wiki CTA */}
-            <Link
-              href={ROUTES.WIKI}
-              className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left block"
-            >
-              <BookOpen className="size-8 text-primary mb-4" />
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <BookOpen className="size-6 text-primary" />
               <SectionLabel>wiki</SectionLabel>
-              <h3 className="mt-4 text-lg font-semibold">Knowledge Base</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Guides, tutorials, and reference documentation for BAS professionals.
-              </p>
-              <span className="inline-flex items-center gap-1 mt-4 text-sm font-medium text-primary group-hover:underline underline-offset-4">
-                Browse Wiki
-                <ArrowRight className="size-3" />
-              </span>
-            </Link>
+            </div>
+            <Button variant="outline" size="sm" asChild>
+              <Link href={ROUTES.WIKI}>
+                Browse All
+                <ArrowRight className="size-3 ml-2" />
+              </Link>
+            </Button>
           </div>
+
+          <p className="text-muted-foreground mb-6">
+            Guides, tutorials, and reference documentation for BAS professionals.
+          </p>
+
+          {recentArticles.length === 0 ? (
+            <div className="border border-dashed border-border p-8 text-center">
+              <p className="text-muted-foreground">No articles yet.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentArticles.map((article) => (
+                <Link
+                  key={article.id}
+                  href={ROUTES.WIKI_ARTICLE(article.slug)}
+                  className="group p-4 border border-border bg-card hover:border-primary/50 transition-all block"
+                >
+                  {article.category && (
+                    <span className="text-xs text-muted-foreground">
+                      {article.category.name}
+                    </span>
+                  )}
+                  <h3 className="mt-1 font-semibold group-hover:text-primary transition-colors line-clamp-2">
+                    {article.title}
+                  </h3>
+                  {article.summary && (
+                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
+                      {article.summary}
+                    </p>
+                  )}
+                  <span className="mt-3 text-xs text-muted-foreground block">
+                    {formatDate(article.created_at)}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Forum Section - Recent Threads */}
+      <section className="py-12 bg-card/30">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Chats className="size-6 text-primary" />
+              <SectionLabel>forum</SectionLabel>
+            </div>
+            <Button variant="outline" size="sm" asChild>
+              <Link href={ROUTES.FORUM}>
+                View All
+                <ArrowRight className="size-3 ml-2" />
+              </Link>
+            </Button>
+          </div>
+
+          <p className="text-muted-foreground mb-6">
+            Connect with other BAS professionals. Ask questions, share knowledge.
+          </p>
+
+          {recentThreads.length === 0 ? (
+            <div className="border border-dashed border-border p-8 text-center">
+              <p className="text-muted-foreground">No discussions yet. Be the first to start one!</p>
+              <Button className="mt-4" asChild>
+                <Link href={ROUTES.FORUM}>
+                  Visit Forum
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {recentThreads.map((thread) => (
+                <Link
+                  key={thread.id}
+                  href={ROUTES.FORUM_THREAD(thread.category?.slug || "general", thread.slug)}
+                  className="group flex items-center justify-between p-4 border border-border bg-card hover:border-primary/50 transition-all"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                      {thread.category && (
+                        <span className="bg-primary/10 text-primary px-2 py-0.5">
+                          {thread.category.name}
+                        </span>
+                      )}
+                      <span>{thread.author?.display_name || "Anonymous"}</span>
+                      <span>&middot;</span>
+                      <span>{formatDate(thread.created_at)}</span>
+                    </div>
+                    <h3 className="font-semibold group-hover:text-primary transition-colors truncate">
+                      {thread.title}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground ml-4 shrink-0">
+                    <ChatCircle className="size-4" />
+                    <span>{thread.reply_count || 0}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       {/* About Section */}
-      <section className="py-12 bg-card/30">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <SectionLabel>built by rob</SectionLabel>
 
