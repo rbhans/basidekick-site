@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { WikiArticle, WikiTag, WikiComment } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
+import { validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset } from "@/lib/security";
 import {
   ArrowLeft,
   Eye,
@@ -28,25 +29,41 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
   const [comments, setComments] = useState<WikiComment[]>([]);
   const [commentContent, setCommentContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [viewCount, setViewCount] = useState(article.view_count || 0);
+  const [error, setError] = useState("");
+  // Use server-rendered view count - don't update optimistically to avoid race conditions
+  const viewCount = article.view_count || 0;
+  const hasIncrementedRef = useRef(false);
 
-  // Increment view count on mount
+  // Increment view count on mount (with session deduplication)
   useEffect(() => {
     async function incrementViews() {
+      // Prevent double-counting in strict mode or re-renders
+      if (hasIncrementedRef.current) return;
+      hasIncrementedRef.current = true;
+
+      // Session-based deduplication - only count once per article per session
+      const viewedKey = `viewed_wiki_${article.id}`;
+      if (typeof window !== "undefined" && sessionStorage.getItem(viewedKey)) {
+        return;
+      }
+
       const supabase = createClient();
       if (!supabase) return;
 
+      // Use server-rendered value for the increment to minimize race condition window
       await supabase
         .from("wiki_articles")
-        .update({ view_count: viewCount + 1 })
+        .update({ view_count: (article.view_count || 0) + 1 })
         .eq("id", article.id);
 
-      setViewCount((prev) => prev + 1);
+      // Mark as viewed for this session
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(viewedKey, "1");
+      }
     }
 
     incrementViews();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [article.id]);
+  }, [article.id, article.view_count]);
 
   // Fetch comments
   useEffect(() => {
@@ -74,19 +91,34 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
   const handlePostComment = async () => {
     if (!user || !commentContent.trim()) return;
 
+    // Validate content
+    const validation = validateContent(commentContent, MAX_LENGTHS.COMMENT);
+    if (!validation.valid) {
+      setError(validation.error || "Invalid comment");
+      return;
+    }
+
+    // Check rate limit (5 comments per minute)
+    if (!checkRateLimit("wiki_comment", 5, 60000)) {
+      const resetIn = getRateLimitReset("wiki_comment", 60000);
+      setError(`Too many comments. Please wait ${resetIn} seconds.`);
+      return;
+    }
+
     setSubmitting(true);
+    setError("");
     const supabase = createClient();
     if (!supabase) {
       setSubmitting(false);
       return;
     }
 
-    const { data, error } = await supabase
+    const { data, error: insertError } = await supabase
       .from("wiki_comments")
       .insert({
         article_id: article.id,
         user_id: user.id,
-        content: commentContent.trim(),
+        content: validation.sanitized,
       })
       .select(`
         *,
@@ -94,9 +126,11 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
       `)
       .single();
 
-    if (data && !error) {
+    if (data && !insertError) {
       setComments((prev) => [...prev, data as WikiComment]);
       setCommentContent("");
+    } else {
+      setError("Failed to post comment. Please try again.");
     }
     setSubmitting(false);
   };
@@ -214,10 +248,22 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
               <h3 className="text-lg font-semibold mb-3">Add a Comment</h3>
               <textarea
                 value={commentContent}
-                onChange={(e) => setCommentContent(e.target.value)}
+                onChange={(e) => {
+                  setCommentContent(e.target.value);
+                  if (error) setError("");
+                }}
                 placeholder="Write your comment..."
+                maxLength={MAX_LENGTHS.COMMENT}
                 className="w-full min-h-[100px] p-4 bg-background border border-border resize-y focus:outline-none focus:ring-2 focus:ring-primary"
               />
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">
+                  {commentContent.length}/{MAX_LENGTHS.COMMENT}
+                </span>
+                {error && (
+                  <span className="text-xs text-destructive">{error}</span>
+                )}
+              </div>
               <div className="mt-3 flex justify-end">
                 <Button
                   onClick={handlePostComment}

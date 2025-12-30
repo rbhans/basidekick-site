@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/client";
 import { License, Profile } from "@/lib/types";
 import { TOOLS } from "@/lib/constants";
 import { ROUTES } from "@/lib/routes";
+import { validateDisplayName, MAX_LENGTHS, MIN_LENGTHS } from "@/lib/security";
 import {
   User,
   Package,
@@ -20,6 +21,10 @@ import {
   Calendar,
   Buildings,
   SignIn,
+  PencilSimple,
+  ChatCircle,
+  X,
+  Check,
 } from "@phosphor-icons/react";
 
 export function AccountView() {
@@ -28,6 +33,12 @@ export function AccountView() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [licenses, setLicenses] = useState<License[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Edit mode state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editDisplayName, setEditDisplayName] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [editError, setEditError] = useState("");
 
   useEffect(() => {
     async function fetchUserData() {
@@ -67,6 +78,57 @@ export function AccountView() {
   const handleSignOut = async () => {
     await signOut();
     router.push(ROUTES.HOME);
+  };
+
+  const handleStartEdit = () => {
+    setEditDisplayName(profile?.display_name || "");
+    setEditError("");
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditDisplayName("");
+    setEditError("");
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+
+    // Validate display name
+    const validation = validateDisplayName(editDisplayName);
+    if (!validation.valid) {
+      setEditError(validation.error || "Invalid display name");
+      return;
+    }
+
+    setSaving(true);
+    setEditError("");
+
+    const supabase = createClient();
+    if (!supabase) {
+      setSaving(false);
+      setEditError("Failed to save. Please try again.");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({ display_name: validation.sanitized })
+      .eq("id", user.id);
+
+    if (error) {
+      setSaving(false);
+      setEditError("Failed to save. Please try again.");
+      return;
+    }
+
+    // Update local state
+    setProfile((prev) =>
+      prev ? { ...prev, display_name: validation.sanitized } : null
+    );
+    setIsEditing(false);
+    setSaving(false);
   };
 
   // Not logged in
@@ -133,6 +195,11 @@ export function AccountView() {
                   {profile.company}
                 </p>
               )}
+              {/* Post count badge */}
+              <p className="mt-2 text-sm text-muted-foreground flex items-center gap-1">
+                <ChatCircle className="size-3" />
+                {profile?.post_count || 0} forum {(profile?.post_count || 0) === 1 ? "post" : "posts"}
+              </p>
             </div>
             <Button variant="outline" onClick={handleSignOut}>
               <SignOut className="size-4 mr-2" />
@@ -221,10 +288,70 @@ export function AccountView() {
       {/* Account Info */}
       <section className="py-8 bg-card/30">
         <div className="container mx-auto px-4">
-          <div className="flex items-center gap-2 mb-6">
-            <User className="size-5 text-primary" />
-            <h2 className="text-xl font-semibold">Account Details</h2>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <User className="size-5 text-primary" />
+              <h2 className="text-xl font-semibold">Account Details</h2>
+            </div>
+            {!isEditing && (
+              <Button variant="outline" size="sm" onClick={handleStartEdit}>
+                <PencilSimple className="size-4 mr-2" />
+                Edit Profile
+              </Button>
+            )}
           </div>
+
+          {/* Edit Form */}
+          {isEditing && (
+            <div className="mb-8 p-6 border border-border bg-card max-w-md">
+              <h3 className="font-semibold mb-4">Edit Display Name</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm text-muted-foreground mb-1">
+                    Display Name
+                  </label>
+                  <input
+                    type="text"
+                    value={editDisplayName}
+                    onChange={(e) => {
+                      setEditDisplayName(e.target.value);
+                      if (editError) setEditError("");
+                    }}
+                    maxLength={MAX_LENGTHS.DISPLAY_NAME}
+                    placeholder="Enter display name..."
+                    className="w-full px-4 py-2 bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                  <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>
+                      {MIN_LENGTHS.DISPLAY_NAME}-{MAX_LENGTHS.DISPLAY_NAME} characters, letters, numbers, spaces, underscores, hyphens
+                    </span>
+                    <span>
+                      {editDisplayName.length}/{MAX_LENGTHS.DISPLAY_NAME}
+                    </span>
+                  </div>
+                </div>
+
+                {editError && (
+                  <div className="text-sm text-destructive">{editError}</div>
+                )}
+
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={handleCancelEdit}
+                    disabled={saving}
+                  >
+                    <X className="size-4 mr-2" />
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSaveProfile} disabled={saving}>
+                    <Check className="size-4 mr-2" />
+                    {saving ? "Saving..." : "Save"}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
             <div>
@@ -244,6 +371,12 @@ export function AccountView() {
                 Company
               </label>
               <p className="mt-1">{profile?.company || "Not set"}</p>
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wider">
+                Forum Posts
+              </label>
+              <p className="mt-1">{profile?.post_count || 0}</p>
             </div>
             <div>
               <label className="text-xs text-muted-foreground uppercase tracking-wider">

@@ -106,6 +106,8 @@ export interface Profile {
       max_devices: number;
     };
   } | null;
+  post_count: number;
+  is_admin: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -203,4 +205,20 @@ export interface WikiComment {
   updated_at: string;
   // Joined data
   author?: { display_name: string | null };
+}
+
+// Wiki suggestion (forum thread → wiki article)
+export interface WikiSuggestion {
+  id: string;
+  thread_id: string;
+  suggested_by: string;
+  suggested_at: string;
+  status: "pending" | "approved" | "rejected";
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  notes: string | null;
+  // Joined data
+  thread?: { title: string; slug: string };
+  suggester?: { display_name: string | null };
+  reviewer?: { display_name: string | null };
 }

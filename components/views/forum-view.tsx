@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { ForumCategory, ForumThread, ForumPost } from "@/lib/types";
 import { getIcon } from "@/lib/icons";
 import { ROUTES } from "@/lib/routes";
+import { validateTitle, validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset } from "@/lib/security";
 import {
   Chats,
   ChatCircle,
@@ -42,6 +43,8 @@ export function ForumView() {
   const [newThreadContent, setNewThreadContent] = useState("");
   const [replyContent, setReplyContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const hasIncrementedViewRef = useRef(false);
 
   // Fetch categories
   useEffect(() => {
@@ -115,11 +118,16 @@ export function ForumView() {
       if (threadData) {
         setCurrentThread(threadData as ForumThread);
 
-        // Increment view count
-        await supabase
-          .from("forum_threads")
-          .update({ view_count: (threadData.view_count || 0) + 1 })
-          .eq("id", viewState.threadId);
+        // Increment view count with session deduplication
+        const viewedKey = `viewed_forum_${viewState.threadId}`;
+        if (!hasIncrementedViewRef.current && typeof window !== "undefined" && !sessionStorage.getItem(viewedKey)) {
+          hasIncrementedViewRef.current = true;
+          await supabase
+            .from("forum_threads")
+            .update({ view_count: (threadData.view_count || 0) + 1 })
+            .eq("id", viewState.threadId);
+          sessionStorage.setItem(viewedKey, "1");
+        }
       }
 
       // Fetch posts
@@ -180,15 +188,37 @@ export function ForumView() {
     if (!user || viewState.view !== "threads") return;
     if (!newThreadTitle.trim() || !newThreadContent.trim()) return;
 
+    // Validate title
+    const titleValidation = validateTitle(newThreadTitle, MAX_LENGTHS.THREAD_TITLE);
+    if (!titleValidation.valid) {
+      setError(titleValidation.error || "Invalid title");
+      return;
+    }
+
+    // Validate content
+    const contentValidation = validateContent(newThreadContent, MAX_LENGTHS.POST_CONTENT);
+    if (!contentValidation.valid) {
+      setError(contentValidation.error || "Invalid content");
+      return;
+    }
+
+    // Check rate limit (3 threads per 5 minutes)
+    if (!checkRateLimit("forum_thread", 3, 300000)) {
+      const resetIn = getRateLimitReset("forum_thread", 300000);
+      setError(`Too many threads created. Please wait ${resetIn} seconds.`);
+      return;
+    }
+
     setSubmitting(true);
+    setError("");
     const supabase = createClient();
     if (!supabase) {
       setSubmitting(false);
       return;
     }
 
-    // Generate slug from title
-    const slug = newThreadTitle
+    // Generate slug from sanitized title
+    const slug = titleValidation.sanitized
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "")
@@ -200,30 +230,26 @@ export function ForumView() {
       .insert({
         category_id: viewState.categoryId,
         user_id: user.id,
-        title: newThreadTitle.trim(),
+        title: titleValidation.sanitized,
         slug: `${slug}-${Date.now().toString(36)}`,
       })
       .select()
       .single();
 
     if (threadError || !threadData) {
-      console.error("Failed to create thread:", threadError);
+      setError("Failed to create thread. Please try again.");
       setSubmitting(false);
       return;
     }
 
     // Create the first post
-    const { error: postError } = await supabase
+    await supabase
       .from("forum_posts")
       .insert({
         thread_id: threadData.id,
         user_id: user.id,
-        content: newThreadContent.trim(),
+        content: contentValidation.sanitized,
       });
-
-    if (postError) {
-      console.error("Failed to create post:", postError);
-    }
 
     // Reset form and navigate to the new thread
     setNewThreadTitle("");
@@ -243,19 +269,34 @@ export function ForumView() {
     if (!user || viewState.view !== "thread") return;
     if (!replyContent.trim()) return;
 
+    // Validate content
+    const validation = validateContent(replyContent, MAX_LENGTHS.POST_CONTENT);
+    if (!validation.valid) {
+      setError(validation.error || "Invalid reply");
+      return;
+    }
+
+    // Check rate limit (10 posts per minute)
+    if (!checkRateLimit("forum_post", 10, 60000)) {
+      const resetIn = getRateLimitReset("forum_post", 60000);
+      setError(`Too many posts. Please wait ${resetIn} seconds.`);
+      return;
+    }
+
     setSubmitting(true);
+    setError("");
     const supabase = createClient();
     if (!supabase) {
       setSubmitting(false);
       return;
     }
 
-    const { data, error } = await supabase
+    const { data, error: insertError } = await supabase
       .from("forum_posts")
       .insert({
         thread_id: viewState.threadId,
         user_id: user.id,
-        content: replyContent.trim(),
+        content: validation.sanitized,
       })
       .select(`
         *,
@@ -263,8 +304,8 @@ export function ForumView() {
       `)
       .single();
 
-    if (error || !data) {
-      console.error("Failed to post reply:", error);
+    if (insertError || !data) {
+      setError("Failed to post reply. Please try again.");
       setSubmitting(false);
       return;
     }
@@ -415,20 +456,37 @@ export function ForumView() {
                     <input
                       type="text"
                       value={newThreadTitle}
-                      onChange={(e) => setNewThreadTitle(e.target.value)}
+                      onChange={(e) => {
+                        setNewThreadTitle(e.target.value);
+                        if (error) setError("");
+                      }}
+                      maxLength={MAX_LENGTHS.THREAD_TITLE}
                       placeholder="Thread title..."
                       className="w-full px-4 py-2 bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary"
                     />
+                    <div className="mt-1 text-xs text-muted-foreground text-right">
+                      {newThreadTitle.length}/{MAX_LENGTHS.THREAD_TITLE}
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm text-muted-foreground mb-1">Content</label>
                     <textarea
                       value={newThreadContent}
-                      onChange={(e) => setNewThreadContent(e.target.value)}
+                      onChange={(e) => {
+                        setNewThreadContent(e.target.value);
+                        if (error) setError("");
+                      }}
+                      maxLength={MAX_LENGTHS.POST_CONTENT}
                       placeholder="Write your post..."
                       className="w-full min-h-[150px] p-4 bg-background border border-border resize-y focus:outline-none focus:ring-2 focus:ring-primary"
                     />
+                    <div className="mt-1 text-xs text-muted-foreground text-right">
+                      {newThreadContent.length}/{MAX_LENGTHS.POST_CONTENT}
+                    </div>
                   </div>
+                  {error && (
+                    <div className="text-sm text-destructive">{error}</div>
+                  )}
                   <div className="flex justify-end gap-3">
                     <Button
                       variant="outline"
@@ -436,6 +494,7 @@ export function ForumView() {
                         setShowNewThreadForm(false);
                         setNewThreadTitle("");
                         setNewThreadContent("");
+                        setError("");
                       }}
                     >
                       Cancel
@@ -610,10 +669,22 @@ export function ForumView() {
                   <h3 className="text-lg font-semibold mb-4">Reply</h3>
                   <textarea
                     value={replyContent}
-                    onChange={(e) => setReplyContent(e.target.value)}
+                    onChange={(e) => {
+                      setReplyContent(e.target.value);
+                      if (error) setError("");
+                    }}
+                    maxLength={MAX_LENGTHS.POST_CONTENT}
                     className="w-full min-h-[150px] p-4 bg-background border border-border resize-y focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Write your reply..."
                   />
+                  <div className="mt-2 flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      {replyContent.length}/{MAX_LENGTHS.POST_CONTENT}
+                    </span>
+                    {error && (
+                      <span className="text-xs text-destructive">{error}</span>
+                    )}
+                  </div>
                   <div className="mt-4 flex justify-end">
                     <Button
                       onClick={handlePostReply}

@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { ForumCategory, ForumThread } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
+import { validateTitle, validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset } from "@/lib/security";
 import {
   ChatCircle,
   Eye,
@@ -33,6 +34,7 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
   const [newThreadTitle, setNewThreadTitle] = useState("");
   const [newThreadContent, setNewThreadContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -47,7 +49,29 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
     if (!user) return;
     if (!newThreadTitle.trim() || !newThreadContent.trim()) return;
 
+    // Validate title
+    const titleValidation = validateTitle(newThreadTitle, MAX_LENGTHS.THREAD_TITLE);
+    if (!titleValidation.valid) {
+      setError(titleValidation.error || "Invalid title");
+      return;
+    }
+
+    // Validate content
+    const contentValidation = validateContent(newThreadContent, MAX_LENGTHS.POST_CONTENT);
+    if (!contentValidation.valid) {
+      setError(contentValidation.error || "Invalid content");
+      return;
+    }
+
+    // Check rate limit (3 threads per 5 minutes)
+    if (!checkRateLimit("forum_thread", 3, 300000)) {
+      const resetIn = getRateLimitReset("forum_thread", 300000);
+      setError(`Too many threads created. Please wait ${resetIn} seconds.`);
+      return;
+    }
+
     setSubmitting(true);
+    setError("");
     const supabase = createClient();
     if (!supabase) {
       setSubmitting(false);
@@ -55,7 +79,7 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
     }
 
     // Generate slug from title
-    const slug = newThreadTitle
+    const slug = titleValidation.sanitized
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "")
@@ -67,7 +91,7 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
       .insert({
         category_id: category.id,
         user_id: user.id,
-        title: newThreadTitle.trim(),
+        title: titleValidation.sanitized,
         slug: `${slug}-${Date.now().toString(36)}`,
       })
       .select(`
@@ -77,7 +101,7 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
       .single();
 
     if (threadError || !threadData) {
-      console.error("Failed to create thread:", threadError);
+      setError("Failed to create thread. Please try again.");
       setSubmitting(false);
       return;
     }
@@ -86,7 +110,7 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
     await supabase.from("forum_posts").insert({
       thread_id: threadData.id,
       user_id: user.id,
-      content: newThreadContent.trim(),
+      content: contentValidation.sanitized,
     });
 
     // Add to list and navigate
@@ -149,20 +173,37 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
                   <input
                     type="text"
                     value={newThreadTitle}
-                    onChange={(e) => setNewThreadTitle(e.target.value)}
+                    onChange={(e) => {
+                      setNewThreadTitle(e.target.value);
+                      if (error) setError("");
+                    }}
+                    maxLength={MAX_LENGTHS.THREAD_TITLE}
                     placeholder="Thread title..."
                     className="w-full px-4 py-2 bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary"
                   />
+                  <div className="mt-1 text-xs text-muted-foreground text-right">
+                    {newThreadTitle.length}/{MAX_LENGTHS.THREAD_TITLE}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm text-muted-foreground mb-1">Content</label>
                   <textarea
                     value={newThreadContent}
-                    onChange={(e) => setNewThreadContent(e.target.value)}
+                    onChange={(e) => {
+                      setNewThreadContent(e.target.value);
+                      if (error) setError("");
+                    }}
+                    maxLength={MAX_LENGTHS.POST_CONTENT}
                     placeholder="Write your post..."
                     className="w-full min-h-[150px] p-4 bg-background border border-border resize-y focus:outline-none focus:ring-2 focus:ring-primary"
                   />
+                  <div className="mt-1 text-xs text-muted-foreground text-right">
+                    {newThreadContent.length}/{MAX_LENGTHS.POST_CONTENT}
+                  </div>
                 </div>
+                {error && (
+                  <div className="text-sm text-destructive">{error}</div>
+                )}
                 <div className="flex justify-end gap-3">
                   <Button
                     variant="outline"
@@ -170,6 +211,7 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
                       setShowNewThreadForm(false);
                       setNewThreadTitle("");
                       setNewThreadContent("");
+                      setError("");
                     }}
                   >
                     Cancel

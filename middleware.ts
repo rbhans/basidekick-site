@@ -1,6 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+// Routes that require authentication
+const PROTECTED_ROUTES = ["/account"];
+
+// Routes that should redirect to home if already authenticated
+const AUTH_ROUTES = ["/signin", "/signup"];
+
 export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -34,7 +40,31 @@ export async function middleware(request: NextRequest) {
   });
 
   // Refresh session if expired - important for Server Components
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const pathname = request.nextUrl.pathname;
+
+  // Check if route requires authentication
+  const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  // Check if route is an auth route (signin/signup)
+  const isAuthRoute = AUTH_ROUTES.some((route) => pathname.startsWith(route));
+
+  // Redirect unauthenticated users from protected routes
+  if (isProtectedRoute && !user) {
+    const signInUrl = new URL("/signin", request.url);
+    signInUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(signInUrl);
+  }
+
+  // Redirect authenticated users away from auth routes
+  if (isAuthRoute && user) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
 
   return supabaseResponse;
 }

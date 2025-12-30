@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { WikiArticleDetail } from "@/components/wiki/wiki-article-detail";
 import { WikiTag } from "@/lib/types";
+import { escapeJsonLd } from "@/lib/security";
 
 // Create a Supabase client for server-side data fetching
 function getSupabaseClient() {
@@ -152,7 +153,7 @@ export default async function WikiArticlePage({ params }: WikiArticlePageProps) 
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: escapeJsonLd(jsonLd) }}
       />
       <WikiArticleDetail article={article} tags={tags} />
     </>

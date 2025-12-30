@@ -11,6 +11,7 @@ import { WikiArticleRow, WikiFilterBar, WikiSidebar, SortOption } from "@/compon
 import { createClient } from "@/lib/supabase/client";
 import { WikiCategory, WikiArticle, WikiTag } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
+import { sanitizeSearchInput } from "@/lib/security";
 import {
   BookOpen,
   ArrowLeft,
@@ -157,11 +158,14 @@ export function WikiView() {
       }
     }
 
-    // Apply search
+    // Apply search (sanitized to prevent SQL injection)
     if (activeSearch) {
-      query = query.or(
-        `title.ilike.%${activeSearch}%,content.ilike.%${activeSearch}%,summary.ilike.%${activeSearch}%`
-      );
+      const sanitized = sanitizeSearchInput(activeSearch);
+      if (sanitized) {
+        query = query.or(
+          `title.ilike.%${sanitized}%,content.ilike.%${sanitized}%,summary.ilike.%${sanitized}%`
+        );
+      }
     }
 
     // Apply sorting and pagination

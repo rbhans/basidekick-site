@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { ForumThreadDetail } from "@/components/forum/forum-thread-detail";
+import { escapeJsonLd } from "@/lib/security";
 
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -201,7 +202,7 @@ export default async function ForumThreadPage({ params }: ForumThreadPageProps) 
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: escapeJsonLd(jsonLd) }}
       />
       <ForumThreadDetail thread={thread} category={category} posts={posts || []} />
     </>
