@@ -19,7 +19,7 @@ export const VIEW_TITLES: Record<string, string> = {
   [VIEW_IDS.RESOURCES]: "Resources",
   [VIEW_IDS.WIKI]: "Wiki",
   [VIEW_IDS.FORUM]: "Forum",
-  [VIEW_IDS.PSK]: "PSK",
+  [VIEW_IDS.PSK]: "ProjectSidekick",
   [VIEW_IDS.CALCULATORS]: "Calculators",
   [VIEW_IDS.ACCOUNT]: "Account",
   [VIEW_IDS.SIGNIN]: "Sign In",
@@ -277,7 +277,7 @@ export const NAV_ITEMS: NavNode[] = [
       { id: VIEW_IDS.WIKI, label: "Wiki", iconName: "BookOpen" },
       { id: VIEW_IDS.FORUM, label: "Forum", iconName: "Chats" },
       { id: VIEW_IDS.CALCULATORS, label: "Calculators", iconName: "Calculator" },
-      { id: VIEW_IDS.PSK, label: "PSK", iconName: "Kanban" },
+      { id: VIEW_IDS.PSK, label: "ProjectSidekick", iconName: "Kanban" },
     ],
   },
   {

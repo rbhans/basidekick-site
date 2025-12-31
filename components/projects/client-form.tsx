@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { X, Plus, Check, Copy } from "@phosphor-icons/react";
+import { useMemo, useState, useRef } from "react";
+import { X, Plus, Check, Copy, Upload, Spinner, Image as ImageIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useClients } from "./project-hooks";
-import { useProjectStore } from "./project-store";
+import { useAuth } from "@/components/providers/auth-provider";
+import { createClient } from "@/lib/supabase/client";
 import type { PSKClient, PSKClientContact } from "@/lib/types";
 
 interface ClientFormProps {
@@ -17,7 +18,8 @@ interface ClientFormProps {
 
 export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
   const { addClient, updateClient } = useClients();
-  const userId = useProjectStore((state) => state.projects[0]?.user_id || state.clients[0]?.user_id);
+  const { user } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formState, setFormState] = useState(() => ({
     name: client?.name ?? "",
@@ -31,6 +33,8 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
 
   const [newColor, setNewColor] = useState("#1E1E1E");
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const contactsValid = useMemo(
     () => formState.contacts.some((contact) => contact.name.trim().length > 0),
@@ -101,6 +105,61 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
     }
   };
 
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError("Please upload a valid image file (JPG, PNG, GIF, WebP, or SVG)");
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError("Image must be less than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const supabase = createClient();
+      if (!supabase) throw new Error("Supabase client not available");
+
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('psk-assets')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('psk-assets')
+        .getPublicUrl(fileName);
+
+      setFormState((prev) => ({ ...prev, logo: publicUrl }));
+    } catch (error) {
+      console.error("Failed to upload logo:", error);
+      setUploadError("Failed to upload image. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveLogo = () => {
+    setFormState((prev) => ({ ...prev, logo: "" }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleSubmit = async () => {
     if (!formState.name.trim()) {
       alert("Client name is required");
@@ -112,8 +171,8 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
       return;
     }
 
-    if (!userId) {
-      alert("Unable to save - please try again");
+    if (!user?.id) {
+      alert("Unable to save - please sign in");
       return;
     }
 
@@ -132,7 +191,7 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
       });
     } else {
       await addClient({
-        user_id: userId,
+        user_id: user.id,
         name: formState.name,
         contacts: filteredContacts,
         logo: formState.logo.trim() || null,
@@ -161,18 +220,18 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium">Logo URL</label>
-          <Input
-            type="url"
-            placeholder="https://example.com/logo.png"
-            value={formState.logo}
-            onChange={(event) =>
-              setFormState((prev) => ({ ...prev, logo: event.target.value }))
-            }
+          <label className="mb-1 block text-sm font-medium">Logo</label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+            onChange={handleLogoUpload}
+            className="hidden"
+            id="logo-upload"
           />
-          {formState.logo && (
-            <div className="mt-2 flex items-center gap-3">
-              <div className="size-12 border border-border bg-muted flex items-center justify-center overflow-hidden">
+          {formState.logo ? (
+            <div className="flex items-center gap-3 p-3 border border-border bg-muted/50">
+              <div className="size-16 border border-border bg-background flex items-center justify-center overflow-hidden flex-shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={formState.logo}
@@ -183,8 +242,45 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
                   }}
                 />
               </div>
-              <span className="text-xs text-muted-foreground">Logo preview</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">Logo uploaded</p>
+                <p className="text-xs text-muted-foreground">Click remove to change</p>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleRemoveLogo}
+                className="text-destructive hover:text-destructive"
+              >
+                <X className="size-4" />
+              </Button>
             </div>
+          ) : (
+            <label
+              htmlFor="logo-upload"
+              className="flex flex-col items-center justify-center gap-2 p-6 border border-dashed border-border cursor-pointer hover:bg-muted/50 transition-colors"
+            >
+              {isUploading ? (
+                <>
+                  <Spinner className="size-8 text-muted-foreground animate-spin" />
+                  <span className="text-sm text-muted-foreground">Uploading...</span>
+                </>
+              ) : (
+                <>
+                  <ImageIcon className="size-8 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    Click to upload logo
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    JPG, PNG, GIF, WebP, SVG (max 5MB)
+                  </span>
+                </>
+              )}
+            </label>
+          )}
+          {uploadError && (
+            <p className="mt-2 text-sm text-destructive">{uploadError}</p>
           )}
         </div>
         <div>

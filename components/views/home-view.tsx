@@ -30,11 +30,11 @@ interface RecentThread {
 }
 
 interface HomeViewProps {
-  recentArticles: RecentArticle[];
-  recentThreads: RecentThread[];
+  recentArticles?: RecentArticle[];
+  recentThreads?: RecentThread[];
 }
 
-export function HomeView({ recentArticles, recentThreads }: HomeViewProps) {
+export function HomeView({ recentArticles = [], recentThreads = [] }: HomeViewProps) {
   // Map tools to product card format
   const products = TOOLS_LIST.map(tool => ({
     name: tool.name,
