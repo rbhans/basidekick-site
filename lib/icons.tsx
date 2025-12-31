@@ -11,6 +11,7 @@ import {
   BookOpen,
   Chats,
   Kanban,
+  Calculator,
   SignIn,
   UserPlus,
   FileMagnifyingGlass,
@@ -46,6 +47,8 @@ export function getIcon(name: IconName | string, className = "size-4"): ReactNod
       return <Chats {...iconProps} />;
     case "Kanban":
       return <Kanban {...iconProps} />;
+    case "Calculator":
+      return <Calculator {...iconProps} />;
     case "SignIn":
       return <SignIn {...iconProps} />;
     case "UserPlus":
