@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
@@ -14,26 +14,15 @@ import {
   DailyTaskList,
 } from "@/components/projects";
 import { useAuth } from "@/components/providers/auth-provider";
-import {
-  Kanban,
-  List,
-  SignIn,
-  Folder,
-  Users,
-} from "@phosphor-icons/react";
+import { SignIn } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
-
-type Tab = "projects" | "clients";
-type ViewMode = "kanban" | "list";
 
 export function PSKView() {
   const { user, loading: authLoading } = useAuth();
   const initialize = useProjectStore((state) => state.initialize);
   const isLoading = useProjectStore((state) => state.isLoading);
   const error = useProjectStore((state) => state.error);
-  const [activeTab, setActiveTab] = useState<Tab>("projects");
-  const [viewMode, setViewMode] = useState<ViewMode>("kanban");
 
   // Initialize store when user is authenticated
   useEffect(() => {
@@ -122,107 +111,45 @@ export function PSKView() {
       {/* Dashboard */}
       <section className="py-8">
         <div className="container mx-auto px-4">
-          {/* Stats */}
-          <div className="mb-8">
-            <DashboardStats />
-          </div>
+          {/* Error State */}
+          {error && (
+            <div className="mb-6 p-4 border border-destructive/50 bg-destructive/10 text-destructive">
+              {error}
+            </div>
+          )}
 
-          {/* Main Content Grid - Calendar & Tasks on right */}
-          <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-            {/* Left Column - Projects/Clients */}
-            <div>
-              {/* Tabs */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex border border-border">
-                  <button
-                    onClick={() => setActiveTab("projects")}
-                    className={`px-4 py-2 text-sm flex items-center gap-2 transition-colors ${
-                      activeTab === "projects"
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-accent"
-                    }`}
-                  >
-                    <Folder className="size-4" />
-                    Projects
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("clients")}
-                    className={`px-4 py-2 text-sm flex items-center gap-2 transition-colors ${
-                      activeTab === "clients"
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-accent"
-                    }`}
-                  >
-                    <Users className="size-4" />
-                    Clients
-                  </button>
+          {/* Loading State */}
+          {isLoading ? (
+            <div className="p-8 text-center">
+              <p className="text-muted-foreground font-mono">Loading...</p>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {/* Stats */}
+              <DashboardStats />
+
+              {/* Kanban Board - Full Width */}
+              <KanbanBoard />
+
+              {/* Bottom Grid: Projects List, Clients, Calendar, Daily Tasks */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Left: Projects List */}
+                <ProjectsList />
+
+                {/* Right: Clients */}
+                <div className="border border-border bg-card p-4">
+                  <h2 className="text-lg font-semibold mb-4">Clients</h2>
+                  <ClientsList />
                 </div>
-
-                {/* View Toggle (only for projects tab) */}
-                {activeTab === "projects" && (
-                  <div className="flex border border-border">
-                    <button
-                      onClick={() => setViewMode("kanban")}
-                      className={`px-3 py-1.5 text-sm flex items-center gap-1.5 transition-colors ${
-                        viewMode === "kanban"
-                          ? "bg-primary text-primary-foreground"
-                          : "hover:bg-accent"
-                      }`}
-                    >
-                      <Kanban className="size-4" />
-                      Kanban
-                    </button>
-                    <button
-                      onClick={() => setViewMode("list")}
-                      className={`px-3 py-1.5 text-sm flex items-center gap-1.5 transition-colors ${
-                        viewMode === "list"
-                          ? "bg-primary text-primary-foreground"
-                          : "hover:bg-accent"
-                      }`}
-                    >
-                      <List className="size-4" />
-                      List
-                    </button>
-                  </div>
-                )}
               </div>
 
-              {/* Error State */}
-              {error && (
-                <div className="mb-6 p-4 border border-destructive/50 bg-destructive/10 text-destructive">
-                  {error}
-                </div>
-              )}
-
-              {/* Loading State */}
-              {isLoading ? (
-                <div className="p-8 text-center">
-                  <p className="text-muted-foreground font-mono">
-                    Loading...
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {/* Tab Content */}
-                  {activeTab === "projects" ? (
-                    viewMode === "kanban" ? (
-                      <KanbanBoard />
-                    ) : (
-                      <ProjectsList />
-                    )
-                  ) : (
-                    <ClientsList />
-                  )}
-                </>
-              )}
+              {/* Calendar and Daily Tasks */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                <ProjectCalendar />
+                <DailyTaskList />
+              </div>
             </div>
-
-            {/* Right Column - Calendar & Daily Tasks */}
-            <div className="space-y-6">
-              <ProjectCalendar />
-              <DailyTaskList />
-            </div>
-          </div>
+          )}
         </div>
       </section>
     </div>
