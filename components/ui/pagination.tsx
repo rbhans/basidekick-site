@@ -9,6 +9,7 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
   totalItems?: number;
   itemsPerPage?: number;
+  itemLabel?: string;
   className?: string;
 }
 
@@ -18,6 +19,7 @@ export function Pagination({
   onPageChange,
   totalItems,
   itemsPerPage = 20,
+  itemLabel = "items",
   className = "",
 }: PaginationProps) {
   if (totalPages <= 1) return null;
@@ -70,7 +72,7 @@ export function Pagination({
     <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 ${className}`}>
       {totalItems !== undefined && (
         <p className="text-sm text-muted-foreground">
-          Showing {startItem}-{endItem} of {totalItems} articles
+          Showing {startItem}-{endItem} of {totalItems} {itemLabel}
         </p>
       )}
 

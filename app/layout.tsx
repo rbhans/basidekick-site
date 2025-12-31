@@ -18,6 +18,18 @@ export const metadata: Metadata = {
   title: "basidekick - Tools for BAS Professionals",
   description: "QA tools for building automation professionals. No subscriptions. No bloat. Software that works.",
   keywords: ["BAS", "building automation", "Niagara", "Metasys", "BACnet", "QA tools"],
+  metadataBase: new URL("https://basidekick.com"),
+  openGraph: {
+    title: "basidekick - Tools for BAS Professionals",
+    description: "QA tools for building automation professionals. No subscriptions. No bloat. Software that works.",
+    siteName: "basidekick",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "basidekick - Tools for BAS Professionals",
+    description: "QA tools for building automation professionals. No subscriptions. No bloat.",
+  },
 };
 
 export default function RootLayout({

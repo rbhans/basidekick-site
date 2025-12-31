@@ -99,6 +99,7 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
           size="icon-sm"
           className="lg:hidden"
           onClick={onMenuClick}
+          aria-label="Open navigation menu"
         >
           <List className="w-5 h-5" />
         </Button>

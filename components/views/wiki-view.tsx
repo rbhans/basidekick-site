@@ -364,6 +364,7 @@ export function WikiView() {
                       totalPages={totalPages}
                       totalItems={totalArticles}
                       itemsPerPage={ARTICLES_PER_PAGE}
+                      itemLabel="articles"
                       onPageChange={setCurrentPage}
                     />
                   </div>

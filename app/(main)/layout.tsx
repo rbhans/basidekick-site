@@ -171,6 +171,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="h-screen flex flex-col bg-background">
+      {/* Skip to content link for accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none"
+      >
+        Skip to main content
+      </a>
+
       {/* Toolbar */}
       <WorkbenchToolbar
         onMenuClick={() => setSidebarOpen(true)}
@@ -207,7 +215,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         >
           <div className="h-12 px-4 flex items-center justify-between border-b border-border">
             <span className="font-mono text-sm font-medium">[nav]</span>
-            <Button variant="ghost" size="icon-sm" onClick={() => setSidebarOpen(false)}>
+            <Button variant="ghost" size="icon-sm" onClick={() => setSidebarOpen(false)} aria-label="Close navigation menu">
               <X className="w-4 h-4" />
             </Button>
           </div>
@@ -222,7 +230,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         </aside>
 
         {/* Main content pane */}
-        <main className="flex-1 overflow-y-auto bg-background">
+        <main id="main-content" className="flex-1 overflow-y-auto bg-background" tabIndex={-1}>
           <PageTransition pathname={pathname}>{children}</PageTransition>
         </main>
       </div>

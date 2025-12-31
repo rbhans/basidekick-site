@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { WikiArticle, WikiTag } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
-import { BookOpen, Calendar, Eye } from "@phosphor-icons/react";
+import { BookOpen, Calendar, Eye, YoutubeLogo } from "@phosphor-icons/react";
+
+/**
+ * Check if content contains YouTube video links
+ */
+function hasYouTubeVideo(content: string): boolean {
+  const youtubePattern = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)[a-zA-Z0-9_-]{11}/i;
+  return youtubePattern.test(content);
+}
 
 interface WikiArticleRowProps {
   article: WikiArticle;
@@ -22,13 +30,22 @@ export function WikiArticleRow({ article, tags, onClick, href }: WikiArticleRowP
   };
 
   const linkHref = href || ROUTES.WIKI_ARTICLE(article.slug);
+  const hasVideo = hasYouTubeVideo(article.content);
 
   const content = (
     <div className="flex items-start justify-between gap-4">
       <div className="flex-1 min-w-0">
-        <h3 className="font-semibold group-hover:text-primary transition-colors line-clamp-1">
-          {article.title}
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold group-hover:text-primary transition-colors line-clamp-1">
+            {article.title}
+          </h3>
+          {hasVideo && (
+            <span className="flex items-center gap-1 px-1.5 py-0.5 text-xs bg-red-500/10 text-red-500 border border-red-500/20 shrink-0" title="Includes video tutorial">
+              <YoutubeLogo className="size-3" weight="fill" />
+              <span className="hidden sm:inline">Video</span>
+            </span>
+          )}
+        </div>
         {article.summary && (
           <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
             {article.summary}

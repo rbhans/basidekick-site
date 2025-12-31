@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { ForumCategory, ForumThread, ForumPost } from "@/lib/types";
@@ -28,6 +29,8 @@ type ForumViewState =
   | { view: "threads"; categoryId: string; categoryName: string }
   | { view: "thread"; threadId: string; threadTitle: string };
 
+const THREADS_PER_PAGE = 20;
+
 export function ForumView() {
   const { user, loading: authLoading } = useAuth();
   const [viewState, setViewState] = useState<ForumViewState>({ view: "categories" });
@@ -36,6 +39,10 @@ export function ForumView() {
   const [posts, setPosts] = useState<ForumPost[]>([]);
   const [currentThread, setCurrentThread] = useState<ForumThread | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Pagination state for threads
+  const [threadPage, setThreadPage] = useState(1);
+  const [totalThreads, setTotalThreads] = useState(0);
 
   // Form state
   const [showNewThreadForm, setShowNewThreadForm] = useState(false);
@@ -77,24 +84,28 @@ export function ForumView() {
       const supabase = createClient();
       if (!supabase) return;
 
-      const { data, error } = await supabase
+      const offset = (threadPage - 1) * THREADS_PER_PAGE;
+
+      const { data, count, error } = await supabase
         .from("forum_threads")
         .select(`
           *,
           author:profiles!forum_threads_user_id_fkey(display_name)
-        `)
+        `, { count: "exact" })
         .eq("category_id", viewState.categoryId)
         .order("is_pinned", { ascending: false })
-        .order("last_post_at", { ascending: false, nullsFirst: false });
+        .order("last_post_at", { ascending: false, nullsFirst: false })
+        .range(offset, offset + THREADS_PER_PAGE - 1);
 
       if (data && !error) {
         setThreads(data as ForumThread[]);
+        setTotalThreads(count || 0);
       }
       setLoading(false);
     }
 
     fetchThreads();
-  }, [viewState]);
+  }, [viewState, threadPage]);
 
   // Fetch posts for a thread
   useEffect(() => {
@@ -150,6 +161,7 @@ export function ForumView() {
   }, [viewState]);
 
   const navigateToCategory = (category: ForumCategory) => {
+    setThreadPage(1); // Reset pagination when changing category
     setViewState({
       view: "threads",
       categoryId: category.id,
@@ -565,6 +577,20 @@ export function ForumView() {
                     </div>
                   </button>
                 ))}
+              </div>
+            )}
+
+            {/* Pagination */}
+            {totalThreads > THREADS_PER_PAGE && (
+              <div className="mt-6">
+                <Pagination
+                  currentPage={threadPage}
+                  totalPages={Math.ceil(totalThreads / THREADS_PER_PAGE)}
+                  onPageChange={setThreadPage}
+                  totalItems={totalThreads}
+                  itemsPerPage={THREADS_PER_PAGE}
+                  itemLabel="threads"
+                />
               </div>
             )}
           </div>
