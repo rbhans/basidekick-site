@@ -25,7 +25,7 @@ const resources = [
   },
   {
     id: "psk",
-    title: "PSK (Free)",
+    title: "PSK",
     description: "Free project management tool built for BAS projects. Track points, schedules, and commissioning progress.",
     icon: Kanban,
     cta: "Open PSK",

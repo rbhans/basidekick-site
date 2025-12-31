@@ -18,6 +18,8 @@ export const ROUTES = {
   SIGNIN: "/signin",
   SIGNUP: "/signup",
   PSK: "/psk",
+  PSK_PROJECT: (id: string) => `/psk/projects/${id}`,
+  PSK_CLIENT: (id: string) => `/psk/clients/${id}`,
 } as const;
 
 // Map VIEW_ID to route path
@@ -67,6 +69,7 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/signin") return VIEW_IDS.SIGNIN;
   if (pathname === "/signup") return VIEW_IDS.SIGNUP;
   if (pathname === "/psk") return VIEW_IDS.PSK;
+  if (pathname.startsWith("/psk/")) return VIEW_IDS.PSK;
 
   // Tool detail pages
   if (pathname.startsWith("/tools/")) {

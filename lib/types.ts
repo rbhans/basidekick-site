@@ -223,3 +223,98 @@ export interface WikiSuggestion {
   suggester?: { display_name: string | null };
   reviewer?: { display_name: string | null };
 }
+
+// Project Manager (PSK) types
+export type PSKKanbanStatus = "backlog" | "in-progress" | "review" | "completed";
+export type PSKTaskStatus = "todo" | "in-progress" | "completed";
+export type PSKTaskPriority = "low" | "medium" | "high";
+
+export interface PSKClientContact {
+  name: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface PSKClient {
+  id: string;
+  user_id: string;
+  name: string;
+  contacts: PSKClientContact[];
+  logo: string | null;
+  color_palette: string[] | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PSKProject {
+  id: string;
+  user_id: string;
+  client_id: string | null;
+  name: string;
+  description: string | null;
+  status: PSKKanbanStatus;
+  color: string | null;
+  is_internal: boolean;
+  is_archived: boolean;
+  proton_drive_link: string | null;
+  due_date: string | null;
+  notes: string | null;
+  budget: number | null;
+  hourly_rate: number | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  client?: PSKClient;
+}
+
+export interface PSKTask {
+  id: string;
+  user_id: string;
+  project_id: string | null;
+  title: string;
+  description: string | null;
+  status: PSKTaskStatus;
+  priority: PSKTaskPriority;
+  due_date: string | null;
+  completed_at: string | null;
+  is_daily: boolean;
+  missed_date: string | null;
+  created_at: string;
+  // Joined data
+  project?: PSKProject;
+}
+
+export interface PSKTimeEntry {
+  id: string;
+  user_id: string;
+  project_id: string;
+  description: string | null;
+  duration: number; // minutes
+  date: string;
+  created_at: string;
+  // Joined data
+  project?: PSKProject;
+}
+
+export interface PSKBudgetLineItem {
+  id: string;
+  user_id: string;
+  project_id: string;
+  description: string;
+  cost: number;
+  category: string | null;
+  date: string | null;
+  created_at: string;
+}
+
+export interface PSKFile {
+  id: string;
+  user_id: string;
+  project_id: string;
+  name: string;
+  type: string | null;
+  size: number | null;
+  url: string;
+  uploaded_at: string;
+}

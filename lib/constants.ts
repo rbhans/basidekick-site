@@ -277,7 +277,7 @@ export const NAV_ITEMS: NavNode[] = [
       { id: VIEW_IDS.WIKI, label: "Wiki", iconName: "BookOpen" },
       { id: VIEW_IDS.FORUM, label: "Forum", iconName: "Chats" },
       { id: VIEW_IDS.CALCULATORS, label: "Calculators", iconName: "Calculator" },
-      { id: VIEW_IDS.PSK, label: "PSK (Free)", iconName: "Kanban" },
+      { id: VIEW_IDS.PSK, label: "PSK", iconName: "Kanban" },
     ],
   },
   {
