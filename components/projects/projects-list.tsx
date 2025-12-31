@@ -18,30 +18,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useClients, useProjects } from "./project-hooks";
-import { useProjectStore } from "./project-store";
 import { ROUTES } from "@/lib/routes";
-import { ClientForm } from "./client-form";
+import { ProjectForm } from "./project-form";
 
 export function ProjectsList() {
   const router = useRouter();
-  const { projects, addProject, updateProject, deleteProject } = useProjects();
+  const { projects, updateProject, deleteProject } = useProjects();
   const { clients } = useClients();
-  const userId = useProjectStore((state) => state.projects[0]?.user_id);
 
   const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
-  const [isClientDialogOpen, setIsClientDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showArchived, setShowArchived] = useState(false);
-  const [newProject, setNewProject] = useState({
-    name: "",
-    description: "",
-    clientId: "",
-    isInternal: false,
-    dueDate: "",
-  });
 
   const filteredProjects = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -65,35 +54,6 @@ export function ProjectsList() {
       );
     });
   }, [projects, searchQuery, showArchived, clients]);
-
-  const handleCreateProject = async () => {
-    if (!newProject.name.trim() || !userId) return;
-
-    await addProject({
-      user_id: userId,
-      name: newProject.name,
-      description: newProject.description || null,
-      client_id: newProject.isInternal ? null : newProject.clientId || null,
-      status: "backlog",
-      is_internal: newProject.isInternal,
-      is_archived: false,
-      due_date: newProject.dueDate || null,
-      color: null,
-      proton_drive_link: null,
-      notes: null,
-      budget: null,
-      hourly_rate: null,
-    });
-
-    setNewProject({
-      name: "",
-      description: "",
-      clientId: "",
-      isInternal: false,
-      dueDate: "",
-    });
-    setIsProjectDialogOpen(false);
-  };
 
   const handleToggleArchive = async (
     projectId: string,
@@ -145,121 +105,14 @@ export function ProjectsList() {
                   New Project
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Create Project</DialogTitle>
                 </DialogHeader>
-                <div className="mt-4 space-y-4">
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Project Name *
-                    </label>
-                    <Input
-                      autoFocus
-                      placeholder="Enter project name"
-                      value={newProject.name}
-                      onChange={(event) =>
-                        setNewProject((value) => ({
-                          ...value,
-                          name: event.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Description
-                    </label>
-                    <Textarea
-                      placeholder="What's this project about?"
-                      value={newProject.description}
-                      onChange={(event) =>
-                        setNewProject((value) => ({
-                          ...value,
-                          description: event.target.value,
-                        }))
-                      }
-                      rows={3}
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-medium">
-                      Due Date
-                    </label>
-                    <Input
-                      type="date"
-                      value={newProject.dueDate}
-                      onChange={(event) =>
-                        setNewProject((value) => ({
-                          ...value,
-                          dueDate: event.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      id="psk-internal-project"
-                      type="checkbox"
-                      checked={newProject.isInternal}
-                      onChange={(event) =>
-                        setNewProject((value) => ({
-                          ...value,
-                          isInternal: event.target.checked,
-                          clientId: event.target.checked ? "" : value.clientId,
-                        }))
-                      }
-                      className="size-4 border-border"
-                    />
-                    <label
-                      htmlFor="psk-internal-project"
-                      className="text-sm font-medium"
-                    >
-                      Internal project (no client)
-                    </label>
-                  </div>
-                  {!newProject.isInternal && (
-                    <div className="space-y-2 border border-border p-4">
-                      <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium">Client</label>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setIsClientDialogOpen(true)}
-                        >
-                          <Plus className="mr-1 size-4" />
-                          New Client
-                        </Button>
-                      </div>
-                      {clients.length > 0 ? (
-                        <select
-                          className="h-10 w-full border border-border bg-background px-3 text-sm"
-                          value={newProject.clientId}
-                          onChange={(event) =>
-                            setNewProject((value) => ({
-                              ...value,
-                              clientId: event.target.value,
-                            }))
-                          }
-                        >
-                          <option value="">Select a client...</option>
-                          {clients.map((client) => (
-                            <option key={client.id} value={client.id}>
-                              {client.name}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">
-                          No clients yet. Create one to link this project.
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  <Button className="w-full" onClick={handleCreateProject}>
-                    Create Project
-                  </Button>
-                </div>
+                <ProjectForm
+                  onSave={() => setIsProjectDialogOpen(false)}
+                  onCancel={() => setIsProjectDialogOpen(false)}
+                />
               </DialogContent>
             </Dialog>
           </div>
@@ -361,18 +214,6 @@ export function ProjectsList() {
         </div>
       </div>
 
-      {/* Client Dialog */}
-      <Dialog open={isClientDialogOpen} onOpenChange={setIsClientDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Create Client</DialogTitle>
-          </DialogHeader>
-          <ClientForm
-            onSave={() => setIsClientDialogOpen(false)}
-            onCancel={() => setIsClientDialogOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

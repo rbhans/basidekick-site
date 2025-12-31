@@ -22,6 +22,7 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
   const [formState, setFormState] = useState(() => ({
     name: client?.name ?? "",
     notes: client?.notes ?? "",
+    logo: client?.logo ?? "",
     contacts:
       client?.contacts ??
       ([{ name: "", email: "", phone: "" }] as PSKClientContact[]),
@@ -124,6 +125,7 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
       await updateClient(client.id, {
         name: formState.name,
         contacts: filteredContacts,
+        logo: formState.logo.trim() || null,
         color_palette:
           formState.colorPalette.length > 0 ? formState.colorPalette : null,
         notes: formState.notes || null,
@@ -133,7 +135,7 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
         user_id: userId,
         name: formState.name,
         contacts: filteredContacts,
-        logo: null,
+        logo: formState.logo.trim() || null,
         color_palette:
           formState.colorPalette.length > 0 ? formState.colorPalette : null,
         notes: formState.notes || null,
@@ -157,6 +159,33 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
               setFormState((prev) => ({ ...prev, name: event.target.value }))
             }
           />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium">Logo URL</label>
+          <Input
+            type="url"
+            placeholder="https://example.com/logo.png"
+            value={formState.logo}
+            onChange={(event) =>
+              setFormState((prev) => ({ ...prev, logo: event.target.value }))
+            }
+          />
+          {formState.logo && (
+            <div className="mt-2 flex items-center gap-3">
+              <div className="size-12 border border-border bg-muted flex items-center justify-center overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={formState.logo}
+                  alt="Client logo preview"
+                  className="max-h-full max-w-full object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
+              </div>
+              <span className="text-xs text-muted-foreground">Logo preview</span>
+            </div>
+          )}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Notes</label>
