@@ -30,7 +30,7 @@ export function WikiArticleRow({ article, tags, onClick, href }: WikiArticleRowP
   };
 
   const linkHref = href || ROUTES.WIKI_ARTICLE(article.slug);
-  const hasVideo = hasYouTubeVideo(article.content);
+  const hasVideo = article.content ? hasYouTubeVideo(article.content) : false;
 
   const content = (
     <div className="flex items-start justify-between gap-4">
