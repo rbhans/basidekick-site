@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useProjects, useClients } from "./project-hooks";
 import { useProjectStore } from "./project-store";
+import { useAuth } from "@/components/providers/auth-provider";
 import type { PSKProject, PSKKanbanStatus } from "@/lib/types";
 
 interface ProjectFormProps {
@@ -25,9 +26,8 @@ const STATUS_OPTIONS: { value: PSKKanbanStatus; label: string }[] = [
 export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
   const { addProject, updateProject } = useProjects();
   const { clients } = useClients();
-  const userId = useProjectStore(
-    (state) => state.projects[0]?.user_id || state.clients[0]?.user_id
-  );
+  const { user } = useAuth();
+  const currentWorkspace = useProjectStore((state) => state.currentWorkspace);
 
   const [formState, setFormState] = useState({
     name: project?.name ?? "",
@@ -51,8 +51,8 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
       return;
     }
 
-    if (!userId) {
-      alert("Unable to save - please try again");
+    if (!user?.id) {
+      alert("Unable to save - please sign in");
       return;
     }
 
@@ -80,7 +80,9 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
     } else {
       await addProject({
         ...projectData,
-        user_id: userId,
+        user_id: user.id,
+        company_id: currentWorkspace.companyId,
+        created_by: user.id,
       });
     }
 

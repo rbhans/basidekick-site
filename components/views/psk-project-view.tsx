@@ -173,9 +173,10 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
 
   // Task handlers
   const handleAddTask = async () => {
-    if (!newTaskTitle.trim() || !project.user_id) return;
+    if (!newTaskTitle.trim() || !user?.id) return;
     await addTask({
-      user_id: project.user_id,
+      user_id: user.id,
+      created_by: user.id,
       project_id: projectId,
       title: newTaskTitle.trim(),
       description: null,
@@ -191,14 +192,15 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
 
   // Time entry handlers
   const handleAddTimeEntry = async () => {
-    if (!project.user_id) return;
+    if (!user?.id) return;
     const hours = parseInt(timeEntryForm.hours) || 0;
     const minutes = parseInt(timeEntryForm.minutes) || 0;
     const duration = hours * 60 + minutes;
     if (duration <= 0) return;
 
     await addTimeEntry({
-      user_id: project.user_id,
+      user_id: user.id,
+      created_by: user.id,
       project_id: projectId,
       description: timeEntryForm.description || null,
       duration,
@@ -214,12 +216,13 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
 
   // Budget item handlers
   const handleAddBudgetItem = async () => {
-    if (!project.user_id || !budgetItemForm.description.trim()) return;
+    if (!user?.id || !budgetItemForm.description.trim()) return;
     const cost = parseFloat(budgetItemForm.cost);
     if (isNaN(cost) || cost <= 0) return;
 
     await addBudgetLineItem({
-      user_id: project.user_id,
+      user_id: user.id,
+      created_by: user.id,
       project_id: projectId,
       description: budgetItemForm.description.trim(),
       cost,
@@ -236,11 +239,12 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
 
   // File handlers
   const handleAddFile = async () => {
-    if (!project.user_id || !fileForm.name.trim() || !fileForm.url.trim())
+    if (!user?.id || !fileForm.name.trim() || !fileForm.url.trim())
       return;
 
     await addFile({
-      user_id: project.user_id,
+      user_id: user.id,
+      created_by: user.id,
       project_id: projectId,
       name: fileForm.name.trim(),
       url: fileForm.url.trim(),

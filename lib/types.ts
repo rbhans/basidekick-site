@@ -228,6 +228,38 @@ export interface WikiSuggestion {
 export type PSKKanbanStatus = "backlog" | "in-progress" | "review" | "completed";
 export type PSKTaskStatus = "todo" | "in-progress" | "completed";
 export type PSKTaskPriority = "low" | "medium" | "high";
+export type PSKWorkspaceType = "personal" | "company";
+export type PSKMemberRole = "owner" | "member";
+
+// Company/Team collaboration
+export interface PSKCompany {
+  id: string;
+  name: string;
+  slug: string;
+  owner_id: string;
+  invite_code: string;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  members?: PSKCompanyMember[];
+  member_count?: number;
+}
+
+export interface PSKCompanyMember {
+  id: string;
+  company_id: string;
+  user_id: string;
+  role: PSKMemberRole;
+  joined_at: string;
+  // Joined data
+  profile?: { display_name: string | null };
+}
+
+export interface PSKWorkspaceContext {
+  type: PSKWorkspaceType;
+  companyId: string | null;
+  companyName: string | null;
+}
 
 export interface PSKClientContact {
   name: string;
@@ -238,6 +270,7 @@ export interface PSKClientContact {
 export interface PSKClient {
   id: string;
   user_id: string;
+  company_id: string | null;
   name: string;
   contacts: PSKClientContact[];
   logo: string | null;
@@ -250,6 +283,8 @@ export interface PSKClient {
 export interface PSKProject {
   id: string;
   user_id: string;
+  company_id: string | null;
+  created_by: string | null;
   client_id: string | null;
   name: string;
   description: string | null;
@@ -266,11 +301,13 @@ export interface PSKProject {
   updated_at: string;
   // Joined data
   client?: PSKClient;
+  creator?: { display_name: string | null };
 }
 
 export interface PSKTask {
   id: string;
   user_id: string;
+  created_by: string | null;
   project_id: string | null;
   title: string;
   description: string | null;
@@ -283,11 +320,13 @@ export interface PSKTask {
   created_at: string;
   // Joined data
   project?: PSKProject;
+  creator?: { display_name: string | null };
 }
 
 export interface PSKTimeEntry {
   id: string;
   user_id: string;
+  created_by: string | null;
   project_id: string;
   description: string | null;
   duration: number; // minutes
@@ -295,26 +334,33 @@ export interface PSKTimeEntry {
   created_at: string;
   // Joined data
   project?: PSKProject;
+  creator?: { display_name: string | null };
 }
 
 export interface PSKBudgetLineItem {
   id: string;
   user_id: string;
+  created_by: string | null;
   project_id: string;
   description: string;
   cost: number;
   category: string | null;
   date: string | null;
   created_at: string;
+  // Joined data
+  creator?: { display_name: string | null };
 }
 
 export interface PSKFile {
   id: string;
   user_id: string;
+  created_by: string | null;
   project_id: string;
   name: string;
   type: string | null;
   size: number | null;
   url: string;
   uploaded_at: string;
+  // Joined data
+  creator?: { display_name: string | null };
 }

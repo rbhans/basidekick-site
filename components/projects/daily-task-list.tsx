@@ -5,7 +5,7 @@ import { Plus, Trash, Check, Circle, Warning } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDailyTasks } from "./project-hooks";
-import { useProjectStore } from "./project-store";
+import { useAuth } from "@/components/providers/auth-provider";
 import type { PSKTask } from "@/lib/types";
 
 function TaskItem({
@@ -56,9 +56,7 @@ function TaskItem({
 
 export function DailyTaskList() {
   const { tasks, addTask, deleteTask, toggleTaskComplete } = useDailyTasks();
-  const userId = useProjectStore(
-    (state) => state.projects[0]?.user_id || state.clients[0]?.user_id
-  );
+  const { user } = useAuth();
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
   const today = new Date();
@@ -97,10 +95,11 @@ export function DailyTaskList() {
   }, [tasks, todayStr]);
 
   const handleAddTask = async () => {
-    if (!newTaskTitle.trim() || !userId) return;
+    if (!newTaskTitle.trim() || !user?.id) return;
 
     await addTask({
-      user_id: userId,
+      user_id: user.id,
+      created_by: user.id,
       project_id: null,
       title: newTaskTitle.trim(),
       description: null,

@@ -8,25 +8,48 @@ import type {
   PSKTimeEntry,
   PSKFile,
   PSKBudgetLineItem,
+  PSKCompany,
+  PSKWorkspaceContext,
 } from "@/lib/types";
 import * as api from "./project-api";
+import * as companyApi from "./company-api";
+
+// Default workspace is personal
+const DEFAULT_WORKSPACE: PSKWorkspaceContext = {
+  type: "personal",
+  companyId: null,
+  companyName: null,
+};
 
 interface ProjectStoreState {
+  // Data
   projects: PSKProject[];
   tasks: PSKTask[];
   timeEntries: PSKTimeEntry[];
   files: PSKFile[];
   clients: PSKClient[];
   budgetLineItems: PSKBudgetLineItem[];
+
+  // Workspace & Companies
+  currentWorkspace: PSKWorkspaceContext;
+  companies: PSKCompany[];
+
+  // Status
   isLoading: boolean;
   error: string | null;
 
+  // Workspace Management
+  setWorkspace: (workspace: PSKWorkspaceContext) => Promise<void>;
+  initializeCompanies: () => Promise<void>;
+  createCompany: (name: string, userId: string) => Promise<PSKCompany>;
+  deleteCompany: (id: string) => Promise<void>;
+
   // Initialization
-  initialize: () => Promise<void>;
+  initialize: (workspace?: PSKWorkspaceContext) => Promise<void>;
 
   // Projects
   addProject: (
-    project: Omit<PSKProject, "id" | "created_at" | "updated_at" | "client">
+    project: Omit<PSKProject, "id" | "created_at" | "updated_at" | "client" | "creator">
   ) => Promise<void>;
   updateProject: (id: string, updates: Partial<PSKProject>) => Promise<void>;
   deleteProject: (id: string) => Promise<void>;
@@ -34,7 +57,7 @@ interface ProjectStoreState {
 
   // Tasks
   addTask: (
-    task: Omit<PSKTask, "id" | "created_at" | "project">
+    task: Omit<PSKTask, "id" | "created_at" | "project" | "creator">
   ) => Promise<void>;
   updateTask: (id: string, updates: Partial<PSKTask>) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
@@ -65,27 +88,78 @@ interface ProjectStoreState {
 }
 
 export const useProjectStore = create<ProjectStoreState>((set, get) => ({
+  // Data
   projects: [],
   tasks: [],
   timeEntries: [],
   files: [],
   clients: [],
   budgetLineItems: [],
+
+  // Workspace & Companies
+  currentWorkspace: DEFAULT_WORKSPACE,
+  companies: [],
+
+  // Status
   isLoading: false,
   error: null,
 
-  initialize: async () => {
-    set({ isLoading: true, error: null });
+  // Workspace Management
+  setWorkspace: async (workspace) => {
+    set({ currentWorkspace: workspace });
+    // Re-initialize data with new workspace context
+    await get().initialize(workspace);
+  },
+
+  initializeCompanies: async () => {
     try {
-      const [projects, tasks, timeEntries, files, clients, budgetLineItems] =
+      const companies = await companyApi.getCompanies();
+      set({ companies });
+    } catch (error) {
+      console.error("Failed to load companies:", error);
+    }
+  },
+
+  createCompany: async (name, userId) => {
+    const newCompany = await companyApi.createCompany(name, userId);
+    set((state) => ({ companies: [...state.companies, newCompany] }));
+    return newCompany;
+  },
+
+  deleteCompany: async (id) => {
+    await companyApi.deleteCompany(id);
+    set((state) => ({
+      companies: state.companies.filter((c) => c.id !== id),
+      // If we were in that company's workspace, switch to personal
+      currentWorkspace:
+        state.currentWorkspace.companyId === id
+          ? DEFAULT_WORKSPACE
+          : state.currentWorkspace,
+    }));
+  },
+
+  initialize: async (workspace) => {
+    const ws = workspace || get().currentWorkspace;
+    set({ isLoading: true, error: null, currentWorkspace: ws });
+
+    try {
+      // Always fetch daily tasks (personal only)
+      const dailyTasks = await api.getTasks(undefined, { dailyOnly: true });
+
+      // Fetch workspace-specific data
+      const [projects, projectTasks, timeEntries, files, clients, budgetLineItems] =
         await Promise.all([
-          api.getProjects(),
-          api.getTasks(),
+          api.getProjects(ws),
+          api.getTasks(ws, { projectTasksOnly: true }),
           api.getTimeEntries(),
           api.getFiles(),
-          api.getClients(),
+          api.getClients(ws),
           api.getBudgetLineItems(),
         ]);
+
+      // Combine daily tasks with project tasks
+      const tasks = [...dailyTasks, ...projectTasks];
+
       set({ projects, tasks, timeEntries, files, clients, budgetLineItems });
     } catch (error) {
       console.error("Failed to initialize store:", error);

@@ -20,6 +20,7 @@ export const ROUTES = {
   PSK: "/psk",
   PSK_PROJECT: (id: string) => `/psk/projects/${id}`,
   PSK_CLIENT: (id: string) => `/psk/clients/${id}`,
+  PSK_JOIN: (inviteCode: string) => `/psk/join/${inviteCode}`,
 } as const;
 
 // Map VIEW_ID to route path
