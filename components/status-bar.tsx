@@ -24,8 +24,14 @@ interface StatusBarProps {
 }
 
 export function StatusBar({ status = "ready" }: StatusBarProps) {
+  const [mounted, setMounted] = useState(false);
   const [messageIndex, setMessageIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+
+  // Avoid hydration mismatch by only showing dynamic content after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -57,15 +63,17 @@ export function StatusBar({ status = "ready" }: StatusBarProps) {
         </span>
       </div>
 
-      {/* Rotating BAS messages */}
+      {/* Rotating BAS messages - only show after mount to avoid hydration mismatch */}
       <div className="flex-1 text-center hidden sm:block">
-        <span
-          className={`text-muted-foreground/70 transition-opacity duration-300 ${
-            isVisible ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          {basMessages[messageIndex]}
-        </span>
+        {mounted && (
+          <span
+            className={`text-muted-foreground/70 transition-opacity duration-300 ${
+              isVisible ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            {basMessages[messageIndex]}
+          </span>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
@@ -76,7 +84,7 @@ export function StatusBar({ status = "ready" }: StatusBarProps) {
           rob@basidekick.com
         </a>
         <span className="text-muted-foreground/60">|</span>
-        <span>&copy; {new Date().getFullYear()} basidekick</span>
+        <span suppressHydrationWarning>&copy; 2025 basidekick</span>
       </div>
     </div>
   );

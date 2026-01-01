@@ -16,9 +16,15 @@ const statusLEDs: StatusLED[] = [
 ];
 
 export function SidebarStatus() {
+  const [mounted, setMounted] = useState(false);
   const [cpu, setCpu] = useState(23);
   const [memory, setMemory] = useState(47);
   const [uptime, setUptime] = useState(0);
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Simulate fluctuating system stats
   useEffect(() => {
@@ -87,11 +93,11 @@ export function SidebarStatus() {
         <div className="flex-1 h-1.5 bg-muted overflow-hidden">
           <div
             className="h-full bg-primary/70 transition-all duration-500"
-            style={{ width: `${cpu}%` }}
+            style={{ width: mounted ? `${cpu}%` : "23%" }}
           />
         </div>
         <span className="text-[10px] font-mono text-muted-foreground w-8 text-right">
-          {Math.round(cpu)}%
+          {mounted ? Math.round(cpu) : 23}%
         </span>
       </div>
 
@@ -101,11 +107,11 @@ export function SidebarStatus() {
         <div className="flex-1 h-1.5 bg-muted overflow-hidden">
           <div
             className="h-full bg-primary/70 transition-all duration-500"
-            style={{ width: `${memory}%` }}
+            style={{ width: mounted ? `${memory}%` : "47%" }}
           />
         </div>
         <span className="text-[10px] font-mono text-muted-foreground w-8 text-right">
-          {Math.round(memory)}%
+          {mounted ? Math.round(memory) : 47}%
         </span>
       </div>
 
@@ -113,7 +119,7 @@ export function SidebarStatus() {
       <div className="flex items-center gap-2">
         <Clock className="w-3 h-3 text-muted-foreground" />
         <span className="text-[10px] font-mono text-muted-foreground">
-          Uptime: {formatUptime(uptime)}
+          Uptime: {mounted ? formatUptime(uptime) : "00:00:00"}
         </span>
       </div>
     </div>
