@@ -1,6 +1,9 @@
 import { HomeView } from "@/components/views/home-view";
 import { createClient } from "@/lib/supabase/server";
 
+// Force dynamic rendering to always show fresh wiki/forum content
+export const dynamic = "force-dynamic";
+
 async function getRecentContent() {
   const supabase = await createClient();
 
