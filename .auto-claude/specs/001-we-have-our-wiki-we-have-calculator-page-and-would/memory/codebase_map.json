@@ -14,7 +14,12 @@
       "description": "Route mapping requires: ROUTES.REFERENCES constant, case in getRouteForViewId switch, and exact match + startsWith check in getViewIdFromPath",
       "category": "configuration",
       "discovered_at": "2026-01-06T04:54:10.882048+00:00"
+    },
+    "components/views/references-view.tsx": {
+      "description": "References view component with 6 collapsible sections displaying BAS reference data. Uses ReferenceTable for tabular data (BACnet, Modbus) and AbbreviationList for grid-based abbreviation displays. First section defaults open.",
+      "category": "component",
+      "discovered_at": "2026-01-06T05:00:36.479267+00:00"
     }
   },
-  "last_updated": "2026-01-06T04:54:10.882055+00:00"
+  "last_updated": "2026-01-06T05:00:36.479276+00:00"
 }
