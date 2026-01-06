@@ -71,6 +71,7 @@ export const VIEW_IDS = {
   SSK: "ssk",
   MSK: "msk",
   RESOURCES: "resources",
+  REFERENCES: "references",
   WIKI: "wiki",
   FORUM: "forum",
   PSK: "psk",
