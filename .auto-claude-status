@@ -3,7 +3,7 @@
   "spec": "001-we-have-our-wiki-we-have-calculator-page-and-would",
   "state": "building",
   "subtasks": {
-    "completed": 0,
+    "completed": 2,
     "total": 7,
     "in_progress": 1,
     "failed": 0
@@ -18,8 +18,8 @@
     "max": 1
   },
   "session": {
-    "number": 1,
+    "number": 3,
     "started_at": "2026-01-05T21:54:57.304076"
   },
-  "last_update": "2026-01-05T21:54:57.359656"
+  "last_update": "2026-01-05T21:56:48.911658"
 }
