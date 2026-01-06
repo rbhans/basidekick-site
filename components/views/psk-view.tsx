@@ -29,7 +29,8 @@ export function PSKView() {
     if (user && !authLoading) {
       initialize();
     }
-  }, [user, authLoading, initialize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, authLoading]);
 
   // Show loading state
   if (authLoading) {

@@ -23,8 +23,7 @@ export async function getProjects(
     .from("psk_projects")
     .select(`
       *,
-      client:psk_clients(*),
-      creator:profiles!psk_projects_created_by_fkey(display_name)
+      client:psk_clients(*)
     `)
     .order("updated_at", { ascending: false });
 
@@ -53,8 +52,7 @@ export async function createProject(
     .insert(project)
     .select(`
       *,
-      client:psk_clients(*),
-      creator:profiles!psk_projects_created_by_fkey(display_name)
+      client:psk_clients(*)
     `)
     .single();
 
@@ -79,8 +77,7 @@ export async function updateProject(
     .eq("id", id)
     .select(`
       *,
-      client:psk_clients(*),
-      creator:profiles!psk_projects_created_by_fkey(display_name)
+      client:psk_clients(*)
     `)
     .single();
 
@@ -113,10 +110,7 @@ export async function getTasks(
 
   let query = supabase
     .from("psk_tasks")
-    .select(`
-      *,
-      creator:profiles!psk_tasks_created_by_fkey(display_name)
-    `)
+    .select("*")
     .order("created_at", { ascending: false });
 
   // Daily tasks are always personal - no company filtering
@@ -144,10 +138,7 @@ export async function createTask(
   const { data, error } = await supabase
     .from("psk_tasks")
     .insert(task)
-    .select(`
-      *,
-      creator:profiles!psk_tasks_created_by_fkey(display_name)
-    `)
+    .select("*")
     .single();
 
   if (error) throw error;
@@ -169,10 +160,7 @@ export async function updateTask(
     .from("psk_tasks")
     .update(updateData)
     .eq("id", id)
-    .select(`
-      *,
-      creator:profiles!psk_tasks_created_by_fkey(display_name)
-    `)
+    .select("*")
     .single();
 
   if (error) throw error;

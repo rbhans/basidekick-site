@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: ForumThreadPageProps): Promis
     .select(`
       id,
       title,
-      author:profiles!forum_threads_user_id_fkey(display_name),
+      author:profiles!forum_threads_author_id_fkey(display_name),
       category:forum_categories!forum_threads_category_id_fkey(name)
     `)
     .eq("slug", threadSlug)
@@ -176,7 +176,7 @@ export default async function ForumThreadPage({ params }: ForumThreadPageProps) 
     .from("forum_threads")
     .select(`
       *,
-      author:profiles!forum_threads_user_id_fkey(display_name)
+      author:profiles!forum_threads_author_id_fkey(display_name)
     `)
     .eq("slug", threadSlug)
     .eq("category_id", category.id)
@@ -191,7 +191,7 @@ export default async function ForumThreadPage({ params }: ForumThreadPageProps) 
     .from("forum_posts")
     .select(`
       *,
-      author:profiles!forum_posts_user_id_fkey(display_name)
+      author:profiles!forum_posts_author_id_fkey(display_name)
     `)
     .eq("thread_id", thread.id)
     .order("created_at");

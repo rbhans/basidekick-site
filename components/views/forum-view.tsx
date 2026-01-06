@@ -12,6 +12,10 @@ import { ForumCategory, ForumThread, ForumPost } from "@/lib/types";
 import { getIcon } from "@/lib/icons";
 import { ROUTES } from "@/lib/routes";
 import { validateTitle, validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset } from "@/lib/security";
+import { PostActionsMenu } from "@/components/forum/post-actions-menu";
+import { DeletePostDialog } from "@/components/forum/delete-post-dialog";
+import { ForumImageUpload } from "@/components/forum/forum-image-upload";
+import { MarkdownContent } from "@/components/markdown-content";
 import {
   Chats,
   ChatCircle,
@@ -22,6 +26,7 @@ import {
   Plus,
   ArrowLeft,
   SignIn,
+  X,
 } from "@phosphor-icons/react";
 
 type ForumViewState =
@@ -52,6 +57,15 @@ export function ForumView() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const hasIncrementedViewRef = useRef(false);
+
+  // Edit/delete state
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState("");
+  const [editError, setEditError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [deletePostId, setDeletePostId] = useState<string | null>(null);
+  const [deletePostIndex, setDeletePostIndex] = useState<number>(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch categories
   useEffect(() => {
@@ -90,7 +104,7 @@ export function ForumView() {
         .from("forum_threads")
         .select(`
           *,
-          author:profiles!forum_threads_user_id_fkey(display_name)
+          author:profiles!forum_threads_author_id_fkey(display_name)
         `, { count: "exact" })
         .eq("category_id", viewState.categoryId)
         .order("is_pinned", { ascending: false })
@@ -121,7 +135,7 @@ export function ForumView() {
         .from("forum_threads")
         .select(`
           *,
-          author:profiles!forum_threads_user_id_fkey(display_name)
+          author:profiles!forum_threads_author_id_fkey(display_name)
         `)
         .eq("id", viewState.threadId)
         .single();
@@ -146,7 +160,7 @@ export function ForumView() {
         .from("forum_posts")
         .select(`
           *,
-          author:profiles!forum_posts_user_id_fkey(display_name)
+          author:profiles!forum_posts_author_id_fkey(display_name)
         `)
         .eq("thread_id", viewState.threadId)
         .order("created_at");
@@ -241,7 +255,7 @@ export function ForumView() {
       .from("forum_threads")
       .insert({
         category_id: viewState.categoryId,
-        user_id: user.id,
+        author_id: user.id,
         title: titleValidation.sanitized,
         slug: `${slug}-${Date.now().toString(36)}`,
       })
@@ -259,7 +273,7 @@ export function ForumView() {
       .from("forum_posts")
       .insert({
         thread_id: threadData.id,
-        user_id: user.id,
+        author_id: user.id,
         content: contentValidation.sanitized,
       });
 
@@ -307,12 +321,12 @@ export function ForumView() {
       .from("forum_posts")
       .insert({
         thread_id: viewState.threadId,
-        user_id: user.id,
+        author_id: user.id,
         content: validation.sanitized,
       })
       .select(`
         *,
-        author:profiles!forum_posts_user_id_fkey(display_name)
+        author:profiles!forum_posts_author_id_fkey(display_name)
       `)
       .single();
 
@@ -332,6 +346,152 @@ export function ForumView() {
     setPosts((prev) => [...prev, data as ForumPost]);
     setReplyContent("");
     setSubmitting(false);
+  };
+
+  // Edit post handlers
+  const handleStartEdit = (post: ForumPost) => {
+    setEditingPostId(post.id);
+    setEditContent(post.content);
+    setEditError("");
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPostId(null);
+    setEditContent("");
+    setEditError("");
+  };
+
+  const handleSaveEdit = async (postId: string) => {
+    if (!editContent.trim()) return;
+
+    // Validate content
+    const validation = validateContent(editContent, MAX_LENGTHS.POST_CONTENT);
+    if (!validation.valid) {
+      setEditError(validation.error || "Invalid content");
+      return;
+    }
+
+    // Check rate limit (20 edits per 10 minutes)
+    if (!checkRateLimit("forum_edit", 20, 600000)) {
+      const resetIn = getRateLimitReset("forum_edit", 600000);
+      setEditError(`Too many edits. Please wait ${resetIn} seconds.`);
+      return;
+    }
+
+    setIsEditing(true);
+    const supabase = createClient();
+    if (!supabase) {
+      setIsEditing(false);
+      return;
+    }
+
+    const { error: updateError } = await supabase
+      .from("forum_posts")
+      .update({
+        content: validation.sanitized,
+        is_edited: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", postId);
+
+    if (updateError) {
+      setEditError("Failed to update post. Please try again.");
+      setIsEditing(false);
+      return;
+    }
+
+    // Update local state
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === postId
+          ? { ...p, content: validation.sanitized, is_edited: true }
+          : p
+      )
+    );
+
+    setEditingPostId(null);
+    setEditContent("");
+    setIsEditing(false);
+  };
+
+  // Delete post handlers
+  const handleOpenDelete = (postId: string, index: number) => {
+    setDeletePostId(postId);
+    setDeletePostIndex(index);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletePostId) return;
+
+    // Check rate limit (5 deletes per 10 minutes)
+    if (!checkRateLimit("forum_delete", 5, 600000)) {
+      const resetIn = getRateLimitReset("forum_delete", 600000);
+      setError(`Too many deletes. Please wait ${resetIn} seconds.`);
+      setDeletePostId(null);
+      return;
+    }
+
+    setIsDeleting(true);
+    const supabase = createClient();
+    if (!supabase) {
+      setIsDeleting(false);
+      return;
+    }
+
+    // If deleting first post, delete the entire thread
+    if (deletePostIndex === 0 && currentThread) {
+      const { error: threadError } = await supabase
+        .from("forum_threads")
+        .delete()
+        .eq("id", currentThread.id);
+
+      if (threadError) {
+        setError("Failed to delete thread. Please try again.");
+        setIsDeleting(false);
+        setDeletePostId(null);
+        return;
+      }
+
+      // Navigate back to category
+      const category = categories.find((c) => c.id === currentThread.category_id);
+      if (category) {
+        setViewState({
+          view: "threads",
+          categoryId: category.id,
+          categoryName: category.name,
+        });
+      } else {
+        setViewState({ view: "categories" });
+      }
+    } else {
+      // Delete just the post
+      const { error: deleteError } = await supabase
+        .from("forum_posts")
+        .delete()
+        .eq("id", deletePostId);
+
+      if (deleteError) {
+        setError("Failed to delete post. Please try again.");
+        setIsDeleting(false);
+        setDeletePostId(null);
+        return;
+      }
+
+      // Remove from local state
+      setPosts((prev) => prev.filter((p) => p.id !== deletePostId));
+    }
+
+    setIsDeleting(false);
+    setDeletePostId(null);
+  };
+
+  // Image upload handlers
+  const handleImageUploaded = (markdownImage: string) => {
+    setReplyContent((prev) => prev + (prev ? "\n" : "") + markdownImage);
+  };
+
+  const handleEditImageUploaded = (markdownImage: string) => {
+    setEditContent((prev) => prev + (prev ? "\n" : "") + markdownImage);
   };
 
   const formatDate = (dateString: string) => {
@@ -675,13 +835,67 @@ export function ForumView() {
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs text-muted-foreground font-mono">
-                      #{index + 1}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground font-mono">
+                        #{index + 1}
+                      </span>
+                      <PostActionsMenu
+                        postAuthorId={post.author_id}
+                        currentUserId={user?.id}
+                        onEdit={() => handleStartEdit(post)}
+                        onDelete={() => handleOpenDelete(post.id, index)}
+                      />
+                    </div>
                   </div>
-                  <div className="prose prose-sm max-w-none dark:prose-invert">
-                    <p className="whitespace-pre-wrap">{post.content}</p>
-                  </div>
+                  {editingPostId === post.id ? (
+                    <div className="space-y-3">
+                      <textarea
+                        value={editContent}
+                        onChange={(e) => {
+                          setEditContent(e.target.value);
+                          if (editError) setEditError("");
+                        }}
+                        maxLength={MAX_LENGTHS.POST_CONTENT}
+                        className="w-full min-h-[150px] p-4 bg-background border border-border resize-y focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <ForumImageUpload
+                            onImageUploaded={handleEditImageUploaded}
+                            disabled={isEditing}
+                          />
+                          <span className="text-xs text-muted-foreground">
+                            {editContent.length}/{MAX_LENGTHS.POST_CONTENT}
+                          </span>
+                        </div>
+                        {editError && (
+                          <span className="text-xs text-destructive">{editError}</span>
+                        )}
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleCancelEdit}
+                          disabled={isEditing}
+                        >
+                          <X className="size-4 mr-1" />
+                          Cancel
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => handleSaveEdit(post.id)}
+                          disabled={isEditing || !editContent.trim()}
+                        >
+                          {isEditing ? "Saving..." : "Save"}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                      <MarkdownContent content={post.content} />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -704,9 +918,15 @@ export function ForumView() {
                     placeholder="Write your reply..."
                   />
                   <div className="mt-2 flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">
-                      {replyContent.length}/{MAX_LENGTHS.POST_CONTENT}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <ForumImageUpload
+                        onImageUploaded={handleImageUploaded}
+                        disabled={submitting}
+                      />
+                      <span className="text-xs text-muted-foreground">
+                        {replyContent.length}/{MAX_LENGTHS.POST_CONTENT}
+                      </span>
+                    </div>
                     {error && (
                       <span className="text-xs text-destructive">{error}</span>
                     )}
@@ -746,6 +966,15 @@ export function ForumView() {
           )}
         </div>
       </section>
+
+      {/* Delete confirmation dialog */}
+      <DeletePostDialog
+        open={deletePostId !== null}
+        onOpenChange={(open) => !open && setDeletePostId(null)}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+        isFirstPost={deletePostIndex === 0}
+      />
     </div>
   );
 }

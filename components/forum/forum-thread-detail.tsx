@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -9,6 +10,10 @@ import { createClient } from "@/lib/supabase/client";
 import { ForumCategory, ForumThread, ForumPost } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import { validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset } from "@/lib/security";
+import { PostActionsMenu } from "@/components/forum/post-actions-menu";
+import { DeletePostDialog } from "@/components/forum/delete-post-dialog";
+import { ForumImageUpload } from "@/components/forum/forum-image-upload";
+import { MarkdownContent } from "@/components/markdown-content";
 import {
   Eye,
   PushPin,
@@ -17,6 +22,7 @@ import {
   SignIn,
   BookBookmark,
   Check,
+  X,
 } from "@phosphor-icons/react";
 
 interface ForumThreadDetailProps {
@@ -26,6 +32,7 @@ interface ForumThreadDetailProps {
 }
 
 export function ForumThreadDetail({ thread, category, posts: initialPosts }: ForumThreadDetailProps) {
+  const router = useRouter();
   const { user } = useAuth();
   const [posts, setPosts] = useState(initialPosts);
   const [replyContent, setReplyContent] = useState("");
@@ -39,6 +46,15 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
   const [hasSuggested, setHasSuggested] = useState(false);
   const [suggestingWiki, setSuggestingWiki] = useState(false);
   const [suggestionError, setSuggestionError] = useState("");
+
+  // Edit/delete state
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState("");
+  const [editError, setEditError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [deletePostId, setDeletePostId] = useState<string | null>(null);
+  const [deletePostIndex, setDeletePostIndex] = useState<number>(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Increment view count on mount (with session deduplication)
   useEffect(() => {
@@ -182,12 +198,12 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
       .from("forum_posts")
       .insert({
         thread_id: thread.id,
-        user_id: user.id,
+        author_id: user.id,
         content: validation.sanitized,
       })
       .select(`
         *,
-        author:profiles!forum_posts_user_id_fkey(display_name)
+        author:profiles!forum_posts_author_id_fkey(display_name)
       `)
       .single();
 
@@ -206,6 +222,142 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
     setPosts((prev) => [...prev, data as ForumPost]);
     setReplyContent("");
     setSubmitting(false);
+  };
+
+  // Start editing a post
+  const handleStartEdit = (post: ForumPost) => {
+    setEditingPostId(post.id);
+    setEditContent(post.content);
+    setEditError("");
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setEditingPostId(null);
+    setEditContent("");
+    setEditError("");
+  };
+
+  // Save edited post
+  const handleSaveEdit = async () => {
+    if (!user || !editingPostId) return;
+
+    // Validate content
+    const validation = validateContent(editContent, MAX_LENGTHS.POST_CONTENT);
+    if (!validation.valid) {
+      setEditError(validation.error || "Invalid content");
+      return;
+    }
+
+    // Rate limit (20 edits per 10 minutes)
+    if (!checkRateLimit("forum_edit", 20, 600000)) {
+      const resetIn = getRateLimitReset("forum_edit", 600000);
+      setEditError(`Too many edits. Please wait ${resetIn} seconds.`);
+      return;
+    }
+
+    setIsEditing(true);
+    setEditError("");
+
+    const supabase = createClient();
+    if (!supabase) {
+      setIsEditing(false);
+      setEditError("Failed to save. Please try again.");
+      return;
+    }
+
+    const { error: updateError } = await supabase
+      .from("forum_posts")
+      .update({
+        content: validation.sanitized,
+        is_edited: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", editingPostId)
+      .eq("author_id", user.id); // Ensure user owns the post
+
+    if (updateError) {
+      setIsEditing(false);
+      setEditError("Failed to save. Please try again.");
+      return;
+    }
+
+    // Update local state
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === editingPostId
+          ? { ...p, content: validation.sanitized, is_edited: true }
+          : p
+      )
+    );
+
+    setEditingPostId(null);
+    setEditContent("");
+    setIsEditing(false);
+  };
+
+  // Open delete dialog
+  const handleOpenDelete = (postId: string, postIndex: number) => {
+    setDeletePostId(postId);
+    setDeletePostIndex(postIndex);
+  };
+
+  // Confirm delete
+  const handleConfirmDelete = async () => {
+    if (!user || !deletePostId) return;
+
+    // Rate limit (5 deletes per 10 minutes)
+    if (!checkRateLimit("forum_delete", 5, 600000)) {
+      setIsDeleting(false);
+      return;
+    }
+
+    setIsDeleting(true);
+
+    const supabase = createClient();
+    if (!supabase) {
+      setIsDeleting(false);
+      return;
+    }
+
+    // If first post, delete the entire thread
+    if (deletePostIndex === 0) {
+      const { error: deleteError } = await supabase
+        .from("forum_threads")
+        .delete()
+        .eq("id", thread.id)
+        .eq("author_id", user.id);
+
+      if (!deleteError) {
+        // Redirect to category page
+        router.push(ROUTES.FORUM_CATEGORY(category.slug));
+        return;
+      }
+    } else {
+      // Delete just the post
+      const { error: deleteError } = await supabase
+        .from("forum_posts")
+        .delete()
+        .eq("id", deletePostId)
+        .eq("author_id", user.id);
+
+      if (!deleteError) {
+        setPosts((prev) => prev.filter((p) => p.id !== deletePostId));
+      }
+    }
+
+    setDeletePostId(null);
+    setIsDeleting(false);
+  };
+
+  // Handle image upload - insert markdown at cursor or append
+  const handleImageUploaded = (markdownImage: string) => {
+    setReplyContent((prev) => prev + (prev ? "\n" : "") + markdownImage);
+  };
+
+  // Handle image upload for edit mode
+  const handleEditImageUploaded = (markdownImage: string) => {
+    setEditContent((prev) => prev + (prev ? "\n" : "") + markdownImage);
   };
 
   return (
@@ -305,17 +457,86 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
                         </p>
                       </div>
                     </div>
-                    <span className="text-xs text-muted-foreground font-mono">
-                      #{index + 1}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground font-mono">
+                        #{index + 1}
+                      </span>
+                      {!thread.is_locked && (
+                        <PostActionsMenu
+                          postAuthorId={post.author_id || ""}
+                          currentUserId={user?.id}
+                          onEdit={() => handleStartEdit(post)}
+                          onDelete={() => handleOpenDelete(post.id, index)}
+                        />
+                      )}
+                    </div>
                   </div>
-                  <div className="prose prose-sm max-w-none dark:prose-invert">
-                    <p className="whitespace-pre-wrap">{post.content}</p>
-                  </div>
+
+                  {/* Edit mode */}
+                  {editingPostId === post.id ? (
+                    <div className="space-y-3">
+                      <textarea
+                        value={editContent}
+                        onChange={(e) => {
+                          setEditContent(e.target.value);
+                          if (editError) setEditError("");
+                        }}
+                        maxLength={MAX_LENGTHS.POST_CONTENT}
+                        className="w-full min-h-[150px] p-4 bg-background border border-border resize-y focus:outline-none focus:ring-2 focus:ring-primary"
+                        disabled={isEditing}
+                      />
+                      <div className="flex items-center gap-2">
+                        <ForumImageUpload
+                          onImageUploaded={handleEditImageUploaded}
+                          disabled={isEditing}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">
+                          {editContent.length}/{MAX_LENGTHS.POST_CONTENT}
+                        </span>
+                        {editError && (
+                          <span className="text-xs text-destructive">{editError}</span>
+                        )}
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleCancelEdit}
+                          disabled={isEditing}
+                        >
+                          <X className="size-4 mr-1" />
+                          Cancel
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={handleSaveEdit}
+                          disabled={isEditing || !editContent.trim()}
+                        >
+                          {isEditing ? "Saving..." : "Save"}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Display mode - use MarkdownContent for image support */
+                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                      <MarkdownContent content={post.content} />
+                    </div>
+                  )}
                 </article>
               ))}
             </div>
           )}
+
+          {/* Delete confirmation dialog */}
+          <DeletePostDialog
+            open={deletePostId !== null}
+            onOpenChange={(open) => !open && setDeletePostId(null)}
+            onConfirm={handleConfirmDelete}
+            isDeleting={isDeleting}
+            isFirstPost={deletePostIndex === 0}
+          />
 
           {/* Reply form */}
           {!thread.is_locked && (
@@ -333,6 +554,12 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
                     className="w-full min-h-[150px] p-4 bg-background border border-border resize-y focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Write your reply..."
                   />
+                  <div className="mt-2 flex items-center gap-2">
+                    <ForumImageUpload
+                      onImageUploaded={handleImageUploaded}
+                      disabled={submitting}
+                    />
+                  </div>
                   <div className="mt-2 flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">
                       {replyContent.length}/{MAX_LENGTHS.POST_CONTENT}

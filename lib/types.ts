@@ -129,7 +129,7 @@ export interface ForumCategory {
 export interface ForumThread {
   id: string;
   category_id: string;
-  user_id: string;
+  author_id: string;
   title: string;
   slug: string;
   is_pinned: boolean;
@@ -147,7 +147,7 @@ export interface ForumThread {
 export interface ForumPost {
   id: string;
   thread_id: string;
-  user_id: string;
+  author_id: string;
   content: string;
   is_edited: boolean;
   created_at: string;

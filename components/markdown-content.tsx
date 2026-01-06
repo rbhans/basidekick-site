@@ -1,12 +1,73 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { Components } from "react-markdown";
 
+// Mermaid initialized flag
+let mermaidInitialized = false;
+
 interface MarkdownContentProps {
   content: string;
   className?: string;
+}
+
+/**
+ * Mermaid diagram component - renders mermaid code as SVG
+ */
+function MermaidDiagram({ code }: { code: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [svg, setSvg] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    async function renderDiagram() {
+      if (!containerRef.current) return;
+
+      try {
+        // Dynamically import mermaid (client-side only)
+        const mermaid = (await import("mermaid")).default;
+
+        // Initialize only once
+        if (!mermaidInitialized) {
+          mermaid.initialize({
+            startOnLoad: false,
+            theme: "dark",
+            securityLevel: "loose",
+            fontFamily: "ui-monospace, monospace",
+          });
+          mermaidInitialized = true;
+        }
+
+        const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+        const { svg } = await mermaid.render(id, code);
+        setSvg(svg);
+        setError("");
+      } catch (err) {
+        console.error("Mermaid render error:", err);
+        setError("Failed to render diagram");
+      }
+    }
+
+    renderDiagram();
+  }, [code]);
+
+  if (error) {
+    return (
+      <div className="my-4 p-4 bg-muted border border-border rounded">
+        <pre className="text-sm font-mono whitespace-pre-wrap">{code}</pre>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={containerRef}
+      className="my-6 flex justify-center overflow-x-auto"
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
 }
 
 /**
@@ -99,9 +160,16 @@ const markdownComponents: Components = {
   li: ({ children }) => (
     <li className="leading-relaxed">{children}</li>
   ),
-  // Style code blocks
+  // Style code blocks - with Mermaid diagram support
   code: ({ className, children }) => {
     const isInline = !className;
+
+    // Check if this is a mermaid code block
+    if (className === "language-mermaid") {
+      const code = String(children).replace(/\n$/, "");
+      return <MermaidDiagram code={code} />;
+    }
+
     if (isInline) {
       return (
         <code className="px-1.5 py-0.5 bg-muted font-mono text-sm rounded">

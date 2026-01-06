@@ -50,7 +50,8 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
     if (user && !authLoading) {
       initialize();
     }
-  }, [user, authLoading, initialize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, authLoading]);
 
   // Redirect if not authenticated
   useEffect(() => {

@@ -81,7 +81,7 @@ export default async function ForumCategoryPage({ params }: ForumCategoryPagePro
     .from("forum_threads")
     .select(`
       *,
-      author:profiles!forum_threads_user_id_fkey(display_name)
+      author:profiles!forum_threads_author_id_fkey(display_name)
     `)
     .eq("category_id", category.id)
     .order("is_pinned", { ascending: false })

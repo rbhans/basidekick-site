@@ -90,13 +90,13 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
       .from("forum_threads")
       .insert({
         category_id: category.id,
-        user_id: user.id,
+        author_id: user.id,
         title: titleValidation.sanitized,
         slug: `${slug}-${Date.now().toString(36)}`,
       })
       .select(`
         *,
-        author:profiles!forum_threads_user_id_fkey(display_name)
+        author:profiles!forum_threads_author_id_fkey(display_name)
       `)
       .single();
 
@@ -109,7 +109,7 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
     // Create the first post
     await supabase.from("forum_posts").insert({
       thread_id: threadData.id,
-      user_id: user.id,
+      author_id: user.id,
       content: contentValidation.sanitized,
     });
 

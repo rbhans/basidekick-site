@@ -24,7 +24,7 @@ interface RecentThread {
   title: string;
   slug: string;
   created_at: string;
-  reply_count: number | null;
+  reply_count?: number | null;
   category: { name: string; slug: string } | null;
   author: { display_name: string | null } | null;
 }

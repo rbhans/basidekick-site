@@ -38,12 +38,13 @@ export function WorkspaceSwitcher({ onSettingsClick }: WorkspaceSwitcherProps) {
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
-  // Load companies on mount
+  // Load companies on mount (only once when user is available)
   useEffect(() => {
     if (user) {
       initializeCompanies();
     }
-  }, [user, initializeCompanies]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const handleSelectPersonal = () => {
     const workspace: PSKWorkspaceContext = {

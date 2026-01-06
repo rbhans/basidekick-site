@@ -20,8 +20,7 @@ export async function getCompanies(): Promise<PSKCompany[]> {
         id,
         user_id,
         role,
-        joined_at,
-        profile:profiles(display_name)
+        joined_at
       )
     `)
     .order("name", { ascending: true });
@@ -45,8 +44,7 @@ export async function getCompany(id: string): Promise<PSKCompany | null> {
         id,
         user_id,
         role,
-        joined_at,
-        profile:profiles(display_name)
+        joined_at
       )
     `)
     .eq("id", id)
@@ -154,10 +152,7 @@ export async function getCompanyMembers(
 
   const { data, error } = await supabase
     .from("psk_company_members")
-    .select(`
-      *,
-      profile:profiles(display_name)
-    `)
+    .select("*")
     .eq("company_id", companyId)
     .order("joined_at", { ascending: true });
 

@@ -64,7 +64,7 @@ async function getRecentContent() {
   // Fetch recent forum threads - simple query (last 5)
   const { data: threads, error: threadsError } = await supabase
     .from("forum_threads")
-    .select("id, title, slug, created_at, reply_count, category_id, author_id")
+    .select("id, title, slug, created_at, category_id, author_id")
     .order("created_at", { ascending: false })
     .limit(5);
 
@@ -109,7 +109,6 @@ async function getRecentContent() {
     title: thread.title,
     slug: thread.slug,
     created_at: thread.created_at,
-    reply_count: thread.reply_count,
     category: thread.category_id ? threadCategoriesMap[thread.category_id] || null : null,
     author: thread.author_id ? authorsMap[thread.author_id] || null : null,
   }));

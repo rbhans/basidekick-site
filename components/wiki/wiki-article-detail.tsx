@@ -19,6 +19,7 @@ import {
   SignIn,
 } from "@phosphor-icons/react";
 import { MarkdownContent } from "@/components/markdown-content";
+import { RelatedArticles } from "@/components/wiki/related-articles";
 
 interface WikiArticleDetailProps {
   article: WikiArticle;
@@ -285,6 +286,13 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
           )}
         </div>
       </section>
+
+      {/* Related Articles */}
+      <RelatedArticles
+        currentArticleId={article.id}
+        categoryId={article.category_id}
+        tagIds={tags.map((t) => t.id)}
+      />
     </div>
   );
 }
