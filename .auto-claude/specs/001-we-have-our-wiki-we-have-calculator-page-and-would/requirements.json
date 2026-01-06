@@ -1,0 +1,4 @@
+{
+  "task_description": "We have our wiki, we have calculator page and would also like a \"References\" page.  It will be similar to the calculator page in intent as a quick reference to common things for people in the building automation industry.  Do some research on things that would fit well for this reference sheet and then implement that page.",
+  "workflow_type": "feature"
+}

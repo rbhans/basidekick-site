@@ -1,0 +1,25 @@
+{
+  "active": true,
+  "spec": "001-we-have-our-wiki-we-have-calculator-page-and-would",
+  "state": "building",
+  "subtasks": {
+    "completed": 6,
+    "total": 7,
+    "in_progress": 1,
+    "failed": 0
+  },
+  "phase": {
+    "current": "End-to-End Verification",
+    "id": null,
+    "total": 2
+  },
+  "workers": {
+    "active": 0,
+    "max": 1
+  },
+  "session": {
+    "number": 7,
+    "started_at": "2026-01-05T21:54:57.304076"
+  },
+  "last_update": "2026-01-05T22:03:06.264108"
+}

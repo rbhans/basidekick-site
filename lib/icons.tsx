@@ -9,6 +9,7 @@ import {
   WaveTriangle,
   Buildings,
   BookOpen,
+  BookmarksSimple,
   Chats,
   Kanban,
   Calculator,
@@ -43,6 +44,8 @@ export function getIcon(name: IconName | string, className = "size-4"): ReactNod
       return <Buildings {...iconProps} />;
     case "BookOpen":
       return <BookOpen {...iconProps} />;
+    case "BookmarksSimple":
+      return <BookmarksSimple {...iconProps} />;
     case "Chats":
       return <Chats {...iconProps} />;
     case "Kanban":

@@ -1,0 +1,477 @@
+{
+  "integrations_researched": [
+    {
+      "name": "Next.js",
+      "type": "framework",
+      "verified_package": {
+        "name": "next",
+        "install_command": "Already installed - version 16.1.1",
+        "version": "16.1.1",
+        "verified": true
+      },
+      "api_patterns": {
+        "imports": [
+          "No framework imports needed for page components"
+        ],
+        "initialization": "Pages export default function PageName() { return <ViewComponent /> }",
+        "key_functions": [
+          "App Router file-based routing: app/(main)/[route]/page.tsx",
+          "Page components render view components from components/views/"
+        ],
+        "verified_against": "Existing codebase pattern (calculators/page.tsx)"
+      },
+      "configuration": {
+        "env_vars": [],
+        "config_files": ["next.config.ts"],
+        "dependencies": []
+      },
+      "infrastructure": {
+        "requires_docker": false
+      },
+      "gotchas": [
+        "Pages under app/(main)/ use the shared layout with navigation",
+        "View components should be in components/views/",
+        "Use 'use client' directive for interactive components"
+      ],
+      "research_sources": [
+        "Existing codebase: app/(main)/calculators/page.tsx"
+      ]
+    },
+    {
+      "name": "React",
+      "type": "library",
+      "verified_package": {
+        "name": "react",
+        "install_command": "Already installed - version 19.2.3",
+        "version": "19.2.3",
+        "verified": true
+      },
+      "api_patterns": {
+        "imports": [
+          "import { useState } from 'react'"
+        ],
+        "initialization": "Functional components with hooks",
+        "key_functions": [
+          "useState() for local state management",
+          "React.ReactNode for children props"
+        ],
+        "verified_against": "Existing codebase pattern (calculators-view.tsx)"
+      },
+      "configuration": {
+        "env_vars": [],
+        "config_files": [],
+        "dependencies": []
+      },
+      "infrastructure": {
+        "requires_docker": false
+      },
+      "gotchas": [
+        "React 19 is being used - ensure compatibility",
+        "Use functional components with hooks, not class components"
+      ],
+      "research_sources": [
+        "package.json",
+        "Existing codebase patterns"
+      ]
+    },
+    {
+      "name": "TailwindCSS",
+      "type": "library",
+      "verified_package": {
+        "name": "tailwindcss",
+        "install_command": "Already installed - version 4",
+        "version": "4.x",
+        "verified": true
+      },
+      "api_patterns": {
+        "imports": [
+          "No imports needed - use className"
+        ],
+        "initialization": "Apply utility classes via className prop",
+        "key_functions": [
+          "Utility classes for layout: flex, grid, gap-*, p-*, m-*",
+          "Typography: text-*, font-*, tracking-*",
+          "Colors: bg-*, text-*, border-*",
+          "Custom theme colors: bg-card, text-primary, bg-muted, border-border"
+        ],
+        "verified_against": "Existing codebase pattern (calculators-view.tsx)"
+      },
+      "configuration": {
+        "env_vars": [],
+        "config_files": ["postcss.config.mjs"],
+        "dependencies": ["@tailwindcss/postcss"]
+      },
+      "infrastructure": {
+        "requires_docker": false
+      },
+      "gotchas": [
+        "Uses custom theme colors: primary, muted, card, border, etc.",
+        "TailwindCSS v4 uses new configuration format",
+        "Design uses dark/light mode support via CSS variables"
+      ],
+      "research_sources": [
+        "package.json",
+        "Existing codebase patterns"
+      ]
+    },
+    {
+      "name": "Phosphor Icons",
+      "type": "library",
+      "verified_package": {
+        "name": "@phosphor-icons/react",
+        "install_command": "Already installed - version 2.1.10",
+        "version": "2.1.10",
+        "verified": true
+      },
+      "api_patterns": {
+        "imports": [
+          "import { IconName } from '@phosphor-icons/react'"
+        ],
+        "initialization": "<IconName className=\"size-5\" />",
+        "key_functions": [
+          "Icon components are directly imported by name",
+          "Use className for sizing: size-4, size-5, size-6",
+          "Use className for coloring: text-primary, text-muted-foreground"
+        ],
+        "verified_against": "Existing codebase pattern (calculators-view.tsx)"
+      },
+      "configuration": {
+        "env_vars": [],
+        "config_files": [],
+        "dependencies": []
+      },
+      "infrastructure": {
+        "requires_docker": false
+      },
+      "gotchas": [
+        "Import icons individually for better tree-shaking",
+        "Icons used in calculators: CaretDown, ChartLine, Wind, Plugs, Drop, Lightning, Thermometer, Calendar, Wrench, Factory, Function, ArrowsClockwise"
+      ],
+      "research_sources": [
+        "Existing codebase: calculators-view.tsx",
+        "https://phosphoricons.com/"
+      ]
+    }
+  ],
+  "existing_patterns": {
+    "page_structure": {
+      "description": "Pages follow a simple pattern where page.tsx imports and renders a view component",
+      "example_page": "app/(main)/calculators/page.tsx",
+      "example_view": "components/views/calculators-view.tsx",
+      "pattern": "import { ViewName } from '@/components/views/view-name'; export default function PageName() { return <ViewName />; }"
+    },
+    "view_component_structure": {
+      "description": "View components use 'use client' directive for interactivity and include header section with CircuitBackground",
+      "sections": [
+        "Header with CircuitBackground and SectionLabel",
+        "Content sections with collapsible cards",
+        "Container max-width: max-w-5xl"
+      ],
+      "key_components_used": [
+        "SectionLabel - displays category labels",
+        "CircuitBackground - decorative background",
+        "Input/Label - form elements",
+        "CaretDown icon - for collapsible sections"
+      ]
+    },
+    "collapsible_section": {
+      "description": "Calculator page uses a custom Section component with expand/collapse functionality",
+      "props": ["title", "icon", "children", "defaultOpen"],
+      "styling": "bg-card, border-border, hover effects"
+    }
+  },
+  "reference_content_research": {
+    "description": "Research on valuable reference content for building automation professionals",
+    "categories": [
+      {
+        "name": "BACnet Object Types",
+        "description": "Standard BACnet object type numbers as defined in ASHRAE 135",
+        "content": {
+          "0": "Analog Input (AI)",
+          "1": "Analog Output (AO)",
+          "2": "Analog Value (AV)",
+          "3": "Binary Input (BI)",
+          "4": "Binary Output (BO)",
+          "5": "Binary Value (BV)",
+          "6": "Calendar",
+          "7": "Command",
+          "8": "Device",
+          "9": "Event Enrollment",
+          "10": "File",
+          "11": "Group",
+          "12": "Loop",
+          "13": "Multi-state Input (MSI)",
+          "14": "Multi-state Output (MSO)",
+          "15": "Notification Class",
+          "16": "Program",
+          "17": "Schedule",
+          "18": "Averaging",
+          "19": "Multi-state Value (MSV)",
+          "20": "Trend Log"
+        },
+        "verified_against": "ASHRAE 135 BACnet Standard, OPC Foundation BACnet Reference"
+      },
+      {
+        "name": "BACnet Common Properties",
+        "description": "Frequently used BACnet property identifiers",
+        "content": {
+          "85": "Present_Value",
+          "75": "Object_Identifier",
+          "77": "Object_Name",
+          "79": "Object_Type",
+          "111": "Status_Flags",
+          "81": "Out_Of_Service",
+          "103": "Reliability",
+          "28": "Description",
+          "117": "Units"
+        },
+        "verified_against": "ASHRAE 135 BACnet Standard"
+      },
+      {
+        "name": "Modbus Register Types",
+        "description": "Standard Modbus register types and address ranges",
+        "content": {
+          "coils": {
+            "prefix": "0x",
+            "address_range": "00001-09999",
+            "function_codes": ["01 Read", "05 Write Single", "15 Write Multiple"],
+            "description": "1-bit read/write discrete outputs"
+          },
+          "discrete_inputs": {
+            "prefix": "1x",
+            "address_range": "10001-19999",
+            "function_codes": ["02 Read"],
+            "description": "1-bit read-only discrete inputs"
+          },
+          "input_registers": {
+            "prefix": "3x",
+            "address_range": "30001-39999",
+            "function_codes": ["04 Read"],
+            "description": "16-bit read-only registers"
+          },
+          "holding_registers": {
+            "prefix": "4x",
+            "address_range": "40001-49999",
+            "function_codes": ["03 Read", "06 Write Single", "16 Write Multiple"],
+            "description": "16-bit read/write registers"
+          }
+        },
+        "verified_against": "Control Solutions Modbus Tutorial, NI Modbus Protocol Guide"
+      },
+      {
+        "name": "HVAC Equipment Abbreviations",
+        "description": "Common equipment abbreviations used in building automation",
+        "content": {
+          "AHU": "Air Handling Unit",
+          "VAV": "Variable Air Volume",
+          "FCU": "Fan Coil Unit",
+          "RTU": "Rooftop Unit",
+          "MAU": "Make-up Air Unit",
+          "ERV": "Energy Recovery Ventilator",
+          "HRV": "Heat Recovery Ventilator",
+          "DOAS": "Dedicated Outdoor Air System",
+          "CU": "Condensing Unit",
+          "CT": "Cooling Tower",
+          "HX": "Heat Exchanger",
+          "VRF": "Variable Refrigerant Flow",
+          "WSHP": "Water Source Heat Pump",
+          "GSHP": "Ground Source Heat Pump",
+          "ASHP": "Air Source Heat Pump"
+        },
+        "verified_against": "ASHRAE Terminology, Industry Standards"
+      },
+      {
+        "name": "Controls & Systems Abbreviations",
+        "description": "Common controls and system abbreviations",
+        "content": {
+          "BAS": "Building Automation System",
+          "BMS": "Building Management System",
+          "DDC": "Direct Digital Control",
+          "EMS": "Energy Management System",
+          "ATC": "Automatic Temperature Control",
+          "VFD": "Variable Frequency Drive",
+          "PLC": "Programmable Logic Controller",
+          "HMI": "Human Machine Interface",
+          "SCADA": "Supervisory Control and Data Acquisition",
+          "I/O": "Input/Output",
+          "AI": "Analog Input",
+          "AO": "Analog Output",
+          "DI": "Digital Input / Discrete Input",
+          "DO": "Digital Output / Discrete Output",
+          "COV": "Change of Value",
+          "PID": "Proportional-Integral-Derivative"
+        },
+        "verified_against": "Smart Buildings Academy, Industry Standards"
+      },
+      {
+        "name": "Temperature & Humidity Abbreviations",
+        "description": "Common temperature and humidity point abbreviations",
+        "content": {
+          "OAT": "Outside Air Temperature",
+          "RAT": "Return Air Temperature",
+          "SAT": "Supply Air Temperature",
+          "MAT": "Mixed Air Temperature",
+          "DAT": "Discharge Air Temperature",
+          "EAT": "Entering Air Temperature",
+          "LAT": "Leaving Air Temperature",
+          "EWT": "Entering Water Temperature",
+          "LWT": "Leaving Water Temperature",
+          "CHWST": "Chilled Water Supply Temperature",
+          "CHWRT": "Chilled Water Return Temperature",
+          "HWST": "Hot Water Supply Temperature",
+          "HWRT": "Hot Water Return Temperature",
+          "DB": "Dry Bulb Temperature",
+          "WB": "Wet Bulb Temperature",
+          "DP": "Dew Point",
+          "RH": "Relative Humidity"
+        },
+        "verified_against": "ASHRAE Standards, Industry Practice"
+      },
+      {
+        "name": "Pressure & Flow Abbreviations",
+        "description": "Common pressure and flow point abbreviations",
+        "content": {
+          "SP": "Static Pressure / Setpoint",
+          "DSP": "Duct Static Pressure",
+          "ESP": "External Static Pressure",
+          "BSP": "Building Static Pressure",
+          "DP": "Differential Pressure",
+          "VPD": "Valve Pressure Drop",
+          "CFM": "Cubic Feet per Minute",
+          "GPM": "Gallons per Minute",
+          "FPM": "Feet per Minute (velocity)"
+        },
+        "verified_against": "ASHRAE Standards, Industry Practice"
+      },
+      {
+        "name": "Network Protocols",
+        "description": "Common building automation network protocols",
+        "content": {
+          "BACnet/IP": "BACnet over Internet Protocol (UDP port 47808)",
+          "BACnet MS/TP": "BACnet Master-Slave/Token-Passing (RS-485)",
+          "Modbus TCP": "Modbus over TCP/IP (TCP port 502)",
+          "Modbus RTU": "Modbus Remote Terminal Unit (RS-485/RS-232)",
+          "LonWorks": "Local Operating Network (Free topology)",
+          "KNX": "Konnex (European standard, twisted pair/IP)",
+          "MQTT": "Message Queuing Telemetry Transport (IoT)",
+          "OPC UA": "Open Platform Communications Unified Architecture"
+        },
+        "verified_against": "Protocol specifications, Industry standards"
+      },
+      {
+        "name": "Common Port Numbers",
+        "description": "Network port numbers for building automation protocols",
+        "content": {
+          "47808": "BACnet/IP (UDP)",
+          "502": "Modbus TCP",
+          "1883": "MQTT (unencrypted)",
+          "8883": "MQTT (TLS encrypted)",
+          "80": "HTTP / Niagara default",
+          "443": "HTTPS",
+          "4911": "Niagara Fox protocol",
+          "3671": "KNXnet/IP"
+        },
+        "verified_against": "IANA Port Registry, Protocol specifications"
+      },
+      {
+        "name": "Wire Gauge Reference",
+        "description": "Common wire gauges for building automation",
+        "content": {
+          "18_AWG": {
+            "use": "General purpose sensor/actuator wiring",
+            "max_distance_24v": "~200 ft typical"
+          },
+          "16_AWG": {
+            "use": "Longer runs, higher current",
+            "max_distance_24v": "~300 ft typical"
+          },
+          "22_AWG": {
+            "use": "RS-485 / MS/TP communication",
+            "note": "Shielded twisted pair recommended"
+          },
+          "Cat5e_Cat6": {
+            "use": "BACnet/IP, Modbus TCP, Ethernet",
+            "max_distance": "328 ft (100m) per segment"
+          }
+        },
+        "verified_against": "NEC, Industry best practices"
+      },
+      {
+        "name": "MS/TP Specifications",
+        "description": "BACnet MS/TP network specifications",
+        "content": {
+          "max_devices": "128 (addresses 0-127, 255 broadcast)",
+          "max_trunk_length": "4000 ft at 76800 baud",
+          "baud_rates": ["9600", "19200", "38400", "76800"],
+          "cable_type": "Shielded twisted pair (STP)",
+          "termination": "120 ohm resistor at each end"
+        },
+        "verified_against": "ASHRAE 135 BACnet Standard"
+      },
+      {
+        "name": "Engineering Units",
+        "description": "Common BACnet engineering units",
+        "content": {
+          "62": "degrees-Fahrenheit",
+          "63": "degrees-Celsius",
+          "64": "degrees-Kelvin",
+          "95": "percent",
+          "96": "percent-relative-humidity",
+          "119": "cubic-feet-per-minute",
+          "120": "gallons-per-minute",
+          "18": "pounds-force-per-square-inch",
+          "133": "inches-of-water"
+        },
+        "verified_against": "ASHRAE 135 Addendum, BACnet Units Enumeration"
+      },
+      {
+        "name": "ASHRAE Standards Quick Reference",
+        "description": "Key ASHRAE standards for building automation",
+        "content": {
+          "Standard_55": "Thermal Environmental Conditions for Human Occupancy",
+          "Standard_62_1": "Ventilation for Acceptable Indoor Air Quality",
+          "Standard_90_1": "Energy Standard for Buildings (except low-rise residential)",
+          "Standard_135": "BACnet - Data Communication Protocol for Building Automation",
+          "Guideline_36": "High-Performance Sequences of Operation for HVAC Systems"
+        },
+        "verified_against": "ASHRAE Publications"
+      }
+    ],
+    "research_sources": [
+      "ASHRAE 135 BACnet Standard - https://www.ashrae.org/technical-resources/standards-and-guidelines",
+      "OPC Foundation BACnet Reference - https://reference.opcfoundation.org/BACnet/v200/docs/7",
+      "BACnet.org Resources - https://bacnet.org/",
+      "Control Solutions Modbus Tutorial - https://www.csimn.com/CSI_pages/Modbus101.html",
+      "NI Modbus Protocol Guide - https://www.ni.com/en/shop/seamlessly-connect-to-third-party-devices-and-supervisory-system/the-modbus-protocol-in-depth.html",
+      "Smart Buildings Academy Acronyms Guide - https://guides.smartbuildingsacademy.com/the-complete-guide-to-building-automation-acronyms",
+      "Abraxas Energy HVAC Acronyms - https://www.abraxasenergy.com/energy-resources/toolbox/hvac-acronyms/",
+      "Siemens ASHRAE Guideline 36 Overview - https://www.siemens.com/us/en/products/buildingtechnologies/trends-topics/building-technologies-blog-center/building-automation/ashrae-guideline-36.html"
+    ]
+  },
+  "unverified_claims": [],
+  "recommendations": [
+    "Create References page following the same pattern as calculators page (page.tsx + view component)",
+    "Use collapsible sections like calculators page for organizing reference categories",
+    "Reference content should include: BACnet object types, Modbus registers, HVAC abbreviations, network protocols, wire gauges",
+    "Consider using tables for structured data like object type numbers and abbreviations",
+    "Use Phosphor icons consistent with calculator page (e.g., Book, ListBullets, Table, etc.)",
+    "Content is static reference data - no calculations needed, so simpler state management",
+    "Reuse existing components: SectionLabel, CircuitBackground, Card patterns"
+  ],
+  "implementation_notes": {
+    "file_structure": {
+      "page_file": "app/(main)/references/page.tsx",
+      "view_component": "components/views/references-view.tsx"
+    },
+    "suggested_sections": [
+      "BACnet Protocol (object types, properties, units)",
+      "Modbus Protocol (register types, function codes)",
+      "HVAC Abbreviations (equipment, controls, temperatures, flows)",
+      "Network Reference (protocols, ports, specifications)",
+      "Standards Reference (ASHRAE, codes)",
+      "Electrical Reference (wire gauges, common voltages)"
+    ],
+    "ui_pattern": "Follow calculators-view.tsx collapsible section pattern with search/filter capability optional"
+  },
+  "created_at": "2026-01-05T00:00:00Z"
+}
