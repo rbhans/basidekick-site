@@ -67,7 +67,9 @@
             "command": "grep -n 'REFERENCES\\|References' lib/constants.ts | wc -l",
             "expected": "at least 3 occurrences (VIEW_TITLES, VIEW_LOADING_TEXT, NAV_ITEMS)"
           },
-          "status": "pending"
+          "status": "completed",
+          "notes": "Added REFERENCES to VIEW_TITLES, VIEW_LOADING_TEXT, and NAV_ITEMS (under RESOURCES children). Also added BookmarksSimple to ICON_NAMES list for the References nav item icon. Verification passed with 3 occurrences.",
+          "updated_at": "2026-01-06T04:57:36.450151+00:00"
         }
       ]
     },
@@ -290,5 +292,5 @@
   "updated_at": "2026-01-06T04:54:27.846Z",
   "status": "in_progress",
   "planStatus": "in_progress",
-  "last_updated": "2026-01-06T04:56:37.900145+00:00"
+  "last_updated": "2026-01-06T04:57:36.450156+00:00"
 }
