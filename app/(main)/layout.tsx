@@ -209,7 +209,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         {/* Mobile sidebar drawer */}
         <aside
           className={cn(
-            "lg:hidden fixed top-0 left-0 bottom-0 z-50 w-[280px] bg-card border-r border-border flex flex-col transition-transform duration-300",
+            "lg:hidden fixed top-0 left-0 bottom-0 z-50 w-[280px] bg-card border-r border-border flex flex-col transition-transform duration-300 motion-reduce:transition-none",
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >

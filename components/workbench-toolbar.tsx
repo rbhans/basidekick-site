@@ -97,11 +97,11 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
         <Button
           variant="ghost"
           size="icon-sm"
-          className="lg:hidden"
+          className="lg:hidden group"
           onClick={onMenuClick}
           aria-label="Open navigation menu"
         >
-          <List className="w-5 h-5" />
+          <List className="w-5 h-5 transition-all duration-150 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
         </Button>
 
         <Logo onClick={onHomeClick} />
@@ -125,12 +125,12 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
         {/* Weather display - rotating world cities */}
         <div className="hidden sm:flex items-center gap-3 text-xs font-mono text-muted-foreground">
           <span className="text-primary">{weather.city}</span>
-          <div className="flex items-center gap-1">
-            <Thermometer className="w-3.5 h-3.5 text-primary" />
+          <div className="flex items-center gap-1 group cursor-default">
+            <Thermometer className="w-3.5 h-3.5 text-primary transition-all duration-150 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
             <span>{weather.loading ? "--" : `${weather.temp}°F`}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Drop className="w-3.5 h-3.5 text-primary" />
+          <div className="flex items-center gap-1 group cursor-default">
+            <Drop className="w-3.5 h-3.5 text-primary transition-all duration-150 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
             <span>{weather.loading ? "--" : `${weather.humidity}%`}</span>
           </div>
         </div>
@@ -138,11 +138,12 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
         <Button
           variant="ghost"
           size="icon-sm"
+          className="group"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           aria-label="Toggle theme"
         >
-          <Sun className="w-4 h-4 hidden dark:block" />
-          <Moon className="w-4 h-4 dark:hidden" />
+          <Sun className="w-4 h-4 hidden dark:block transition-all duration-150 group-hover:scale-110 group-hover:rotate-12 motion-reduce:transition-none motion-reduce:group-hover:scale-100 motion-reduce:group-hover:rotate-0" />
+          <Moon className="w-4 h-4 dark:hidden transition-all duration-150 group-hover:scale-110 group-hover:-rotate-12 motion-reduce:transition-none motion-reduce:group-hover:scale-100 motion-reduce:group-hover:rotate-0" />
         </Button>
 
         {/* User menu */}
@@ -153,10 +154,10 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="relative"
+                  className="relative group"
                   aria-label="User menu"
                 >
-                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                  <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium transition-all duration-150 group-hover:scale-110 group-hover:shadow-[0_0_8px_hsl(var(--primary)/0.5)] motion-reduce:transition-none motion-reduce:group-hover:scale-100 motion-reduce:group-hover:shadow-none">
                     {getUserInitials()}
                   </div>
                 </Button>
@@ -182,9 +183,9 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
               variant="ghost"
               size="sm"
               onClick={() => onNavigate?.("signin")}
-              className="text-xs"
+              className="text-xs group"
             >
-              <User className="w-4 h-4 mr-1.5" />
+              <User className="w-4 h-4 mr-1.5 transition-all duration-150 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
               Sign In
             </Button>
           )

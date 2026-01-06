@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { CaretRight, CaretDown } from "@phosphor-icons/react";
+import { CaretRight } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -61,11 +61,13 @@ export function NavTreeItem({
           className="flex items-center justify-center w-5 h-5 hover:bg-muted rounded -ml-1"
           aria-label={expanded ? "Collapse" : "Expand"}
         >
-          {expanded ? (
-            <CaretDown className="w-3 h-3" weight="bold" />
-          ) : (
-            <CaretRight className="w-3 h-3" weight="bold" />
-          )}
+          <CaretRight
+            className={cn(
+              "w-3 h-3 transition-transform duration-150 motion-reduce:transition-none",
+              expanded && "rotate-90"
+            )}
+            weight="bold"
+          />
         </button>
       ) : (
         <span className="w-4" />
@@ -75,11 +77,16 @@ export function NavTreeItem({
       <button
         type="button"
         onClick={handleClick}
-        className="flex items-center gap-2 flex-grow min-w-0"
+        className="group flex items-center gap-2 flex-grow min-w-0"
       >
         {/* Icon */}
         {icon && (
-          <span className={cn("flex-shrink-0", active ? "text-primary" : "text-muted-foreground")}>
+          <span className={cn(
+            "flex-shrink-0 transition-all duration-150 motion-reduce:transition-none",
+            "group-hover:scale-110 motion-reduce:group-hover:scale-100",
+            active && "scale-110 drop-shadow-[0_0_3px_hsl(var(--primary)/0.5)] motion-reduce:scale-100 motion-reduce:drop-shadow-none",
+            active ? "text-primary" : "text-muted-foreground"
+          )}>
             {icon}
           </span>
         )}
