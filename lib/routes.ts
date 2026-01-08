@@ -13,6 +13,8 @@ export const ROUTES = {
   FORUM_THREAD: (categorySlug: string, threadSlug: string) =>
     `/forum/${categorySlug}/${threadSlug}`,
   RESOURCES: "/resources",
+  BABEL: "/resources/babel",
+  BABEL_ENTRY: (id: string) => `/resources/babel/${id}`,
   REFERENCES: "/references",
   CALCULATORS: "/calculators",
   ACCOUNT: "/account",
@@ -43,6 +45,8 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.FORUM;
     case VIEW_IDS.RESOURCES:
       return ROUTES.RESOURCES;
+    case VIEW_IDS.BABEL:
+      return ROUTES.BABEL;
     case VIEW_IDS.REFERENCES:
       return ROUTES.REFERENCES;
     case VIEW_IDS.CALCULATORS:
@@ -68,6 +72,8 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/wiki") return VIEW_IDS.WIKI;
   if (pathname === "/forum") return VIEW_IDS.FORUM;
   if (pathname === "/resources") return VIEW_IDS.RESOURCES;
+  if (pathname === "/resources/babel") return VIEW_IDS.BABEL;
+  if (pathname.startsWith("/resources/babel/")) return VIEW_IDS.BABEL;
   if (pathname === "/references") return VIEW_IDS.REFERENCES;
   if (pathname === "/calculators") return VIEW_IDS.CALCULATORS;
   if (pathname === "/account") return VIEW_IDS.ACCOUNT;

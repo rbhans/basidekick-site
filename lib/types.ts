@@ -71,6 +71,7 @@ export const VIEW_IDS = {
   SSK: "ssk",
   MSK: "msk",
   RESOURCES: "resources",
+  BABEL: "babel",
   REFERENCES: "references",
   WIKI: "wiki",
   FORUM: "forum",
@@ -364,4 +365,90 @@ export interface PSKFile {
   uploaded_at: string;
   // Joined data
   creator?: { display_name: string | null };
+}
+
+// BAS Babel types
+export interface BabelTypicalRange {
+  min: number;
+  max: number;
+}
+
+export interface BabelAliases {
+  common: string[];
+  abbreviated?: string[];
+  verbose?: string[];
+  misspellings?: string[];
+}
+
+export interface BabelPointConcept {
+  id: string;
+  name: string;
+  category: string;
+  subcategory?: string;
+  description: string;
+  haystack?: string;
+  brick?: string;
+  unit?: string;
+  typical_range?: BabelTypicalRange;
+  object_type?: string;
+  engineering_units?: string;
+}
+
+export interface BabelPointEntry {
+  concept: BabelPointConcept;
+  aliases: BabelAliases;
+  notes?: string[];
+  related?: string[];
+}
+
+export interface BabelEquipmentSubtype {
+  id: string;
+  name: string;
+  aliases?: string[];
+  description?: string;
+}
+
+export interface BabelEquipmentEntry {
+  id: string;
+  name: string;
+  full_name: string;
+  category: string;
+  description: string;
+  aliases: BabelAliases;
+  subtypes?: BabelEquipmentSubtype[];
+  typical_points?: string[];
+}
+
+export interface BabelCategory {
+  id: string;
+  name: string;
+  type: "points" | "equipment";
+  count: number;
+  subcategories?: BabelCategory[];
+}
+
+export interface BabelSearchIndexEntry {
+  id: string;
+  type: "point" | "equipment";
+  name: string;
+  tokens: string[];
+}
+
+export interface BabelData {
+  version: string;
+  lastUpdated: string;
+  totalPoints: number;
+  totalEquipment: number;
+  points: BabelPointEntry[];
+  equipment: BabelEquipmentEntry[];
+}
+
+export interface BabelCategoriesData {
+  version: string;
+  categories: BabelCategory[];
+}
+
+export interface BabelSearchIndexData {
+  version: string;
+  entries: BabelSearchIndexEntry[];
 }

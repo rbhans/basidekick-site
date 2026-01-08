@@ -3,10 +3,18 @@
 import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
-import { BookOpen, Chats, Kanban, ArrowRight } from "@phosphor-icons/react";
+import { BookOpen, Chats, Kanban, ArrowRight, Translate } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 
 const resources = [
+  {
+    id: "babel",
+    title: "BAS Babel",
+    description: "Point naming standards and aliases across BAS platforms. Translate between vendor conventions and industry standards.",
+    icon: Translate,
+    cta: "Browse Standards",
+    href: ROUTES.BABEL,
+  },
   {
     id: "wiki",
     title: "Wiki",
@@ -54,7 +62,7 @@ export function ResourcesView() {
       {/* Resources Grid */}
       <section className="py-8">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {resources.map((resource) => (
               <Link
                 key={resource.id}

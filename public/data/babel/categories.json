@@ -1,0 +1,107 @@
+{
+  "version": "1.0.0",
+  "categories": [
+    {
+      "id": "air-handling",
+      "name": "Air Handling",
+      "type": "equipment",
+      "count": 31
+    },
+    {
+      "id": "central-plant",
+      "name": "Central Plant",
+      "type": "equipment",
+      "count": 10
+    },
+    {
+      "id": "metering",
+      "name": "Metering",
+      "type": "equipment",
+      "count": 6
+    },
+    {
+      "id": "motors",
+      "name": "Motors",
+      "type": "equipment",
+      "count": 1
+    },
+    {
+      "id": "terminal-units",
+      "name": "Terminal Units",
+      "type": "equipment",
+      "count": 12
+    },
+    {
+      "id": "vrf",
+      "name": "VRF",
+      "type": "equipment",
+      "count": 2
+    },
+    {
+      "id": "alarms",
+      "name": "Alarms",
+      "type": "points",
+      "count": 31
+    },
+    {
+      "id": "commands",
+      "name": "Commands",
+      "type": "points",
+      "count": 70
+    },
+    {
+      "id": "dampers",
+      "name": "Dampers",
+      "type": "points",
+      "count": 18
+    },
+    {
+      "id": "fans",
+      "name": "Fans",
+      "type": "points",
+      "count": 24
+    },
+    {
+      "id": "flows",
+      "name": "Flows",
+      "type": "points",
+      "count": 5
+    },
+    {
+      "id": "humidity",
+      "name": "Humidity",
+      "type": "points",
+      "count": 6
+    },
+    {
+      "id": "pressures",
+      "name": "Pressures",
+      "type": "points",
+      "count": 12
+    },
+    {
+      "id": "setpoints",
+      "name": "Setpoints",
+      "type": "points",
+      "count": 10
+    },
+    {
+      "id": "status",
+      "name": "Status",
+      "type": "points",
+      "count": 52
+    },
+    {
+      "id": "temperatures",
+      "name": "Temperatures",
+      "type": "points",
+      "count": 51
+    },
+    {
+      "id": "valves",
+      "name": "Valves",
+      "type": "points",
+      "count": 13
+    }
+  ]
+}

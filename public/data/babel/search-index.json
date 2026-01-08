@@ -1,0 +1,6028 @@
+{
+  "version": "1.0.0",
+  "entries": [
+    {
+      "id": "boiler-1-alarm",
+      "type": "point",
+      "name": "Boiler 1 Alarm",
+      "tokens": [
+        "boiler 1 alarm",
+        "boiler-1-alarm",
+        "boiler",
+        "1",
+        "alarm",
+        "point",
+        "blr1-a",
+        "blr 1 alm",
+        "boiler 1 alm"
+      ]
+    },
+    {
+      "id": "boiler-2-alarm",
+      "type": "point",
+      "name": "Boiler 2 Alarm",
+      "tokens": [
+        "boiler 2 alarm",
+        "boiler-2-alarm",
+        "boiler",
+        "2",
+        "alarm",
+        "point",
+        "blr2-a",
+        "blr 2 alm",
+        "boiler 2 alm"
+      ]
+    },
+    {
+      "id": "boiler-3-alarm",
+      "type": "point",
+      "name": "Boiler 3 Alarm",
+      "tokens": [
+        "boiler 3 alarm",
+        "boiler-3-alarm",
+        "boiler",
+        "3",
+        "alarm",
+        "point",
+        "blr3-a",
+        "blr 3 alm",
+        "boiler 3 alm"
+      ]
+    },
+    {
+      "id": "boiler-4-alarm",
+      "type": "point",
+      "name": "Boiler 4 Alarm",
+      "tokens": [
+        "boiler 4 alarm",
+        "boiler-4-alarm",
+        "boiler",
+        "4",
+        "alarm",
+        "point",
+        "blr4-a",
+        "blr 4 alm",
+        "boiler 4 alm"
+      ]
+    },
+    {
+      "id": "boiler-pump-alarm",
+      "type": "point",
+      "name": "Boiler Pump Alarm",
+      "tokens": [
+        "boiler pump alarm",
+        "boiler-pump-alarm",
+        "boiler",
+        "pump",
+        "alarm",
+        "point",
+        "bp-a",
+        "bp alm",
+        "bp alarm",
+        "blrp alarm",
+        "blr pump alm"
+      ]
+    },
+    {
+      "id": "chilled-water-pump-alarm",
+      "type": "point",
+      "name": "Chilled Water Pump Alarm",
+      "tokens": [
+        "chilled water pump alarm",
+        "chilled-water-pump-alarm",
+        "chilled",
+        "water",
+        "pump",
+        "alarm",
+        "point",
+        "chwp-a",
+        "chwp alm",
+        "chwp alarm"
+      ]
+    },
+    {
+      "id": "chiller-1-alarm",
+      "type": "point",
+      "name": "Chiller 1 Alarm",
+      "tokens": [
+        "chiller 1 alarm",
+        "chiller-1-alarm",
+        "chiller",
+        "1",
+        "alarm",
+        "point",
+        "ch1-a",
+        "ch1-alm",
+        "ch-1 alarm",
+        "ch-1 alm"
+      ]
+    },
+    {
+      "id": "chiller-2-alarm",
+      "type": "point",
+      "name": "Chiller 2 Alarm",
+      "tokens": [
+        "chiller 2 alarm",
+        "chiller-2-alarm",
+        "chiller",
+        "2",
+        "alarm",
+        "point",
+        "ch2-a",
+        "ch2-alm",
+        "ch-2 alarm",
+        "ch-2 alm"
+      ]
+    },
+    {
+      "id": "chiller-3-alarm",
+      "type": "point",
+      "name": "Chiller 3 Alarm",
+      "tokens": [
+        "chiller 3 alarm",
+        "chiller-3-alarm",
+        "chiller",
+        "3",
+        "alarm",
+        "point",
+        "ch3-a",
+        "ch3-alm",
+        "ch-3 alarm",
+        "ch-3 alm"
+      ]
+    },
+    {
+      "id": "chiller-4-alarm",
+      "type": "point",
+      "name": "Chiller 4 Alarm",
+      "tokens": [
+        "chiller 4 alarm",
+        "chiller-4-alarm",
+        "chiller",
+        "4",
+        "alarm",
+        "point",
+        "ch4-a",
+        "ch4-alm",
+        "ch-4 alarm",
+        "ch-4 alm"
+      ]
+    },
+    {
+      "id": "chiller-5-alarm",
+      "type": "point",
+      "name": "Chiller 5 Alarm",
+      "tokens": [
+        "chiller 5 alarm",
+        "chiller-5-alarm",
+        "chiller",
+        "5",
+        "alarm",
+        "point",
+        "ch5-a",
+        "ch5-alm",
+        "ch-5 alarm",
+        "ch-5 alm"
+      ]
+    },
+    {
+      "id": "chiller-6-alarm",
+      "type": "point",
+      "name": "Chiller 6 Alarm",
+      "tokens": [
+        "chiller 6 alarm",
+        "chiller-6-alarm",
+        "chiller",
+        "6",
+        "alarm",
+        "point",
+        "ch6-a",
+        "ch6-alm",
+        "ch-6 alarm",
+        "ch-6 alm"
+      ]
+    },
+    {
+      "id": "chiller-7-alarm",
+      "type": "point",
+      "name": "Chiller 7 Alarm",
+      "tokens": [
+        "chiller 7 alarm",
+        "chiller-7-alarm",
+        "chiller",
+        "7",
+        "alarm",
+        "point",
+        "ch7-a",
+        "ch7-alm",
+        "ch-7 alarm",
+        "ch-7 alm"
+      ]
+    },
+    {
+      "id": "chiller-8-alarm",
+      "type": "point",
+      "name": "Chiller 8 Alarm",
+      "tokens": [
+        "chiller 8 alarm",
+        "chiller-8-alarm",
+        "chiller",
+        "8",
+        "alarm",
+        "point",
+        "ch8-a",
+        "ch8-alm",
+        "ch-8 alarm",
+        "ch-8 alm"
+      ]
+    },
+    {
+      "id": "condenser-water-pump-alarm",
+      "type": "point",
+      "name": "Condenser Water Pump Alarm",
+      "tokens": [
+        "condenser water pump alarm",
+        "condenser-water-pump-alarm",
+        "condenser",
+        "water",
+        "pump",
+        "alarm",
+        "point",
+        "cwp-a",
+        "cwp alm",
+        "cwp alarm"
+      ]
+    },
+    {
+      "id": "cooling-tower-1-alarm",
+      "type": "point",
+      "name": "Cooling Tower 1 Alarm",
+      "tokens": [
+        "cooling tower 1 alarm",
+        "cooling-tower-1-alarm",
+        "cooling",
+        "tower",
+        "1",
+        "alarm",
+        "point",
+        "ct1-a",
+        "clg twr 1 alm",
+        "ct-1 alarm",
+        "ct-1 alm"
+      ]
+    },
+    {
+      "id": "cooling-tower-2-alarm",
+      "type": "point",
+      "name": "Cooling Tower 2 Alarm",
+      "tokens": [
+        "cooling tower 2 alarm",
+        "cooling-tower-2-alarm",
+        "cooling",
+        "tower",
+        "2",
+        "alarm",
+        "point",
+        "ct2-a",
+        "clg twr 2 alm",
+        "ct-2 alarm",
+        "ct-2 alm"
+      ]
+    },
+    {
+      "id": "cooling-tower-3-alarm",
+      "type": "point",
+      "name": "Cooling Tower 3 Alarm",
+      "tokens": [
+        "cooling tower 3 alarm",
+        "cooling-tower-3-alarm",
+        "cooling",
+        "tower",
+        "3",
+        "alarm",
+        "point",
+        "ct3-a",
+        "clg twr 3 alm",
+        "ct-3 alarm",
+        "ct-3 alm"
+      ]
+    },
+    {
+      "id": "cooling-tower-4-alarm",
+      "type": "point",
+      "name": "Cooling Tower 4 Alarm",
+      "tokens": [
+        "cooling tower 4 alarm",
+        "cooling-tower-4-alarm",
+        "cooling",
+        "tower",
+        "4",
+        "alarm",
+        "point",
+        "ct4-a",
+        "clg twr 4 alm",
+        "ct-4 alarm",
+        "ct-4 alm"
+      ]
+    },
+    {
+      "id": "cooling-tower-5-alarm",
+      "type": "point",
+      "name": "Cooling Tower 5 Alarm",
+      "tokens": [
+        "cooling tower 5 alarm",
+        "cooling-tower-5-alarm",
+        "cooling",
+        "tower",
+        "5",
+        "alarm",
+        "point",
+        "ct5-a",
+        "clg twr 5 alm",
+        "ct-5 alarm",
+        "ct-5 alm"
+      ]
+    },
+    {
+      "id": "cooling-tower-6-alarm",
+      "type": "point",
+      "name": "Cooling Tower 6 Alarm",
+      "tokens": [
+        "cooling tower 6 alarm",
+        "cooling-tower-6-alarm",
+        "cooling",
+        "tower",
+        "6",
+        "alarm",
+        "point",
+        "ct6-a",
+        "clg twr 6 alm",
+        "ct-6 alarm",
+        "ct-6 alm"
+      ]
+    },
+    {
+      "id": "cooling-tower-7-alarm",
+      "type": "point",
+      "name": "Cooling Tower 7 Alarm",
+      "tokens": [
+        "cooling tower 7 alarm",
+        "cooling-tower-7-alarm",
+        "cooling",
+        "tower",
+        "7",
+        "alarm",
+        "point",
+        "ct7-a",
+        "clg twr 7 alm",
+        "ct-7 alarm",
+        "ct-7 alm"
+      ]
+    },
+    {
+      "id": "cooling-tower-8-alarm",
+      "type": "point",
+      "name": "Cooling Tower 8 Alarm",
+      "tokens": [
+        "cooling tower 8 alarm",
+        "cooling-tower-8-alarm",
+        "cooling",
+        "tower",
+        "8",
+        "alarm",
+        "point",
+        "ct8-a",
+        "clg twr 8 alm",
+        "ct-8 alarm",
+        "ct-8 alm"
+      ]
+    },
+    {
+      "id": "filter-alarm",
+      "type": "point",
+      "name": "Filter Alarm",
+      "tokens": [
+        "filter alarm",
+        "filter-alarm",
+        "filter",
+        "alarm",
+        "point",
+        "filt-a",
+        "filt alm",
+        "filt alarm"
+      ]
+    },
+    {
+      "id": "final-filter-alarm",
+      "type": "point",
+      "name": "Final Filter Alarm",
+      "tokens": [
+        "final filter alarm",
+        "final-filter-alarm",
+        "final",
+        "filter",
+        "alarm",
+        "point",
+        "fin filter alarm",
+        "ffilt-a",
+        "fin filt alm",
+        "fin filt alarm"
+      ]
+    },
+    {
+      "id": "hot-water-pump-alarm",
+      "type": "point",
+      "name": "Hot Water Pump Alarm",
+      "tokens": [
+        "hot water pump alarm",
+        "hot-water-pump-alarm",
+        "hot",
+        "water",
+        "pump",
+        "alarm",
+        "point",
+        "hwp-a",
+        "hwp alm",
+        "hwp alarm"
+      ]
+    },
+    {
+      "id": "low-limit-alarm",
+      "type": "point",
+      "name": "Low Limit Alarm",
+      "tokens": [
+        "low limit alarm",
+        "low-limit-alarm",
+        "low",
+        "limit",
+        "alarm",
+        "point",
+        "low temp alarm",
+        "freezestat",
+        "lt-a",
+        "frz-st",
+        "ll-a",
+        "low temp alm"
+      ]
+    },
+    {
+      "id": "prefilter-alarm",
+      "type": "point",
+      "name": "Prefilter Alarm",
+      "tokens": [
+        "prefilter alarm",
+        "prefilter-alarm",
+        "prefilter",
+        "alarm",
+        "point",
+        "pre filter alarm",
+        "pfilt-a",
+        "pre filt alm",
+        "pre filt alarm"
+      ]
+    },
+    {
+      "id": "primary-chilled-water-pump-alarm",
+      "type": "point",
+      "name": "Primary Chilled Water Pump Alarm",
+      "tokens": [
+        "primary chilled water pump alarm",
+        "primary-chilled-water-pump-alarm",
+        "primary",
+        "chilled",
+        "water",
+        "pump",
+        "alarm",
+        "point",
+        "pchwp-a",
+        "pchwp alm",
+        "pchwp alarm"
+      ]
+    },
+    {
+      "id": "secondary-chilled-water-pump-alarm",
+      "type": "point",
+      "name": "Secondary Chilled Water Pump Alarm",
+      "tokens": [
+        "secondary chilled water pump alarm",
+        "secondary-chilled-water-pump-alarm",
+        "secondary",
+        "chilled",
+        "water",
+        "pump",
+        "alarm",
+        "point",
+        "schwp-a",
+        "schwp alm",
+        "schwp alarm"
+      ]
+    },
+    {
+      "id": "smoke-alarm",
+      "type": "point",
+      "name": "Smoke Alarm",
+      "tokens": [
+        "smoke alarm",
+        "smoke-alarm",
+        "smoke",
+        "alarm",
+        "point",
+        "smoke detect",
+        "smk-alm",
+        "smk-det"
+      ]
+    },
+    {
+      "id": "boiler-1-command",
+      "type": "point",
+      "name": "Boiler 1 Command",
+      "tokens": [
+        "boiler 1 command",
+        "boiler-1-command",
+        "boiler",
+        "1",
+        "command",
+        "point",
+        "blr1-c",
+        "blr 1 cmd",
+        "boiler 1 cmd",
+        "b-1 command"
+      ]
+    },
+    {
+      "id": "boiler-1-output",
+      "type": "point",
+      "name": "Boiler 1 Output",
+      "tokens": [
+        "boiler 1 output",
+        "boiler-1-output",
+        "boiler",
+        "1",
+        "output",
+        "point",
+        "blr1-o",
+        "blr 1 out",
+        "boiler 1 out",
+        "b-1 output"
+      ]
+    },
+    {
+      "id": "boiler-2-command",
+      "type": "point",
+      "name": "Boiler 2 Command",
+      "tokens": [
+        "boiler 2 command",
+        "boiler-2-command",
+        "boiler",
+        "2",
+        "command",
+        "point",
+        "blr2-c",
+        "blr 2 cmd",
+        "boiler 2 cmd",
+        "b-2 command"
+      ]
+    },
+    {
+      "id": "boiler-2-output",
+      "type": "point",
+      "name": "Boiler 2 Output",
+      "tokens": [
+        "boiler 2 output",
+        "boiler-2-output",
+        "boiler",
+        "2",
+        "output",
+        "point",
+        "blr2-o",
+        "blr 2 out",
+        "boiler 2 out",
+        "b-2 output"
+      ]
+    },
+    {
+      "id": "boiler-3-command",
+      "type": "point",
+      "name": "Boiler 3 Command",
+      "tokens": [
+        "boiler 3 command",
+        "boiler-3-command",
+        "boiler",
+        "3",
+        "command",
+        "point",
+        "blr3-c",
+        "blr 3 cmd",
+        "boiler 3 cmd",
+        "b-3 command"
+      ]
+    },
+    {
+      "id": "boiler-3-output",
+      "type": "point",
+      "name": "Boiler 3 Output",
+      "tokens": [
+        "boiler 3 output",
+        "boiler-3-output",
+        "boiler",
+        "3",
+        "output",
+        "point",
+        "blr3-o",
+        "blr 3 out",
+        "boiler 3 out",
+        "b-3 output"
+      ]
+    },
+    {
+      "id": "boiler-4-command",
+      "type": "point",
+      "name": "Boiler 4 Command",
+      "tokens": [
+        "boiler 4 command",
+        "boiler-4-command",
+        "boiler",
+        "4",
+        "command",
+        "point",
+        "blr4-c",
+        "blr 4 cmd",
+        "boiler 4 cmd",
+        "b-4 command"
+      ]
+    },
+    {
+      "id": "boiler-4-output",
+      "type": "point",
+      "name": "Boiler 4 Output",
+      "tokens": [
+        "boiler 4 output",
+        "boiler-4-output",
+        "boiler",
+        "4",
+        "output",
+        "point",
+        "blr4-o",
+        "blr 4 out",
+        "boiler 4 out",
+        "b-4 output"
+      ]
+    },
+    {
+      "id": "boiler-pump-command",
+      "type": "point",
+      "name": "Boiler Pump Command",
+      "tokens": [
+        "boiler pump command",
+        "boiler-pump-command",
+        "boiler",
+        "pump",
+        "command",
+        "point",
+        "bp-c",
+        "bp cmd",
+        "bp command",
+        "blrp command",
+        "blr pump cmd"
+      ]
+    },
+    {
+      "id": "boiler-pump-output",
+      "type": "point",
+      "name": "Boiler Pump Output",
+      "tokens": [
+        "boiler pump output",
+        "boiler-pump-output",
+        "boiler",
+        "pump",
+        "output",
+        "point",
+        "bp-o",
+        "bp out",
+        "bp output",
+        "blrp output",
+        "blr pump out"
+      ]
+    },
+    {
+      "id": "chilled-water-pump-command",
+      "type": "point",
+      "name": "Chilled Water Pump Command",
+      "tokens": [
+        "chilled water pump command",
+        "chilled-water-pump-command",
+        "chilled",
+        "water",
+        "pump",
+        "command",
+        "point",
+        "chwp-c",
+        "chwp cmd",
+        "chwp command"
+      ]
+    },
+    {
+      "id": "chilled-water-pump-output",
+      "type": "point",
+      "name": "Chilled Water Pump Output",
+      "tokens": [
+        "chilled water pump output",
+        "chilled-water-pump-output",
+        "chilled",
+        "water",
+        "pump",
+        "output",
+        "point",
+        "chwp-o",
+        "chwp out",
+        "chwp output"
+      ]
+    },
+    {
+      "id": "chiller-1-command",
+      "type": "point",
+      "name": "Chiller 1 Command",
+      "tokens": [
+        "chiller 1 command",
+        "chiller-1-command",
+        "chiller",
+        "1",
+        "command",
+        "point",
+        "ch1-c",
+        "ch1-cmd",
+        "ch-1 cmd",
+        "ch-1 command",
+        "chlr-1 cmd"
+      ]
+    },
+    {
+      "id": "chiller-1-enable",
+      "type": "point",
+      "name": "Chiller 1 Enable",
+      "tokens": [
+        "chiller 1 enable",
+        "chiller-1-enable",
+        "chiller",
+        "1",
+        "enable",
+        "point",
+        "ch1-en",
+        "ch1-enable",
+        "ch-1 enable",
+        "chlr-1 enable"
+      ]
+    },
+    {
+      "id": "chiller-2-command",
+      "type": "point",
+      "name": "Chiller 2 Command",
+      "tokens": [
+        "chiller 2 command",
+        "chiller-2-command",
+        "chiller",
+        "2",
+        "command",
+        "point",
+        "ch2-c",
+        "ch2-cmd",
+        "ch-2 cmd",
+        "ch-2 command",
+        "chlr-2 cmd"
+      ]
+    },
+    {
+      "id": "chiller-2-enable",
+      "type": "point",
+      "name": "Chiller 2 Enable",
+      "tokens": [
+        "chiller 2 enable",
+        "chiller-2-enable",
+        "chiller",
+        "2",
+        "enable",
+        "point",
+        "ch2-en",
+        "ch2-enable",
+        "ch-2 enable",
+        "chlr-2 enable"
+      ]
+    },
+    {
+      "id": "chiller-3-command",
+      "type": "point",
+      "name": "Chiller 3 Command",
+      "tokens": [
+        "chiller 3 command",
+        "chiller-3-command",
+        "chiller",
+        "3",
+        "command",
+        "point",
+        "ch3-c",
+        "ch3-cmd",
+        "ch-3 cmd",
+        "ch-3 command",
+        "chlr-3 cmd"
+      ]
+    },
+    {
+      "id": "chiller-3-enable",
+      "type": "point",
+      "name": "Chiller 3 Enable",
+      "tokens": [
+        "chiller 3 enable",
+        "chiller-3-enable",
+        "chiller",
+        "3",
+        "enable",
+        "point",
+        "ch3-en",
+        "ch3-enable",
+        "ch-3 enable",
+        "chlr-3 enable"
+      ]
+    },
+    {
+      "id": "chiller-4-command",
+      "type": "point",
+      "name": "Chiller 4 Command",
+      "tokens": [
+        "chiller 4 command",
+        "chiller-4-command",
+        "chiller",
+        "4",
+        "command",
+        "point",
+        "ch4-c",
+        "ch4-cmd",
+        "ch-4 cmd",
+        "ch-4 command",
+        "chlr-4 cmd"
+      ]
+    },
+    {
+      "id": "chiller-4-enable",
+      "type": "point",
+      "name": "Chiller 4 Enable",
+      "tokens": [
+        "chiller 4 enable",
+        "chiller-4-enable",
+        "chiller",
+        "4",
+        "enable",
+        "point",
+        "ch4-en",
+        "ch4-enable",
+        "ch-4 enable",
+        "chlr-4 enable"
+      ]
+    },
+    {
+      "id": "chiller-5-command",
+      "type": "point",
+      "name": "Chiller 5 Command",
+      "tokens": [
+        "chiller 5 command",
+        "chiller-5-command",
+        "chiller",
+        "5",
+        "command",
+        "point",
+        "ch5-c",
+        "ch5-cmd",
+        "ch-5 cmd",
+        "ch-5 command",
+        "chlr-5 cmd"
+      ]
+    },
+    {
+      "id": "chiller-5-enable",
+      "type": "point",
+      "name": "Chiller 5 Enable",
+      "tokens": [
+        "chiller 5 enable",
+        "chiller-5-enable",
+        "chiller",
+        "5",
+        "enable",
+        "point",
+        "ch5-en",
+        "ch5-enable",
+        "ch-5 enable",
+        "chlr-5 enable"
+      ]
+    },
+    {
+      "id": "chiller-6-command",
+      "type": "point",
+      "name": "Chiller 6 Command",
+      "tokens": [
+        "chiller 6 command",
+        "chiller-6-command",
+        "chiller",
+        "6",
+        "command",
+        "point",
+        "ch6-c",
+        "ch6-cmd",
+        "ch-6 cmd",
+        "ch-6 command",
+        "chlr-6 cmd"
+      ]
+    },
+    {
+      "id": "chiller-6-enable",
+      "type": "point",
+      "name": "Chiller 6 Enable",
+      "tokens": [
+        "chiller 6 enable",
+        "chiller-6-enable",
+        "chiller",
+        "6",
+        "enable",
+        "point",
+        "ch6-en",
+        "ch6-enable",
+        "ch-6 enable",
+        "chlr-6 enable"
+      ]
+    },
+    {
+      "id": "chiller-7-command",
+      "type": "point",
+      "name": "Chiller 7 Command",
+      "tokens": [
+        "chiller 7 command",
+        "chiller-7-command",
+        "chiller",
+        "7",
+        "command",
+        "point",
+        "ch7-c",
+        "ch7-cmd",
+        "ch-7 cmd",
+        "ch-7 command",
+        "chlr-7 cmd"
+      ]
+    },
+    {
+      "id": "chiller-7-enable",
+      "type": "point",
+      "name": "Chiller 7 Enable",
+      "tokens": [
+        "chiller 7 enable",
+        "chiller-7-enable",
+        "chiller",
+        "7",
+        "enable",
+        "point",
+        "ch7-en",
+        "ch7-enable",
+        "ch-7 enable",
+        "chlr-7 enable"
+      ]
+    },
+    {
+      "id": "chiller-8-command",
+      "type": "point",
+      "name": "Chiller 8 Command",
+      "tokens": [
+        "chiller 8 command",
+        "chiller-8-command",
+        "chiller",
+        "8",
+        "command",
+        "point",
+        "ch8-c",
+        "ch8-cmd",
+        "ch-8 cmd",
+        "ch-8 command",
+        "chlr-8 cmd"
+      ]
+    },
+    {
+      "id": "chiller-8-enable",
+      "type": "point",
+      "name": "Chiller 8 Enable",
+      "tokens": [
+        "chiller 8 enable",
+        "chiller-8-enable",
+        "chiller",
+        "8",
+        "enable",
+        "point",
+        "ch8-en",
+        "ch8-enable",
+        "ch-8 enable",
+        "chlr-8 enable"
+      ]
+    },
+    {
+      "id": "condenser-water-pump-command",
+      "type": "point",
+      "name": "Condenser Water Pump Command",
+      "tokens": [
+        "condenser water pump command",
+        "condenser-water-pump-command",
+        "condenser",
+        "water",
+        "pump",
+        "command",
+        "point",
+        "cwp-c",
+        "cwp cmd",
+        "cwp command"
+      ]
+    },
+    {
+      "id": "condenser-water-pump-output",
+      "type": "point",
+      "name": "Condenser Water Pump Output",
+      "tokens": [
+        "condenser water pump output",
+        "condenser-water-pump-output",
+        "condenser",
+        "water",
+        "pump",
+        "output",
+        "point",
+        "cwp-o",
+        "cwp out",
+        "cwp output"
+      ]
+    },
+    {
+      "id": "cooling-enable",
+      "type": "point",
+      "name": "Cooling Enable",
+      "tokens": [
+        "cooling enable",
+        "cooling-enable",
+        "cooling",
+        "enable",
+        "point",
+        "clg-en",
+        "cooling en",
+        "cool enable",
+        "clg enable"
+      ]
+    },
+    {
+      "id": "cooling-tower-1-command",
+      "type": "point",
+      "name": "Cooling Tower 1 Command",
+      "tokens": [
+        "cooling tower 1 command",
+        "cooling-tower-1-command",
+        "cooling",
+        "tower",
+        "1",
+        "command",
+        "point",
+        "ct1-cmd",
+        "clg twr 1 cmd",
+        "ct-1 command"
+      ]
+    },
+    {
+      "id": "cooling-tower-1-enable",
+      "type": "point",
+      "name": "Cooling Tower 1 Enable",
+      "tokens": [
+        "cooling tower 1 enable",
+        "cooling-tower-1-enable",
+        "cooling",
+        "tower",
+        "1",
+        "enable",
+        "point",
+        "ct1-en",
+        "clg twr 1 en",
+        "ct-1 enable",
+        "clg twr 1 enable",
+        "ct-1 ena"
+      ]
+    },
+    {
+      "id": "cooling-tower-1-output",
+      "type": "point",
+      "name": "Cooling Tower 1 Output",
+      "tokens": [
+        "cooling tower 1 output",
+        "cooling-tower-1-output",
+        "cooling",
+        "tower",
+        "1",
+        "output",
+        "point",
+        "ct1-o",
+        "clg twr 1 out",
+        "ct-1 out",
+        "ct-1 output"
+      ]
+    },
+    {
+      "id": "cooling-tower-2-command",
+      "type": "point",
+      "name": "Cooling Tower 2 Command",
+      "tokens": [
+        "cooling tower 2 command",
+        "cooling-tower-2-command",
+        "cooling",
+        "tower",
+        "2",
+        "command",
+        "point",
+        "ct2-cmd",
+        "clg twr 2 cmd",
+        "ct-2 command"
+      ]
+    },
+    {
+      "id": "cooling-tower-2-enable",
+      "type": "point",
+      "name": "Cooling Tower 2 Enable",
+      "tokens": [
+        "cooling tower 2 enable",
+        "cooling-tower-2-enable",
+        "cooling",
+        "tower",
+        "2",
+        "enable",
+        "point",
+        "ct2-en",
+        "clg twr 2 en",
+        "ct-2 enable",
+        "clg twr 2 enable",
+        "ct-2 ena"
+      ]
+    },
+    {
+      "id": "cooling-tower-2-output",
+      "type": "point",
+      "name": "Cooling Tower 2 Output",
+      "tokens": [
+        "cooling tower 2 output",
+        "cooling-tower-2-output",
+        "cooling",
+        "tower",
+        "2",
+        "output",
+        "point",
+        "ct2-o",
+        "clg twr 2 out",
+        "ct-2 out",
+        "ct-2 output"
+      ]
+    },
+    {
+      "id": "cooling-tower-3-command",
+      "type": "point",
+      "name": "Cooling Tower 3 Command",
+      "tokens": [
+        "cooling tower 3 command",
+        "cooling-tower-3-command",
+        "cooling",
+        "tower",
+        "3",
+        "command",
+        "point",
+        "ct3-cmd",
+        "clg twr 3 cmd",
+        "ct-3 command"
+      ]
+    },
+    {
+      "id": "cooling-tower-3-enable",
+      "type": "point",
+      "name": "Cooling Tower 3 Enable",
+      "tokens": [
+        "cooling tower 3 enable",
+        "cooling-tower-3-enable",
+        "cooling",
+        "tower",
+        "3",
+        "enable",
+        "point",
+        "ct3-en",
+        "clg twr 3 en",
+        "ct-3 enable",
+        "clg twr 3 enable",
+        "ct-3 ena"
+      ]
+    },
+    {
+      "id": "cooling-tower-3-output",
+      "type": "point",
+      "name": "Cooling Tower 3 Output",
+      "tokens": [
+        "cooling tower 3 output",
+        "cooling-tower-3-output",
+        "cooling",
+        "tower",
+        "3",
+        "output",
+        "point",
+        "ct3-o",
+        "clg twr 3 out",
+        "ct-3 out",
+        "ct-3 output"
+      ]
+    },
+    {
+      "id": "cooling-tower-4-command",
+      "type": "point",
+      "name": "Cooling Tower 4 Command",
+      "tokens": [
+        "cooling tower 4 command",
+        "cooling-tower-4-command",
+        "cooling",
+        "tower",
+        "4",
+        "command",
+        "point",
+        "ct4-cmd",
+        "clg twr 4 cmd",
+        "ct-4 command"
+      ]
+    },
+    {
+      "id": "cooling-tower-4-enable",
+      "type": "point",
+      "name": "Cooling Tower 4 Enable",
+      "tokens": [
+        "cooling tower 4 enable",
+        "cooling-tower-4-enable",
+        "cooling",
+        "tower",
+        "4",
+        "enable",
+        "point",
+        "ct4-en",
+        "clg twr 4 en",
+        "ct-4 enable",
+        "clg twr 4 enable",
+        "ct-4 ena"
+      ]
+    },
+    {
+      "id": "cooling-tower-4-output",
+      "type": "point",
+      "name": "Cooling Tower 4 Output",
+      "tokens": [
+        "cooling tower 4 output",
+        "cooling-tower-4-output",
+        "cooling",
+        "tower",
+        "4",
+        "output",
+        "point",
+        "ct4-o",
+        "clg twr 4 out",
+        "ct-4 out",
+        "ct-4 output"
+      ]
+    },
+    {
+      "id": "cooling-tower-5-command",
+      "type": "point",
+      "name": "Cooling Tower 5 Command",
+      "tokens": [
+        "cooling tower 5 command",
+        "cooling-tower-5-command",
+        "cooling",
+        "tower",
+        "5",
+        "command",
+        "point",
+        "ct5-cmd",
+        "clg twr 5 cmd",
+        "ct-5 command"
+      ]
+    },
+    {
+      "id": "cooling-tower-5-enable",
+      "type": "point",
+      "name": "Cooling Tower 5 Enable",
+      "tokens": [
+        "cooling tower 5 enable",
+        "cooling-tower-5-enable",
+        "cooling",
+        "tower",
+        "5",
+        "enable",
+        "point",
+        "ct5-en",
+        "clg twr 5 en",
+        "ct-5 enable",
+        "clg twr 5 enable",
+        "ct-5 ena"
+      ]
+    },
+    {
+      "id": "cooling-tower-5-output",
+      "type": "point",
+      "name": "Cooling Tower 5 Output",
+      "tokens": [
+        "cooling tower 5 output",
+        "cooling-tower-5-output",
+        "cooling",
+        "tower",
+        "5",
+        "output",
+        "point",
+        "ct5-o",
+        "clg twr 5 out",
+        "ct-5 out",
+        "ct-5 output"
+      ]
+    },
+    {
+      "id": "cooling-tower-6-command",
+      "type": "point",
+      "name": "Cooling Tower 6 Command",
+      "tokens": [
+        "cooling tower 6 command",
+        "cooling-tower-6-command",
+        "cooling",
+        "tower",
+        "6",
+        "command",
+        "point",
+        "ct6-cmd",
+        "clg twr 6 cmd",
+        "ct-6 command"
+      ]
+    },
+    {
+      "id": "cooling-tower-6-enable",
+      "type": "point",
+      "name": "Cooling Tower 6 Enable",
+      "tokens": [
+        "cooling tower 6 enable",
+        "cooling-tower-6-enable",
+        "cooling",
+        "tower",
+        "6",
+        "enable",
+        "point",
+        "ct6-en",
+        "clg twr 6 en",
+        "ct-6 enable",
+        "clg twr 6 enable",
+        "ct-6 ena"
+      ]
+    },
+    {
+      "id": "cooling-tower-6-output",
+      "type": "point",
+      "name": "Cooling Tower 6 Output",
+      "tokens": [
+        "cooling tower 6 output",
+        "cooling-tower-6-output",
+        "cooling",
+        "tower",
+        "6",
+        "output",
+        "point",
+        "ct6-o",
+        "clg twr 6 out",
+        "ct-6 out",
+        "ct-6 output"
+      ]
+    },
+    {
+      "id": "cooling-tower-7-command",
+      "type": "point",
+      "name": "Cooling Tower 7 Command",
+      "tokens": [
+        "cooling tower 7 command",
+        "cooling-tower-7-command",
+        "cooling",
+        "tower",
+        "7",
+        "command",
+        "point",
+        "ct7-cmd",
+        "clg twr 7 cmd",
+        "ct-7 command"
+      ]
+    },
+    {
+      "id": "cooling-tower-7-enable",
+      "type": "point",
+      "name": "Cooling Tower 7 Enable",
+      "tokens": [
+        "cooling tower 7 enable",
+        "cooling-tower-7-enable",
+        "cooling",
+        "tower",
+        "7",
+        "enable",
+        "point",
+        "ct7-en",
+        "clg twr 7 en",
+        "ct-7 enable",
+        "clg twr 7 enable",
+        "ct-7 ena"
+      ]
+    },
+    {
+      "id": "cooling-tower-7-output",
+      "type": "point",
+      "name": "Cooling Tower 7 Output",
+      "tokens": [
+        "cooling tower 7 output",
+        "cooling-tower-7-output",
+        "cooling",
+        "tower",
+        "7",
+        "output",
+        "point",
+        "ct7-o",
+        "clg twr 7 out",
+        "ct-7 out",
+        "ct-7 output"
+      ]
+    },
+    {
+      "id": "cooling-tower-8-command",
+      "type": "point",
+      "name": "Cooling Tower 8 Command",
+      "tokens": [
+        "cooling tower 8 command",
+        "cooling-tower-8-command",
+        "cooling",
+        "tower",
+        "8",
+        "command",
+        "point",
+        "ct8-cmd",
+        "clg twr 8 cmd",
+        "ct-8 command"
+      ]
+    },
+    {
+      "id": "cooling-tower-8-enable",
+      "type": "point",
+      "name": "Cooling Tower 8 Enable",
+      "tokens": [
+        "cooling tower 8 enable",
+        "cooling-tower-8-enable",
+        "cooling",
+        "tower",
+        "8",
+        "enable",
+        "point",
+        "ct8-en",
+        "clg twr 8 en",
+        "ct-8 enable",
+        "clg twr 8 enable",
+        "ct-8 ena"
+      ]
+    },
+    {
+      "id": "cooling-tower-8-output",
+      "type": "point",
+      "name": "Cooling Tower 8 Output",
+      "tokens": [
+        "cooling tower 8 output",
+        "cooling-tower-8-output",
+        "cooling",
+        "tower",
+        "8",
+        "output",
+        "point",
+        "ct8-o",
+        "clg twr 8 out",
+        "ct-8 out",
+        "ct-8 output"
+      ]
+    },
+    {
+      "id": "economizer-enable",
+      "type": "point",
+      "name": "Economizer Enable",
+      "tokens": [
+        "economizer enable",
+        "economizer-enable",
+        "economizer",
+        "enable",
+        "point",
+        "econ-en",
+        "econ enable",
+        "econ en"
+      ]
+    },
+    {
+      "id": "gas-fired-heat-output",
+      "type": "point",
+      "name": "Gas Fired Heat Output",
+      "tokens": [
+        "gas fired heat output",
+        "gas-fired-heat-output",
+        "gas",
+        "fired",
+        "heat",
+        "output",
+        "point",
+        "gashtg-o",
+        "gas heating out",
+        "gas heat"
+      ]
+    },
+    {
+      "id": "heat-wheel-command",
+      "type": "point",
+      "name": "Heat Wheel Command",
+      "tokens": [
+        "heat wheel command",
+        "heat-wheel-command",
+        "heat",
+        "wheel",
+        "command",
+        "point",
+        "hw-c",
+        "hw cmd",
+        "hw command",
+        "erw command",
+        "energy recovery wheel command",
+        "erw-c"
+      ]
+    },
+    {
+      "id": "heat-wheel-output",
+      "type": "point",
+      "name": "Heat Wheel Output",
+      "tokens": [
+        "heat wheel output",
+        "heat-wheel-output",
+        "heat",
+        "wheel",
+        "output",
+        "point",
+        "hw-o",
+        "hw out",
+        "hw output",
+        "erw output",
+        "energy recovery wheel output",
+        "erw-o"
+      ]
+    },
+    {
+      "id": "heating-enable",
+      "type": "point",
+      "name": "Heating Enable",
+      "tokens": [
+        "heating enable",
+        "heating-enable",
+        "heating",
+        "enable",
+        "point",
+        "htg-en",
+        "heating en",
+        "htg enable",
+        "heat enable"
+      ]
+    },
+    {
+      "id": "hot-water-pump-command",
+      "type": "point",
+      "name": "Hot Water Pump Command",
+      "tokens": [
+        "hot water pump command",
+        "hot-water-pump-command",
+        "hot",
+        "water",
+        "pump",
+        "command",
+        "point",
+        "hwp-c",
+        "hwp cmd",
+        "hwp command"
+      ]
+    },
+    {
+      "id": "hot-water-pump-output",
+      "type": "point",
+      "name": "Hot Water Pump Output",
+      "tokens": [
+        "hot water pump output",
+        "hot-water-pump-output",
+        "hot",
+        "water",
+        "pump",
+        "output",
+        "point",
+        "hwp-o",
+        "hwp out",
+        "hwp output"
+      ]
+    },
+    {
+      "id": "occupied-command",
+      "type": "point",
+      "name": "Occupied Command",
+      "tokens": [
+        "occupied command",
+        "occupied-command",
+        "occupied",
+        "command",
+        "point",
+        "occ-cmd",
+        "occ command",
+        "occupancy cmd"
+      ]
+    },
+    {
+      "id": "primary-chilled-water-pump-command",
+      "type": "point",
+      "name": "Primary Chilled Water Pump Command",
+      "tokens": [
+        "primary chilled water pump command",
+        "primary-chilled-water-pump-command",
+        "primary",
+        "chilled",
+        "water",
+        "pump",
+        "command",
+        "point",
+        "pchwp-c",
+        "pchwp cmd",
+        "pchwp command"
+      ]
+    },
+    {
+      "id": "primary-chilled-water-pump-output",
+      "type": "point",
+      "name": "Primary Chilled Water Pump Output",
+      "tokens": [
+        "primary chilled water pump output",
+        "primary-chilled-water-pump-output",
+        "primary",
+        "chilled",
+        "water",
+        "pump",
+        "output",
+        "point",
+        "pchwp-o",
+        "pchwp out",
+        "pchwp output"
+      ]
+    },
+    {
+      "id": "secondary-chilled-water-pump-command",
+      "type": "point",
+      "name": "Secondary Chilled Water Pump Command",
+      "tokens": [
+        "secondary chilled water pump command",
+        "secondary-chilled-water-pump-command",
+        "secondary",
+        "chilled",
+        "water",
+        "pump",
+        "command",
+        "point",
+        "schwp-c",
+        "schwp cmd",
+        "schwp command"
+      ]
+    },
+    {
+      "id": "secondary-chilled-water-pump-output",
+      "type": "point",
+      "name": "Secondary Chilled Water Pump Output",
+      "tokens": [
+        "secondary chilled water pump output",
+        "secondary-chilled-water-pump-output",
+        "secondary",
+        "chilled",
+        "water",
+        "pump",
+        "output",
+        "point",
+        "schwp-o",
+        "schwp out",
+        "schwp output"
+      ]
+    },
+    {
+      "id": "steam-heating-output",
+      "type": "point",
+      "name": "Steam Heating Output",
+      "tokens": [
+        "steam heating output",
+        "steam-heating-output",
+        "steam",
+        "heating",
+        "output",
+        "point",
+        "stm-o",
+        "steam out",
+        "steam heat out",
+        "steam htg out",
+        "steam htg output"
+      ]
+    },
+    {
+      "id": "system-enable",
+      "type": "point",
+      "name": "System Enable",
+      "tokens": [
+        "system enable",
+        "system-enable",
+        "system",
+        "enable",
+        "point",
+        "sys-en",
+        "system en",
+        "sys enable"
+      ]
+    },
+    {
+      "id": "unit-enable-mode",
+      "type": "point",
+      "name": "Unit Enable Mode",
+      "tokens": [
+        "unit enable mode",
+        "unit-enable-mode",
+        "unit",
+        "enable",
+        "mode",
+        "point",
+        "uniten-mode",
+        "unit en mode"
+      ]
+    },
+    {
+      "id": "exhaust-air-damper-closed",
+      "type": "point",
+      "name": "Exhaust Air Damper Closed",
+      "tokens": [
+        "exhaust air damper closed",
+        "exhaust-air-damper-closed",
+        "exhaust",
+        "air",
+        "damper",
+        "closed",
+        "point",
+        "ead-closed",
+        "ea damper closed",
+        "ead closed"
+      ]
+    },
+    {
+      "id": "exhaust-air-damper-open",
+      "type": "point",
+      "name": "Exhaust Air Damper Open",
+      "tokens": [
+        "exhaust air damper open",
+        "exhaust-air-damper-open",
+        "exhaust",
+        "air",
+        "damper",
+        "open",
+        "point",
+        "ead-open",
+        "ea damper open",
+        "ead open"
+      ]
+    },
+    {
+      "id": "exhaust-air-damper-output",
+      "type": "point",
+      "name": "Exhaust Air Damper Output",
+      "tokens": [
+        "exhaust air damper output",
+        "exhaust-air-damper-output",
+        "exhaust",
+        "air",
+        "damper",
+        "output",
+        "point",
+        "ead-o",
+        "ea damper output",
+        "ead output"
+      ]
+    },
+    {
+      "id": "exhaust-air-damper-position",
+      "type": "point",
+      "name": "Exhaust Air Damper Position",
+      "tokens": [
+        "exhaust air damper position",
+        "exhaust-air-damper-position",
+        "exhaust",
+        "air",
+        "damper",
+        "position",
+        "point",
+        "ead-pos",
+        "ea damper position",
+        "ead position"
+      ]
+    },
+    {
+      "id": "face-bypass-damper-output",
+      "type": "point",
+      "name": "Face Bypass Damper Output",
+      "tokens": [
+        "face bypass damper output",
+        "face-bypass-damper-output",
+        "face",
+        "bypass",
+        "damper",
+        "output",
+        "point",
+        "fbd-o",
+        "fbd output",
+        "fbd out",
+        "face byp output",
+        "fbdpr out"
+      ]
+    },
+    {
+      "id": "mixed-air-damper-closed",
+      "type": "point",
+      "name": "Mixed Air Damper Closed",
+      "tokens": [
+        "mixed air damper closed",
+        "mixed-air-damper-closed",
+        "mixed",
+        "air",
+        "damper",
+        "closed",
+        "point",
+        "mad-closed",
+        "ma damper closed",
+        "mad closed"
+      ]
+    },
+    {
+      "id": "mixed-air-damper-open",
+      "type": "point",
+      "name": "Mixed Air Damper Open",
+      "tokens": [
+        "mixed air damper open",
+        "mixed-air-damper-open",
+        "mixed",
+        "air",
+        "damper",
+        "open",
+        "point",
+        "mad-open",
+        "ma damper open",
+        "mad open"
+      ]
+    },
+    {
+      "id": "mixed-air-damper-output",
+      "type": "point",
+      "name": "Mixed Air Damper Output",
+      "tokens": [
+        "mixed air damper output",
+        "mixed-air-damper-output",
+        "mixed",
+        "air",
+        "damper",
+        "output",
+        "point",
+        "mad-o",
+        "ma damper output",
+        "mad output"
+      ]
+    },
+    {
+      "id": "mixed-air-damper-position",
+      "type": "point",
+      "name": "Mixed Air Damper Position",
+      "tokens": [
+        "mixed air damper position",
+        "mixed-air-damper-position",
+        "mixed",
+        "air",
+        "damper",
+        "position",
+        "point",
+        "mad-pos",
+        "ma damper position",
+        "mad position"
+      ]
+    },
+    {
+      "id": "outside-air-damper-closed",
+      "type": "point",
+      "name": "Outside Air Damper Closed",
+      "tokens": [
+        "outside air damper closed",
+        "outside-air-damper-closed",
+        "outside",
+        "air",
+        "damper",
+        "closed",
+        "point",
+        "oad-closed",
+        "oa damper closed",
+        "oad closed",
+        "outdoor air damper closed"
+      ]
+    },
+    {
+      "id": "outside-air-damper-open",
+      "type": "point",
+      "name": "Outside Air Damper Open",
+      "tokens": [
+        "outside air damper open",
+        "outside-air-damper-open",
+        "outside",
+        "air",
+        "damper",
+        "open",
+        "point",
+        "oad-open",
+        "oa damper open",
+        "oad open",
+        "outdoor air damper open"
+      ]
+    },
+    {
+      "id": "outside-air-damper-output",
+      "type": "point",
+      "name": "Outside Air Damper Output",
+      "tokens": [
+        "outside air damper output",
+        "outside-air-damper-output",
+        "outside",
+        "air",
+        "damper",
+        "output",
+        "point",
+        "oad-o",
+        "oa damper output",
+        "oad output",
+        "outdoor air damper output"
+      ]
+    },
+    {
+      "id": "outside-air-damper-position",
+      "type": "point",
+      "name": "Outside Air Damper Position",
+      "tokens": [
+        "outside air damper position",
+        "outside-air-damper-position",
+        "outside",
+        "air",
+        "damper",
+        "position",
+        "point",
+        "oad-pos",
+        "oa damper position",
+        "oad position",
+        "outdoor air damper position"
+      ]
+    },
+    {
+      "id": "relief-air-damper-closed",
+      "type": "point",
+      "name": "Relief Air Damper Closed",
+      "tokens": [
+        "relief air damper closed",
+        "relief-air-damper-closed",
+        "relief",
+        "air",
+        "damper",
+        "closed",
+        "point",
+        "rlfd-closed",
+        "rlf damper closed",
+        "rlfd closed"
+      ]
+    },
+    {
+      "id": "relief-air-damper-open",
+      "type": "point",
+      "name": "Relief Air Damper Open",
+      "tokens": [
+        "relief air damper open",
+        "relief-air-damper-open",
+        "relief",
+        "air",
+        "damper",
+        "open",
+        "point",
+        "rlfd-open",
+        "rlf damper open",
+        "rlfd open"
+      ]
+    },
+    {
+      "id": "relief-air-damper-output",
+      "type": "point",
+      "name": "Relief Air Damper Output",
+      "tokens": [
+        "relief air damper output",
+        "relief-air-damper-output",
+        "relief",
+        "air",
+        "damper",
+        "output",
+        "point",
+        "rlfd-o",
+        "rlf damper output",
+        "rlfd output"
+      ]
+    },
+    {
+      "id": "relief-air-damper-position",
+      "type": "point",
+      "name": "Relief Air Damper Position",
+      "tokens": [
+        "relief air damper position",
+        "relief-air-damper-position",
+        "relief",
+        "air",
+        "damper",
+        "position",
+        "point",
+        "rlfd-pos",
+        "rlf damper position",
+        "rlfd position"
+      ]
+    },
+    {
+      "id": "smoke-damper-open",
+      "type": "point",
+      "name": "Smoke Damper Open",
+      "tokens": [
+        "smoke damper open",
+        "smoke-damper-open",
+        "smoke",
+        "damper",
+        "open",
+        "point",
+        "smk-dpr",
+        "smoke damper out",
+        "smoke damper output",
+        "smoke dpr output"
+      ]
+    },
+    {
+      "id": "exhaust-fan-alarm",
+      "type": "point",
+      "name": "Exhaust Fan Alarm",
+      "tokens": [
+        "exhaust fan alarm",
+        "exhaust-fan-alarm",
+        "exhaust",
+        "fan",
+        "alarm",
+        "point",
+        "ef-a",
+        "ef alarm",
+        "ef alm"
+      ]
+    },
+    {
+      "id": "exhaust-fan-command",
+      "type": "point",
+      "name": "Exhaust Fan Command",
+      "tokens": [
+        "exhaust fan command",
+        "exhaust-fan-command",
+        "exhaust",
+        "fan",
+        "command",
+        "point",
+        "ef-c",
+        "ef command",
+        "ef cmd"
+      ]
+    },
+    {
+      "id": "exhaust-fan-fault",
+      "type": "point",
+      "name": "Exhaust Fan Fault",
+      "tokens": [
+        "exhaust fan fault",
+        "exhaust-fan-fault",
+        "exhaust",
+        "fan",
+        "fault",
+        "point",
+        "ef-fault",
+        "ef fault",
+        "ef flt"
+      ]
+    },
+    {
+      "id": "exhaust-fan-output",
+      "type": "point",
+      "name": "Exhaust Fan Output",
+      "tokens": [
+        "exhaust fan output",
+        "exhaust-fan-output",
+        "exhaust",
+        "fan",
+        "output",
+        "point",
+        "ef-o",
+        "ef output",
+        "ef out"
+      ]
+    },
+    {
+      "id": "exhaust-fan-speed",
+      "type": "point",
+      "name": "Exhaust Fan Speed",
+      "tokens": [
+        "exhaust fan speed",
+        "exhaust-fan-speed",
+        "exhaust",
+        "fan",
+        "speed",
+        "point",
+        "ef-spd",
+        "ef speed",
+        "ef vfd"
+      ]
+    },
+    {
+      "id": "exhaust-fan-status",
+      "type": "point",
+      "name": "Exhaust Fan Status",
+      "tokens": [
+        "exhaust fan status",
+        "exhaust-fan-status",
+        "exhaust",
+        "fan",
+        "status",
+        "point",
+        "ef-s",
+        "ef status",
+        "ef sts"
+      ]
+    },
+    {
+      "id": "relief-fan-alarm",
+      "type": "point",
+      "name": "Relief Fan Alarm",
+      "tokens": [
+        "relief fan alarm",
+        "relief-fan-alarm",
+        "relief",
+        "fan",
+        "alarm",
+        "point",
+        "rlf-a",
+        "rlf alarm",
+        "rlf alm"
+      ]
+    },
+    {
+      "id": "relief-fan-command",
+      "type": "point",
+      "name": "Relief Fan Command",
+      "tokens": [
+        "relief fan command",
+        "relief-fan-command",
+        "relief",
+        "fan",
+        "command",
+        "point",
+        "rlf-c",
+        "rlf command",
+        "rlf cmd"
+      ]
+    },
+    {
+      "id": "relief-fan-fault",
+      "type": "point",
+      "name": "Relief Fan Fault",
+      "tokens": [
+        "relief fan fault",
+        "relief-fan-fault",
+        "relief",
+        "fan",
+        "fault",
+        "point",
+        "rlf-fault",
+        "rlf fault",
+        "rlf flt"
+      ]
+    },
+    {
+      "id": "relief-fan-output",
+      "type": "point",
+      "name": "Relief Fan Output",
+      "tokens": [
+        "relief fan output",
+        "relief-fan-output",
+        "relief",
+        "fan",
+        "output",
+        "point",
+        "rlf-o",
+        "rlf output",
+        "rlf out"
+      ]
+    },
+    {
+      "id": "relief-fan-speed",
+      "type": "point",
+      "name": "Relief Fan Speed",
+      "tokens": [
+        "relief fan speed",
+        "relief-fan-speed",
+        "relief",
+        "fan",
+        "speed",
+        "point",
+        "rlf-spd",
+        "rlf speed",
+        "rlf vfd"
+      ]
+    },
+    {
+      "id": "relief-fan-status",
+      "type": "point",
+      "name": "Relief Fan Status",
+      "tokens": [
+        "relief fan status",
+        "relief-fan-status",
+        "relief",
+        "fan",
+        "status",
+        "point",
+        "rlf-s",
+        "rlf status",
+        "rlf sts"
+      ]
+    },
+    {
+      "id": "return-fan-alarm",
+      "type": "point",
+      "name": "Return Fan Alarm",
+      "tokens": [
+        "return fan alarm",
+        "return-fan-alarm",
+        "return",
+        "fan",
+        "alarm",
+        "point",
+        "rf-a",
+        "rf alarm",
+        "rf alm"
+      ]
+    },
+    {
+      "id": "return-fan-command",
+      "type": "point",
+      "name": "Return Fan Command",
+      "tokens": [
+        "return fan command",
+        "return-fan-command",
+        "return",
+        "fan",
+        "command",
+        "point",
+        "rf-c",
+        "rf command",
+        "rf cmd"
+      ]
+    },
+    {
+      "id": "return-fan-fault",
+      "type": "point",
+      "name": "Return Fan Fault",
+      "tokens": [
+        "return fan fault",
+        "return-fan-fault",
+        "return",
+        "fan",
+        "fault",
+        "point",
+        "rf-fault",
+        "rf fault",
+        "rf flt"
+      ]
+    },
+    {
+      "id": "return-fan-output",
+      "type": "point",
+      "name": "Return Fan Output",
+      "tokens": [
+        "return fan output",
+        "return-fan-output",
+        "return",
+        "fan",
+        "output",
+        "point",
+        "rf-o",
+        "rf output",
+        "rf out"
+      ]
+    },
+    {
+      "id": "return-fan-speed",
+      "type": "point",
+      "name": "Return Fan Speed",
+      "tokens": [
+        "return fan speed",
+        "return-fan-speed",
+        "return",
+        "fan",
+        "speed",
+        "point",
+        "rf-spd",
+        "rf speed",
+        "rf vfd"
+      ]
+    },
+    {
+      "id": "return-fan-status",
+      "type": "point",
+      "name": "Return Fan Status",
+      "tokens": [
+        "return fan status",
+        "return-fan-status",
+        "return",
+        "fan",
+        "status",
+        "point",
+        "rf-s",
+        "rf status",
+        "rf sts"
+      ]
+    },
+    {
+      "id": "supply-fan-alarm",
+      "type": "point",
+      "name": "Supply Fan Alarm",
+      "tokens": [
+        "supply fan alarm",
+        "supply-fan-alarm",
+        "supply",
+        "fan",
+        "alarm",
+        "point",
+        "sf-a",
+        "sf alarm",
+        "sf alm",
+        "fan alarm"
+      ]
+    },
+    {
+      "id": "supply-fan-command",
+      "type": "point",
+      "name": "Supply Fan Command",
+      "tokens": [
+        "supply fan command",
+        "supply-fan-command",
+        "supply",
+        "fan",
+        "command",
+        "point",
+        "sf-c",
+        "sf command",
+        "sf cmd",
+        "fan command"
+      ]
+    },
+    {
+      "id": "supply-fan-fault",
+      "type": "point",
+      "name": "Supply Fan Fault",
+      "tokens": [
+        "supply fan fault",
+        "supply-fan-fault",
+        "supply",
+        "fan",
+        "fault",
+        "point",
+        "sf-fault",
+        "sf fault",
+        "sf flt",
+        "fan fault"
+      ]
+    },
+    {
+      "id": "supply-fan-output",
+      "type": "point",
+      "name": "Supply Fan Output",
+      "tokens": [
+        "supply fan output",
+        "supply-fan-output",
+        "supply",
+        "fan",
+        "output",
+        "point",
+        "sf-o",
+        "sf output",
+        "sf out",
+        "fan output"
+      ]
+    },
+    {
+      "id": "supply-fan-speed",
+      "type": "point",
+      "name": "Supply Fan Speed",
+      "tokens": [
+        "supply fan speed",
+        "supply-fan-speed",
+        "supply",
+        "fan",
+        "speed",
+        "point",
+        "sf-spd",
+        "sf speed",
+        "sf vfd",
+        "fan speed"
+      ]
+    },
+    {
+      "id": "supply-fan-status",
+      "type": "point",
+      "name": "Supply Fan Status",
+      "tokens": [
+        "supply fan status",
+        "supply-fan-status",
+        "binary",
+        "status",
+        "indicating",
+        "if",
+        "supply",
+        "fan",
+        "is",
+        "running",
+        "run",
+        "sensor",
+        "sf-s",
+        "sf status",
+        "sf sts",
+        "fan status",
+        "supply fan run",
+        "sf_status",
+        "supplyfan_sts",
+        "sfs",
+        "sf-sts",
+        "supply fan running status",
+        "supply fan proof of operation"
+      ]
+    },
+    {
+      "id": "discharge-air-flow",
+      "type": "point",
+      "name": "Discharge Air Flow",
+      "tokens": [
+        "discharge air flow",
+        "discharge-air-flow",
+        "discharge",
+        "air",
+        "flow",
+        "point",
+        "da-f",
+        "da flow",
+        "disch air flow"
+      ]
+    },
+    {
+      "id": "exhaust-air-flow",
+      "type": "point",
+      "name": "Exhaust Air Flow",
+      "tokens": [
+        "exhaust air flow",
+        "exhaust-air-flow",
+        "exhaust",
+        "air",
+        "flow",
+        "point",
+        "ea-f",
+        "ea flow",
+        "exh air flow"
+      ]
+    },
+    {
+      "id": "outdoor-air-flow",
+      "type": "point",
+      "name": "Outdoor Air Flow",
+      "tokens": [
+        "outdoor air flow",
+        "outdoor-air-flow",
+        "outdoor",
+        "air",
+        "flow",
+        "point",
+        "oa-f",
+        "oa flow"
+      ]
+    },
+    {
+      "id": "return-air-flow",
+      "type": "point",
+      "name": "Return Air Flow",
+      "tokens": [
+        "return air flow",
+        "return-air-flow",
+        "return",
+        "air",
+        "flow",
+        "point",
+        "ra-f",
+        "ra flow",
+        "ret air flow"
+      ]
+    },
+    {
+      "id": "supply-air-flow",
+      "type": "point",
+      "name": "Supply Air Flow",
+      "tokens": [
+        "supply air flow",
+        "supply-air-flow",
+        "supply",
+        "air",
+        "flow",
+        "point",
+        "sa-f",
+        "sa flow",
+        "sup air flow"
+      ]
+    },
+    {
+      "id": "discharge-air-humidity",
+      "type": "point",
+      "name": "Discharge Air Humidity",
+      "tokens": [
+        "discharge air humidity",
+        "discharge-air-humidity",
+        "discharge",
+        "air",
+        "humidity",
+        "point",
+        "da-h",
+        "da humid",
+        "da humidity",
+        "disch air hum"
+      ]
+    },
+    {
+      "id": "humidifier-enable",
+      "type": "point",
+      "name": "Humidifier Enable",
+      "tokens": [
+        "humidifier enable",
+        "humidifier-enable",
+        "humidifier",
+        "enable",
+        "point",
+        "hum-en",
+        "humid en",
+        "humid enable"
+      ]
+    },
+    {
+      "id": "humidifier-output",
+      "type": "point",
+      "name": "Humidifier Output",
+      "tokens": [
+        "humidifier output",
+        "humidifier-output",
+        "humidifier",
+        "output",
+        "point",
+        "hum-o",
+        "humidifier out",
+        "hum vlv",
+        "humidifier valve out",
+        "humid valve"
+      ]
+    },
+    {
+      "id": "outdoor-air-humidity",
+      "type": "point",
+      "name": "Outdoor Air Humidity",
+      "tokens": [
+        "outdoor air humidity",
+        "outdoor-air-humidity",
+        "outdoor",
+        "air",
+        "humidity",
+        "point",
+        "oa-h",
+        "oa humid",
+        "oa humidity",
+        "outdoor air humid"
+      ]
+    },
+    {
+      "id": "return-air-humidity",
+      "type": "point",
+      "name": "Return Air Humidity",
+      "tokens": [
+        "return air humidity",
+        "return-air-humidity",
+        "return",
+        "air",
+        "humidity",
+        "point",
+        "ra-h",
+        "ra humid",
+        "ra humidity",
+        "ret air humid"
+      ]
+    },
+    {
+      "id": "zone-humidity",
+      "type": "point",
+      "name": "Zone Humidity",
+      "tokens": [
+        "zone humidity",
+        "zone-humidity",
+        "zone",
+        "humidity",
+        "point",
+        "zn-h",
+        "zn humid",
+        "zn humidity",
+        "zone humid"
+      ]
+    },
+    {
+      "id": "building-pressure",
+      "type": "point",
+      "name": "Building Pressure",
+      "tokens": [
+        "building pressure",
+        "building-pressure",
+        "building",
+        "pressure",
+        "point",
+        "bldg-p",
+        "bldg press",
+        "bldg pressure",
+        "building press"
+      ]
+    },
+    {
+      "id": "chilled-water-differential-pressure",
+      "type": "point",
+      "name": "Chilled Water Differential Pressure",
+      "tokens": [
+        "chilled water differential pressure",
+        "chilled-water-differential-pressure",
+        "chilled",
+        "water",
+        "differential",
+        "pressure",
+        "point",
+        "chw-dp",
+        "chw diff press",
+        "chw diff pressure"
+      ]
+    },
+    {
+      "id": "discharge-air-high-pressure-alarm",
+      "type": "point",
+      "name": "Discharge Air High Pressure Alarm",
+      "tokens": [
+        "discharge air high pressure alarm",
+        "discharge-air-high-pressure-alarm",
+        "discharge",
+        "air",
+        "high",
+        "pressure",
+        "alarm",
+        "point",
+        "dahp-a",
+        "da hi prs alm",
+        "da high press alarm",
+        "disch air high press alarm"
+      ]
+    },
+    {
+      "id": "discharge-air-low-pressure-alarm",
+      "type": "point",
+      "name": "Discharge Air Low Pressure Alarm",
+      "tokens": [
+        "discharge air low pressure alarm",
+        "discharge-air-low-pressure-alarm",
+        "discharge",
+        "air",
+        "low",
+        "pressure",
+        "alarm",
+        "point",
+        "dalp-a",
+        "da low prs almost",
+        "da low press alarm",
+        "disch air low press alarm"
+      ]
+    },
+    {
+      "id": "discharge-air-pressure-setpoint",
+      "type": "point",
+      "name": "Discharge Air Pressure Setpoint",
+      "tokens": [
+        "discharge air pressure setpoint",
+        "discharge-air-pressure-setpoint",
+        "discharge",
+        "air",
+        "pressure",
+        "setpoint",
+        "point",
+        "dap-sp",
+        "dap setpoint",
+        "da press stpt",
+        "da prs stpt",
+        "da pressure setpt",
+        "disch air press setpoint"
+      ]
+    },
+    {
+      "id": "discharge-air-pressure",
+      "type": "point",
+      "name": "Discharge Air Pressure",
+      "tokens": [
+        "discharge air pressure",
+        "discharge-air-pressure",
+        "static",
+        "pressure",
+        "in",
+        "supply",
+        "air",
+        "duct,",
+        "used",
+        "to",
+        "control",
+        "fan",
+        "speed",
+        "discharge",
+        "sensor",
+        "da-p",
+        "da press",
+        "da pressure",
+        "disch air pressure",
+        "disch air press",
+        "da1-p",
+        "duct static",
+        "duct static pressure",
+        "supply static",
+        "supply static pressure",
+        "dsp",
+        "dap",
+        "sp",
+        "discharge air static pressure",
+        "supply duct static pressure",
+        "duct static pressure sensor"
+      ]
+    },
+    {
+      "id": "hot-water-differential-pressure",
+      "type": "point",
+      "name": "Hot Water Differential Pressure",
+      "tokens": [
+        "hot water differential pressure",
+        "hot-water-differential-pressure",
+        "hot",
+        "water",
+        "differential",
+        "pressure",
+        "point",
+        "hw-dp",
+        "hw diff press",
+        "hw diff pressure"
+      ]
+    },
+    {
+      "id": "return-air-high-pressure-alarm",
+      "type": "point",
+      "name": "Return Air High Pressure Alarm",
+      "tokens": [
+        "return air high pressure alarm",
+        "return-air-high-pressure-alarm",
+        "return",
+        "air",
+        "high",
+        "pressure",
+        "alarm",
+        "point",
+        "rahp-a",
+        "ra hi prs alm",
+        "ra high press alarm",
+        "ret air high press alarm"
+      ]
+    },
+    {
+      "id": "return-air-low-pressure-alarm",
+      "type": "point",
+      "name": "Return Air Low Pressure Alarm",
+      "tokens": [
+        "return air low pressure alarm",
+        "return-air-low-pressure-alarm",
+        "return",
+        "air",
+        "low",
+        "pressure",
+        "alarm",
+        "point",
+        "ralp-a",
+        "ra low prs almost",
+        "ra low press alarm",
+        "ret air low press alarm"
+      ]
+    },
+    {
+      "id": "return-air-pressure-setpoint",
+      "type": "point",
+      "name": "Return Air Pressure Setpoint",
+      "tokens": [
+        "return air pressure setpoint",
+        "return-air-pressure-setpoint",
+        "return",
+        "air",
+        "pressure",
+        "setpoint",
+        "point",
+        "rap-sp",
+        "rap setpoint",
+        "ra press stpt",
+        "ra prs stpt",
+        "ra pressure setpt",
+        "ret air press setpoint"
+      ]
+    },
+    {
+      "id": "return-air-pressure",
+      "type": "point",
+      "name": "Return Air Pressure",
+      "tokens": [
+        "return air pressure",
+        "return-air-pressure",
+        "return",
+        "air",
+        "pressure",
+        "point",
+        "ra-p",
+        "ra press",
+        "ra pressure",
+        "ret air pressure",
+        "ret air press"
+      ]
+    },
+    {
+      "id": "space-pressure",
+      "type": "point",
+      "name": "Space Pressure",
+      "tokens": [
+        "space pressure",
+        "space-pressure",
+        "space",
+        "pressure",
+        "point",
+        "zone pressure",
+        "room pressure",
+        "space-p",
+        "zn-p",
+        "rm-p",
+        "space press",
+        "zone press",
+        "room press",
+        "zn pressure",
+        "rm pressure"
+      ]
+    },
+    {
+      "id": "cooling-outdoor-air-lockout-setpoint",
+      "type": "point",
+      "name": "Cooling Outdoor Air Lockout Setpoint",
+      "tokens": [
+        "cooling outdoor air lockout setpoint",
+        "cooling-outdoor-air-lockout-setpoint",
+        "cooling",
+        "outdoor",
+        "air",
+        "lockout",
+        "setpoint",
+        "point",
+        "clgoalockout-sp",
+        "clg oat lockout setpoint",
+        "cooling oat lockout stpt",
+        "cool oat lock setpt"
+      ]
+    },
+    {
+      "id": "effective-cooling-setpoint",
+      "type": "point",
+      "name": "Effective Cooling Setpoint",
+      "tokens": [
+        "effective cooling setpoint",
+        "effective-cooling-setpoint",
+        "effective",
+        "cooling",
+        "setpoint",
+        "point",
+        "effclg-sp",
+        "eff clg setpoint",
+        "effective clg sp",
+        "eff clg stpt",
+        "eff cooling setpt"
+      ]
+    },
+    {
+      "id": "effective-heating-setpoint",
+      "type": "point",
+      "name": "Effective Heating Setpoint",
+      "tokens": [
+        "effective heating setpoint",
+        "effective-heating-setpoint",
+        "effective",
+        "heating",
+        "setpoint",
+        "point",
+        "effhtg-sp",
+        "eff htg setpoint",
+        "effective htg sp",
+        "eff htg stpt",
+        "eff heating setpt"
+      ]
+    },
+    {
+      "id": "heating-outdoor-air-lockout-setpoint",
+      "type": "point",
+      "name": "Heating Outdoor Air Lockout Setpoint",
+      "tokens": [
+        "heating outdoor air lockout setpoint",
+        "heating-outdoor-air-lockout-setpoint",
+        "heating",
+        "outdoor",
+        "air",
+        "lockout",
+        "setpoint",
+        "point",
+        "htgoalockout-sp",
+        "htg oat lockout setpoint",
+        "heating oat lockout stpt",
+        "heat oat lock setpt"
+      ]
+    },
+    {
+      "id": "occupied-cooling-setpoint",
+      "type": "point",
+      "name": "Occupied Cooling Setpoint",
+      "tokens": [
+        "occupied cooling setpoint",
+        "occupied-cooling-setpoint",
+        "occupied",
+        "cooling",
+        "setpoint",
+        "point",
+        "occclg-sp",
+        "occ clg setpoint",
+        "occupied clg sp",
+        "occ clg stpt",
+        "occ cooling setpt"
+      ]
+    },
+    {
+      "id": "occupied-heating-setpoint",
+      "type": "point",
+      "name": "Occupied Heating Setpoint",
+      "tokens": [
+        "occupied heating setpoint",
+        "occupied-heating-setpoint",
+        "occupied",
+        "heating",
+        "setpoint",
+        "point",
+        "occhtg-sp",
+        "occ htg setpoint",
+        "occupied htg sp",
+        "occ htg stpt",
+        "occ heating setpt"
+      ]
+    },
+    {
+      "id": "standby-cooling-setpoint",
+      "type": "point",
+      "name": "Standby Cooling Setpoint",
+      "tokens": [
+        "standby cooling setpoint",
+        "standby-cooling-setpoint",
+        "standby",
+        "cooling",
+        "setpoint",
+        "point",
+        "stbyclg-sp",
+        "standby clg setpoint",
+        "standby clg sp",
+        "standby clg stpt",
+        "standby cooling setpt"
+      ]
+    },
+    {
+      "id": "standby-heating-setpoint",
+      "type": "point",
+      "name": "Standby Heating Setpoint",
+      "tokens": [
+        "standby heating setpoint",
+        "standby-heating-setpoint",
+        "standby",
+        "heating",
+        "setpoint",
+        "point",
+        "stbyhtg-sp",
+        "standby htg setpoint",
+        "standby htg sp",
+        "standby htg stpt",
+        "standby heating setpt"
+      ]
+    },
+    {
+      "id": "unoccupied-cooling-setpoint",
+      "type": "point",
+      "name": "Unoccupied Cooling Setpoint",
+      "tokens": [
+        "unoccupied cooling setpoint",
+        "unoccupied-cooling-setpoint",
+        "unoccupied",
+        "cooling",
+        "setpoint",
+        "point",
+        "unoccclg-sp",
+        "unocc clg setpoint",
+        "unoccupied clg sp",
+        "unocc clg stpt",
+        "unocc cooling setpt"
+      ]
+    },
+    {
+      "id": "unoccupied-heating-setpoint",
+      "type": "point",
+      "name": "Unoccupied Heating Setpoint",
+      "tokens": [
+        "unoccupied heating setpoint",
+        "unoccupied-heating-setpoint",
+        "unoccupied",
+        "heating",
+        "setpoint",
+        "point",
+        "unocchtg-sp",
+        "unocc htg setpoint",
+        "unoccupied htg sp",
+        "unocc htg stpt",
+        "unocc heating setpt"
+      ]
+    },
+    {
+      "id": "boiler-1-status",
+      "type": "point",
+      "name": "Boiler 1 Status",
+      "tokens": [
+        "boiler 1 status",
+        "boiler-1-status",
+        "boiler",
+        "1",
+        "status",
+        "point",
+        "blr1-s",
+        "blr 1 sts",
+        "boiler 1 sts",
+        "b-1 status"
+      ]
+    },
+    {
+      "id": "boiler-2-status",
+      "type": "point",
+      "name": "Boiler 2 Status",
+      "tokens": [
+        "boiler 2 status",
+        "boiler-2-status",
+        "boiler",
+        "2",
+        "status",
+        "point",
+        "blr2-s",
+        "blr 2 sts",
+        "boiler 2 sts",
+        "b-2 status"
+      ]
+    },
+    {
+      "id": "boiler-3-status",
+      "type": "point",
+      "name": "Boiler 3 Status",
+      "tokens": [
+        "boiler 3 status",
+        "boiler-3-status",
+        "boiler",
+        "3",
+        "status",
+        "point",
+        "blr3-s",
+        "blr 3 sts",
+        "boiler 3 sts",
+        "b-3 status"
+      ]
+    },
+    {
+      "id": "boiler-4-status",
+      "type": "point",
+      "name": "Boiler 4 Status",
+      "tokens": [
+        "boiler 4 status",
+        "boiler-4-status",
+        "boiler",
+        "4",
+        "status",
+        "point",
+        "blr4-s",
+        "blr 4 sts",
+        "boiler 4 sts",
+        "b-4 status"
+      ]
+    },
+    {
+      "id": "boiler-pump-status",
+      "type": "point",
+      "name": "Boiler Pump Status",
+      "tokens": [
+        "boiler pump status",
+        "boiler-pump-status",
+        "boiler",
+        "pump",
+        "status",
+        "point",
+        "bp-s",
+        "bp sts",
+        "bp status",
+        "blrp status",
+        "blr pump sts"
+      ]
+    },
+    {
+      "id": "chilled-water-pump-status",
+      "type": "point",
+      "name": "Chilled Water Pump Status",
+      "tokens": [
+        "chilled water pump status",
+        "chilled-water-pump-status",
+        "chilled",
+        "water",
+        "pump",
+        "status",
+        "point",
+        "chwp-s",
+        "chwp sts",
+        "chwp status"
+      ]
+    },
+    {
+      "id": "chiller-1-status",
+      "type": "point",
+      "name": "Chiller 1 Status",
+      "tokens": [
+        "chiller 1 status",
+        "chiller-1-status",
+        "chiller",
+        "1",
+        "status",
+        "point",
+        "ch1-s",
+        "ch-1 sts",
+        "ch-1 status",
+        "chlr-1 status"
+      ]
+    },
+    {
+      "id": "chiller-2-status",
+      "type": "point",
+      "name": "Chiller 2 Status",
+      "tokens": [
+        "chiller 2 status",
+        "chiller-2-status",
+        "chiller",
+        "2",
+        "status",
+        "point",
+        "ch2-s",
+        "ch-2 sts",
+        "ch-2 status",
+        "chlr-2 status"
+      ]
+    },
+    {
+      "id": "chiller-3-status",
+      "type": "point",
+      "name": "Chiller 3 Status",
+      "tokens": [
+        "chiller 3 status",
+        "chiller-3-status",
+        "chiller",
+        "3",
+        "status",
+        "point",
+        "ch3-s",
+        "ch-3 sts",
+        "ch-3 status",
+        "chlr-3 status"
+      ]
+    },
+    {
+      "id": "chiller-4-status",
+      "type": "point",
+      "name": "Chiller 4 Status",
+      "tokens": [
+        "chiller 4 status",
+        "chiller-4-status",
+        "chiller",
+        "4",
+        "status",
+        "point",
+        "ch4-s",
+        "ch-4 sts",
+        "ch-4 status",
+        "chlr-4 status"
+      ]
+    },
+    {
+      "id": "chiller-5-status",
+      "type": "point",
+      "name": "Chiller 5 Status",
+      "tokens": [
+        "chiller 5 status",
+        "chiller-5-status",
+        "chiller",
+        "5",
+        "status",
+        "point",
+        "ch5-s",
+        "ch-5 sts",
+        "ch-5 status",
+        "chlr-5 status"
+      ]
+    },
+    {
+      "id": "chiller-6-status",
+      "type": "point",
+      "name": "Chiller 6 Status",
+      "tokens": [
+        "chiller 6 status",
+        "chiller-6-status",
+        "chiller",
+        "6",
+        "status",
+        "point",
+        "ch6-s",
+        "ch-6 sts",
+        "ch-6 status",
+        "chlr-6 status"
+      ]
+    },
+    {
+      "id": "chiller-7-status",
+      "type": "point",
+      "name": "Chiller 7 Status",
+      "tokens": [
+        "chiller 7 status",
+        "chiller-7-status",
+        "chiller",
+        "7",
+        "status",
+        "point",
+        "ch7-s",
+        "ch-7 sts",
+        "ch-7 status",
+        "chlr-7 status"
+      ]
+    },
+    {
+      "id": "chiller-8-status",
+      "type": "point",
+      "name": "Chiller 8 Status",
+      "tokens": [
+        "chiller 8 status",
+        "chiller-8-status",
+        "chiller",
+        "8",
+        "status",
+        "point",
+        "ch8-s",
+        "ch-8 sts",
+        "ch-8 status",
+        "chlr-8 status"
+      ]
+    },
+    {
+      "id": "condenser-water-pump-status",
+      "type": "point",
+      "name": "Condenser Water Pump Status",
+      "tokens": [
+        "condenser water pump status",
+        "condenser-water-pump-status",
+        "condenser",
+        "water",
+        "pump",
+        "status",
+        "point",
+        "cwp-s",
+        "cwp sts",
+        "cwp status"
+      ]
+    },
+    {
+      "id": "cooling-tower-1-status",
+      "type": "point",
+      "name": "Cooling Tower 1 Status",
+      "tokens": [
+        "cooling tower 1 status",
+        "cooling-tower-1-status",
+        "cooling",
+        "tower",
+        "1",
+        "status",
+        "point",
+        "ct1-s",
+        "ct1f-s",
+        "ct-1 fan status",
+        "ct-1 fan sts",
+        "clg twr 1 sts"
+      ]
+    },
+    {
+      "id": "cooling-tower-2-status",
+      "type": "point",
+      "name": "Cooling Tower 2 Status",
+      "tokens": [
+        "cooling tower 2 status",
+        "cooling-tower-2-status",
+        "cooling",
+        "tower",
+        "2",
+        "status",
+        "point",
+        "ct2-s",
+        "ct2f-s",
+        "ct-2 fan status",
+        "ct-2 fan sts",
+        "clg twr 2 sts"
+      ]
+    },
+    {
+      "id": "cooling-tower-3-status",
+      "type": "point",
+      "name": "Cooling Tower 3 Status",
+      "tokens": [
+        "cooling tower 3 status",
+        "cooling-tower-3-status",
+        "cooling",
+        "tower",
+        "3",
+        "status",
+        "point",
+        "ct3-s",
+        "ct3f-s",
+        "ct-3 fan status",
+        "ct-3 fan sts",
+        "clg twr 3 sts"
+      ]
+    },
+    {
+      "id": "cooling-tower-4-status",
+      "type": "point",
+      "name": "Cooling Tower 4 Status",
+      "tokens": [
+        "cooling tower 4 status",
+        "cooling-tower-4-status",
+        "cooling",
+        "tower",
+        "4",
+        "status",
+        "point",
+        "ct4-s",
+        "ct4f-s",
+        "ct-4 fan status",
+        "ct-4 fan sts",
+        "clg twr 4 sts"
+      ]
+    },
+    {
+      "id": "cooling-tower-5-status",
+      "type": "point",
+      "name": "Cooling Tower 5 Status",
+      "tokens": [
+        "cooling tower 5 status",
+        "cooling-tower-5-status",
+        "cooling",
+        "tower",
+        "5",
+        "status",
+        "point",
+        "ct5-s",
+        "ct5f-s",
+        "ct-5 fan status",
+        "ct-5 fan sts",
+        "clg twr 5 sts"
+      ]
+    },
+    {
+      "id": "cooling-tower-6-status",
+      "type": "point",
+      "name": "Cooling Tower 6 Status",
+      "tokens": [
+        "cooling tower 6 status",
+        "cooling-tower-6-status",
+        "cooling",
+        "tower",
+        "6",
+        "status",
+        "point",
+        "ct6-s",
+        "ct6f-s",
+        "ct-6 fan status",
+        "ct-6 fan sts",
+        "clg twr 6 sts"
+      ]
+    },
+    {
+      "id": "cooling-tower-7-status",
+      "type": "point",
+      "name": "Cooling Tower 7 Status",
+      "tokens": [
+        "cooling tower 7 status",
+        "cooling-tower-7-status",
+        "cooling",
+        "tower",
+        "7",
+        "status",
+        "point",
+        "ct7-s",
+        "ct7f-s",
+        "ct-7 fan status",
+        "ct-7 fan sts",
+        "clg twr 7 sts"
+      ]
+    },
+    {
+      "id": "cooling-tower-8-status",
+      "type": "point",
+      "name": "Cooling Tower 8 Status",
+      "tokens": [
+        "cooling tower 8 status",
+        "cooling-tower-8-status",
+        "cooling",
+        "tower",
+        "8",
+        "status",
+        "point",
+        "ct8-s",
+        "ct8f-s",
+        "ct-8 fan status",
+        "ct-8 fan sts",
+        "clg twr 8 sts"
+      ]
+    },
+    {
+      "id": "dx-cooling-stage-1",
+      "type": "point",
+      "name": "DX Cooling Stage 1",
+      "tokens": [
+        "dx cooling stage 1",
+        "dx-cooling-stage-1",
+        "dx",
+        "cooling",
+        "stage",
+        "1",
+        "point",
+        "dx-stg1",
+        "compr 1",
+        "clg stg 1",
+        "cooling stg 1",
+        "compressor stage 1"
+      ]
+    },
+    {
+      "id": "dx-cooling-stage-2",
+      "type": "point",
+      "name": "DX Cooling Stage 2",
+      "tokens": [
+        "dx cooling stage 2",
+        "dx-cooling-stage-2",
+        "dx",
+        "cooling",
+        "stage",
+        "2",
+        "point",
+        "dx-stg2",
+        "compr 2",
+        "clg stg 2",
+        "cooling stg 2",
+        "compressor stage 2"
+      ]
+    },
+    {
+      "id": "dx-cooling-stage-3",
+      "type": "point",
+      "name": "DX Cooling Stage 3",
+      "tokens": [
+        "dx cooling stage 3",
+        "dx-cooling-stage-3",
+        "dx",
+        "cooling",
+        "stage",
+        "3",
+        "point",
+        "dx-stg3",
+        "compr 3",
+        "clg stg 3",
+        "cooling stg 3",
+        "compressor stage 3"
+      ]
+    },
+    {
+      "id": "dx-cooling-stage-4",
+      "type": "point",
+      "name": "DX Cooling Stage 4",
+      "tokens": [
+        "dx cooling stage 4",
+        "dx-cooling-stage-4",
+        "dx",
+        "cooling",
+        "stage",
+        "4",
+        "point",
+        "dx-stg4",
+        "compr 4",
+        "clg stg 4",
+        "cooling stg 4",
+        "compressor stage 4"
+      ]
+    },
+    {
+      "id": "dx-cooling-stage-5",
+      "type": "point",
+      "name": "DX Cooling Stage 5",
+      "tokens": [
+        "dx cooling stage 5",
+        "dx-cooling-stage-5",
+        "dx",
+        "cooling",
+        "stage",
+        "5",
+        "point",
+        "dx-stg5",
+        "compr 5",
+        "clg stg 5",
+        "cooling stg 5",
+        "compressor stage 5"
+      ]
+    },
+    {
+      "id": "dx-cooling-stage-6",
+      "type": "point",
+      "name": "DX Cooling Stage 6",
+      "tokens": [
+        "dx cooling stage 6",
+        "dx-cooling-stage-6",
+        "dx",
+        "cooling",
+        "stage",
+        "6",
+        "point",
+        "dx-stg6",
+        "compr 6",
+        "clg stg 6",
+        "cooling stg 6",
+        "compressor stage 6"
+      ]
+    },
+    {
+      "id": "dx-cooling-stage-7",
+      "type": "point",
+      "name": "DX Cooling Stage 7",
+      "tokens": [
+        "dx cooling stage 7",
+        "dx-cooling-stage-7",
+        "dx",
+        "cooling",
+        "stage",
+        "7",
+        "point",
+        "dx-stg7",
+        "compr 7",
+        "clg stg 7",
+        "cooling stg 7",
+        "compressor stage 7"
+      ]
+    },
+    {
+      "id": "dx-cooling-stage-8",
+      "type": "point",
+      "name": "DX Cooling Stage 8",
+      "tokens": [
+        "dx cooling stage 8",
+        "dx-cooling-stage-8",
+        "dx",
+        "cooling",
+        "stage",
+        "8",
+        "point",
+        "dx-stg8",
+        "compr 8",
+        "clg stg 8",
+        "cooling stg 8",
+        "compressor stage 8"
+      ]
+    },
+    {
+      "id": "dx-cooling-stage-9",
+      "type": "point",
+      "name": "DX Cooling Stage 9",
+      "tokens": [
+        "dx cooling stage 9",
+        "dx-cooling-stage-9",
+        "dx",
+        "cooling",
+        "stage",
+        "9",
+        "point",
+        "dx-stg9",
+        "compr 9",
+        "clg stg 9",
+        "cooling stg 9",
+        "compressor stage 9"
+      ]
+    },
+    {
+      "id": "effective-occupancy",
+      "type": "point",
+      "name": "Effective Occupancy",
+      "tokens": [
+        "effective occupancy",
+        "effective-occupancy",
+        "effective",
+        "occupancy",
+        "point",
+        "eff-occ",
+        "effective occ",
+        "eff occupancy"
+      ]
+    },
+    {
+      "id": "electric-heat-stage-1",
+      "type": "point",
+      "name": "Electric Heat Stage 1",
+      "tokens": [
+        "electric heat stage 1",
+        "electric-heat-stage-1",
+        "electric",
+        "heat",
+        "stage",
+        "1",
+        "point",
+        "elechtg-stg1",
+        "htg-stg1",
+        "elec-stg1",
+        "electric heat stg 1",
+        "heating stg 1",
+        "heating stage 1",
+        "heat 1"
+      ]
+    },
+    {
+      "id": "electric-heat-stage-2",
+      "type": "point",
+      "name": "Electric Heat Stage 2",
+      "tokens": [
+        "electric heat stage 2",
+        "electric-heat-stage-2",
+        "electric",
+        "heat",
+        "stage",
+        "2",
+        "point",
+        "elechtg-stg2",
+        "htg-stg2",
+        "elec-stg2",
+        "electric heat stg 2",
+        "heating stg 2",
+        "heating stage 2",
+        "heat 2"
+      ]
+    },
+    {
+      "id": "electric-heat-stage-3",
+      "type": "point",
+      "name": "Electric Heat Stage 3",
+      "tokens": [
+        "electric heat stage 3",
+        "electric-heat-stage-3",
+        "electric",
+        "heat",
+        "stage",
+        "3",
+        "point",
+        "elechtg-stg3",
+        "htg-stg3",
+        "elec-stg3",
+        "electric heat stg 3",
+        "heating stg 3",
+        "heating stage 3",
+        "heat 3"
+      ]
+    },
+    {
+      "id": "electric-heat-stage-4",
+      "type": "point",
+      "name": "Electric Heat Stage 4",
+      "tokens": [
+        "electric heat stage 4",
+        "electric-heat-stage-4",
+        "electric",
+        "heat",
+        "stage",
+        "4",
+        "point",
+        "elechtg-stg4",
+        "htg-stg4",
+        "elec-stg4",
+        "electric heat stg 4",
+        "heating stg 4",
+        "heating stage 4",
+        "heat 4"
+      ]
+    },
+    {
+      "id": "electric-heat-stage-5",
+      "type": "point",
+      "name": "Electric Heat Stage 5",
+      "tokens": [
+        "electric heat stage 5",
+        "electric-heat-stage-5",
+        "electric",
+        "heat",
+        "stage",
+        "5",
+        "point",
+        "elechtg-stg5",
+        "htg-stg5",
+        "elec-stg5",
+        "electric heat stg 5",
+        "heating stg 5",
+        "heating stage 5",
+        "heat 5"
+      ]
+    },
+    {
+      "id": "electric-heat-stage-6",
+      "type": "point",
+      "name": "Electric Heat Stage 6",
+      "tokens": [
+        "electric heat stage 6",
+        "electric-heat-stage-6",
+        "electric",
+        "heat",
+        "stage",
+        "6",
+        "point",
+        "elechtg-stg6",
+        "htg-stg6",
+        "elec-stg6",
+        "electric heat stg 6",
+        "heating stg 6",
+        "heating stage 6",
+        "heat 6"
+      ]
+    },
+    {
+      "id": "electric-heat-stage-7",
+      "type": "point",
+      "name": "Electric Heat Stage 7",
+      "tokens": [
+        "electric heat stage 7",
+        "electric-heat-stage-7",
+        "electric",
+        "heat",
+        "stage",
+        "7",
+        "point",
+        "elechtg-stg7",
+        "htg-stg7",
+        "elec-stg7",
+        "electric heat stg 7",
+        "heating stg 7",
+        "heating stage 7",
+        "heat 7"
+      ]
+    },
+    {
+      "id": "electric-heat-stage-8",
+      "type": "point",
+      "name": "Electric Heat Stage 8",
+      "tokens": [
+        "electric heat stage 8",
+        "electric-heat-stage-8",
+        "electric",
+        "heat",
+        "stage",
+        "8",
+        "point",
+        "elechtg-stg8",
+        "htg-stg8",
+        "elec-stg8",
+        "electric heat stg 8",
+        "heating stg 8",
+        "heating stage 8",
+        "heat 8"
+      ]
+    },
+    {
+      "id": "filter-status",
+      "type": "point",
+      "name": "Filter Status",
+      "tokens": [
+        "filter status",
+        "filter-status",
+        "filter",
+        "status",
+        "point",
+        "filt-s",
+        "filt sts",
+        "filt status"
+      ]
+    },
+    {
+      "id": "final-filter-status",
+      "type": "point",
+      "name": "Final Filter Status",
+      "tokens": [
+        "final filter status",
+        "final-filter-status",
+        "final",
+        "filter",
+        "status",
+        "point",
+        "fin filter status",
+        "ffilt-s",
+        "fin filt sts",
+        "fin filt status"
+      ]
+    },
+    {
+      "id": "heat-wheel-status",
+      "type": "point",
+      "name": "Heat Wheel Status",
+      "tokens": [
+        "heat wheel status",
+        "heat-wheel-status",
+        "heat",
+        "wheel",
+        "status",
+        "point",
+        "hw-s",
+        "hw sts",
+        "hw status",
+        "erw status",
+        "energy recovery wheel status",
+        "erw-s"
+      ]
+    },
+    {
+      "id": "hot-water-pump-status",
+      "type": "point",
+      "name": "Hot Water Pump Status",
+      "tokens": [
+        "hot water pump status",
+        "hot-water-pump-status",
+        "hot",
+        "water",
+        "pump",
+        "status",
+        "point",
+        "hwp-s",
+        "hwp sts",
+        "hwp status"
+      ]
+    },
+    {
+      "id": "occupancy-schedule",
+      "type": "point",
+      "name": "Occupancy Schedule",
+      "tokens": [
+        "occupancy schedule",
+        "occupancy-schedule",
+        "occupancy",
+        "schedule",
+        "point",
+        "occ-sched",
+        "occ sched",
+        "occ schedule"
+      ]
+    },
+    {
+      "id": "occupancy",
+      "type": "point",
+      "name": "Occupancy",
+      "tokens": [
+        "occupancy",
+        "point",
+        "occupied",
+        "occ"
+      ]
+    },
+    {
+      "id": "prefilter-status",
+      "type": "point",
+      "name": "Prefilter Status",
+      "tokens": [
+        "prefilter status",
+        "prefilter-status",
+        "prefilter",
+        "status",
+        "point",
+        "pre filter status",
+        "pfilt-s",
+        "pre filt sts",
+        "pre filt status"
+      ]
+    },
+    {
+      "id": "primary-chilled-water-pump-status",
+      "type": "point",
+      "name": "Primary Chilled Water Pump Status",
+      "tokens": [
+        "primary chilled water pump status",
+        "primary-chilled-water-pump-status",
+        "primary",
+        "chilled",
+        "water",
+        "pump",
+        "status",
+        "point",
+        "pchwp-s",
+        "pchwp sts",
+        "pchwp status"
+      ]
+    },
+    {
+      "id": "return-air-co2",
+      "type": "point",
+      "name": "Return Air CO2",
+      "tokens": [
+        "return air co2",
+        "return-air-co2",
+        "return",
+        "air",
+        "co2",
+        "point",
+        "return air quality",
+        "ra-co2",
+        "ra-q",
+        "ra co2",
+        "ra quality",
+        "ret air co2",
+        "ret air quality"
+      ]
+    },
+    {
+      "id": "secondary-chilled-water-pump-status",
+      "type": "point",
+      "name": "Secondary Chilled Water Pump Status",
+      "tokens": [
+        "secondary chilled water pump status",
+        "secondary-chilled-water-pump-status",
+        "secondary",
+        "chilled",
+        "water",
+        "pump",
+        "status",
+        "point",
+        "schwp-s",
+        "schwp sts",
+        "schwp status"
+      ]
+    },
+    {
+      "id": "shutdown",
+      "type": "point",
+      "name": "Shutdown",
+      "tokens": [
+        "shutdown",
+        "point",
+        "shutdwn"
+      ]
+    },
+    {
+      "id": "chilled-water-return-temperature",
+      "type": "point",
+      "name": "Chilled Water Return Temperature",
+      "tokens": [
+        "chilled water return temperature",
+        "chilled-water-return-temperature",
+        "chilled",
+        "water",
+        "return",
+        "temperature",
+        "point",
+        "chwr-t",
+        "chwr temp",
+        "chwr temperature",
+        "chwr tmp"
+      ]
+    },
+    {
+      "id": "chilled-water-supply-temperature",
+      "type": "point",
+      "name": "Chilled Water Supply Temperature",
+      "tokens": [
+        "chilled water supply temperature",
+        "chilled-water-supply-temperature",
+        "temperature",
+        "of",
+        "chilled",
+        "water",
+        "leaving",
+        "the",
+        "chiller",
+        "plant",
+        "temp",
+        "sensor",
+        "chws-t",
+        "chws temp",
+        "chws temperature",
+        "chws tmp",
+        "chw supply temp",
+        "chwst",
+        "chw_supply_temp",
+        "cwst",
+        "chilled water supply temperature sensor",
+        "chilled water leaving temperature"
+      ]
+    },
+    {
+      "id": "chiller-1-entering-temperature",
+      "type": "point",
+      "name": "Chiller 1 Entering Temperature",
+      "tokens": [
+        "chiller 1 entering temperature",
+        "chiller-1-entering-temperature",
+        "chiller",
+        "1",
+        "entering",
+        "temperature",
+        "point",
+        "ch1-ewt",
+        "ch1-ent-temp",
+        "ch-1 ent temp",
+        "ch-1 entering temp",
+        "ch-1 enter temp"
+      ]
+    },
+    {
+      "id": "chiller-1-leaving-temperature",
+      "type": "point",
+      "name": "Chiller 1 Leaving Temperature",
+      "tokens": [
+        "chiller 1 leaving temperature",
+        "chiller-1-leaving-temperature",
+        "chiller",
+        "1",
+        "leaving",
+        "temperature",
+        "point",
+        "ch1-lwt",
+        "ch1-lvg-temp",
+        "ch-1 lvg temp",
+        "ch-1 leaving temp",
+        "ch-1 leave temp"
+      ]
+    },
+    {
+      "id": "chiller-2-entering-temperature",
+      "type": "point",
+      "name": "Chiller 2 Entering Temperature",
+      "tokens": [
+        "chiller 2 entering temperature",
+        "chiller-2-entering-temperature",
+        "chiller",
+        "2",
+        "entering",
+        "temperature",
+        "point",
+        "ch2-ewt",
+        "ch2-ent-temp",
+        "ch-2 ent temp",
+        "ch-2 entering temp",
+        "ch-2 enter temp"
+      ]
+    },
+    {
+      "id": "chiller-2-leaving-temperature",
+      "type": "point",
+      "name": "Chiller 2 Leaving Temperature",
+      "tokens": [
+        "chiller 2 leaving temperature",
+        "chiller-2-leaving-temperature",
+        "chiller",
+        "2",
+        "leaving",
+        "temperature",
+        "point",
+        "ch2-lwt",
+        "ch2-lvg-temp",
+        "ch-2 lvg temp",
+        "ch-2 leaving temp",
+        "ch-2 leave temp"
+      ]
+    },
+    {
+      "id": "chiller-3-entering-temperature",
+      "type": "point",
+      "name": "Chiller 3 Entering Temperature",
+      "tokens": [
+        "chiller 3 entering temperature",
+        "chiller-3-entering-temperature",
+        "chiller",
+        "3",
+        "entering",
+        "temperature",
+        "point",
+        "ch3-ewt",
+        "ch3-ent-temp",
+        "ch-3 ent temp",
+        "ch-3 entering temp",
+        "ch-3 enter temp"
+      ]
+    },
+    {
+      "id": "chiller-3-leaving-temperature",
+      "type": "point",
+      "name": "Chiller 3 Leaving Temperature",
+      "tokens": [
+        "chiller 3 leaving temperature",
+        "chiller-3-leaving-temperature",
+        "chiller",
+        "3",
+        "leaving",
+        "temperature",
+        "point",
+        "ch3-lwt",
+        "ch3-lvg-temp",
+        "ch-3 lvg temp",
+        "ch-3 leaving temp",
+        "ch-3 leave temp"
+      ]
+    },
+    {
+      "id": "chiller-4-entering-temperature",
+      "type": "point",
+      "name": "Chiller 4 Entering Temperature",
+      "tokens": [
+        "chiller 4 entering temperature",
+        "chiller-4-entering-temperature",
+        "chiller",
+        "4",
+        "entering",
+        "temperature",
+        "point",
+        "ch4-ewt",
+        "ch4-ent-temp",
+        "ch-4 ent temp",
+        "ch-4 entering temp",
+        "ch-4 enter temp"
+      ]
+    },
+    {
+      "id": "chiller-4-leaving-temperature",
+      "type": "point",
+      "name": "Chiller 4 Leaving Temperature",
+      "tokens": [
+        "chiller 4 leaving temperature",
+        "chiller-4-leaving-temperature",
+        "chiller",
+        "4",
+        "leaving",
+        "temperature",
+        "point",
+        "ch4-lwt",
+        "ch4-lvg-temp",
+        "ch-4 lvg temp",
+        "ch-4 leaving temp",
+        "ch-4 leave temp"
+      ]
+    },
+    {
+      "id": "chiller-5-entering-temperature",
+      "type": "point",
+      "name": "Chiller 5 Entering Temperature",
+      "tokens": [
+        "chiller 5 entering temperature",
+        "chiller-5-entering-temperature",
+        "chiller",
+        "5",
+        "entering",
+        "temperature",
+        "point",
+        "ch5-ewt",
+        "ch5-ent-temp",
+        "ch-5 ent temp",
+        "ch-5 entering temp",
+        "ch-5 enter temp"
+      ]
+    },
+    {
+      "id": "chiller-5-leaving-temperature",
+      "type": "point",
+      "name": "Chiller 5 Leaving Temperature",
+      "tokens": [
+        "chiller 5 leaving temperature",
+        "chiller-5-leaving-temperature",
+        "chiller",
+        "5",
+        "leaving",
+        "temperature",
+        "point",
+        "ch5-lwt",
+        "ch5-lvg-temp",
+        "ch-5 lvg temp",
+        "ch-5 leaving temp",
+        "ch-5 leave temp"
+      ]
+    },
+    {
+      "id": "chiller-6-entering-temperature",
+      "type": "point",
+      "name": "Chiller 6 Entering Temperature",
+      "tokens": [
+        "chiller 6 entering temperature",
+        "chiller-6-entering-temperature",
+        "chiller",
+        "6",
+        "entering",
+        "temperature",
+        "point",
+        "ch6-ewt",
+        "ch6-ent-temp",
+        "ch-6 ent temp",
+        "ch-6 entering temp",
+        "ch-6 enter temp"
+      ]
+    },
+    {
+      "id": "chiller-6-leaving-temperature",
+      "type": "point",
+      "name": "Chiller 6 Leaving Temperature",
+      "tokens": [
+        "chiller 6 leaving temperature",
+        "chiller-6-leaving-temperature",
+        "chiller",
+        "6",
+        "leaving",
+        "temperature",
+        "point",
+        "ch6-lwt",
+        "ch6-lvg-temp",
+        "ch-6 lvg temp",
+        "ch-6 leaving temp",
+        "ch-6 leave temp"
+      ]
+    },
+    {
+      "id": "chiller-7-entering-temperature",
+      "type": "point",
+      "name": "Chiller 7 Entering Temperature",
+      "tokens": [
+        "chiller 7 entering temperature",
+        "chiller-7-entering-temperature",
+        "chiller",
+        "7",
+        "entering",
+        "temperature",
+        "point",
+        "ch7-ewt",
+        "ch7-ent-temp",
+        "ch-7 ent temp",
+        "ch-7 entering temp",
+        "ch-7 enter temp"
+      ]
+    },
+    {
+      "id": "chiller-7-leaving-temperature",
+      "type": "point",
+      "name": "Chiller 7 Leaving Temperature",
+      "tokens": [
+        "chiller 7 leaving temperature",
+        "chiller-7-leaving-temperature",
+        "chiller",
+        "7",
+        "leaving",
+        "temperature",
+        "point",
+        "ch7-lwt",
+        "ch7-lvg-temp",
+        "ch-7 lvg temp",
+        "ch-7 leaving temp",
+        "ch-7 leave temp"
+      ]
+    },
+    {
+      "id": "chiller-8-entering-temperature",
+      "type": "point",
+      "name": "Chiller 8 Entering Temperature",
+      "tokens": [
+        "chiller 8 entering temperature",
+        "chiller-8-entering-temperature",
+        "chiller",
+        "8",
+        "entering",
+        "temperature",
+        "point",
+        "ch8-ewt",
+        "ch8-ent-temp",
+        "ch-8 ent temp",
+        "ch-8 entering temp",
+        "ch-8 enter temp"
+      ]
+    },
+    {
+      "id": "chiller-8-leaving-temperature",
+      "type": "point",
+      "name": "Chiller 8 Leaving Temperature",
+      "tokens": [
+        "chiller 8 leaving temperature",
+        "chiller-8-leaving-temperature",
+        "chiller",
+        "8",
+        "leaving",
+        "temperature",
+        "point",
+        "ch8-lwt",
+        "ch8-lvg-temp",
+        "ch-8 lvg temp",
+        "ch-8 leaving temp",
+        "ch-8 leave temp"
+      ]
+    },
+    {
+      "id": "city-water-temperature",
+      "type": "point",
+      "name": "City Water Temperature",
+      "tokens": [
+        "city water temperature",
+        "city-water-temperature",
+        "city",
+        "water",
+        "temperature",
+        "point",
+        "cw-t",
+        "city wtr temp"
+      ]
+    },
+    {
+      "id": "condenser-water-return-temperature",
+      "type": "point",
+      "name": "Condenser Water Return Temperature",
+      "tokens": [
+        "condenser water return temperature",
+        "condenser-water-return-temperature",
+        "condenser",
+        "water",
+        "return",
+        "temperature",
+        "point",
+        "cwr-t",
+        "cwr temp",
+        "cwr temperature",
+        "cwr tmp"
+      ]
+    },
+    {
+      "id": "condenser-water-supply-temperature",
+      "type": "point",
+      "name": "Condenser Water Supply Temperature",
+      "tokens": [
+        "condenser water supply temperature",
+        "condenser-water-supply-temperature",
+        "condenser",
+        "water",
+        "supply",
+        "temperature",
+        "point",
+        "cws-t",
+        "cws temp",
+        "cws temperature",
+        "cws tmp"
+      ]
+    },
+    {
+      "id": "cooling-tower-1-basin-temperature",
+      "type": "point",
+      "name": "Cooling Tower 1 Basin Temperature",
+      "tokens": [
+        "cooling tower 1 basin temperature",
+        "cooling-tower-1-basin-temperature",
+        "cooling",
+        "tower",
+        "1",
+        "basin",
+        "temperature",
+        "point",
+        "ct1-basin-t",
+        "clg twr 1 basin temp",
+        "ct-1 basin temp",
+        "ct-1 basin temperature"
+      ]
+    },
+    {
+      "id": "cooling-tower-2-basin-temperature",
+      "type": "point",
+      "name": "Cooling Tower 2 Basin Temperature",
+      "tokens": [
+        "cooling tower 2 basin temperature",
+        "cooling-tower-2-basin-temperature",
+        "cooling",
+        "tower",
+        "2",
+        "basin",
+        "temperature",
+        "point",
+        "ct2-basin-t",
+        "clg twr 2 basin temp",
+        "ct-2 basin temp",
+        "ct-2 basin temperature"
+      ]
+    },
+    {
+      "id": "cooling-tower-3-basin-temperature",
+      "type": "point",
+      "name": "Cooling Tower 3 Basin Temperature",
+      "tokens": [
+        "cooling tower 3 basin temperature",
+        "cooling-tower-3-basin-temperature",
+        "cooling",
+        "tower",
+        "3",
+        "basin",
+        "temperature",
+        "point",
+        "ct3-basin-t",
+        "clg twr 3 basin temp",
+        "ct-3 basin temp",
+        "ct-3 basin temperature"
+      ]
+    },
+    {
+      "id": "cooling-tower-4-basin-temperature",
+      "type": "point",
+      "name": "Cooling Tower 4 Basin Temperature",
+      "tokens": [
+        "cooling tower 4 basin temperature",
+        "cooling-tower-4-basin-temperature",
+        "cooling",
+        "tower",
+        "4",
+        "basin",
+        "temperature",
+        "point",
+        "ct4-basin-t",
+        "clg twr 4 basin temp",
+        "ct-4 basin temp",
+        "ct-4 basin temperature"
+      ]
+    },
+    {
+      "id": "cooling-tower-5-basin-temperature",
+      "type": "point",
+      "name": "Cooling Tower 5 Basin Temperature",
+      "tokens": [
+        "cooling tower 5 basin temperature",
+        "cooling-tower-5-basin-temperature",
+        "cooling",
+        "tower",
+        "5",
+        "basin",
+        "temperature",
+        "point",
+        "ct5-basin-t",
+        "clg twr 5 basin temp",
+        "ct-5 basin temp",
+        "ct-5 basin temperature"
+      ]
+    },
+    {
+      "id": "cooling-tower-6-basin-temperature",
+      "type": "point",
+      "name": "Cooling Tower 6 Basin Temperature",
+      "tokens": [
+        "cooling tower 6 basin temperature",
+        "cooling-tower-6-basin-temperature",
+        "cooling",
+        "tower",
+        "6",
+        "basin",
+        "temperature",
+        "point",
+        "ct6-basin-t",
+        "clg twr 6 basin temp",
+        "ct-6 basin temp",
+        "ct-6 basin temperature"
+      ]
+    },
+    {
+      "id": "cooling-tower-7-basin-temperature",
+      "type": "point",
+      "name": "Cooling Tower 7 Basin Temperature",
+      "tokens": [
+        "cooling tower 7 basin temperature",
+        "cooling-tower-7-basin-temperature",
+        "cooling",
+        "tower",
+        "7",
+        "basin",
+        "temperature",
+        "point",
+        "ct7-basin-t",
+        "clg twr 7 basin temp",
+        "ct-7 basin temp",
+        "ct-7 basin temperature"
+      ]
+    },
+    {
+      "id": "cooling-tower-8-basin-temperature",
+      "type": "point",
+      "name": "Cooling Tower 8 Basin Temperature",
+      "tokens": [
+        "cooling tower 8 basin temperature",
+        "cooling-tower-8-basin-temperature",
+        "cooling",
+        "tower",
+        "8",
+        "basin",
+        "temperature",
+        "point",
+        "ct8-basin-t",
+        "clg twr 8 basin temp",
+        "ct-8 basin temp",
+        "ct-8 basin temperature"
+      ]
+    },
+    {
+      "id": "discharge-air-temperature-setpoint",
+      "type": "point",
+      "name": "Discharge Air Temperature Setpoint",
+      "tokens": [
+        "discharge air temperature setpoint",
+        "discharge-air-temperature-setpoint",
+        "discharge",
+        "air",
+        "temperature",
+        "setpoint",
+        "point",
+        "dat-sp",
+        "dat setpoint",
+        "dat stpt"
+      ]
+    },
+    {
+      "id": "discharge-air-temperature",
+      "type": "point",
+      "name": "Discharge Air Temperature",
+      "tokens": [
+        "discharge air temperature",
+        "discharge-air-temperature",
+        "temperature",
+        "of",
+        "air",
+        "leaving",
+        "the",
+        "handling",
+        "unit",
+        "or",
+        "terminal",
+        "discharge",
+        "temp",
+        "sensor",
+        "da-t",
+        "da temp",
+        "da temperature",
+        "disch air temp",
+        "dat",
+        "dischargetemp",
+        "discharge_temp",
+        "dt",
+        "discharge air temperature sensor",
+        "leaving air temperature",
+        "supply air temperature"
+      ]
+    },
+    {
+      "id": "domestic-hot-water-return-temperature",
+      "type": "point",
+      "name": "Domestic Hot Water Return Temperature",
+      "tokens": [
+        "domestic hot water return temperature",
+        "domestic-hot-water-return-temperature",
+        "domestic",
+        "hot",
+        "water",
+        "return",
+        "temperature",
+        "point",
+        "dhwr-t",
+        "dhwr temp",
+        "dhwr temperature",
+        "dhwr tmp"
+      ]
+    },
+    {
+      "id": "domestic-hot-water-supply-temperature",
+      "type": "point",
+      "name": "Domestic Hot Water Supply Temperature",
+      "tokens": [
+        "domestic hot water supply temperature",
+        "domestic-hot-water-supply-temperature",
+        "domestic",
+        "hot",
+        "water",
+        "supply",
+        "temperature",
+        "point",
+        "dhws-t",
+        "dhws temp",
+        "dhws temperature",
+        "dhws tmp"
+      ]
+    },
+    {
+      "id": "effective-discharge-air-temperature-setpoint",
+      "type": "point",
+      "name": "Effective Discharge Air Temperature Setpoint",
+      "tokens": [
+        "effective discharge air temperature setpoint",
+        "effective-discharge-air-temperature-setpoint",
+        "effective",
+        "discharge",
+        "air",
+        "temperature",
+        "setpoint",
+        "point",
+        "effdat-sp",
+        "eff dat setpoint",
+        "eff dat stpt",
+        "effective dat stpt",
+        "eff da temp setpt"
+      ]
+    },
+    {
+      "id": "exhaust-air-temperaure",
+      "type": "point",
+      "name": "Exhaust Air Temperaure",
+      "tokens": [
+        "exhaust air temperaure",
+        "exhaust-air-temperaure",
+        "exhaust",
+        "air",
+        "temperaure",
+        "point",
+        "ea-t",
+        "ea temp",
+        "ea temperature",
+        "exh air temp"
+      ]
+    },
+    {
+      "id": "hot-water-return-temperature",
+      "type": "point",
+      "name": "Hot Water Return Temperature",
+      "tokens": [
+        "hot water return temperature",
+        "hot-water-return-temperature",
+        "hot",
+        "water",
+        "return",
+        "temperature",
+        "point",
+        "hwr-t",
+        "hwr temp",
+        "hwr temperature",
+        "hwr tmp"
+      ]
+    },
+    {
+      "id": "hot-water-supply-temperature",
+      "type": "point",
+      "name": "Hot Water Supply Temperature",
+      "tokens": [
+        "hot water supply temperature",
+        "hot-water-supply-temperature",
+        "hot",
+        "water",
+        "supply",
+        "temperature",
+        "point",
+        "hws-t",
+        "hws temp",
+        "hws temperature",
+        "hws tmp"
+      ]
+    },
+    {
+      "id": "mixed-air-temperature-setpoint",
+      "type": "point",
+      "name": "Mixed Air Temperature Setpoint",
+      "tokens": [
+        "mixed air temperature setpoint",
+        "mixed-air-temperature-setpoint",
+        "mixed",
+        "air",
+        "temperature",
+        "setpoint",
+        "point",
+        "mat-sp",
+        "mat setpoint",
+        "ma temp stpt",
+        "ma temp setpt",
+        "ma temperature setpt"
+      ]
+    },
+    {
+      "id": "mixed-air-temperature",
+      "type": "point",
+      "name": "Mixed Air Temperature",
+      "tokens": [
+        "mixed air temperature",
+        "mixed-air-temperature",
+        "mixed",
+        "air",
+        "temperature",
+        "point",
+        "ma-t",
+        "ma temp",
+        "ma temperature",
+        "mixed air temp"
+      ]
+    },
+    {
+      "id": "outdoor-air-temperature",
+      "type": "point",
+      "name": "Outdoor Air Temperature",
+      "tokens": [
+        "outdoor air temperature",
+        "outdoor-air-temperature",
+        "temperature",
+        "of",
+        "outside",
+        "ambient",
+        "air,",
+        "used",
+        "for",
+        "economizer",
+        "and",
+        "lockout",
+        "control",
+        "air",
+        "temp",
+        "sensor",
+        "oa-t",
+        "oa temp",
+        "oa temperature",
+        "outdoor air temp",
+        "outside air temp",
+        "outside temp",
+        "oat",
+        "outdoortemp",
+        "outsidetemp",
+        "ot",
+        "outside air temperature sensor",
+        "ambient air temperature",
+        "outdoor ambient temperature",
+        "outdor temp",
+        "outsite temp"
+      ]
+    },
+    {
+      "id": "primary-chilled-water-return-temperature",
+      "type": "point",
+      "name": "Primary Chilled Water Return Temperature",
+      "tokens": [
+        "primary chilled water return temperature",
+        "primary-chilled-water-return-temperature",
+        "primary",
+        "chilled",
+        "water",
+        "return",
+        "temperature",
+        "point",
+        "pchwr-t",
+        "pchwr temp",
+        "pchwr temperature",
+        "pchwr tmp"
+      ]
+    },
+    {
+      "id": "primary-chilled-water-supply-temperature",
+      "type": "point",
+      "name": "Primary Chilled Water Supply Temperature",
+      "tokens": [
+        "primary chilled water supply temperature",
+        "primary-chilled-water-supply-temperature",
+        "primary",
+        "chilled",
+        "water",
+        "supply",
+        "temperature",
+        "point",
+        "pchws-t",
+        "pchws temp",
+        "pchws temperature",
+        "pchws tmp"
+      ]
+    },
+    {
+      "id": "primary-hot-water-return-temperature",
+      "type": "point",
+      "name": "Primary Hot Water Return Temperature",
+      "tokens": [
+        "primary hot water return temperature",
+        "primary-hot-water-return-temperature",
+        "primary",
+        "hot",
+        "water",
+        "return",
+        "temperature",
+        "point",
+        "phwr-t",
+        "phwr temp",
+        "phwr temperature",
+        "phwr tmp"
+      ]
+    },
+    {
+      "id": "primary-hot-water-supply-temperature",
+      "type": "point",
+      "name": "Primary Hot Water Supply Temperature",
+      "tokens": [
+        "primary hot water supply temperature",
+        "primary-hot-water-supply-temperature",
+        "primary",
+        "hot",
+        "water",
+        "supply",
+        "temperature",
+        "point",
+        "phws-t",
+        "phws temp",
+        "phws temperature",
+        "phws tmp"
+      ]
+    },
+    {
+      "id": "return-air-temperature",
+      "type": "point",
+      "name": "Return Air Temperature",
+      "tokens": [
+        "return air temperature",
+        "return-air-temperature",
+        "return",
+        "air",
+        "temperature",
+        "point",
+        "ra-t",
+        "ra temp",
+        "ra temperature",
+        "ret air temp"
+      ]
+    },
+    {
+      "id": "secondary-chilled-water-return-temperature",
+      "type": "point",
+      "name": "Secondary Chilled Water Return Temperature",
+      "tokens": [
+        "secondary chilled water return temperature",
+        "secondary-chilled-water-return-temperature",
+        "secondary",
+        "chilled",
+        "water",
+        "return",
+        "temperature",
+        "point",
+        "schwr-t",
+        "schwr temp",
+        "schwr temperature",
+        "schwr tmp"
+      ]
+    },
+    {
+      "id": "secondary-chilled-water-supply-temperature",
+      "type": "point",
+      "name": "Secondary Chilled Water Supply Temperature",
+      "tokens": [
+        "secondary chilled water supply temperature",
+        "secondary-chilled-water-supply-temperature",
+        "secondary",
+        "chilled",
+        "water",
+        "supply",
+        "temperature",
+        "point",
+        "schws-t",
+        "schws temp",
+        "schws temperature",
+        "schws tmp"
+      ]
+    },
+    {
+      "id": "secondary-hot-water-return-temperature",
+      "type": "point",
+      "name": "Secondary Hot Water Return Temperature",
+      "tokens": [
+        "secondary hot water return temperature",
+        "secondary-hot-water-return-temperature",
+        "secondary",
+        "hot",
+        "water",
+        "return",
+        "temperature",
+        "point",
+        "shwr-t",
+        "shwr temp",
+        "shwr temperature",
+        "shwr tmp"
+      ]
+    },
+    {
+      "id": "secondary-hot-water-supply-temperature",
+      "type": "point",
+      "name": "Secondary Hot Water Supply Temperature",
+      "tokens": [
+        "secondary hot water supply temperature",
+        "secondary-hot-water-supply-temperature",
+        "secondary",
+        "hot",
+        "water",
+        "supply",
+        "temperature",
+        "point",
+        "shws-t",
+        "shws temp",
+        "shws temperature",
+        "shws tmp"
+      ]
+    },
+    {
+      "id": "supply-air-temperature",
+      "type": "point",
+      "name": "Supply Air Temperature",
+      "tokens": [
+        "supply air temperature",
+        "supply-air-temperature",
+        "supply",
+        "air",
+        "temperature",
+        "point",
+        "sa-t",
+        "sa temp",
+        "sa temperature",
+        "sup air temp"
+      ]
+    },
+    {
+      "id": "zone-temperature",
+      "type": "point",
+      "name": "Zone Temperature",
+      "tokens": [
+        "zone temperature",
+        "zone-temperature",
+        "sensed",
+        "temperature",
+        "of",
+        "air",
+        "in",
+        "occupied",
+        "zone",
+        "or",
+        "space",
+        "temp",
+        "sensor",
+        "zn-t",
+        "zn temp",
+        "zn temperature",
+        "zone temp",
+        "room temperature",
+        "rm-t",
+        "rm temp",
+        "rm temperature",
+        "room temp",
+        "space temperature",
+        "space-t",
+        "space temp",
+        "zonetemp",
+        "zone_temp",
+        "roomtemp",
+        "spacetemp",
+        "zat",
+        "rat",
+        "zt",
+        "znt",
+        "rt",
+        "st",
+        "zone air temperature",
+        "room air temperature",
+        "space air temperature",
+        "zone temperature sensor",
+        "zonetepm",
+        "zontemp",
+        "temperture",
+        "tempreture"
+      ]
+    },
+    {
+      "id": "bypass-valve-output",
+      "type": "point",
+      "name": "Bypass Valve Output",
+      "tokens": [
+        "bypass valve output",
+        "bypass-valve-output",
+        "bypass",
+        "valve",
+        "output",
+        "point",
+        "byp-o",
+        "byp vlv out",
+        "bypass vlv output"
+      ]
+    },
+    {
+      "id": "cooling-tower-1-isolation-valve",
+      "type": "point",
+      "name": "Cooling Tower 1 Isolation Valve",
+      "tokens": [
+        "cooling tower 1 isolation valve",
+        "cooling-tower-1-isolation-valve",
+        "cooling",
+        "tower",
+        "1",
+        "isolation",
+        "valve",
+        "point",
+        "ct1-isovlv",
+        "clg twr 1 iso vlv",
+        "ct-1 iso valve"
+      ]
+    },
+    {
+      "id": "cooling-tower-2-isolation-valve",
+      "type": "point",
+      "name": "Cooling Tower 2 Isolation Valve",
+      "tokens": [
+        "cooling tower 2 isolation valve",
+        "cooling-tower-2-isolation-valve",
+        "cooling",
+        "tower",
+        "2",
+        "isolation",
+        "valve",
+        "point",
+        "ct2-isovlv",
+        "clg twr 2 iso vlv",
+        "ct-2 iso valve"
+      ]
+    },
+    {
+      "id": "cooling-tower-3-isolation-valve",
+      "type": "point",
+      "name": "Cooling Tower 3 Isolation Valve",
+      "tokens": [
+        "cooling tower 3 isolation valve",
+        "cooling-tower-3-isolation-valve",
+        "cooling",
+        "tower",
+        "3",
+        "isolation",
+        "valve",
+        "point",
+        "ct3-isovlv",
+        "clg twr 3 iso vlv",
+        "ct-3 iso valve"
+      ]
+    },
+    {
+      "id": "cooling-tower-4-isolation-valve",
+      "type": "point",
+      "name": "Cooling Tower 4 Isolation Valve",
+      "tokens": [
+        "cooling tower 4 isolation valve",
+        "cooling-tower-4-isolation-valve",
+        "cooling",
+        "tower",
+        "4",
+        "isolation",
+        "valve",
+        "point",
+        "ct4-isovlv",
+        "clg twr 4 iso vlv",
+        "ct-4 iso valve"
+      ]
+    },
+    {
+      "id": "cooling-tower-5-isolation-valve",
+      "type": "point",
+      "name": "Cooling Tower 5 Isolation Valve",
+      "tokens": [
+        "cooling tower 5 isolation valve",
+        "cooling-tower-5-isolation-valve",
+        "cooling",
+        "tower",
+        "5",
+        "isolation",
+        "valve",
+        "point",
+        "ct5-isovlv",
+        "clg twr 5 iso vlv",
+        "ct-5 iso valve"
+      ]
+    },
+    {
+      "id": "cooling-tower-6-isolation-valve",
+      "type": "point",
+      "name": "Cooling Tower 6 Isolation Valve",
+      "tokens": [
+        "cooling tower 6 isolation valve",
+        "cooling-tower-6-isolation-valve",
+        "cooling",
+        "tower",
+        "6",
+        "isolation",
+        "valve",
+        "point",
+        "ct6-isovlv",
+        "clg twr 6 iso vlv",
+        "ct-6 iso valve"
+      ]
+    },
+    {
+      "id": "cooling-tower-7-isolation-valve",
+      "type": "point",
+      "name": "Cooling Tower 7 Isolation Valve",
+      "tokens": [
+        "cooling tower 7 isolation valve",
+        "cooling-tower-7-isolation-valve",
+        "cooling",
+        "tower",
+        "7",
+        "isolation",
+        "valve",
+        "point",
+        "ct7-isovlv",
+        "clg twr 7 iso vlv",
+        "ct-7 iso valve"
+      ]
+    },
+    {
+      "id": "cooling-tower-8-isolation-valve",
+      "type": "point",
+      "name": "Cooling Tower 8 Isolation Valve",
+      "tokens": [
+        "cooling tower 8 isolation valve",
+        "cooling-tower-8-isolation-valve",
+        "cooling",
+        "tower",
+        "8",
+        "isolation",
+        "valve",
+        "point",
+        "ct8-isovlv",
+        "clg twr 8 iso vlv",
+        "ct-8 iso valve"
+      ]
+    },
+    {
+      "id": "cooling-valve-output",
+      "type": "point",
+      "name": "Cooling Valve Output",
+      "tokens": [
+        "cooling valve output",
+        "cooling-valve-output",
+        "cooling",
+        "valve",
+        "output",
+        "point",
+        "clg-o",
+        "cooling output",
+        "cooling valve",
+        "cool output",
+        "chw valve",
+        "chw vlv out"
+      ]
+    },
+    {
+      "id": "heating-valve-output",
+      "type": "point",
+      "name": "Heating Valve Output",
+      "tokens": [
+        "heating valve output",
+        "heating-valve-output",
+        "heating",
+        "valve",
+        "output",
+        "point",
+        "htg-o",
+        "heating output",
+        "heating valve",
+        "heat output"
+      ]
+    },
+    {
+      "id": "isolation-valve-output",
+      "type": "point",
+      "name": "Isolation Valve Output",
+      "tokens": [
+        "isolation valve output",
+        "isolation-valve-output",
+        "isolation",
+        "valve",
+        "output",
+        "point",
+        "iso-o",
+        "iso vlv out",
+        "iso valve output"
+      ]
+    },
+    {
+      "id": "mixing-valve-output",
+      "type": "point",
+      "name": "Mixing Valve Output",
+      "tokens": [
+        "mixing valve output",
+        "mixing-valve-output",
+        "mixing",
+        "valve",
+        "output",
+        "point",
+        "mixvlv-o",
+        "mix vlv out",
+        "mix valve output"
+      ]
+    },
+    {
+      "id": "ahu",
+      "type": "equipment",
+      "name": "ahu",
+      "tokens": [
+        "ahu",
+        "air handling unit",
+        "air",
+        "handling",
+        "unit"
+      ]
+    },
+    {
+      "id": "doas",
+      "type": "equipment",
+      "name": "doas",
+      "tokens": [
+        "doas",
+        "dedicated outside air system",
+        "dedicated",
+        "outside",
+        "air",
+        "system",
+        "dedicated outdoor air unit",
+        "doau"
+      ]
+    },
+    {
+      "id": "mau",
+      "type": "equipment",
+      "name": "mau",
+      "tokens": [
+        "mau",
+        "makeup air unit",
+        "makeup",
+        "air",
+        "unit",
+        "makeup air"
+      ]
+    },
+    {
+      "id": "rtu",
+      "type": "equipment",
+      "name": "rtu",
+      "tokens": [
+        "rtu",
+        "roof top unit",
+        "roof",
+        "top",
+        "unit"
+      ]
+    },
+    {
+      "id": "fcu",
+      "type": "equipment",
+      "name": "fcu",
+      "tokens": [
+        "fcu",
+        "fan coil unit",
+        "fan",
+        "coil",
+        "unit",
+        "fan coil"
+      ]
+    },
+    {
+      "id": "crac",
+      "type": "equipment",
+      "name": "crac",
+      "tokens": [
+        "crac",
+        "computer room air conditioner",
+        "computer",
+        "room",
+        "air",
+        "conditioner",
+        "crah"
+      ]
+    },
+    {
+      "id": "unitvent",
+      "type": "equipment",
+      "name": "unitVent",
+      "tokens": [
+        "unitvent",
+        "uv",
+        "unit ventilator",
+        "unit vent"
+      ]
+    },
+    {
+      "id": "heatpump",
+      "type": "equipment",
+      "name": "heatPump",
+      "tokens": [
+        "heatpump",
+        "hp",
+        "heat pump"
+      ]
+    },
+    {
+      "id": "dxheating",
+      "type": "equipment",
+      "name": "dxHeating",
+      "tokens": [
+        "dxheating",
+        "dx heating",
+        "dx",
+        "heating",
+        "heat"
+      ]
+    },
+    {
+      "id": "elecheating",
+      "type": "equipment",
+      "name": "elecHeating",
+      "tokens": [
+        "elecheating",
+        "electric heating",
+        "electric",
+        "heating",
+        "stage heat",
+        "heat"
+      ]
+    },
+    {
+      "id": "hotwaterheating",
+      "type": "equipment",
+      "name": "hotWaterHeating",
+      "tokens": [
+        "hotwaterheating",
+        "hot water heating",
+        "hot",
+        "water",
+        "heating",
+        "hw heating",
+        "heat"
+      ]
+    },
+    {
+      "id": "naturalgasheating",
+      "type": "equipment",
+      "name": "naturalGasHeating",
+      "tokens": [
+        "naturalgasheating",
+        "natural gas heating",
+        "natural",
+        "gas",
+        "heating",
+        "gas heating",
+        "gas fired heating",
+        "heat"
+      ]
+    },
+    {
+      "id": "steamheating",
+      "type": "equipment",
+      "name": "steamHeating",
+      "tokens": [
+        "steamheating",
+        "steam heating",
+        "steam",
+        "heating",
+        "steam heat",
+        "heat"
+      ]
+    },
+    {
+      "id": "chilledwatercooling",
+      "type": "equipment",
+      "name": "chilledWaterCooling",
+      "tokens": [
+        "chilledwatercooling",
+        "chilled water cooling",
+        "chilled",
+        "water",
+        "cooling",
+        "chw cooling",
+        "cool"
+      ]
+    },
+    {
+      "id": "constantairvolume",
+      "type": "equipment",
+      "name": "constantAirVolume",
+      "tokens": [
+        "constantairvolume",
+        "constant air volume",
+        "constant",
+        "air",
+        "volume",
+        "cv ahu"
+      ]
+    },
+    {
+      "id": "variableairvolume",
+      "type": "equipment",
+      "name": "variableAirVolume",
+      "tokens": [
+        "variableairvolume",
+        "variable air volume",
+        "variable",
+        "air",
+        "volume",
+        "vav ahu"
+      ]
+    },
+    {
+      "id": "vavzone",
+      "type": "equipment",
+      "name": "vavZone",
+      "tokens": [
+        "vavzone",
+        "vav zone",
+        "vav",
+        "zone"
+      ]
+    },
+    {
+      "id": "directzone",
+      "type": "equipment",
+      "name": "directZone",
+      "tokens": [
+        "directzone",
+        "direct zone",
+        "direct",
+        "zone"
+      ]
+    },
+    {
+      "id": "chilledbeamzone",
+      "type": "equipment",
+      "name": "chilledBeamZone",
+      "tokens": [
+        "chilledbeamzone",
+        "chilled beam zone",
+        "chilled",
+        "beam",
+        "zone"
+      ]
+    },
+    {
+      "id": "multizone",
+      "type": "equipment",
+      "name": "multiZone",
+      "tokens": [
+        "multizone",
+        "multi zone",
+        "multi",
+        "zone"
+      ]
+    },
+    {
+      "id": "singleduct",
+      "type": "equipment",
+      "name": "singleDuct",
+      "tokens": [
+        "singleduct",
+        "single duct",
+        "single",
+        "duct"
+      ]
+    },
+    {
+      "id": "dualduct",
+      "type": "equipment",
+      "name": "dualDuct",
+      "tokens": [
+        "dualduct",
+        "dual duct",
+        "dual",
+        "duct"
+      ]
+    },
+    {
+      "id": "tripleduct",
+      "type": "equipment",
+      "name": "tripleDuct",
+      "tokens": [
+        "tripleduct",
+        "triple duct",
+        "triple",
+        "duct"
+      ]
+    },
+    {
+      "id": "discharge",
+      "type": "equipment",
+      "name": "discharge",
+      "tokens": [
+        "discharge",
+        "discharge air",
+        "air",
+        "da"
+      ]
+    },
+    {
+      "id": "return",
+      "type": "equipment",
+      "name": "return",
+      "tokens": [
+        "return",
+        "return air",
+        "air",
+        "ra"
+      ]
+    },
+    {
+      "id": "outside",
+      "type": "equipment",
+      "name": "outside",
+      "tokens": [
+        "outside",
+        "outside air",
+        "air",
+        "oa"
+      ]
+    },
+    {
+      "id": "exhaust",
+      "type": "equipment",
+      "name": "exhaust",
+      "tokens": [
+        "exhaust",
+        "exhaust air",
+        "air",
+        "ea"
+      ]
+    },
+    {
+      "id": "mixed",
+      "type": "equipment",
+      "name": "mixed",
+      "tokens": [
+        "mixed",
+        "mixed air",
+        "air",
+        "ma"
+      ]
+    },
+    {
+      "id": "cool",
+      "type": "equipment",
+      "name": "cool",
+      "tokens": [
+        "cool",
+        "cooling"
+      ]
+    },
+    {
+      "id": "heat",
+      "type": "equipment",
+      "name": "heat",
+      "tokens": [
+        "heat",
+        "heating"
+      ]
+    },
+    {
+      "id": "zone",
+      "type": "equipment",
+      "name": "zone",
+      "tokens": [
+        "zone",
+        "room",
+        "space"
+      ]
+    },
+    {
+      "id": "chilled-water-plant",
+      "type": "equipment",
+      "name": "chilled-water-plant",
+      "tokens": [
+        "chilled-water-plant",
+        "chilled water plant",
+        "chilled",
+        "water",
+        "plant",
+        "chilled water system",
+        "central plant"
+      ]
+    },
+    {
+      "id": "hot-water-plant",
+      "type": "equipment",
+      "name": "hot-water-plant",
+      "tokens": [
+        "hot-water-plant",
+        "hot water plant",
+        "hot",
+        "water",
+        "plant",
+        "hot water system",
+        "heating water system",
+        "heating water"
+      ]
+    },
+    {
+      "id": "steam-plant",
+      "type": "equipment",
+      "name": "steam-plant",
+      "tokens": [
+        "steam-plant",
+        "steam plant",
+        "steam",
+        "plant",
+        "steam water system",
+        "steam water",
+        "low pressure steam",
+        "high pressure steam"
+      ]
+    },
+    {
+      "id": "chiller",
+      "type": "equipment",
+      "name": "chiller",
+      "tokens": [
+        "chiller",
+        "ch",
+        "chlr"
+      ]
+    },
+    {
+      "id": "coolingtower",
+      "type": "equipment",
+      "name": "coolingTower",
+      "tokens": [
+        "coolingtower",
+        "cooling tower",
+        "cooling",
+        "tower",
+        "ct"
+      ]
+    },
+    {
+      "id": "heatexchanger",
+      "type": "equipment",
+      "name": "heatExchanger",
+      "tokens": [
+        "heatexchanger",
+        "heat exchanger",
+        "heat",
+        "exchanger",
+        "hx"
+      ]
+    },
+    {
+      "id": "pump-motor",
+      "type": "equipment",
+      "name": "pump-motor",
+      "tokens": [
+        "pump-motor",
+        "pump",
+        "chw pump",
+        "chwp",
+        "hw pump",
+        "hwp",
+        "pchwp",
+        "schwp",
+        "phwp",
+        "shwp"
+      ]
+    },
+    {
+      "id": "valve-actuator",
+      "type": "equipment",
+      "name": "valve-actuator",
+      "tokens": [
+        "valve-actuator",
+        "valve",
+        "isolation valve",
+        "mixing valve",
+        "modulating valve"
+      ]
+    },
+    {
+      "id": "hot-water-boiler",
+      "type": "equipment",
+      "name": "hot-water-boiler",
+      "tokens": [
+        "hot-water-boiler",
+        "hot water boiler",
+        "hot",
+        "water",
+        "boiler",
+        "b",
+        "blr"
+      ]
+    },
+    {
+      "id": "steam-boiler",
+      "type": "equipment",
+      "name": "steam-boiler",
+      "tokens": [
+        "steam-boiler",
+        "steam boiler",
+        "steam",
+        "boiler",
+        "b",
+        "blr"
+      ]
+    },
+    {
+      "id": "ac-elec-meter",
+      "type": "equipment",
+      "name": "ac-elec-meter",
+      "tokens": [
+        "ac-elec-meter",
+        "elec meter",
+        "elec",
+        "meter",
+        "electricity meter",
+        "kw meter",
+        "power meter"
+      ]
+    },
+    {
+      "id": "dc-elec-meter",
+      "type": "equipment",
+      "name": "dc-elec meter",
+      "tokens": [
+        "dc-elec meter",
+        "dc-elec-meter",
+        "elec meter",
+        "elec",
+        "meter",
+        "electricity meter",
+        "kw meter",
+        "power meter"
+      ]
+    },
+    {
+      "id": "elec-meter",
+      "type": "equipment",
+      "name": "elec-meter",
+      "tokens": [
+        "elec-meter",
+        "elec meter",
+        "elec",
+        "meter",
+        "electricity meter",
+        "kw meter",
+        "power meter"
+      ]
+    },
+    {
+      "id": "flow-meter",
+      "type": "equipment",
+      "name": "flow-meter",
+      "tokens": [
+        "flow-meter",
+        "water meter",
+        "water",
+        "meter",
+        "gpm meter"
+      ]
+    },
+    {
+      "id": "gas-meter",
+      "type": "equipment",
+      "name": "gas-meter",
+      "tokens": [
+        "gas-meter",
+        "natural gas meter",
+        "natural",
+        "gas",
+        "meter",
+        "gas meter"
+      ]
+    },
+    {
+      "id": "steam-meter",
+      "type": "equipment",
+      "name": "steam-meter",
+      "tokens": [
+        "steam-meter",
+        "steam meter",
+        "steam",
+        "meter"
+      ]
+    },
+    {
+      "id": "fan-motor",
+      "type": "equipment",
+      "name": "fan-motor",
+      "tokens": [
+        "fan-motor",
+        "fan motor",
+        "fan",
+        "motor",
+        "supply fan",
+        "return fan",
+        "exhaust fan"
+      ]
+    },
+    {
+      "id": "elecheating",
+      "type": "equipment",
+      "name": "elecHeating",
+      "tokens": [
+        "elecheating",
+        "electric heating",
+        "electric",
+        "heating",
+        "stage heat",
+        "heat"
+      ]
+    },
+    {
+      "id": "hotwaterheating",
+      "type": "equipment",
+      "name": "hotWaterHeating",
+      "tokens": [
+        "hotwaterheating",
+        "hot water heating",
+        "hot",
+        "water",
+        "heating",
+        "hw heating",
+        "heat"
+      ]
+    },
+    {
+      "id": "steamheating",
+      "type": "equipment",
+      "name": "steamHeating",
+      "tokens": [
+        "steamheating",
+        "steam heating",
+        "steam",
+        "heating",
+        "steam heat",
+        "heat"
+      ]
+    },
+    {
+      "id": "pressuredependent",
+      "type": "equipment",
+      "name": "pressureDependent",
+      "tokens": [
+        "pressuredependent",
+        "pressure dependent",
+        "pressure",
+        "dependent"
+      ]
+    },
+    {
+      "id": "pressureindependent",
+      "type": "equipment",
+      "name": "pressureIndependent",
+      "tokens": [
+        "pressureindependent",
+        "pressure independent",
+        "pressure",
+        "independent"
+      ]
+    },
+    {
+      "id": "parallel",
+      "type": "equipment",
+      "name": "parallel",
+      "tokens": [
+        "parallel",
+        "pfvav",
+        "parallel fan",
+        "parallel fan vav"
+      ]
+    },
+    {
+      "id": "series",
+      "type": "equipment",
+      "name": "series",
+      "tokens": [
+        "series",
+        "sfvav",
+        "series fan",
+        "series fan vav"
+      ]
+    },
+    {
+      "id": "singleduct",
+      "type": "equipment",
+      "name": "singleDuct",
+      "tokens": [
+        "singleduct",
+        "single duct",
+        "single",
+        "duct"
+      ]
+    },
+    {
+      "id": "dualduct",
+      "type": "equipment",
+      "name": "dualDuct",
+      "tokens": [
+        "dualduct",
+        "dual duct",
+        "dual",
+        "duct"
+      ]
+    },
+    {
+      "id": "inlet",
+      "type": "equipment",
+      "name": "inlet",
+      "tokens": [
+        "inlet",
+        "supply air",
+        "supply",
+        "air",
+        "from ahu",
+        "sa"
+      ]
+    },
+    {
+      "id": "discharge",
+      "type": "equipment",
+      "name": "discharge",
+      "tokens": [
+        "discharge",
+        "discharge air",
+        "air",
+        "da"
+      ]
+    },
+    {
+      "id": "zone",
+      "type": "equipment",
+      "name": "zone",
+      "tokens": [
+        "zone",
+        "space",
+        "room"
+      ]
+    },
+    {
+      "id": "vrf-indoorunit",
+      "type": "equipment",
+      "name": "vrf-indoorUnit",
+      "tokens": [
+        "vrf-indoorunit",
+        "vrf",
+        "variable refrigerant flow",
+        "ceiling cassette",
+        "ceiling concealed duct",
+        "wall mounted"
+      ]
+    },
+    {
+      "id": "vrf-outdoorunit",
+      "type": "equipment",
+      "name": "vrf-outdoorUnit",
+      "tokens": [
+        "vrf-outdoorunit",
+        "vrf odu",
+        "vrf",
+        "odu",
+        "outdoor unit"
+      ]
+    }
+  ]
+}

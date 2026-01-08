@@ -1,0 +1,6401 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-08T16:03:29.526Z",
+  "totalPoints": 292,
+  "totalEquipment": 62,
+  "points": [
+    {
+      "concept": {
+        "id": "boiler-1-alarm",
+        "name": "Boiler 1 Alarm",
+        "category": "alarms",
+        "description": "Boiler 1 Alarm point",
+        "haystack": "boiler 1 alarm"
+      },
+      "aliases": {
+        "common": [
+          "blr1-a",
+          "blr 1 alm",
+          "boiler 1 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-2-alarm",
+        "name": "Boiler 2 Alarm",
+        "category": "alarms",
+        "description": "Boiler 2 Alarm point",
+        "haystack": "boiler 2 alarm"
+      },
+      "aliases": {
+        "common": [
+          "blr2-a",
+          "blr 2 alm",
+          "boiler 2 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-3-alarm",
+        "name": "Boiler 3 Alarm",
+        "category": "alarms",
+        "description": "Boiler 3 Alarm point",
+        "haystack": "boiler 3 alarm"
+      },
+      "aliases": {
+        "common": [
+          "blr3-a",
+          "blr 3 alm",
+          "boiler 3 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-4-alarm",
+        "name": "Boiler 4 Alarm",
+        "category": "alarms",
+        "description": "Boiler 4 Alarm point",
+        "haystack": "boiler 4 alarm"
+      },
+      "aliases": {
+        "common": [
+          "blr4-a",
+          "blr 4 alm",
+          "boiler 4 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-pump-alarm",
+        "name": "Boiler Pump Alarm",
+        "category": "alarms",
+        "description": "Boiler Pump Alarm point",
+        "haystack": "boiler pump alarm"
+      },
+      "aliases": {
+        "common": [
+          "bp-a",
+          "bp alm",
+          "bp alarm",
+          "blrp alarm",
+          "blr pump alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chilled-water-pump-alarm",
+        "name": "Chilled Water Pump Alarm",
+        "category": "alarms",
+        "description": "Chilled Water Pump Alarm point",
+        "haystack": "chilled water pump alarm"
+      },
+      "aliases": {
+        "common": [
+          "chwp-a",
+          "chwp alm",
+          "chwp alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-1-alarm",
+        "name": "Chiller 1 Alarm",
+        "category": "alarms",
+        "description": "Chiller 1 Alarm point",
+        "haystack": "chiller 1 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ch1-a",
+          "ch1-alm",
+          "ch-1 alarm",
+          "ch-1 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-2-alarm",
+        "name": "Chiller 2 Alarm",
+        "category": "alarms",
+        "description": "Chiller 2 Alarm point",
+        "haystack": "chiller 2 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ch2-a",
+          "ch2-alm",
+          "ch-2 alarm",
+          "ch-2 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-3-alarm",
+        "name": "Chiller 3 Alarm",
+        "category": "alarms",
+        "description": "Chiller 3 Alarm point",
+        "haystack": "chiller 3 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ch3-a",
+          "ch3-alm",
+          "ch-3 alarm",
+          "ch-3 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-4-alarm",
+        "name": "Chiller 4 Alarm",
+        "category": "alarms",
+        "description": "Chiller 4 Alarm point",
+        "haystack": "chiller 4 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ch4-a",
+          "ch4-alm",
+          "ch-4 alarm",
+          "ch-4 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-5-alarm",
+        "name": "Chiller 5 Alarm",
+        "category": "alarms",
+        "description": "Chiller 5 Alarm point",
+        "haystack": "chiller 5 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ch5-a",
+          "ch5-alm",
+          "ch-5 alarm",
+          "ch-5 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-6-alarm",
+        "name": "Chiller 6 Alarm",
+        "category": "alarms",
+        "description": "Chiller 6 Alarm point",
+        "haystack": "chiller 6 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ch6-a",
+          "ch6-alm",
+          "ch-6 alarm",
+          "ch-6 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-7-alarm",
+        "name": "Chiller 7 Alarm",
+        "category": "alarms",
+        "description": "Chiller 7 Alarm point",
+        "haystack": "chiller 7 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ch7-a",
+          "ch7-alm",
+          "ch-7 alarm",
+          "ch-7 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-8-alarm",
+        "name": "Chiller 8 Alarm",
+        "category": "alarms",
+        "description": "Chiller 8 Alarm point",
+        "haystack": "chiller 8 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ch8-a",
+          "ch8-alm",
+          "ch-8 alarm",
+          "ch-8 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "condenser-water-pump-alarm",
+        "name": "Condenser Water Pump Alarm",
+        "category": "alarms",
+        "description": "Condenser Water Pump Alarm point",
+        "haystack": "condenser water pump alarm"
+      },
+      "aliases": {
+        "common": [
+          "cwp-a",
+          "cwp alm",
+          "cwp alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-1-alarm",
+        "name": "Cooling Tower 1 Alarm",
+        "category": "alarms",
+        "description": "Cooling Tower 1 Alarm point",
+        "haystack": "cooling tower 1 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ct1-a",
+          "clg twr 1 alm",
+          "ct-1 alarm",
+          "ct-1 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-2-alarm",
+        "name": "Cooling Tower 2 Alarm",
+        "category": "alarms",
+        "description": "Cooling Tower 2 Alarm point",
+        "haystack": "cooling tower 2 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ct2-a",
+          "clg twr 2 alm",
+          "ct-2 alarm",
+          "ct-2 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-3-alarm",
+        "name": "Cooling Tower 3 Alarm",
+        "category": "alarms",
+        "description": "Cooling Tower 3 Alarm point",
+        "haystack": "cooling tower 3 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ct3-a",
+          "clg twr 3 alm",
+          "ct-3 alarm",
+          "ct-3 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-4-alarm",
+        "name": "Cooling Tower 4 Alarm",
+        "category": "alarms",
+        "description": "Cooling Tower 4 Alarm point",
+        "haystack": "cooling tower 4 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ct4-a",
+          "clg twr 4 alm",
+          "ct-4 alarm",
+          "ct-4 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-5-alarm",
+        "name": "Cooling Tower 5 Alarm",
+        "category": "alarms",
+        "description": "Cooling Tower 5 Alarm point",
+        "haystack": "cooling tower 5 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ct5-a",
+          "clg twr 5 alm",
+          "ct-5 alarm",
+          "ct-5 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-6-alarm",
+        "name": "Cooling Tower 6 Alarm",
+        "category": "alarms",
+        "description": "Cooling Tower 6 Alarm point",
+        "haystack": "cooling tower 6 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ct6-a",
+          "clg twr 6 alm",
+          "ct-6 alarm",
+          "ct-6 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-7-alarm",
+        "name": "Cooling Tower 7 Alarm",
+        "category": "alarms",
+        "description": "Cooling Tower 7 Alarm point",
+        "haystack": "cooling tower 7 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ct7-a",
+          "clg twr 7 alm",
+          "ct-7 alarm",
+          "ct-7 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-8-alarm",
+        "name": "Cooling Tower 8 Alarm",
+        "category": "alarms",
+        "description": "Cooling Tower 8 Alarm point",
+        "haystack": "cooling tower 8 alarm"
+      },
+      "aliases": {
+        "common": [
+          "ct8-a",
+          "clg twr 8 alm",
+          "ct-8 alarm",
+          "ct-8 alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "filter-alarm",
+        "name": "Filter Alarm",
+        "category": "alarms",
+        "description": "Filter Alarm point",
+        "haystack": "filter alarm"
+      },
+      "aliases": {
+        "common": [
+          "filt-a",
+          "filt alm",
+          "filt alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "final-filter-alarm",
+        "name": "Final Filter Alarm",
+        "category": "alarms",
+        "description": "Final Filter Alarm point",
+        "haystack": "final filter alarm"
+      },
+      "aliases": {
+        "common": [
+          "fin filter alarm",
+          "ffilt-a",
+          "fin filt alm",
+          "fin filt alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "hot-water-pump-alarm",
+        "name": "Hot Water Pump Alarm",
+        "category": "alarms",
+        "description": "Hot Water Pump Alarm point",
+        "haystack": "hot water pump alarm"
+      },
+      "aliases": {
+        "common": [
+          "hwp-a",
+          "hwp alm",
+          "hwp alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "low-limit-alarm",
+        "name": "Low Limit Alarm",
+        "category": "alarms",
+        "description": "Low Limit Alarm point",
+        "haystack": "low limit alarm"
+      },
+      "aliases": {
+        "common": [
+          "low temp alarm",
+          "freezestat",
+          "lt-a",
+          "frz-st",
+          "ll-a",
+          "low temp alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "prefilter-alarm",
+        "name": "Prefilter Alarm",
+        "category": "alarms",
+        "description": "Prefilter Alarm point",
+        "haystack": "prefilter alarm"
+      },
+      "aliases": {
+        "common": [
+          "pre filter alarm",
+          "pfilt-a",
+          "pre filt alm",
+          "pre filt alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "primary-chilled-water-pump-alarm",
+        "name": "Primary Chilled Water Pump Alarm",
+        "category": "alarms",
+        "description": "Primary Chilled Water Pump Alarm point",
+        "haystack": "primary chilled water pump alarm"
+      },
+      "aliases": {
+        "common": [
+          "pchwp-a",
+          "pchwp alm",
+          "pchwp alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "secondary-chilled-water-pump-alarm",
+        "name": "Secondary Chilled Water Pump Alarm",
+        "category": "alarms",
+        "description": "Secondary Chilled Water Pump Alarm point",
+        "haystack": "secondary chilled water pump alarm"
+      },
+      "aliases": {
+        "common": [
+          "schwp-a",
+          "schwp alm",
+          "schwp alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "smoke-alarm",
+        "name": "Smoke Alarm",
+        "category": "alarms",
+        "description": "Smoke Alarm point",
+        "haystack": "smoke alarm"
+      },
+      "aliases": {
+        "common": [
+          "smoke detect",
+          "smk-alm",
+          "smk-det"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-1-command",
+        "name": "Boiler 1 Command",
+        "category": "commands",
+        "description": "Boiler 1 Command point",
+        "haystack": "boiler 1 command"
+      },
+      "aliases": {
+        "common": [
+          "blr1-c",
+          "blr 1 cmd",
+          "boiler 1 cmd",
+          "b-1 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-1-output",
+        "name": "Boiler 1 Output",
+        "category": "commands",
+        "description": "Boiler 1 Output point",
+        "haystack": "boiler 1 output"
+      },
+      "aliases": {
+        "common": [
+          "blr1-o",
+          "blr 1 out",
+          "boiler 1 out",
+          "b-1 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-2-command",
+        "name": "Boiler 2 Command",
+        "category": "commands",
+        "description": "Boiler 2 Command point",
+        "haystack": "boiler 2 command"
+      },
+      "aliases": {
+        "common": [
+          "blr2-c",
+          "blr 2 cmd",
+          "boiler 2 cmd",
+          "b-2 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-2-output",
+        "name": "Boiler 2 Output",
+        "category": "commands",
+        "description": "Boiler 2 Output point",
+        "haystack": "boiler 2 output"
+      },
+      "aliases": {
+        "common": [
+          "blr2-o",
+          "blr 2 out",
+          "boiler 2 out",
+          "b-2 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-3-command",
+        "name": "Boiler 3 Command",
+        "category": "commands",
+        "description": "Boiler 3 Command point",
+        "haystack": "boiler 3 command"
+      },
+      "aliases": {
+        "common": [
+          "blr3-c",
+          "blr 3 cmd",
+          "boiler 3 cmd",
+          "b-3 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-3-output",
+        "name": "Boiler 3 Output",
+        "category": "commands",
+        "description": "Boiler 3 Output point",
+        "haystack": "boiler 3 output"
+      },
+      "aliases": {
+        "common": [
+          "blr3-o",
+          "blr 3 out",
+          "boiler 3 out",
+          "b-3 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-4-command",
+        "name": "Boiler 4 Command",
+        "category": "commands",
+        "description": "Boiler 4 Command point",
+        "haystack": "boiler 4 command"
+      },
+      "aliases": {
+        "common": [
+          "blr4-c",
+          "blr 4 cmd",
+          "boiler 4 cmd",
+          "b-4 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-4-output",
+        "name": "Boiler 4 Output",
+        "category": "commands",
+        "description": "Boiler 4 Output point",
+        "haystack": "boiler 4 output"
+      },
+      "aliases": {
+        "common": [
+          "blr4-o",
+          "blr 4 out",
+          "boiler 4 out",
+          "b-4 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-pump-command",
+        "name": "Boiler Pump Command",
+        "category": "commands",
+        "description": "Boiler Pump Command point",
+        "haystack": "boiler pump command"
+      },
+      "aliases": {
+        "common": [
+          "bp-c",
+          "bp cmd",
+          "bp command",
+          "blrp command",
+          "blr pump cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-pump-output",
+        "name": "Boiler Pump Output",
+        "category": "commands",
+        "description": "Boiler Pump Output point",
+        "haystack": "boiler pump output"
+      },
+      "aliases": {
+        "common": [
+          "bp-o",
+          "bp out",
+          "bp output",
+          "blrp output",
+          "blr pump out"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chilled-water-pump-command",
+        "name": "Chilled Water Pump Command",
+        "category": "commands",
+        "description": "Chilled Water Pump Command point",
+        "haystack": "chilled water pump command"
+      },
+      "aliases": {
+        "common": [
+          "chwp-c",
+          "chwp cmd",
+          "chwp command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chilled-water-pump-output",
+        "name": "Chilled Water Pump Output",
+        "category": "commands",
+        "description": "Chilled Water Pump Output point",
+        "haystack": "chilled water pump output"
+      },
+      "aliases": {
+        "common": [
+          "chwp-o",
+          "chwp out",
+          "chwp output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-1-command",
+        "name": "Chiller 1 Command",
+        "category": "commands",
+        "description": "Chiller 1 Command point",
+        "haystack": "chiller 1 command"
+      },
+      "aliases": {
+        "common": [
+          "ch1-c",
+          "ch1-cmd",
+          "ch-1 cmd",
+          "ch-1 command",
+          "chlr-1 cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-1-enable",
+        "name": "Chiller 1 Enable",
+        "category": "commands",
+        "description": "Chiller 1 Enable point",
+        "haystack": "chiller 1 enable"
+      },
+      "aliases": {
+        "common": [
+          "ch1-en",
+          "ch1-enable",
+          "ch-1 enable",
+          "chlr-1 enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-2-command",
+        "name": "Chiller 2 Command",
+        "category": "commands",
+        "description": "Chiller 2 Command point",
+        "haystack": "chiller 2 command"
+      },
+      "aliases": {
+        "common": [
+          "ch2-c",
+          "ch2-cmd",
+          "ch-2 cmd",
+          "ch-2 command",
+          "chlr-2 cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-2-enable",
+        "name": "Chiller 2 Enable",
+        "category": "commands",
+        "description": "Chiller 2 Enable point",
+        "haystack": "chiller 2 enable"
+      },
+      "aliases": {
+        "common": [
+          "ch2-en",
+          "ch2-enable",
+          "ch-2 enable",
+          "chlr-2 enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-3-command",
+        "name": "Chiller 3 Command",
+        "category": "commands",
+        "description": "Chiller 3 Command point",
+        "haystack": "chiller 3 command"
+      },
+      "aliases": {
+        "common": [
+          "ch3-c",
+          "ch3-cmd",
+          "ch-3 cmd",
+          "ch-3 command",
+          "chlr-3 cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-3-enable",
+        "name": "Chiller 3 Enable",
+        "category": "commands",
+        "description": "Chiller 3 Enable point",
+        "haystack": "chiller 3 enable"
+      },
+      "aliases": {
+        "common": [
+          "ch3-en",
+          "ch3-enable",
+          "ch-3 enable",
+          "chlr-3 enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-4-command",
+        "name": "Chiller 4 Command",
+        "category": "commands",
+        "description": "Chiller 4 Command point",
+        "haystack": "chiller 4 command"
+      },
+      "aliases": {
+        "common": [
+          "ch4-c",
+          "ch4-cmd",
+          "ch-4 cmd",
+          "ch-4 command",
+          "chlr-4 cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-4-enable",
+        "name": "Chiller 4 Enable",
+        "category": "commands",
+        "description": "Chiller 4 Enable point",
+        "haystack": "chiller 4 enable"
+      },
+      "aliases": {
+        "common": [
+          "ch4-en",
+          "ch4-enable",
+          "ch-4 enable",
+          "chlr-4 enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-5-command",
+        "name": "Chiller 5 Command",
+        "category": "commands",
+        "description": "Chiller 5 Command point",
+        "haystack": "chiller 5 command"
+      },
+      "aliases": {
+        "common": [
+          "ch5-c",
+          "ch5-cmd",
+          "ch-5 cmd",
+          "ch-5 command",
+          "chlr-5 cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-5-enable",
+        "name": "Chiller 5 Enable",
+        "category": "commands",
+        "description": "Chiller 5 Enable point",
+        "haystack": "chiller 5 enable"
+      },
+      "aliases": {
+        "common": [
+          "ch5-en",
+          "ch5-enable",
+          "ch-5 enable",
+          "chlr-5 enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-6-command",
+        "name": "Chiller 6 Command",
+        "category": "commands",
+        "description": "Chiller 6 Command point",
+        "haystack": "chiller 6 command"
+      },
+      "aliases": {
+        "common": [
+          "ch6-c",
+          "ch6-cmd",
+          "ch-6 cmd",
+          "ch-6 command",
+          "chlr-6 cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-6-enable",
+        "name": "Chiller 6 Enable",
+        "category": "commands",
+        "description": "Chiller 6 Enable point",
+        "haystack": "chiller 6 enable"
+      },
+      "aliases": {
+        "common": [
+          "ch6-en",
+          "ch6-enable",
+          "ch-6 enable",
+          "chlr-6 enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-7-command",
+        "name": "Chiller 7 Command",
+        "category": "commands",
+        "description": "Chiller 7 Command point",
+        "haystack": "chiller 7 command"
+      },
+      "aliases": {
+        "common": [
+          "ch7-c",
+          "ch7-cmd",
+          "ch-7 cmd",
+          "ch-7 command",
+          "chlr-7 cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-7-enable",
+        "name": "Chiller 7 Enable",
+        "category": "commands",
+        "description": "Chiller 7 Enable point",
+        "haystack": "chiller 7 enable"
+      },
+      "aliases": {
+        "common": [
+          "ch7-en",
+          "ch7-enable",
+          "ch-7 enable",
+          "chlr-7 enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-8-command",
+        "name": "Chiller 8 Command",
+        "category": "commands",
+        "description": "Chiller 8 Command point",
+        "haystack": "chiller 8 command"
+      },
+      "aliases": {
+        "common": [
+          "ch8-c",
+          "ch8-cmd",
+          "ch-8 cmd",
+          "ch-8 command",
+          "chlr-8 cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-8-enable",
+        "name": "Chiller 8 Enable",
+        "category": "commands",
+        "description": "Chiller 8 Enable point",
+        "haystack": "chiller 8 enable"
+      },
+      "aliases": {
+        "common": [
+          "ch8-en",
+          "ch8-enable",
+          "ch-8 enable",
+          "chlr-8 enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "condenser-water-pump-command",
+        "name": "Condenser Water Pump Command",
+        "category": "commands",
+        "description": "Condenser Water Pump Command point",
+        "haystack": "condenser water pump command"
+      },
+      "aliases": {
+        "common": [
+          "cwp-c",
+          "cwp cmd",
+          "cwp command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "condenser-water-pump-output",
+        "name": "Condenser Water Pump Output",
+        "category": "commands",
+        "description": "Condenser Water Pump Output point",
+        "haystack": "condenser water pump output"
+      },
+      "aliases": {
+        "common": [
+          "cwp-o",
+          "cwp out",
+          "cwp output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-enable",
+        "name": "Cooling Enable",
+        "category": "commands",
+        "description": "Cooling Enable point",
+        "haystack": "cooling enable"
+      },
+      "aliases": {
+        "common": [
+          "clg-en",
+          "cooling en",
+          "cool enable",
+          "clg enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-1-command",
+        "name": "Cooling Tower 1 Command",
+        "category": "commands",
+        "description": "Cooling Tower 1 Command point",
+        "haystack": "cooling tower 1 command"
+      },
+      "aliases": {
+        "common": [
+          "ct1-cmd",
+          "clg twr 1 cmd",
+          "ct-1 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-1-enable",
+        "name": "Cooling Tower 1 Enable",
+        "category": "commands",
+        "description": "Cooling Tower 1 Enable point",
+        "haystack": "cooling tower 1 enable"
+      },
+      "aliases": {
+        "common": [
+          "ct1-en",
+          "clg twr 1 en",
+          "ct-1 enable",
+          "clg twr 1 enable",
+          "ct-1 ena"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-1-output",
+        "name": "Cooling Tower 1 Output",
+        "category": "commands",
+        "description": "Cooling Tower 1 Output point",
+        "haystack": "cooling tower 1 output"
+      },
+      "aliases": {
+        "common": [
+          "ct1-o",
+          "clg twr 1 out",
+          "ct-1 out",
+          "ct-1 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-2-command",
+        "name": "Cooling Tower 2 Command",
+        "category": "commands",
+        "description": "Cooling Tower 2 Command point",
+        "haystack": "cooling tower 2 command"
+      },
+      "aliases": {
+        "common": [
+          "ct2-cmd",
+          "clg twr 2 cmd",
+          "ct-2 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-2-enable",
+        "name": "Cooling Tower 2 Enable",
+        "category": "commands",
+        "description": "Cooling Tower 2 Enable point",
+        "haystack": "cooling tower 2 enable"
+      },
+      "aliases": {
+        "common": [
+          "ct2-en",
+          "clg twr 2 en",
+          "ct-2 enable",
+          "clg twr 2 enable",
+          "ct-2 ena"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-2-output",
+        "name": "Cooling Tower 2 Output",
+        "category": "commands",
+        "description": "Cooling Tower 2 Output point",
+        "haystack": "cooling tower 2 output"
+      },
+      "aliases": {
+        "common": [
+          "ct2-o",
+          "clg twr 2 out",
+          "ct-2 out",
+          "ct-2 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-3-command",
+        "name": "Cooling Tower 3 Command",
+        "category": "commands",
+        "description": "Cooling Tower 3 Command point",
+        "haystack": "cooling tower 3 command"
+      },
+      "aliases": {
+        "common": [
+          "ct3-cmd",
+          "clg twr 3 cmd",
+          "ct-3 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-3-enable",
+        "name": "Cooling Tower 3 Enable",
+        "category": "commands",
+        "description": "Cooling Tower 3 Enable point",
+        "haystack": "cooling tower 3 enable"
+      },
+      "aliases": {
+        "common": [
+          "ct3-en",
+          "clg twr 3 en",
+          "ct-3 enable",
+          "clg twr 3 enable",
+          "ct-3 ena"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-3-output",
+        "name": "Cooling Tower 3 Output",
+        "category": "commands",
+        "description": "Cooling Tower 3 Output point",
+        "haystack": "cooling tower 3 output"
+      },
+      "aliases": {
+        "common": [
+          "ct3-o",
+          "clg twr 3 out",
+          "ct-3 out",
+          "ct-3 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-4-command",
+        "name": "Cooling Tower 4 Command",
+        "category": "commands",
+        "description": "Cooling Tower 4 Command point",
+        "haystack": "cooling tower 4 command"
+      },
+      "aliases": {
+        "common": [
+          "ct4-cmd",
+          "clg twr 4 cmd",
+          "ct-4 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-4-enable",
+        "name": "Cooling Tower 4 Enable",
+        "category": "commands",
+        "description": "Cooling Tower 4 Enable point",
+        "haystack": "cooling tower 4 enable"
+      },
+      "aliases": {
+        "common": [
+          "ct4-en",
+          "clg twr 4 en",
+          "ct-4 enable",
+          "clg twr 4 enable",
+          "ct-4 ena"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-4-output",
+        "name": "Cooling Tower 4 Output",
+        "category": "commands",
+        "description": "Cooling Tower 4 Output point",
+        "haystack": "cooling tower 4 output"
+      },
+      "aliases": {
+        "common": [
+          "ct4-o",
+          "clg twr 4 out",
+          "ct-4 out",
+          "ct-4 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-5-command",
+        "name": "Cooling Tower 5 Command",
+        "category": "commands",
+        "description": "Cooling Tower 5 Command point",
+        "haystack": "cooling tower 5 command"
+      },
+      "aliases": {
+        "common": [
+          "ct5-cmd",
+          "clg twr 5 cmd",
+          "ct-5 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-5-enable",
+        "name": "Cooling Tower 5 Enable",
+        "category": "commands",
+        "description": "Cooling Tower 5 Enable point",
+        "haystack": "cooling tower 5 enable"
+      },
+      "aliases": {
+        "common": [
+          "ct5-en",
+          "clg twr 5 en",
+          "ct-5 enable",
+          "clg twr 5 enable",
+          "ct-5 ena"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-5-output",
+        "name": "Cooling Tower 5 Output",
+        "category": "commands",
+        "description": "Cooling Tower 5 Output point",
+        "haystack": "cooling tower 5 output"
+      },
+      "aliases": {
+        "common": [
+          "ct5-o",
+          "clg twr 5 out",
+          "ct-5 out",
+          "ct-5 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-6-command",
+        "name": "Cooling Tower 6 Command",
+        "category": "commands",
+        "description": "Cooling Tower 6 Command point",
+        "haystack": "cooling tower 6 command"
+      },
+      "aliases": {
+        "common": [
+          "ct6-cmd",
+          "clg twr 6 cmd",
+          "ct-6 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-6-enable",
+        "name": "Cooling Tower 6 Enable",
+        "category": "commands",
+        "description": "Cooling Tower 6 Enable point",
+        "haystack": "cooling tower 6 enable"
+      },
+      "aliases": {
+        "common": [
+          "ct6-en",
+          "clg twr 6 en",
+          "ct-6 enable",
+          "clg twr 6 enable",
+          "ct-6 ena"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-6-output",
+        "name": "Cooling Tower 6 Output",
+        "category": "commands",
+        "description": "Cooling Tower 6 Output point",
+        "haystack": "cooling tower 6 output"
+      },
+      "aliases": {
+        "common": [
+          "ct6-o",
+          "clg twr 6 out",
+          "ct-6 out",
+          "ct-6 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-7-command",
+        "name": "Cooling Tower 7 Command",
+        "category": "commands",
+        "description": "Cooling Tower 7 Command point",
+        "haystack": "cooling tower 7 command"
+      },
+      "aliases": {
+        "common": [
+          "ct7-cmd",
+          "clg twr 7 cmd",
+          "ct-7 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-7-enable",
+        "name": "Cooling Tower 7 Enable",
+        "category": "commands",
+        "description": "Cooling Tower 7 Enable point",
+        "haystack": "cooling tower 7 enable"
+      },
+      "aliases": {
+        "common": [
+          "ct7-en",
+          "clg twr 7 en",
+          "ct-7 enable",
+          "clg twr 7 enable",
+          "ct-7 ena"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-7-output",
+        "name": "Cooling Tower 7 Output",
+        "category": "commands",
+        "description": "Cooling Tower 7 Output point",
+        "haystack": "cooling tower 7 output"
+      },
+      "aliases": {
+        "common": [
+          "ct7-o",
+          "clg twr 7 out",
+          "ct-7 out",
+          "ct-7 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-8-command",
+        "name": "Cooling Tower 8 Command",
+        "category": "commands",
+        "description": "Cooling Tower 8 Command point",
+        "haystack": "cooling tower 8 command"
+      },
+      "aliases": {
+        "common": [
+          "ct8-cmd",
+          "clg twr 8 cmd",
+          "ct-8 command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-8-enable",
+        "name": "Cooling Tower 8 Enable",
+        "category": "commands",
+        "description": "Cooling Tower 8 Enable point",
+        "haystack": "cooling tower 8 enable"
+      },
+      "aliases": {
+        "common": [
+          "ct8-en",
+          "clg twr 8 en",
+          "ct-8 enable",
+          "clg twr 8 enable",
+          "ct-8 ena"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-8-output",
+        "name": "Cooling Tower 8 Output",
+        "category": "commands",
+        "description": "Cooling Tower 8 Output point",
+        "haystack": "cooling tower 8 output"
+      },
+      "aliases": {
+        "common": [
+          "ct8-o",
+          "clg twr 8 out",
+          "ct-8 out",
+          "ct-8 output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "economizer-enable",
+        "name": "Economizer Enable",
+        "category": "commands",
+        "description": "Economizer Enable point",
+        "haystack": "economizer enable"
+      },
+      "aliases": {
+        "common": [
+          "econ-en",
+          "econ enable",
+          "econ en"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "gas-fired-heat-output",
+        "name": "Gas Fired Heat Output",
+        "category": "commands",
+        "description": "Gas Fired Heat Output point",
+        "haystack": "gas fired heat output"
+      },
+      "aliases": {
+        "common": [
+          "gashtg-o",
+          "gas heating out",
+          "gas heat"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "heat-wheel-command",
+        "name": "Heat Wheel Command",
+        "category": "commands",
+        "description": "Heat Wheel Command point",
+        "haystack": "heat wheel command"
+      },
+      "aliases": {
+        "common": [
+          "hw-c",
+          "hw cmd",
+          "hw command",
+          "erw command",
+          "energy recovery wheel command",
+          "erw-c"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "heat-wheel-output",
+        "name": "Heat Wheel Output",
+        "category": "commands",
+        "description": "Heat Wheel Output point",
+        "haystack": "heat wheel output"
+      },
+      "aliases": {
+        "common": [
+          "hw-o",
+          "hw out",
+          "hw output",
+          "erw output",
+          "energy recovery wheel output",
+          "erw-o"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "heating-enable",
+        "name": "Heating Enable",
+        "category": "commands",
+        "description": "Heating Enable point",
+        "haystack": "heating enable"
+      },
+      "aliases": {
+        "common": [
+          "htg-en",
+          "heating en",
+          "htg enable",
+          "heat enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "hot-water-pump-command",
+        "name": "Hot Water Pump Command",
+        "category": "commands",
+        "description": "Hot Water Pump Command point",
+        "haystack": "hot water pump command"
+      },
+      "aliases": {
+        "common": [
+          "hwp-c",
+          "hwp cmd",
+          "hwp command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "hot-water-pump-output",
+        "name": "Hot Water Pump Output",
+        "category": "commands",
+        "description": "Hot Water Pump Output point",
+        "haystack": "hot water pump output"
+      },
+      "aliases": {
+        "common": [
+          "hwp-o",
+          "hwp out",
+          "hwp output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "occupied-command",
+        "name": "Occupied Command",
+        "category": "commands",
+        "description": "Occupied Command point",
+        "haystack": "occupied command"
+      },
+      "aliases": {
+        "common": [
+          "occ-cmd",
+          "occ command",
+          "occupancy cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "primary-chilled-water-pump-command",
+        "name": "Primary Chilled Water Pump Command",
+        "category": "commands",
+        "description": "Primary Chilled Water Pump Command point",
+        "haystack": "primary chilled water pump command"
+      },
+      "aliases": {
+        "common": [
+          "pchwp-c",
+          "pchwp cmd",
+          "pchwp command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "primary-chilled-water-pump-output",
+        "name": "Primary Chilled Water Pump Output",
+        "category": "commands",
+        "description": "Primary Chilled Water Pump Output point",
+        "haystack": "primary chilled water pump output"
+      },
+      "aliases": {
+        "common": [
+          "pchwp-o",
+          "pchwp out",
+          "pchwp output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "secondary-chilled-water-pump-command",
+        "name": "Secondary Chilled Water Pump Command",
+        "category": "commands",
+        "description": "Secondary Chilled Water Pump Command point",
+        "haystack": "secondary chilled water pump command"
+      },
+      "aliases": {
+        "common": [
+          "schwp-c",
+          "schwp cmd",
+          "schwp command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "secondary-chilled-water-pump-output",
+        "name": "Secondary Chilled Water Pump Output",
+        "category": "commands",
+        "description": "Secondary Chilled Water Pump Output point",
+        "haystack": "secondary chilled water pump output"
+      },
+      "aliases": {
+        "common": [
+          "schwp-o",
+          "schwp out",
+          "schwp output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "steam-heating-output",
+        "name": "Steam Heating Output",
+        "category": "commands",
+        "description": "Steam Heating Output point",
+        "haystack": "steam heating output"
+      },
+      "aliases": {
+        "common": [
+          "stm-o",
+          "steam out",
+          "steam heat out",
+          "steam htg out",
+          "steam htg output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "system-enable",
+        "name": "System Enable",
+        "category": "commands",
+        "description": "System Enable point",
+        "haystack": "system enable"
+      },
+      "aliases": {
+        "common": [
+          "sys-en",
+          "system en",
+          "sys enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "unit-enable-mode",
+        "name": "Unit Enable Mode",
+        "category": "commands",
+        "description": "Unit Enable Mode point",
+        "haystack": "unit enable mode"
+      },
+      "aliases": {
+        "common": [
+          "uniten-mode",
+          "unit en mode",
+          "unit enable mode"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-air-damper-closed",
+        "name": "Exhaust Air Damper Closed",
+        "category": "dampers",
+        "description": "Exhaust Air Damper Closed point",
+        "haystack": "exhaust air damper closed"
+      },
+      "aliases": {
+        "common": [
+          "ead-closed",
+          "ea damper closed",
+          "ead closed"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-air-damper-open",
+        "name": "Exhaust Air Damper Open",
+        "category": "dampers",
+        "description": "Exhaust Air Damper Open point",
+        "haystack": "exhaust air damper open"
+      },
+      "aliases": {
+        "common": [
+          "ead-open",
+          "ea damper open",
+          "ead open"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-air-damper-output",
+        "name": "Exhaust Air Damper Output",
+        "category": "dampers",
+        "description": "Exhaust Air Damper Output point",
+        "haystack": "exhaust air damper output"
+      },
+      "aliases": {
+        "common": [
+          "ead-o",
+          "ea damper output",
+          "ead output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-air-damper-position",
+        "name": "Exhaust Air Damper Position",
+        "category": "dampers",
+        "description": "Exhaust Air Damper Position point",
+        "haystack": "exhaust air damper position"
+      },
+      "aliases": {
+        "common": [
+          "ead-pos",
+          "ea damper position",
+          "ead position"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "face-bypass-damper-output",
+        "name": "Face Bypass Damper Output",
+        "category": "dampers",
+        "description": "Face Bypass Damper Output point",
+        "haystack": "face bypass damper output"
+      },
+      "aliases": {
+        "common": [
+          "fbd-o",
+          "fbd output",
+          "fbd out",
+          "face byp output",
+          "fbdpr out"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "mixed-air-damper-closed",
+        "name": "Mixed Air Damper Closed",
+        "category": "dampers",
+        "description": "Mixed Air Damper Closed point",
+        "haystack": "mixed air damper closed"
+      },
+      "aliases": {
+        "common": [
+          "mad-closed",
+          "ma damper closed",
+          "mad closed"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "mixed-air-damper-open",
+        "name": "Mixed Air Damper Open",
+        "category": "dampers",
+        "description": "Mixed Air Damper Open point",
+        "haystack": "mixed air damper open"
+      },
+      "aliases": {
+        "common": [
+          "mad-open",
+          "ma damper open",
+          "mad open"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "mixed-air-damper-output",
+        "name": "Mixed Air Damper Output",
+        "category": "dampers",
+        "description": "Mixed Air Damper Output point",
+        "haystack": "mixed air damper output"
+      },
+      "aliases": {
+        "common": [
+          "mad-o",
+          "ma damper output",
+          "mad output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "mixed-air-damper-position",
+        "name": "Mixed Air Damper Position",
+        "category": "dampers",
+        "description": "Mixed Air Damper Position point",
+        "haystack": "mixed air damper position"
+      },
+      "aliases": {
+        "common": [
+          "mad-pos",
+          "ma damper position",
+          "mad position"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "outside-air-damper-closed",
+        "name": "Outside Air Damper Closed",
+        "category": "dampers",
+        "description": "Outside Air Damper Closed point",
+        "haystack": "outside air damper closed"
+      },
+      "aliases": {
+        "common": [
+          "oad-closed",
+          "oa damper closed",
+          "oad closed",
+          "outdoor air damper closed"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "outside-air-damper-open",
+        "name": "Outside Air Damper Open",
+        "category": "dampers",
+        "description": "Outside Air Damper Open point",
+        "haystack": "outside air damper open"
+      },
+      "aliases": {
+        "common": [
+          "oad-open",
+          "oa damper open",
+          "oad open",
+          "outdoor air damper open"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "outside-air-damper-output",
+        "name": "Outside Air Damper Output",
+        "category": "dampers",
+        "description": "Outside Air Damper Output point",
+        "haystack": "outside air damper output"
+      },
+      "aliases": {
+        "common": [
+          "oad-o",
+          "oa damper output",
+          "oad output",
+          "outdoor air damper output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "outside-air-damper-position",
+        "name": "Outside Air Damper Position",
+        "category": "dampers",
+        "description": "Outside Air Damper Position point",
+        "haystack": "outside air damper position"
+      },
+      "aliases": {
+        "common": [
+          "oad-pos",
+          "oa damper position",
+          "oad position",
+          "outdoor air damper position"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-air-damper-closed",
+        "name": "Relief Air Damper Closed",
+        "category": "dampers",
+        "description": "Relief Air Damper Closed point",
+        "haystack": "relief air damper closed"
+      },
+      "aliases": {
+        "common": [
+          "rlfd-closed",
+          "rlf damper closed",
+          "rlfd closed"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-air-damper-open",
+        "name": "Relief Air Damper Open",
+        "category": "dampers",
+        "description": "Relief Air Damper Open point",
+        "haystack": "relief air damper open"
+      },
+      "aliases": {
+        "common": [
+          "rlfd-open",
+          "rlf damper open",
+          "rlfd open"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-air-damper-output",
+        "name": "Relief Air Damper Output",
+        "category": "dampers",
+        "description": "Relief Air Damper Output point",
+        "haystack": "relief air damper output"
+      },
+      "aliases": {
+        "common": [
+          "rlfd-o",
+          "rlf damper output",
+          "rlfd output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-air-damper-position",
+        "name": "Relief Air Damper Position",
+        "category": "dampers",
+        "description": "Relief Air Damper Position point",
+        "haystack": "relief air damper position"
+      },
+      "aliases": {
+        "common": [
+          "rlfd-pos",
+          "rlf damper position",
+          "rlfd position"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "smoke-damper-open",
+        "name": "Smoke Damper Open",
+        "category": "dampers",
+        "description": "Smoke Damper Open point",
+        "haystack": "smoke damper open"
+      },
+      "aliases": {
+        "common": [
+          "smk-dpr",
+          "smoke damper out",
+          "smoke damper output",
+          "smoke dpr output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-fan-alarm",
+        "name": "Exhaust Fan Alarm",
+        "category": "fans",
+        "description": "Exhaust Fan Alarm point",
+        "haystack": "exhaust fan alarm"
+      },
+      "aliases": {
+        "common": [
+          "ef-a",
+          "ef alarm",
+          "ef alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-fan-command",
+        "name": "Exhaust Fan Command",
+        "category": "fans",
+        "description": "Exhaust Fan Command point",
+        "haystack": "exhaust fan command"
+      },
+      "aliases": {
+        "common": [
+          "ef-c",
+          "ef command",
+          "ef cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-fan-fault",
+        "name": "Exhaust Fan Fault",
+        "category": "fans",
+        "description": "Exhaust Fan Fault point",
+        "haystack": "exhaust fan fault"
+      },
+      "aliases": {
+        "common": [
+          "ef-fault",
+          "ef fault",
+          "ef flt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-fan-output",
+        "name": "Exhaust Fan Output",
+        "category": "fans",
+        "description": "Exhaust Fan Output point",
+        "haystack": "exhaust fan output"
+      },
+      "aliases": {
+        "common": [
+          "ef-o",
+          "ef output",
+          "ef out"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-fan-speed",
+        "name": "Exhaust Fan Speed",
+        "category": "fans",
+        "description": "Exhaust Fan Speed point",
+        "haystack": "exhaust fan speed"
+      },
+      "aliases": {
+        "common": [
+          "ef-spd",
+          "ef speed",
+          "ef vfd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-fan-status",
+        "name": "Exhaust Fan Status",
+        "category": "fans",
+        "description": "Exhaust Fan Status point",
+        "haystack": "exhaust fan status"
+      },
+      "aliases": {
+        "common": [
+          "ef-s",
+          "ef status",
+          "ef sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-fan-alarm",
+        "name": "Relief Fan Alarm",
+        "category": "fans",
+        "description": "Relief Fan Alarm point",
+        "haystack": "relief fan alarm"
+      },
+      "aliases": {
+        "common": [
+          "rlf-a",
+          "rlf alarm",
+          "rlf alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-fan-command",
+        "name": "Relief Fan Command",
+        "category": "fans",
+        "description": "Relief Fan Command point",
+        "haystack": "relief fan command"
+      },
+      "aliases": {
+        "common": [
+          "rlf-c",
+          "rlf command",
+          "rlf cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-fan-fault",
+        "name": "Relief Fan Fault",
+        "category": "fans",
+        "description": "Relief Fan Fault point",
+        "haystack": "relief fan fault"
+      },
+      "aliases": {
+        "common": [
+          "rlf-fault",
+          "rlf fault",
+          "rlf flt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-fan-output",
+        "name": "Relief Fan Output",
+        "category": "fans",
+        "description": "Relief Fan Output point",
+        "haystack": "relief fan output"
+      },
+      "aliases": {
+        "common": [
+          "rlf-o",
+          "rlf output",
+          "rlf out"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-fan-speed",
+        "name": "Relief Fan Speed",
+        "category": "fans",
+        "description": "Relief Fan Speed point",
+        "haystack": "relief fan speed"
+      },
+      "aliases": {
+        "common": [
+          "rlf-spd",
+          "rlf speed",
+          "rlf vfd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "relief-fan-status",
+        "name": "Relief Fan Status",
+        "category": "fans",
+        "description": "Relief Fan Status point",
+        "haystack": "relief fan status"
+      },
+      "aliases": {
+        "common": [
+          "rlf-s",
+          "rlf status",
+          "rlf sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-fan-alarm",
+        "name": "Return Fan Alarm",
+        "category": "fans",
+        "description": "Return Fan Alarm point",
+        "haystack": "return fan alarm"
+      },
+      "aliases": {
+        "common": [
+          "rf-a",
+          "rf alarm",
+          "rf alm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-fan-command",
+        "name": "Return Fan Command",
+        "category": "fans",
+        "description": "Return Fan Command point",
+        "haystack": "return fan command"
+      },
+      "aliases": {
+        "common": [
+          "rf-c",
+          "rf command",
+          "rf cmd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-fan-fault",
+        "name": "Return Fan Fault",
+        "category": "fans",
+        "description": "Return Fan Fault point",
+        "haystack": "return fan fault"
+      },
+      "aliases": {
+        "common": [
+          "rf-fault",
+          "rf fault",
+          "rf flt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-fan-output",
+        "name": "Return Fan Output",
+        "category": "fans",
+        "description": "Return Fan Output point",
+        "haystack": "return fan output"
+      },
+      "aliases": {
+        "common": [
+          "rf-o",
+          "rf output",
+          "rf out"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-fan-speed",
+        "name": "Return Fan Speed",
+        "category": "fans",
+        "description": "Return Fan Speed point",
+        "haystack": "return fan speed"
+      },
+      "aliases": {
+        "common": [
+          "rf-spd",
+          "rf speed",
+          "rf vfd"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-fan-status",
+        "name": "Return Fan Status",
+        "category": "fans",
+        "description": "Return Fan Status point",
+        "haystack": "return fan status"
+      },
+      "aliases": {
+        "common": [
+          "rf-s",
+          "rf status",
+          "rf sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "supply-fan-alarm",
+        "name": "Supply Fan Alarm",
+        "category": "fans",
+        "description": "Supply Fan Alarm point",
+        "haystack": "supply fan alarm"
+      },
+      "aliases": {
+        "common": [
+          "sf-a",
+          "sf alarm",
+          "sf alm",
+          "fan alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "supply-fan-command",
+        "name": "Supply Fan Command",
+        "category": "fans",
+        "description": "Supply Fan Command point",
+        "haystack": "supply fan command"
+      },
+      "aliases": {
+        "common": [
+          "sf-c",
+          "sf command",
+          "sf cmd",
+          "fan command"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "supply-fan-fault",
+        "name": "Supply Fan Fault",
+        "category": "fans",
+        "description": "Supply Fan Fault point",
+        "haystack": "supply fan fault"
+      },
+      "aliases": {
+        "common": [
+          "sf-fault",
+          "sf fault",
+          "sf flt",
+          "fan fault"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "supply-fan-output",
+        "name": "Supply Fan Output",
+        "category": "fans",
+        "description": "Supply Fan Output point",
+        "haystack": "supply fan output"
+      },
+      "aliases": {
+        "common": [
+          "sf-o",
+          "sf output",
+          "sf out",
+          "fan output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "supply-fan-speed",
+        "name": "Supply Fan Speed",
+        "category": "fans",
+        "description": "Supply Fan Speed point",
+        "haystack": "supply fan speed"
+      },
+      "aliases": {
+        "common": [
+          "sf-spd",
+          "sf speed",
+          "sf vfd",
+          "fan speed"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "supply-fan-status",
+        "name": "Supply Fan Status",
+        "category": "fans",
+        "description": "Binary status indicating if supply fan is running",
+        "haystack": "supply fan run sensor",
+        "brick": "Supply_Fan_Status",
+        "object_type": "binary-input"
+      },
+      "aliases": {
+        "common": [
+          "sf-s",
+          "sf status",
+          "sf sts",
+          "fan status",
+          "supply fan run",
+          "SF_Status",
+          "SupplyFan_Sts",
+          "SFS"
+        ],
+        "abbreviated": [
+          "sfs",
+          "sf-sts"
+        ],
+        "verbose": [
+          "supply fan running status",
+          "supply fan proof of operation"
+        ]
+      },
+      "notes": [
+        "Typically from current sensing relay or differential pressure switch",
+        "Used for fan failure alarms and interlock logic",
+        "Should match command within reasonable delay",
+        "Critical for safety interlocks"
+      ],
+      "related": [
+        "supply-fan-command",
+        "supply-fan-alarm",
+        "supply-fan-fault",
+        "supply-fan-speed"
+      ]
+    },
+    {
+      "concept": {
+        "id": "discharge-air-flow",
+        "name": "Discharge Air Flow",
+        "category": "flows",
+        "description": "Discharge Air Flow point",
+        "haystack": "discharge air flow"
+      },
+      "aliases": {
+        "common": [
+          "da-f",
+          "da flow",
+          "disch air flow"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-air-flow",
+        "name": "Exhaust Air Flow",
+        "category": "flows",
+        "description": "Exhaust Air Flow point",
+        "haystack": "exhaust air flow"
+      },
+      "aliases": {
+        "common": [
+          "ea-f",
+          "ea flow",
+          "exh air flow"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "outdoor-air-flow",
+        "name": "Outdoor Air Flow",
+        "category": "flows",
+        "description": "Outdoor Air Flow point",
+        "haystack": "outdoor air flow"
+      },
+      "aliases": {
+        "common": [
+          "oa-f",
+          "oa flow"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-air-flow",
+        "name": "Return Air Flow",
+        "category": "flows",
+        "description": "Return Air Flow point",
+        "haystack": "return air flow"
+      },
+      "aliases": {
+        "common": [
+          "ra-f",
+          "ra flow",
+          "ret air flow"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "supply-air-flow",
+        "name": "Supply Air Flow",
+        "category": "flows",
+        "description": "Supply Air Flow point",
+        "haystack": "supply air flow"
+      },
+      "aliases": {
+        "common": [
+          "sa-f",
+          "sa flow",
+          "sup air flow"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "discharge-air-humidity",
+        "name": "Discharge Air Humidity",
+        "category": "humidity",
+        "description": "Discharge Air Humidity point",
+        "haystack": "discharge air humidity"
+      },
+      "aliases": {
+        "common": [
+          "da-h",
+          "da humid",
+          "da humidity",
+          "disch air hum"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "humidifier-enable",
+        "name": "Humidifier Enable",
+        "category": "humidity",
+        "description": "Humidifier Enable point",
+        "haystack": "humidifier enable"
+      },
+      "aliases": {
+        "common": [
+          "hum-en",
+          "humid en",
+          "humid enable"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "humidifier-output",
+        "name": "Humidifier Output",
+        "category": "humidity",
+        "description": "Humidifier Output point",
+        "haystack": "humidifier output"
+      },
+      "aliases": {
+        "common": [
+          "hum-o",
+          "humidifier out",
+          "hum vlv",
+          "humidifier valve out",
+          "humid valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "outdoor-air-humidity",
+        "name": "Outdoor Air Humidity",
+        "category": "humidity",
+        "description": "Outdoor Air Humidity point",
+        "haystack": "outdoor air humidity"
+      },
+      "aliases": {
+        "common": [
+          "oa-h",
+          "oa humid",
+          "oa humidity",
+          "outdoor air humid"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-air-humidity",
+        "name": "Return Air Humidity",
+        "category": "humidity",
+        "description": "Return Air Humidity point",
+        "haystack": "return air humidity"
+      },
+      "aliases": {
+        "common": [
+          "ra-h",
+          "ra humid",
+          "ra humidity",
+          "ret air humid"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "zone-humidity",
+        "name": "Zone Humidity",
+        "category": "humidity",
+        "description": "Zone Humidity point",
+        "haystack": "zone humidity"
+      },
+      "aliases": {
+        "common": [
+          "zn-h",
+          "zn humid",
+          "zn humidity",
+          "zone humid"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "building-pressure",
+        "name": "Building Pressure",
+        "category": "pressures",
+        "description": "Building Pressure point",
+        "haystack": "building pressure"
+      },
+      "aliases": {
+        "common": [
+          "bldg-p",
+          "bldg press",
+          "bldg pressure",
+          "building press"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chilled-water-differential-pressure",
+        "name": "Chilled Water Differential Pressure",
+        "category": "pressures",
+        "description": "Chilled Water Differential Pressure point",
+        "haystack": "chilled water differential pressure"
+      },
+      "aliases": {
+        "common": [
+          "chw-dp",
+          "chw diff press",
+          "chw diff pressure"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "discharge-air-high-pressure-alarm",
+        "name": "Discharge Air High Pressure Alarm",
+        "category": "pressures",
+        "description": "Discharge Air High Pressure Alarm point",
+        "haystack": "discharge air high pressure alarm"
+      },
+      "aliases": {
+        "common": [
+          "dahp-a",
+          "da hi prs alm",
+          "da high press alarm",
+          "disch air high press alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "discharge-air-low-pressure-alarm",
+        "name": "Discharge Air Low Pressure Alarm",
+        "category": "pressures",
+        "description": "Discharge Air Low Pressure Alarm point",
+        "haystack": "discharge air low pressure alarm"
+      },
+      "aliases": {
+        "common": [
+          "dalp-a",
+          "da low prs almost",
+          "da low press alarm",
+          "disch air low press alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "discharge-air-pressure-setpoint",
+        "name": "Discharge Air Pressure Setpoint",
+        "category": "pressures",
+        "description": "Discharge Air Pressure Setpoint point",
+        "haystack": "discharge air pressure setpoint"
+      },
+      "aliases": {
+        "common": [
+          "dap-sp",
+          "dap setpoint",
+          "da press stpt",
+          "da prs stpt",
+          "da pressure setpt",
+          "disch air press setpoint"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "discharge-air-pressure",
+        "name": "Discharge Air Pressure",
+        "category": "pressures",
+        "description": "Static pressure in supply air duct, used to control fan speed",
+        "haystack": "discharge air pressure sensor",
+        "brick": "Discharge_Air_Static_Pressure_Sensor",
+        "unit": "inH2O",
+        "typical_range": {
+          "min": 0.5,
+          "max": 3
+        },
+        "object_type": "analog-input",
+        "engineering_units": "inches-of-water"
+      },
+      "aliases": {
+        "common": [
+          "da-p",
+          "da press",
+          "da pressure",
+          "disch air pressure",
+          "disch air press",
+          "da1-p",
+          "duct static",
+          "duct static pressure",
+          "supply static",
+          "supply static pressure",
+          "DSP",
+          "DAP"
+        ],
+        "abbreviated": [
+          "dsp",
+          "dap",
+          "sp"
+        ],
+        "verbose": [
+          "discharge air static pressure",
+          "supply duct static pressure",
+          "duct static pressure sensor"
+        ]
+      },
+      "notes": [
+        "Typically measured 2/3 down the longest duct run",
+        "Used as feedback for supply fan VFD speed control",
+        "Setpoint typically 1.0-2.0 in.wc for VAV systems",
+        "Higher setpoint needed for longer duct runs"
+      ],
+      "related": [
+        "discharge-air-pressure-setpoint",
+        "supply-fan-speed",
+        "supply-fan-output"
+      ]
+    },
+    {
+      "concept": {
+        "id": "hot-water-differential-pressure",
+        "name": "Hot Water Differential Pressure",
+        "category": "pressures",
+        "description": "Hot Water Differential Pressure point",
+        "haystack": "hot water differential pressure"
+      },
+      "aliases": {
+        "common": [
+          "hw-dp",
+          "hw diff press",
+          "hw diff pressure"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-air-high-pressure-alarm",
+        "name": "Return Air High Pressure Alarm",
+        "category": "pressures",
+        "description": "Return Air High Pressure Alarm point",
+        "haystack": "return air high pressure alarm"
+      },
+      "aliases": {
+        "common": [
+          "rahp-a",
+          "ra hi prs alm",
+          "ra high press alarm",
+          "ret air high press alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-air-low-pressure-alarm",
+        "name": "Return Air Low Pressure Alarm",
+        "category": "pressures",
+        "description": "Return Air Low Pressure Alarm point",
+        "haystack": "return air low pressure alarm"
+      },
+      "aliases": {
+        "common": [
+          "ralp-a",
+          "ra low prs almost",
+          "ra low press alarm",
+          "ret air low press alarm"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-air-pressure-setpoint",
+        "name": "Return Air Pressure Setpoint",
+        "category": "pressures",
+        "description": "Return Air Pressure Setpoint point",
+        "haystack": "return air pressure setpoint"
+      },
+      "aliases": {
+        "common": [
+          "rap-sp",
+          "rap setpoint",
+          "ra press stpt",
+          "ra prs stpt",
+          "ra pressure setpt",
+          "ret air press setpoint"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-air-pressure",
+        "name": "Return Air Pressure",
+        "category": "pressures",
+        "description": "Return Air Pressure point",
+        "haystack": "return air pressure"
+      },
+      "aliases": {
+        "common": [
+          "ra-p",
+          "ra press",
+          "ra pressure",
+          "ret air pressure",
+          "ret air press"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "space-pressure",
+        "name": "Space Pressure",
+        "category": "pressures",
+        "description": "Space Pressure point",
+        "haystack": "space pressure"
+      },
+      "aliases": {
+        "common": [
+          "zone pressure",
+          "room pressure",
+          "space-p",
+          "zn-p",
+          "rm-p",
+          "space press",
+          "zone press",
+          "room press",
+          "zn pressure",
+          "rm pressure"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-outdoor-air-lockout-setpoint",
+        "name": "Cooling Outdoor Air Lockout Setpoint",
+        "category": "setpoints",
+        "description": "Cooling Outdoor Air Lockout Setpoint point",
+        "haystack": "cooling outdoor air lockout setpoint"
+      },
+      "aliases": {
+        "common": [
+          "clgoalockout-sp",
+          "clg oat lockout setpoint",
+          "cooling oat lockout stpt",
+          "cool oat lock setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "effective-cooling-setpoint",
+        "name": "Effective Cooling Setpoint",
+        "category": "setpoints",
+        "description": "Effective Cooling Setpoint point",
+        "haystack": "effective cooling setpoint"
+      },
+      "aliases": {
+        "common": [
+          "effclg-sp",
+          "eff clg setpoint",
+          "effective clg sp",
+          "eff clg stpt",
+          "eff cooling setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "effective-heating-setpoint",
+        "name": "Effective Heating Setpoint",
+        "category": "setpoints",
+        "description": "Effective Heating Setpoint point",
+        "haystack": "effective heating setpoint"
+      },
+      "aliases": {
+        "common": [
+          "effhtg-sp",
+          "eff htg setpoint",
+          "effective htg sp",
+          "eff htg stpt",
+          "eff heating setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "heating-outdoor-air-lockout-setpoint",
+        "name": "Heating Outdoor Air Lockout Setpoint",
+        "category": "setpoints",
+        "description": "Heating Outdoor Air Lockout Setpoint point",
+        "haystack": "heating outdoor air lockout setpoint"
+      },
+      "aliases": {
+        "common": [
+          "htgoalockout-sp",
+          "htg oat lockout setpoint",
+          "heating oat lockout stpt",
+          "heat oat lock setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "occupied-cooling-setpoint",
+        "name": "Occupied Cooling Setpoint",
+        "category": "setpoints",
+        "description": "Occupied Cooling Setpoint point",
+        "haystack": "occupied cooling setpoint"
+      },
+      "aliases": {
+        "common": [
+          "occclg-sp",
+          "occ clg setpoint",
+          "occupied clg sp",
+          "occ clg stpt",
+          "occ cooling setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "occupied-heating-setpoint",
+        "name": "Occupied Heating Setpoint",
+        "category": "setpoints",
+        "description": "Occupied Heating Setpoint point",
+        "haystack": "occupied heating setpoint"
+      },
+      "aliases": {
+        "common": [
+          "occhtg-sp",
+          "occ htg setpoint",
+          "occupied htg sp",
+          "occ htg stpt",
+          "occ heating setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "standby-cooling-setpoint",
+        "name": "Standby Cooling Setpoint",
+        "category": "setpoints",
+        "description": "Standby Cooling Setpoint point",
+        "haystack": "standby cooling setpoint"
+      },
+      "aliases": {
+        "common": [
+          "stbyclg-sp",
+          "standby clg setpoint",
+          "standby clg sp",
+          "standby clg stpt",
+          "standby cooling setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "standby-heating-setpoint",
+        "name": "Standby Heating Setpoint",
+        "category": "setpoints",
+        "description": "Standby Heating Setpoint point",
+        "haystack": "standby heating setpoint"
+      },
+      "aliases": {
+        "common": [
+          "stbyhtg-sp",
+          "standby htg setpoint",
+          "standby htg sp",
+          "standby htg stpt",
+          "standby heating setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "unoccupied-cooling-setpoint",
+        "name": "Unoccupied Cooling Setpoint",
+        "category": "setpoints",
+        "description": "Unoccupied Cooling Setpoint point",
+        "haystack": "unoccupied cooling setpoint"
+      },
+      "aliases": {
+        "common": [
+          "unoccclg-sp",
+          "unocc clg setpoint",
+          "unoccupied clg sp",
+          "unocc clg stpt",
+          "unocc cooling setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "unoccupied-heating-setpoint",
+        "name": "Unoccupied Heating Setpoint",
+        "category": "setpoints",
+        "description": "Unoccupied Heating Setpoint point",
+        "haystack": "unoccupied heating setpoint"
+      },
+      "aliases": {
+        "common": [
+          "unocchtg-sp",
+          "unocc htg setpoint",
+          "unoccupied htg sp",
+          "unocc htg stpt",
+          "unocc heating setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-1-status",
+        "name": "Boiler 1 Status",
+        "category": "status",
+        "description": "Boiler 1 Status point",
+        "haystack": "boiler 1 status"
+      },
+      "aliases": {
+        "common": [
+          "blr1-s",
+          "blr 1 sts",
+          "boiler 1 sts",
+          "b-1 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-2-status",
+        "name": "Boiler 2 Status",
+        "category": "status",
+        "description": "Boiler 2 Status point",
+        "haystack": "boiler 2 status"
+      },
+      "aliases": {
+        "common": [
+          "blr2-s",
+          "blr 2 sts",
+          "boiler 2 sts",
+          "b-2 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-3-status",
+        "name": "Boiler 3 Status",
+        "category": "status",
+        "description": "Boiler 3 Status point",
+        "haystack": "boiler 3 status"
+      },
+      "aliases": {
+        "common": [
+          "blr3-s",
+          "blr 3 sts",
+          "boiler 3 sts",
+          "b-3 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-4-status",
+        "name": "Boiler 4 Status",
+        "category": "status",
+        "description": "Boiler 4 Status point",
+        "haystack": "boiler 4 status"
+      },
+      "aliases": {
+        "common": [
+          "blr4-s",
+          "blr 4 sts",
+          "boiler 4 sts",
+          "b-4 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "boiler-pump-status",
+        "name": "Boiler Pump Status",
+        "category": "status",
+        "description": "Boiler Pump Status point",
+        "haystack": "boiler pump status"
+      },
+      "aliases": {
+        "common": [
+          "bp-s",
+          "bp sts",
+          "bp status",
+          "blrp status",
+          "blr pump sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chilled-water-pump-status",
+        "name": "Chilled Water Pump Status",
+        "category": "status",
+        "description": "Chilled Water Pump Status point",
+        "haystack": "chilled water pump status"
+      },
+      "aliases": {
+        "common": [
+          "chwp-s",
+          "chwp sts",
+          "chwp status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-1-status",
+        "name": "Chiller 1 Status",
+        "category": "status",
+        "description": "Chiller 1 Status point",
+        "haystack": "chiller 1 status"
+      },
+      "aliases": {
+        "common": [
+          "ch1-s",
+          "ch-1 sts",
+          "ch-1 status",
+          "chlr-1 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-2-status",
+        "name": "Chiller 2 Status",
+        "category": "status",
+        "description": "Chiller 2 Status point",
+        "haystack": "chiller 2 status"
+      },
+      "aliases": {
+        "common": [
+          "ch2-s",
+          "ch-2 sts",
+          "ch-2 status",
+          "chlr-2 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-3-status",
+        "name": "Chiller 3 Status",
+        "category": "status",
+        "description": "Chiller 3 Status point",
+        "haystack": "chiller 3 status"
+      },
+      "aliases": {
+        "common": [
+          "ch3-s",
+          "ch-3 sts",
+          "ch-3 status",
+          "chlr-3 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-4-status",
+        "name": "Chiller 4 Status",
+        "category": "status",
+        "description": "Chiller 4 Status point",
+        "haystack": "chiller 4 status"
+      },
+      "aliases": {
+        "common": [
+          "ch4-s",
+          "ch-4 sts",
+          "ch-4 status",
+          "chlr-4 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-5-status",
+        "name": "Chiller 5 Status",
+        "category": "status",
+        "description": "Chiller 5 Status point",
+        "haystack": "chiller 5 status"
+      },
+      "aliases": {
+        "common": [
+          "ch5-s",
+          "ch-5 sts",
+          "ch-5 status",
+          "chlr-5 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-6-status",
+        "name": "Chiller 6 Status",
+        "category": "status",
+        "description": "Chiller 6 Status point",
+        "haystack": "chiller 6 status"
+      },
+      "aliases": {
+        "common": [
+          "ch6-s",
+          "ch-6 sts",
+          "ch-6 status",
+          "chlr-6 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-7-status",
+        "name": "Chiller 7 Status",
+        "category": "status",
+        "description": "Chiller 7 Status point",
+        "haystack": "chiller 7 status"
+      },
+      "aliases": {
+        "common": [
+          "ch7-s",
+          "ch-7 sts",
+          "ch-7 status",
+          "chlr-7 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-8-status",
+        "name": "Chiller 8 Status",
+        "category": "status",
+        "description": "Chiller 8 Status point",
+        "haystack": "chiller 8 status"
+      },
+      "aliases": {
+        "common": [
+          "ch8-s",
+          "ch-8 sts",
+          "ch-8 status",
+          "chlr-8 status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "condenser-water-pump-status",
+        "name": "Condenser Water Pump Status",
+        "category": "status",
+        "description": "Condenser Water Pump Status point",
+        "haystack": "condenser water pump status"
+      },
+      "aliases": {
+        "common": [
+          "cwp-s",
+          "cwp sts",
+          "cwp status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-1-status",
+        "name": "Cooling Tower 1 Status",
+        "category": "status",
+        "description": "Cooling Tower 1 Status point",
+        "haystack": "cooling tower 1 status"
+      },
+      "aliases": {
+        "common": [
+          "ct1-s",
+          "ct1f-s",
+          "ct-1 fan status",
+          "ct-1 fan sts",
+          "clg twr 1 sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-2-status",
+        "name": "Cooling Tower 2 Status",
+        "category": "status",
+        "description": "Cooling Tower 2 Status point",
+        "haystack": "cooling tower 2 status"
+      },
+      "aliases": {
+        "common": [
+          "ct2-s",
+          "ct2f-s",
+          "ct-2 fan status",
+          "ct-2 fan sts",
+          "clg twr 2 sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-3-status",
+        "name": "Cooling Tower 3 Status",
+        "category": "status",
+        "description": "Cooling Tower 3 Status point",
+        "haystack": "cooling tower 3 status"
+      },
+      "aliases": {
+        "common": [
+          "ct3-s",
+          "ct3f-s",
+          "ct-3 fan status",
+          "ct-3 fan sts",
+          "clg twr 3 sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-4-status",
+        "name": "Cooling Tower 4 Status",
+        "category": "status",
+        "description": "Cooling Tower 4 Status point",
+        "haystack": "cooling tower 4 status"
+      },
+      "aliases": {
+        "common": [
+          "ct4-s",
+          "ct4f-s",
+          "ct-4 fan status",
+          "ct-4 fan sts",
+          "clg twr 4 sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-5-status",
+        "name": "Cooling Tower 5 Status",
+        "category": "status",
+        "description": "Cooling Tower 5 Status point",
+        "haystack": "cooling tower 5 status"
+      },
+      "aliases": {
+        "common": [
+          "ct5-s",
+          "ct5f-s",
+          "ct-5 fan status",
+          "ct-5 fan sts",
+          "clg twr 5 sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-6-status",
+        "name": "Cooling Tower 6 Status",
+        "category": "status",
+        "description": "Cooling Tower 6 Status point",
+        "haystack": "cooling tower 6 status"
+      },
+      "aliases": {
+        "common": [
+          "ct6-s",
+          "ct6f-s",
+          "ct-6 fan status",
+          "ct-6 fan sts",
+          "clg twr 6 sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-7-status",
+        "name": "Cooling Tower 7 Status",
+        "category": "status",
+        "description": "Cooling Tower 7 Status point",
+        "haystack": "cooling tower 7 status"
+      },
+      "aliases": {
+        "common": [
+          "ct7-s",
+          "ct7f-s",
+          "ct-7 fan status",
+          "ct-7 fan sts",
+          "clg twr 7 sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-8-status",
+        "name": "Cooling Tower 8 Status",
+        "category": "status",
+        "description": "Cooling Tower 8 Status point",
+        "haystack": "cooling tower 8 status"
+      },
+      "aliases": {
+        "common": [
+          "ct8-s",
+          "ct8f-s",
+          "ct-8 fan status",
+          "ct-8 fan sts",
+          "clg twr 8 sts"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "dx-cooling-stage-1",
+        "name": "DX Cooling Stage 1",
+        "category": "status",
+        "description": "DX Cooling Stage 1 point",
+        "haystack": "dx cooling stage 1"
+      },
+      "aliases": {
+        "common": [
+          "dx-stg1",
+          "compr 1",
+          "clg stg 1",
+          "cooling stg 1",
+          "compressor stage 1"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "dx-cooling-stage-2",
+        "name": "DX Cooling Stage 2",
+        "category": "status",
+        "description": "DX Cooling Stage 2 point",
+        "haystack": "dx cooling stage 2"
+      },
+      "aliases": {
+        "common": [
+          "dx-stg2",
+          "compr 2",
+          "clg stg 2",
+          "cooling stg 2",
+          "compressor stage 2"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "dx-cooling-stage-3",
+        "name": "DX Cooling Stage 3",
+        "category": "status",
+        "description": "DX Cooling Stage 3 point",
+        "haystack": "dx cooling stage 3"
+      },
+      "aliases": {
+        "common": [
+          "dx-stg3",
+          "compr 3",
+          "clg stg 3",
+          "cooling stg 3",
+          "compressor stage 3"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "dx-cooling-stage-4",
+        "name": "DX Cooling Stage 4",
+        "category": "status",
+        "description": "DX Cooling Stage 4 point",
+        "haystack": "dx cooling stage 4"
+      },
+      "aliases": {
+        "common": [
+          "dx-stg4",
+          "compr 4",
+          "clg stg 4",
+          "cooling stg 4",
+          "compressor stage 4"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "dx-cooling-stage-5",
+        "name": "DX Cooling Stage 5",
+        "category": "status",
+        "description": "DX Cooling Stage 5 point",
+        "haystack": "dx cooling stage 5"
+      },
+      "aliases": {
+        "common": [
+          "dx-stg5",
+          "compr 5",
+          "clg stg 5",
+          "cooling stg 5",
+          "compressor stage 5"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "dx-cooling-stage-6",
+        "name": "DX Cooling Stage 6",
+        "category": "status",
+        "description": "DX Cooling Stage 6 point",
+        "haystack": "dx cooling stage 6"
+      },
+      "aliases": {
+        "common": [
+          "dx-stg6",
+          "compr 6",
+          "clg stg 6",
+          "cooling stg 6",
+          "compressor stage 6"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "dx-cooling-stage-7",
+        "name": "DX Cooling Stage 7",
+        "category": "status",
+        "description": "DX Cooling Stage 7 point",
+        "haystack": "dx cooling stage 7"
+      },
+      "aliases": {
+        "common": [
+          "dx-stg7",
+          "compr 7",
+          "clg stg 7",
+          "cooling stg 7",
+          "compressor stage 7"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "dx-cooling-stage-8",
+        "name": "DX Cooling Stage 8",
+        "category": "status",
+        "description": "DX Cooling Stage 8 point",
+        "haystack": "dx cooling stage 8"
+      },
+      "aliases": {
+        "common": [
+          "dx-stg8",
+          "compr 8",
+          "clg stg 8",
+          "cooling stg 8",
+          "compressor stage 8"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "dx-cooling-stage-9",
+        "name": "DX Cooling Stage 9",
+        "category": "status",
+        "description": "DX Cooling Stage 9 point",
+        "haystack": "dx cooling stage 9"
+      },
+      "aliases": {
+        "common": [
+          "dx-stg9",
+          "compr 9",
+          "clg stg 9",
+          "cooling stg 9",
+          "compressor stage 9"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "effective-occupancy",
+        "name": "Effective Occupancy",
+        "category": "status",
+        "description": "Effective Occupancy point",
+        "haystack": "effective occupancy"
+      },
+      "aliases": {
+        "common": [
+          "eff-occ",
+          "effective occ",
+          "eff occupancy"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "electric-heat-stage-1",
+        "name": "Electric Heat Stage 1",
+        "category": "status",
+        "description": "Electric Heat Stage 1 point",
+        "haystack": "electric heat stage 1"
+      },
+      "aliases": {
+        "common": [
+          "elechtg-stg1",
+          "htg-stg1",
+          "elec-stg1",
+          "electric heat stg 1",
+          "heating stg 1",
+          "heating stage 1",
+          "heat 1"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "electric-heat-stage-2",
+        "name": "Electric Heat Stage 2",
+        "category": "status",
+        "description": "Electric Heat Stage 2 point",
+        "haystack": "electric heat stage 2"
+      },
+      "aliases": {
+        "common": [
+          "elechtg-stg2",
+          "htg-stg2",
+          "elec-stg2",
+          "electric heat stg 2",
+          "heating stg 2",
+          "heating stage 2",
+          "heat 2"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "electric-heat-stage-3",
+        "name": "Electric Heat Stage 3",
+        "category": "status",
+        "description": "Electric Heat Stage 3 point",
+        "haystack": "electric heat stage 3"
+      },
+      "aliases": {
+        "common": [
+          "elechtg-stg3",
+          "htg-stg3",
+          "elec-stg3",
+          "electric heat stg 3",
+          "heating stg 3",
+          "heating stage 3",
+          "heat 3"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "electric-heat-stage-4",
+        "name": "Electric Heat Stage 4",
+        "category": "status",
+        "description": "Electric Heat Stage 4 point",
+        "haystack": "electric heat stage 4"
+      },
+      "aliases": {
+        "common": [
+          "elechtg-stg4",
+          "htg-stg4",
+          "elec-stg4",
+          "electric heat stg 4",
+          "heating stg 4",
+          "heating stage 4",
+          "heat 4"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "electric-heat-stage-5",
+        "name": "Electric Heat Stage 5",
+        "category": "status",
+        "description": "Electric Heat Stage 5 point",
+        "haystack": "electric heat stage 5"
+      },
+      "aliases": {
+        "common": [
+          "elechtg-stg5",
+          "htg-stg5",
+          "elec-stg5",
+          "electric heat stg 5",
+          "heating stg 5",
+          "heating stage 5",
+          "heat 5"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "electric-heat-stage-6",
+        "name": "Electric Heat Stage 6",
+        "category": "status",
+        "description": "Electric Heat Stage 6 point",
+        "haystack": "electric heat stage 6"
+      },
+      "aliases": {
+        "common": [
+          "elechtg-stg6",
+          "htg-stg6",
+          "elec-stg6",
+          "electric heat stg 6",
+          "heating stg 6",
+          "heating stage 6",
+          "heat 6"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "electric-heat-stage-7",
+        "name": "Electric Heat Stage 7",
+        "category": "status",
+        "description": "Electric Heat Stage 7 point",
+        "haystack": "electric heat stage 7"
+      },
+      "aliases": {
+        "common": [
+          "elechtg-stg7",
+          "htg-stg7",
+          "elec-stg7",
+          "electric heat stg 7",
+          "heating stg 7",
+          "heating stage 7",
+          "heat 7"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "electric-heat-stage-8",
+        "name": "Electric Heat Stage 8",
+        "category": "status",
+        "description": "Electric Heat Stage 8 point",
+        "haystack": "electric heat stage 8"
+      },
+      "aliases": {
+        "common": [
+          "elechtg-stg8",
+          "htg-stg8",
+          "elec-stg8",
+          "electric heat stg 8",
+          "heating stg 8",
+          "heating stage 8",
+          "heat 8"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "filter-status",
+        "name": "Filter Status",
+        "category": "status",
+        "description": "Filter Status point",
+        "haystack": "filter status"
+      },
+      "aliases": {
+        "common": [
+          "filt-s",
+          "filt sts",
+          "filt status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "final-filter-status",
+        "name": "Final Filter Status",
+        "category": "status",
+        "description": "Final Filter Status point",
+        "haystack": "final filter status"
+      },
+      "aliases": {
+        "common": [
+          "fin filter status",
+          "ffilt-s",
+          "fin filt sts",
+          "fin filt status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "heat-wheel-status",
+        "name": "Heat Wheel Status",
+        "category": "status",
+        "description": "Heat Wheel Status point",
+        "haystack": "heat wheel status"
+      },
+      "aliases": {
+        "common": [
+          "hw-s",
+          "hw sts",
+          "hw status",
+          "erw status",
+          "energy recovery wheel status",
+          "erw-s"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "hot-water-pump-status",
+        "name": "Hot Water Pump Status",
+        "category": "status",
+        "description": "Hot Water Pump Status point",
+        "haystack": "hot water pump status"
+      },
+      "aliases": {
+        "common": [
+          "hwp-s",
+          "hwp sts",
+          "hwp status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "occupancy-schedule",
+        "name": "Occupancy Schedule",
+        "category": "status",
+        "description": "Occupancy Schedule point",
+        "haystack": "occupancy schedule"
+      },
+      "aliases": {
+        "common": [
+          "occ-sched",
+          "occupancy schedule",
+          "occ sched",
+          "occ schedule"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "occupancy",
+        "name": "Occupancy",
+        "category": "status",
+        "description": "Occupancy point",
+        "haystack": "occupancy"
+      },
+      "aliases": {
+        "common": [
+          "occupied"
+        ],
+        "abbreviated": [
+          "occ"
+        ]
+      }
+    },
+    {
+      "concept": {
+        "id": "prefilter-status",
+        "name": "Prefilter Status",
+        "category": "status",
+        "description": "Prefilter Status point",
+        "haystack": "prefilter status"
+      },
+      "aliases": {
+        "common": [
+          "pre filter status",
+          "pfilt-s",
+          "pre filt sts",
+          "pre filt status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "primary-chilled-water-pump-status",
+        "name": "Primary Chilled Water Pump Status",
+        "category": "status",
+        "description": "Primary Chilled Water Pump Status point",
+        "haystack": "primary chilled water pump status"
+      },
+      "aliases": {
+        "common": [
+          "pchwp-s",
+          "pchwp sts",
+          "pchwp status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-air-co2",
+        "name": "Return Air CO2",
+        "category": "status",
+        "description": "Return Air CO2 point",
+        "haystack": "return air co2"
+      },
+      "aliases": {
+        "common": [
+          "return air quality",
+          "ra-co2",
+          "ra-q",
+          "ra co2",
+          "ra quality",
+          "ret air co2",
+          "ret air quality"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "secondary-chilled-water-pump-status",
+        "name": "Secondary Chilled Water Pump Status",
+        "category": "status",
+        "description": "Secondary Chilled Water Pump Status point",
+        "haystack": "secondary chilled water pump status"
+      },
+      "aliases": {
+        "common": [
+          "schwp-s",
+          "schwp sts",
+          "schwp status"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "shutdown",
+        "name": "Shutdown",
+        "category": "status",
+        "description": "Shutdown point",
+        "haystack": "shutdown"
+      },
+      "aliases": {
+        "common": [
+          "shutdwn"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chilled-water-return-temperature",
+        "name": "Chilled Water Return Temperature",
+        "category": "temperatures",
+        "description": "Chilled Water Return Temperature point",
+        "haystack": "chilled water return temperature"
+      },
+      "aliases": {
+        "common": [
+          "chwr-t",
+          "chwr temp",
+          "chwr temperature",
+          "chwr tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chilled-water-supply-temperature",
+        "name": "Chilled Water Supply Temperature",
+        "category": "temperatures",
+        "description": "Temperature of chilled water leaving the chiller plant",
+        "haystack": "chilled water leaving temp sensor",
+        "brick": "Chilled_Water_Supply_Temperature_Sensor",
+        "unit": "degF",
+        "typical_range": {
+          "min": 40,
+          "max": 55
+        },
+        "object_type": "analog-input",
+        "engineering_units": "degrees-fahrenheit"
+      },
+      "aliases": {
+        "common": [
+          "chws-t",
+          "chws temp",
+          "chws temperature",
+          "chws tmp",
+          "chw supply temp",
+          "CHWST",
+          "CHW_Supply_Temp"
+        ],
+        "abbreviated": [
+          "chwst",
+          "cwst"
+        ],
+        "verbose": [
+          "chilled water supply temperature sensor",
+          "chilled water leaving temperature"
+        ]
+      },
+      "notes": [
+        "Typical setpoint 42-44°F for comfort cooling",
+        "Higher setpoints (50-55°F) for energy optimization",
+        "Must stay above 40°F to prevent coil freezing",
+        "Delta T from return typically 10-14°F"
+      ],
+      "related": [
+        "chilled-water-return-temperature",
+        "chiller-1-leaving-temperature",
+        "cooling-valve-output"
+      ]
+    },
+    {
+      "concept": {
+        "id": "chiller-1-entering-temperature",
+        "name": "Chiller 1 Entering Temperature",
+        "category": "temperatures",
+        "description": "Chiller 1 Entering Temperature point",
+        "haystack": "chiller 1 entering temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch1-ewt",
+          "ch1-ent-temp",
+          "ch-1 ent temp",
+          "ch-1 entering temp",
+          "ch-1 enter temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-1-leaving-temperature",
+        "name": "Chiller 1 Leaving Temperature",
+        "category": "temperatures",
+        "description": "Chiller 1 Leaving Temperature point",
+        "haystack": "chiller 1 leaving temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch1-lwt",
+          "ch1-lvg-temp",
+          "ch-1 lvg temp",
+          "ch-1 leaving temp",
+          "ch-1 leave temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-2-entering-temperature",
+        "name": "Chiller 2 Entering Temperature",
+        "category": "temperatures",
+        "description": "Chiller 2 Entering Temperature point",
+        "haystack": "chiller 2 entering temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch2-ewt",
+          "ch2-ent-temp",
+          "ch-2 ent temp",
+          "ch-2 entering temp",
+          "ch-2 enter temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-2-leaving-temperature",
+        "name": "Chiller 2 Leaving Temperature",
+        "category": "temperatures",
+        "description": "Chiller 2 Leaving Temperature point",
+        "haystack": "chiller 2 leaving temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch2-lwt",
+          "ch2-lvg-temp",
+          "ch-2 lvg temp",
+          "ch-2 leaving temp",
+          "ch-2 leave temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-3-entering-temperature",
+        "name": "Chiller 3 Entering Temperature",
+        "category": "temperatures",
+        "description": "Chiller 3 Entering Temperature point",
+        "haystack": "chiller 3 entering temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch3-ewt",
+          "ch3-ent-temp",
+          "ch-3 ent temp",
+          "ch-3 entering temp",
+          "ch-3 enter temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-3-leaving-temperature",
+        "name": "Chiller 3 Leaving Temperature",
+        "category": "temperatures",
+        "description": "Chiller 3 Leaving Temperature point",
+        "haystack": "chiller 3 leaving temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch3-lwt",
+          "ch3-lvg-temp",
+          "ch-3 lvg temp",
+          "ch-3 leaving temp",
+          "ch-3 leave temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-4-entering-temperature",
+        "name": "Chiller 4 Entering Temperature",
+        "category": "temperatures",
+        "description": "Chiller 4 Entering Temperature point",
+        "haystack": "chiller 4 entering temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch4-ewt",
+          "ch4-ent-temp",
+          "ch-4 ent temp",
+          "ch-4 entering temp",
+          "ch-4 enter temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-4-leaving-temperature",
+        "name": "Chiller 4 Leaving Temperature",
+        "category": "temperatures",
+        "description": "Chiller 4 Leaving Temperature point",
+        "haystack": "chiller 4 leaving temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch4-lwt",
+          "ch4-lvg-temp",
+          "ch-4 lvg temp",
+          "ch-4 leaving temp",
+          "ch-4 leave temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-5-entering-temperature",
+        "name": "Chiller 5 Entering Temperature",
+        "category": "temperatures",
+        "description": "Chiller 5 Entering Temperature point",
+        "haystack": "chiller 5 entering temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch5-ewt",
+          "ch5-ent-temp",
+          "ch-5 ent temp",
+          "ch-5 entering temp",
+          "ch-5 enter temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-5-leaving-temperature",
+        "name": "Chiller 5 Leaving Temperature",
+        "category": "temperatures",
+        "description": "Chiller 5 Leaving Temperature point",
+        "haystack": "chiller 5 leaving temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch5-lwt",
+          "ch5-lvg-temp",
+          "ch-5 lvg temp",
+          "ch-5 leaving temp",
+          "ch-5 leave temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-6-entering-temperature",
+        "name": "Chiller 6 Entering Temperature",
+        "category": "temperatures",
+        "description": "Chiller 6 Entering Temperature point",
+        "haystack": "chiller 6 entering temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch6-ewt",
+          "ch6-ent-temp",
+          "ch-6 ent temp",
+          "ch-6 entering temp",
+          "ch-6 enter temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-6-leaving-temperature",
+        "name": "Chiller 6 Leaving Temperature",
+        "category": "temperatures",
+        "description": "Chiller 6 Leaving Temperature point",
+        "haystack": "chiller 6 leaving temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch6-lwt",
+          "ch6-lvg-temp",
+          "ch-6 lvg temp",
+          "ch-6 leaving temp",
+          "ch-6 leave temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-7-entering-temperature",
+        "name": "Chiller 7 Entering Temperature",
+        "category": "temperatures",
+        "description": "Chiller 7 Entering Temperature point",
+        "haystack": "chiller 7 entering temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch7-ewt",
+          "ch7-ent-temp",
+          "ch-7 ent temp",
+          "ch-7 entering temp",
+          "ch-7 enter temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-7-leaving-temperature",
+        "name": "Chiller 7 Leaving Temperature",
+        "category": "temperatures",
+        "description": "Chiller 7 Leaving Temperature point",
+        "haystack": "chiller 7 leaving temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch7-lwt",
+          "ch7-lvg-temp",
+          "ch-7 lvg temp",
+          "ch-7 leaving temp",
+          "ch-7 leave temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-8-entering-temperature",
+        "name": "Chiller 8 Entering Temperature",
+        "category": "temperatures",
+        "description": "Chiller 8 Entering Temperature point",
+        "haystack": "chiller 8 entering temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch8-ewt",
+          "ch8-ent-temp",
+          "ch-8 ent temp",
+          "ch-8 entering temp",
+          "ch-8 enter temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "chiller-8-leaving-temperature",
+        "name": "Chiller 8 Leaving Temperature",
+        "category": "temperatures",
+        "description": "Chiller 8 Leaving Temperature point",
+        "haystack": "chiller 8 leaving temperature"
+      },
+      "aliases": {
+        "common": [
+          "ch8-lwt",
+          "ch8-lvg-temp",
+          "ch-8 lvg temp",
+          "ch-8 leaving temp",
+          "ch-8 leave temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "city-water-temperature",
+        "name": "City Water Temperature",
+        "category": "temperatures",
+        "description": "City Water Temperature point",
+        "haystack": "city water temperature"
+      },
+      "aliases": {
+        "common": [
+          "cw-t",
+          "city wtr temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "condenser-water-return-temperature",
+        "name": "Condenser Water Return Temperature",
+        "category": "temperatures",
+        "description": "Condenser Water Return Temperature point",
+        "haystack": "condenser water return temperature"
+      },
+      "aliases": {
+        "common": [
+          "cwr-t",
+          "cwr temp",
+          "cwr temperature",
+          "cwr tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "condenser-water-supply-temperature",
+        "name": "Condenser Water Supply Temperature",
+        "category": "temperatures",
+        "description": "Condenser Water Supply Temperature point",
+        "haystack": "condenser water supply temperature"
+      },
+      "aliases": {
+        "common": [
+          "cws-t",
+          "cws temp",
+          "cws temperature",
+          "cws tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-1-basin-temperature",
+        "name": "Cooling Tower 1 Basin Temperature",
+        "category": "temperatures",
+        "description": "Cooling Tower 1 Basin Temperature point",
+        "haystack": "cooling tower 1 basin temperature"
+      },
+      "aliases": {
+        "common": [
+          "ct1-basin-t",
+          "clg twr 1 basin temp",
+          "ct-1 basin temp",
+          "ct-1 basin temperature"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-2-basin-temperature",
+        "name": "Cooling Tower 2 Basin Temperature",
+        "category": "temperatures",
+        "description": "Cooling Tower 2 Basin Temperature point",
+        "haystack": "cooling tower 2 basin temperature"
+      },
+      "aliases": {
+        "common": [
+          "ct2-basin-t",
+          "clg twr 2 basin temp",
+          "ct-2 basin temp",
+          "ct-2 basin temperature"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-3-basin-temperature",
+        "name": "Cooling Tower 3 Basin Temperature",
+        "category": "temperatures",
+        "description": "Cooling Tower 3 Basin Temperature point",
+        "haystack": "cooling tower 3 basin temperature"
+      },
+      "aliases": {
+        "common": [
+          "ct3-basin-t",
+          "clg twr 3 basin temp",
+          "ct-3 basin temp",
+          "ct-3 basin temperature"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-4-basin-temperature",
+        "name": "Cooling Tower 4 Basin Temperature",
+        "category": "temperatures",
+        "description": "Cooling Tower 4 Basin Temperature point",
+        "haystack": "cooling tower 4 basin temperature"
+      },
+      "aliases": {
+        "common": [
+          "ct4-basin-t",
+          "clg twr 4 basin temp",
+          "ct-4 basin temp",
+          "ct-4 basin temperature"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-5-basin-temperature",
+        "name": "Cooling Tower 5 Basin Temperature",
+        "category": "temperatures",
+        "description": "Cooling Tower 5 Basin Temperature point",
+        "haystack": "cooling tower 5 basin temperature"
+      },
+      "aliases": {
+        "common": [
+          "ct5-basin-t",
+          "clg twr 5 basin temp",
+          "ct-5 basin temp",
+          "ct-5 basin temperature"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-6-basin-temperature",
+        "name": "Cooling Tower 6 Basin Temperature",
+        "category": "temperatures",
+        "description": "Cooling Tower 6 Basin Temperature point",
+        "haystack": "cooling tower 6 basin temperature"
+      },
+      "aliases": {
+        "common": [
+          "ct6-basin-t",
+          "clg twr 6 basin temp",
+          "ct-6 basin temp",
+          "ct-6 basin temperature"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-7-basin-temperature",
+        "name": "Cooling Tower 7 Basin Temperature",
+        "category": "temperatures",
+        "description": "Cooling Tower 7 Basin Temperature point",
+        "haystack": "cooling tower 7 basin temperature"
+      },
+      "aliases": {
+        "common": [
+          "ct7-basin-t",
+          "clg twr 7 basin temp",
+          "ct-7 basin temp",
+          "ct-7 basin temperature"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-8-basin-temperature",
+        "name": "Cooling Tower 8 Basin Temperature",
+        "category": "temperatures",
+        "description": "Cooling Tower 8 Basin Temperature point",
+        "haystack": "cooling tower 8 basin temperature"
+      },
+      "aliases": {
+        "common": [
+          "ct8-basin-t",
+          "clg twr 8 basin temp",
+          "ct-8 basin temp",
+          "ct-8 basin temperature"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "discharge-air-temperature-setpoint",
+        "name": "Discharge Air Temperature Setpoint",
+        "category": "temperatures",
+        "description": "Discharge Air Temperature Setpoint point",
+        "haystack": "discharge air temperature setpoint"
+      },
+      "aliases": {
+        "common": [
+          "dat-sp",
+          "dat setpoint",
+          "dat stpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "discharge-air-temperature",
+        "name": "Discharge Air Temperature",
+        "category": "temperatures",
+        "description": "Temperature of air leaving the air handling unit or terminal unit",
+        "haystack": "discharge air temp sensor",
+        "brick": "Discharge_Air_Temperature_Sensor",
+        "unit": "degF",
+        "typical_range": {
+          "min": 50,
+          "max": 110
+        },
+        "object_type": "analog-input",
+        "engineering_units": "degrees-fahrenheit"
+      },
+      "aliases": {
+        "common": [
+          "da-t",
+          "da temp",
+          "da temperature",
+          "disch air temp",
+          "DAT",
+          "DischargeTemp",
+          "Discharge_Temp"
+        ],
+        "abbreviated": [
+          "dat",
+          "dt"
+        ],
+        "verbose": [
+          "discharge air temperature sensor",
+          "leaving air temperature",
+          "supply air temperature"
+        ]
+      },
+      "notes": [
+        "Cooling mode typically 50-65°F",
+        "Heating mode typically 70-110°F",
+        "Sometimes called Supply Air Temperature (SAT) downstream of unit",
+        "Critical for discharge air temperature control loops"
+      ],
+      "related": [
+        "supply-air-temperature",
+        "mixed-air-temperature",
+        "discharge-air-temperature-setpoint",
+        "cooling-valve-output",
+        "heating-valve-output"
+      ]
+    },
+    {
+      "concept": {
+        "id": "domestic-hot-water-return-temperature",
+        "name": "Domestic Hot Water Return Temperature",
+        "category": "temperatures",
+        "description": "Domestic Hot Water Return Temperature point",
+        "haystack": "domestic hot water return temperature"
+      },
+      "aliases": {
+        "common": [
+          "dhwr-t",
+          "dhwr temp",
+          "dhwr temperature",
+          "dhwr tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "domestic-hot-water-supply-temperature",
+        "name": "Domestic Hot Water Supply Temperature",
+        "category": "temperatures",
+        "description": "Domestic Hot Water Supply Temperature point",
+        "haystack": "domestic hot water supply temperature"
+      },
+      "aliases": {
+        "common": [
+          "dhws-t",
+          "dhws temp",
+          "dhws temperature",
+          "dhws tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "effective-discharge-air-temperature-setpoint",
+        "name": "Effective Discharge Air Temperature Setpoint",
+        "category": "temperatures",
+        "description": "Effective Discharge Air Temperature Setpoint point",
+        "haystack": "effective discharge air temperature setpoint"
+      },
+      "aliases": {
+        "common": [
+          "effdat-sp",
+          "eff dat setpoint",
+          "eff dat stpt",
+          "effective dat stpt",
+          "eff da temp setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "exhaust-air-temperaure",
+        "name": "Exhaust Air Temperaure",
+        "category": "temperatures",
+        "description": "Exhaust Air Temperaure point",
+        "haystack": "exhaust air temperaure"
+      },
+      "aliases": {
+        "common": [
+          "ea-t",
+          "ea temp",
+          "ea temperature",
+          "exh air temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "hot-water-return-temperature",
+        "name": "Hot Water Return Temperature",
+        "category": "temperatures",
+        "description": "Hot Water Return Temperature point",
+        "haystack": "hot water return temperature"
+      },
+      "aliases": {
+        "common": [
+          "hwr-t",
+          "hwr temp",
+          "hwr temperature",
+          "hwr tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "hot-water-supply-temperature",
+        "name": "Hot Water Supply Temperature",
+        "category": "temperatures",
+        "description": "Hot Water Supply Temperature point",
+        "haystack": "hot water supply temperature"
+      },
+      "aliases": {
+        "common": [
+          "hws-t",
+          "hws temp",
+          "hws temperature",
+          "hws tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "mixed-air-temperature-setpoint",
+        "name": "Mixed Air Temperature Setpoint",
+        "category": "temperatures",
+        "description": "Mixed Air Temperature Setpoint point",
+        "haystack": "mixed air temperature setpoint"
+      },
+      "aliases": {
+        "common": [
+          "mat-sp",
+          "mat setpoint",
+          "ma temp stpt",
+          "ma temp setpt",
+          "ma temperature setpt"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "mixed-air-temperature",
+        "name": "Mixed Air Temperature",
+        "category": "temperatures",
+        "description": "Mixed Air Temperature point",
+        "haystack": "mixed air temperature"
+      },
+      "aliases": {
+        "common": [
+          "ma-t",
+          "ma temp",
+          "ma temperature",
+          "mixed air temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "outdoor-air-temperature",
+        "name": "Outdoor Air Temperature",
+        "category": "temperatures",
+        "description": "Temperature of outside ambient air, used for economizer and lockout control",
+        "haystack": "outside air temp sensor",
+        "brick": "Outside_Air_Temperature_Sensor",
+        "unit": "degF",
+        "typical_range": {
+          "min": -20,
+          "max": 120
+        },
+        "object_type": "analog-input",
+        "engineering_units": "degrees-fahrenheit"
+      },
+      "aliases": {
+        "common": [
+          "oa-t",
+          "oa temp",
+          "oa temperature",
+          "outdoor air temp",
+          "outside air temp",
+          "outside temp",
+          "OAT",
+          "OutdoorTemp",
+          "OutsideTemp"
+        ],
+        "abbreviated": [
+          "oat",
+          "ot"
+        ],
+        "verbose": [
+          "outside air temperature sensor",
+          "ambient air temperature",
+          "outdoor ambient temperature"
+        ],
+        "misspellings": [
+          "outdor temp",
+          "outsite temp"
+        ]
+      },
+      "notes": [
+        "Critical for economizer enable/disable decisions",
+        "Used for heating/cooling lockout control",
+        "Often shared across multiple AHUs via BACnet",
+        "May be provided by weather service in some systems"
+      ],
+      "related": [
+        "economizer-enable",
+        "cooling-outdoor-air-lockout-setpoint",
+        "heating-outdoor-air-lockout-setpoint",
+        "outdoor-air-humidity"
+      ]
+    },
+    {
+      "concept": {
+        "id": "primary-chilled-water-return-temperature",
+        "name": "Primary Chilled Water Return Temperature",
+        "category": "temperatures",
+        "description": "Primary Chilled Water Return Temperature point",
+        "haystack": "primary chilled water return temperature"
+      },
+      "aliases": {
+        "common": [
+          "pchwr-t",
+          "pchwr temp",
+          "pchwr temperature",
+          "pchwr tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "primary-chilled-water-supply-temperature",
+        "name": "Primary Chilled Water Supply Temperature",
+        "category": "temperatures",
+        "description": "Primary Chilled Water Supply Temperature point",
+        "haystack": "primary chilled water supply temperature"
+      },
+      "aliases": {
+        "common": [
+          "pchws-t",
+          "pchws temp",
+          "pchws temperature",
+          "pchws tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "primary-hot-water-return-temperature",
+        "name": "Primary Hot Water Return Temperature",
+        "category": "temperatures",
+        "description": "Primary Hot Water Return Temperature point",
+        "haystack": "primary hot water return temperature"
+      },
+      "aliases": {
+        "common": [
+          "phwr-t",
+          "phwr temp",
+          "phwr temperature",
+          "phwr tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "primary-hot-water-supply-temperature",
+        "name": "Primary Hot Water Supply Temperature",
+        "category": "temperatures",
+        "description": "Primary Hot Water Supply Temperature point",
+        "haystack": "primary hot water supply temperature"
+      },
+      "aliases": {
+        "common": [
+          "phws-t",
+          "phws temp",
+          "phws temperature",
+          "phws tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "return-air-temperature",
+        "name": "Return Air Temperature",
+        "category": "temperatures",
+        "description": "Return Air Temperature point",
+        "haystack": "return air temperature"
+      },
+      "aliases": {
+        "common": [
+          "ra-t",
+          "ra temp",
+          "ra temperature",
+          "ret air temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "secondary-chilled-water-return-temperature",
+        "name": "Secondary Chilled Water Return Temperature",
+        "category": "temperatures",
+        "description": "Secondary Chilled Water Return Temperature point",
+        "haystack": "secondary chilled water return temperature"
+      },
+      "aliases": {
+        "common": [
+          "schwr-t",
+          "schwr temp",
+          "schwr temperature",
+          "schwr tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "secondary-chilled-water-supply-temperature",
+        "name": "Secondary Chilled Water Supply Temperature",
+        "category": "temperatures",
+        "description": "Secondary Chilled Water Supply Temperature point",
+        "haystack": "secondary chilled water supply temperature"
+      },
+      "aliases": {
+        "common": [
+          "schws-t",
+          "schws temp",
+          "schws temperature",
+          "schws tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "secondary-hot-water-return-temperature",
+        "name": "Secondary Hot Water Return Temperature",
+        "category": "temperatures",
+        "description": "Secondary Hot Water Return Temperature point",
+        "haystack": "secondary hot water return temperature"
+      },
+      "aliases": {
+        "common": [
+          "shwr-t",
+          "shwr temp",
+          "shwr temperature",
+          "shwr tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "secondary-hot-water-supply-temperature",
+        "name": "Secondary Hot Water Supply Temperature",
+        "category": "temperatures",
+        "description": "Secondary Hot Water Supply Temperature point",
+        "haystack": "secondary hot water supply temperature"
+      },
+      "aliases": {
+        "common": [
+          "shws-t",
+          "shws temp",
+          "shws temperature",
+          "shws tmp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "supply-air-temperature",
+        "name": "Supply Air Temperature",
+        "category": "temperatures",
+        "description": "Supply Air Temperature point",
+        "haystack": "supply air temperature"
+      },
+      "aliases": {
+        "common": [
+          "sa-t",
+          "sa temp",
+          "sa temperature",
+          "sup air temp"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "zone-temperature",
+        "name": "Zone Temperature",
+        "category": "temperatures",
+        "description": "Sensed temperature of air in occupied zone or space",
+        "haystack": "zone air temp sensor",
+        "brick": "Zone_Air_Temperature_Sensor",
+        "unit": "degF",
+        "typical_range": {
+          "min": 55,
+          "max": 85
+        },
+        "object_type": "analog-input",
+        "engineering_units": "degrees-fahrenheit"
+      },
+      "aliases": {
+        "common": [
+          "zn-t",
+          "zn temp",
+          "zn temperature",
+          "zone temp",
+          "room temperature",
+          "rm-t",
+          "rm temp",
+          "rm temperature",
+          "room temp",
+          "space temperature",
+          "space-t",
+          "space temp",
+          "ZoneTemp",
+          "Zone_Temp",
+          "RoomTemp",
+          "SpaceTemp",
+          "ZAT",
+          "RAT"
+        ],
+        "abbreviated": [
+          "zt",
+          "znt",
+          "rt",
+          "st"
+        ],
+        "verbose": [
+          "zone air temperature",
+          "room air temperature",
+          "space air temperature",
+          "zone temperature sensor"
+        ],
+        "misspellings": [
+          "ZoneTepm",
+          "ZonTemp",
+          "temperture",
+          "tempreture"
+        ]
+      },
+      "notes": [
+        "Often abbreviated as ZAT (Zone Air Temp) or RAT (Room Air Temp)",
+        "In VRF systems, may be called Indoor Unit Temp or FCU Temp",
+        "Wireless sensors often use vendor-specific names like EnOcean_Temp_1",
+        "When multiple sensors in zone, often suffixed ZoneTemp_1, ZoneTemp_Avg"
+      ],
+      "related": [
+        "discharge-air-temperature",
+        "return-air-temperature",
+        "occupied-cooling-setpoint",
+        "occupied-heating-setpoint"
+      ]
+    },
+    {
+      "concept": {
+        "id": "bypass-valve-output",
+        "name": "Bypass Valve Output",
+        "category": "valves",
+        "description": "Bypass Valve Output point",
+        "haystack": "bypass valve output"
+      },
+      "aliases": {
+        "common": [
+          "byp-o",
+          "byp vlv out",
+          "bypass vlv output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-1-isolation-valve",
+        "name": "Cooling Tower 1 Isolation Valve",
+        "category": "valves",
+        "description": "Cooling Tower 1 Isolation Valve point",
+        "haystack": "cooling tower 1 isolation valve"
+      },
+      "aliases": {
+        "common": [
+          "ct1-isovlv",
+          "clg twr 1 iso vlv",
+          "ct-1 iso valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-2-isolation-valve",
+        "name": "Cooling Tower 2 Isolation Valve",
+        "category": "valves",
+        "description": "Cooling Tower 2 Isolation Valve point",
+        "haystack": "cooling tower 2 isolation valve"
+      },
+      "aliases": {
+        "common": [
+          "ct2-isovlv",
+          "clg twr 2 iso vlv",
+          "ct-2 iso valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-3-isolation-valve",
+        "name": "Cooling Tower 3 Isolation Valve",
+        "category": "valves",
+        "description": "Cooling Tower 3 Isolation Valve point",
+        "haystack": "cooling tower 3 isolation valve"
+      },
+      "aliases": {
+        "common": [
+          "ct3-isovlv",
+          "clg twr 3 iso vlv",
+          "ct-3 iso valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-4-isolation-valve",
+        "name": "Cooling Tower 4 Isolation Valve",
+        "category": "valves",
+        "description": "Cooling Tower 4 Isolation Valve point",
+        "haystack": "cooling tower 4 isolation valve"
+      },
+      "aliases": {
+        "common": [
+          "ct4-isovlv",
+          "clg twr 4 iso vlv",
+          "ct-4 iso valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-5-isolation-valve",
+        "name": "Cooling Tower 5 Isolation Valve",
+        "category": "valves",
+        "description": "Cooling Tower 5 Isolation Valve point",
+        "haystack": "cooling tower 5 isolation valve"
+      },
+      "aliases": {
+        "common": [
+          "ct5-isovlv",
+          "clg twr 5 iso vlv",
+          "ct-5 iso valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-6-isolation-valve",
+        "name": "Cooling Tower 6 Isolation Valve",
+        "category": "valves",
+        "description": "Cooling Tower 6 Isolation Valve point",
+        "haystack": "cooling tower 6 isolation valve"
+      },
+      "aliases": {
+        "common": [
+          "ct6-isovlv",
+          "clg twr 6 iso vlv",
+          "ct-6 iso valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-7-isolation-valve",
+        "name": "Cooling Tower 7 Isolation Valve",
+        "category": "valves",
+        "description": "Cooling Tower 7 Isolation Valve point",
+        "haystack": "cooling tower 7 isolation valve"
+      },
+      "aliases": {
+        "common": [
+          "ct7-isovlv",
+          "clg twr 7 iso vlv",
+          "ct-7 iso valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-tower-8-isolation-valve",
+        "name": "Cooling Tower 8 Isolation Valve",
+        "category": "valves",
+        "description": "Cooling Tower 8 Isolation Valve point",
+        "haystack": "cooling tower 8 isolation valve"
+      },
+      "aliases": {
+        "common": [
+          "ct8-isovlv",
+          "clg twr 8 iso vlv",
+          "ct-8 iso valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "cooling-valve-output",
+        "name": "Cooling Valve Output",
+        "category": "valves",
+        "description": "Cooling Valve Output point",
+        "haystack": "cooling valve output"
+      },
+      "aliases": {
+        "common": [
+          "clg-o",
+          "cooling output",
+          "cooling valve",
+          "cool output",
+          "chw valve",
+          "chw vlv out"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "heating-valve-output",
+        "name": "Heating Valve Output",
+        "category": "valves",
+        "description": "Heating Valve Output point",
+        "haystack": "heating valve output"
+      },
+      "aliases": {
+        "common": [
+          "htg-o",
+          "heating output",
+          "heating valve",
+          "heat output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "isolation-valve-output",
+        "name": "Isolation Valve Output",
+        "category": "valves",
+        "description": "Isolation Valve Output point",
+        "haystack": "isolation valve output"
+      },
+      "aliases": {
+        "common": [
+          "iso-o",
+          "iso vlv out",
+          "iso valve output"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "concept": {
+        "id": "mixing-valve-output",
+        "name": "Mixing Valve Output",
+        "category": "valves",
+        "description": "Mixing Valve Output point",
+        "haystack": "mixing valve output"
+      },
+      "aliases": {
+        "common": [
+          "mixvlv-o",
+          "mix vlv out",
+          "mix valve output"
+        ],
+        "abbreviated": []
+      }
+    }
+  ],
+  "equipment": [
+    {
+      "id": "ahu",
+      "name": "ahu",
+      "full_name": "air handling unit",
+      "category": "air-handling",
+      "description": "air handling unit",
+      "aliases": {
+        "common": [
+          "air handling unit"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "doas",
+      "name": "doas",
+      "full_name": "dedicated outside air system",
+      "category": "air-handling",
+      "description": "dedicated outside air system",
+      "aliases": {
+        "common": [
+          "dedicated outside air system",
+          "dedicated outdoor air unit",
+          "doau"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "mau",
+      "name": "mau",
+      "full_name": "makeup air unit",
+      "category": "air-handling",
+      "description": "makeup air unit",
+      "aliases": {
+        "common": [
+          "makeup air unit",
+          "makeup air"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "rtu",
+      "name": "rtu",
+      "full_name": "roof top unit",
+      "category": "air-handling",
+      "description": "roof top unit",
+      "aliases": {
+        "common": [
+          "roof top unit"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "fcu",
+      "name": "fcu",
+      "full_name": "fan coil unit",
+      "category": "air-handling",
+      "description": "fan coil unit",
+      "aliases": {
+        "common": [
+          "fan coil unit",
+          "fan coil"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "crac",
+      "name": "crac",
+      "full_name": "computer room air conditioner",
+      "category": "air-handling",
+      "description": "computer room air conditioner",
+      "aliases": {
+        "common": [
+          "computer room air conditioner",
+          "crah"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "unitvent",
+      "name": "unitVent",
+      "full_name": "uv",
+      "category": "air-handling",
+      "description": "uv",
+      "aliases": {
+        "common": [
+          "uv",
+          "unit ventilator",
+          "unit vent"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "heatpump",
+      "name": "heatPump",
+      "full_name": "hp",
+      "category": "air-handling",
+      "description": "hp",
+      "aliases": {
+        "common": [
+          "hp",
+          "heat pump"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "dxheating",
+      "name": "dxHeating",
+      "full_name": "dx heating",
+      "category": "air-handling",
+      "description": "dx heating",
+      "aliases": {
+        "common": [
+          "dx heating",
+          "heating",
+          "heat"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "elecheating",
+      "name": "elecHeating",
+      "full_name": "electric heating",
+      "category": "air-handling",
+      "description": "electric heating",
+      "aliases": {
+        "common": [
+          "electric heating",
+          "stage heat",
+          "heating",
+          "heat"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "hotwaterheating",
+      "name": "hotWaterHeating",
+      "full_name": "hot water heating",
+      "category": "air-handling",
+      "description": "hot water heating",
+      "aliases": {
+        "common": [
+          "hot water heating",
+          "hw heating",
+          "heating",
+          "heat"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "naturalgasheating",
+      "name": "naturalGasHeating",
+      "full_name": "natural gas heating",
+      "category": "air-handling",
+      "description": "natural gas heating",
+      "aliases": {
+        "common": [
+          "natural gas heating",
+          "gas heating",
+          "gas fired heating",
+          "heating",
+          "heat"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "steamheating",
+      "name": "steamHeating",
+      "full_name": "steam heating",
+      "category": "air-handling",
+      "description": "steam heating",
+      "aliases": {
+        "common": [
+          "steam heating",
+          "steam heat",
+          "heating",
+          "heat"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "chilledwatercooling",
+      "name": "chilledWaterCooling",
+      "full_name": "chilled water cooling",
+      "category": "air-handling",
+      "description": "chilled water cooling",
+      "aliases": {
+        "common": [
+          "chilled water cooling",
+          "chw cooling",
+          "cooling",
+          "cool"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "constantairvolume",
+      "name": "constantAirVolume",
+      "full_name": "constant air volume",
+      "category": "air-handling",
+      "description": "constant air volume",
+      "aliases": {
+        "common": [
+          "constant air volume",
+          "cv ahu"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "variableairvolume",
+      "name": "variableAirVolume",
+      "full_name": "variable air volume",
+      "category": "air-handling",
+      "description": "variable air volume",
+      "aliases": {
+        "common": [
+          "variable air volume",
+          "vav ahu"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "vavzone",
+      "name": "vavZone",
+      "full_name": "vav zone",
+      "category": "air-handling",
+      "description": "vav zone",
+      "aliases": {
+        "common": [
+          "vav zone"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "directzone",
+      "name": "directZone",
+      "full_name": "direct zone",
+      "category": "air-handling",
+      "description": "direct zone",
+      "aliases": {
+        "common": [
+          "direct zone"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "chilledbeamzone",
+      "name": "chilledBeamZone",
+      "full_name": "chilled beam zone",
+      "category": "air-handling",
+      "description": "chilled beam zone",
+      "aliases": {
+        "common": [
+          "chilled beam zone"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "multizone",
+      "name": "multiZone",
+      "full_name": "multi zone",
+      "category": "air-handling",
+      "description": "multi zone",
+      "aliases": {
+        "common": [
+          "multi zone"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "singleduct",
+      "name": "singleDuct",
+      "full_name": "single duct",
+      "category": "air-handling",
+      "description": "single duct",
+      "aliases": {
+        "common": [
+          "single duct"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "dualduct",
+      "name": "dualDuct",
+      "full_name": "dual duct",
+      "category": "air-handling",
+      "description": "dual duct",
+      "aliases": {
+        "common": [
+          "dual duct"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "tripleduct",
+      "name": "tripleDuct",
+      "full_name": "triple duct",
+      "category": "air-handling",
+      "description": "triple duct",
+      "aliases": {
+        "common": [
+          "triple duct"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "discharge",
+      "name": "discharge",
+      "full_name": "discharge air",
+      "category": "air-handling",
+      "description": "discharge air",
+      "aliases": {
+        "common": [
+          "discharge air",
+          "da"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "return",
+      "name": "return",
+      "full_name": "return air",
+      "category": "air-handling",
+      "description": "return air",
+      "aliases": {
+        "common": [
+          "return air",
+          "ra"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "outside",
+      "name": "outside",
+      "full_name": "outside air",
+      "category": "air-handling",
+      "description": "outside air",
+      "aliases": {
+        "common": [
+          "outside air",
+          "oa"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "exhaust",
+      "name": "exhaust",
+      "full_name": "exhaust air",
+      "category": "air-handling",
+      "description": "exhaust air",
+      "aliases": {
+        "common": [
+          "exhaust air",
+          "ea"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "mixed",
+      "name": "mixed",
+      "full_name": "mixed air",
+      "category": "air-handling",
+      "description": "mixed air",
+      "aliases": {
+        "common": [
+          "mixed air",
+          "ma"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "cool",
+      "name": "cool",
+      "full_name": "cooling",
+      "category": "air-handling",
+      "description": "cooling",
+      "aliases": {
+        "common": [
+          "cooling"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "heat",
+      "name": "heat",
+      "full_name": "heating",
+      "category": "air-handling",
+      "description": "heating",
+      "aliases": {
+        "common": [
+          "heating"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "zone",
+      "name": "zone",
+      "full_name": "room",
+      "category": "air-handling",
+      "description": "room",
+      "aliases": {
+        "common": [
+          "room",
+          "space"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "chilled-water-plant",
+      "name": "chilled-water-plant",
+      "full_name": "chilled water plant",
+      "category": "central-plant",
+      "description": "chilled water plant",
+      "aliases": {
+        "common": [
+          "chilled water plant",
+          "chilled water system",
+          "central plant"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "hot-water-plant",
+      "name": "hot-water-plant",
+      "full_name": "hot water plant",
+      "category": "central-plant",
+      "description": "hot water plant",
+      "aliases": {
+        "common": [
+          "hot water plant",
+          "hot water system",
+          "heating water system",
+          "heating water"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "steam-plant",
+      "name": "steam-plant",
+      "full_name": "steam plant",
+      "category": "central-plant",
+      "description": "steam plant",
+      "aliases": {
+        "common": [
+          "steam plant",
+          "steam water system",
+          "steam water",
+          "low pressure steam",
+          "high pressure steam"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "chiller",
+      "name": "chiller",
+      "full_name": "ch",
+      "category": "central-plant",
+      "description": "ch",
+      "aliases": {
+        "common": [
+          "ch",
+          "chlr"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "coolingtower",
+      "name": "coolingTower",
+      "full_name": "cooling tower",
+      "category": "central-plant",
+      "description": "cooling tower",
+      "aliases": {
+        "common": [
+          "cooling tower",
+          "ct",
+          "tower"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "heatexchanger",
+      "name": "heatExchanger",
+      "full_name": "heat exchanger",
+      "category": "central-plant",
+      "description": "heat exchanger",
+      "aliases": {
+        "common": [
+          "heat exchanger",
+          "hx"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "pump-motor",
+      "name": "pump-motor",
+      "full_name": "pump",
+      "category": "central-plant",
+      "description": "pump",
+      "aliases": {
+        "common": [
+          "pump",
+          "chw pump",
+          "chwp",
+          "hw pump",
+          "hwp"
+        ],
+        "abbreviated": [
+          "pchwp",
+          "schwp",
+          "phwp",
+          "shwp"
+        ]
+      }
+    },
+    {
+      "id": "valve-actuator",
+      "name": "valve-actuator",
+      "full_name": "valve",
+      "category": "central-plant",
+      "description": "valve",
+      "aliases": {
+        "common": [
+          "valve",
+          "isolation valve",
+          "mixing valve",
+          "modulating valve"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "hot-water-boiler",
+      "name": "hot-water-boiler",
+      "full_name": "hot water boiler",
+      "category": "central-plant",
+      "description": "hot water boiler",
+      "aliases": {
+        "common": [
+          "hot water boiler",
+          "boiler",
+          "b",
+          "blr"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "steam-boiler",
+      "name": "steam-boiler",
+      "full_name": "steam boiler",
+      "category": "central-plant",
+      "description": "steam boiler",
+      "aliases": {
+        "common": [
+          "steam boiler",
+          "boiler",
+          "b",
+          "blr"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "ac-elec-meter",
+      "name": "ac-elec-meter",
+      "full_name": "elec meter",
+      "category": "metering",
+      "description": "elec meter",
+      "aliases": {
+        "common": [
+          "elec meter",
+          "electricity meter",
+          "kw meter",
+          "power meter"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "dc-elec-meter",
+      "name": "dc-elec meter",
+      "full_name": "elec meter",
+      "category": "metering",
+      "description": "elec meter",
+      "aliases": {
+        "common": [
+          "elec meter",
+          "electricity meter",
+          "kw meter",
+          "power meter"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "elec-meter",
+      "name": "elec-meter",
+      "full_name": "elec meter",
+      "category": "metering",
+      "description": "elec meter",
+      "aliases": {
+        "common": [
+          "elec meter",
+          "electricity meter",
+          "kw meter",
+          "power meter"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "flow-meter",
+      "name": "flow-meter",
+      "full_name": "water meter",
+      "category": "metering",
+      "description": "water meter",
+      "aliases": {
+        "common": [
+          "water meter",
+          "gpm meter"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "gas-meter",
+      "name": "gas-meter",
+      "full_name": "natural gas meter",
+      "category": "metering",
+      "description": "natural gas meter",
+      "aliases": {
+        "common": [
+          "natural gas meter",
+          "gas meter"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "steam-meter",
+      "name": "steam-meter",
+      "full_name": "steam meter",
+      "category": "metering",
+      "description": "steam meter",
+      "aliases": {
+        "common": [
+          "steam meter"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "fan-motor",
+      "name": "fan-motor",
+      "full_name": "fan motor",
+      "category": "motors",
+      "description": "fan motor",
+      "aliases": {
+        "common": [
+          "fan motor",
+          "fan",
+          "supply fan",
+          "return fan",
+          "exhaust fan"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "elecheating",
+      "name": "elecHeating",
+      "full_name": "electric heating",
+      "category": "terminal-units",
+      "description": "electric heating",
+      "aliases": {
+        "common": [
+          "electric heating",
+          "stage heat",
+          "heating",
+          "heat"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "hotwaterheating",
+      "name": "hotWaterHeating",
+      "full_name": "hot water heating",
+      "category": "terminal-units",
+      "description": "hot water heating",
+      "aliases": {
+        "common": [
+          "hot water heating",
+          "hw heating",
+          "heating",
+          "heat"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "steamheating",
+      "name": "steamHeating",
+      "full_name": "steam heating",
+      "category": "terminal-units",
+      "description": "steam heating",
+      "aliases": {
+        "common": [
+          "steam heating",
+          "steam heat",
+          "heating",
+          "heat"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "pressuredependent",
+      "name": "pressureDependent",
+      "full_name": "pressure dependent",
+      "category": "terminal-units",
+      "description": "pressure dependent",
+      "aliases": {
+        "common": [
+          "pressure dependent"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "pressureindependent",
+      "name": "pressureIndependent",
+      "full_name": "pressure independent",
+      "category": "terminal-units",
+      "description": "pressure independent",
+      "aliases": {
+        "common": [
+          "pressure independent"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "parallel",
+      "name": "parallel",
+      "full_name": "pfvav",
+      "category": "terminal-units",
+      "description": "pfvav",
+      "aliases": {
+        "common": [
+          "pfvav",
+          "parallel fan",
+          "parallel fan vav"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "series",
+      "name": "series",
+      "full_name": "sfvav",
+      "category": "terminal-units",
+      "description": "sfvav",
+      "aliases": {
+        "common": [
+          "sfvav",
+          "series fan",
+          "series fan vav"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "singleduct",
+      "name": "singleDuct",
+      "full_name": "single duct",
+      "category": "terminal-units",
+      "description": "single duct",
+      "aliases": {
+        "common": [
+          "single duct"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "dualduct",
+      "name": "dualDuct",
+      "full_name": "dual duct",
+      "category": "terminal-units",
+      "description": "dual duct",
+      "aliases": {
+        "common": [
+          "dual duct"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "inlet",
+      "name": "inlet",
+      "full_name": "supply air",
+      "category": "terminal-units",
+      "description": "supply air",
+      "aliases": {
+        "common": [
+          "supply air",
+          "from ahu",
+          "sa"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "discharge",
+      "name": "discharge",
+      "full_name": "discharge air",
+      "category": "terminal-units",
+      "description": "discharge air",
+      "aliases": {
+        "common": [
+          "discharge air",
+          "da"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "zone",
+      "name": "zone",
+      "full_name": "space",
+      "category": "terminal-units",
+      "description": "space",
+      "aliases": {
+        "common": [
+          "space",
+          "room"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "vrf-indoorunit",
+      "name": "vrf-indoorUnit",
+      "full_name": "vrf",
+      "category": "vrf",
+      "description": "vrf",
+      "aliases": {
+        "common": [
+          "vrf",
+          "variable refrigerant flow",
+          "ceiling cassette",
+          "ceiling concealed duct",
+          "wall mounted"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "vrf-outdoorunit",
+      "name": "vrf-outdoorUnit",
+      "full_name": "vrf odu",
+      "category": "vrf",
+      "description": "vrf odu",
+      "aliases": {
+        "common": [
+          "vrf odu",
+          "odu",
+          "outdoor unit"
+        ],
+        "abbreviated": []
+      }
+    }
+  ]
+}
