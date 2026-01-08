@@ -128,9 +128,10 @@ export function BabelView() {
           <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
             BAS Babel
           </h1>
-          <p className="mt-3 text-muted-foreground max-w-xl">
-            Point naming standards and aliases across BAS platforms. Translate between
-            vendor conventions, Haystack tags, and Brick schema.
+          <p className="mt-3 text-muted-foreground max-w-2xl">
+            An open source, community-driven database of BAS point naming standards and equipment definitions.
+            Translate between vendor conventions, Haystack tags, and Brick schema with a shared reference
+            that grows with contributions from the industry.
           </p>
 
           <div className="mt-4 flex items-center gap-4">
