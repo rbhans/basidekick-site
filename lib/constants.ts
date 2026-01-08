@@ -16,6 +16,7 @@ export const VIEW_TITLES: Record<string, string> = {
   [VIEW_IDS.NSK]: "NiagaraSidekick",
   [VIEW_IDS.SSK]: "SimulatorSidekick",
   [VIEW_IDS.MSK]: "MetasysSidekick",
+  [VIEW_IDS.QSK]: "QR Sidekick",
   [VIEW_IDS.RESOURCES]: "Resources",
   [VIEW_IDS.BABEL]: "BAS Babel",
   [VIEW_IDS.REFERENCES]: "References",
@@ -35,6 +36,7 @@ export const VIEW_LOADING_TEXT: Record<string, string> = {
   [VIEW_IDS.NSK]: "NIAGARA_SIDEKICK",
   [VIEW_IDS.SSK]: "SIMULATOR_SIDEKICK",
   [VIEW_IDS.MSK]: "METASYS_SIDEKICK",
+  [VIEW_IDS.QSK]: "QR_SIDEKICK",
   [VIEW_IDS.RESOURCES]: "RESOURCES",
   [VIEW_IDS.BABEL]: "BAS_BABEL",
   [VIEW_IDS.REFERENCES]: "REFERENCES",
@@ -98,6 +100,22 @@ export const TOOLS: Record<string, Tool> = {
       "Template comparison",
       "Typo detection",
       "PDF report generation",
+    ],
+  },
+  [VIEW_IDS.QSK]: {
+    id: VIEW_IDS.QSK,
+    name: "QR Sidekick",
+    shortName: "QSK",
+    tagline: "Scan. Track. Control.",
+    description: "The simplest way for field technicians to manage building equipment using QR codes.",
+    status: "coming",
+    iconName: "QrCode",
+    webVersion: false,
+    features: [
+      "Instant QR scanning",
+      "Live BACnet data",
+      "Maintenance notes",
+      "Cross-platform (iOS/Android)",
     ],
   },
 };
@@ -215,6 +233,61 @@ export const TOOL_DETAILS: Record<string, ToolDetail> = {
       { label: "Export Format", value: "CSV/XML" },
     ],
   },
+  [VIEW_IDS.QSK]: {
+    ...TOOLS[VIEW_IDS.QSK],
+    mobileApp: true,
+    detailedFeatures: [
+      {
+        iconName: "Scan",
+        title: "Instant QR Scanning",
+        description: "Scan equipment QR codes to pull up point values and status instantly.",
+      },
+      {
+        iconName: "Gauge",
+        title: "Live BACnet Data",
+        description: "View real-time values when connected to the building network.",
+      },
+      {
+        iconName: "Note",
+        title: "Maintenance Notes",
+        description: "Add dated notes for repairs, inspections, and observations.",
+      },
+      {
+        iconName: "Lock",
+        title: "Secure & Private",
+        description: "Your data stays secure on your device and cloud storage.",
+      },
+    ],
+    steps: [
+      { number: 1, title: "Scan QR Code", description: "Point your phone at any equipment QR code" },
+      { number: 2, title: "View Data", description: "See live point values, status, and history" },
+      { number: 3, title: "Add Notes", description: "Record maintenance notes for your team" },
+    ],
+    requirements: [
+      { label: "Platform", value: "iOS & Android" },
+      { label: "For live data", value: "Building network connection" },
+      { label: "Free tier", value: "5 equipment items" },
+    ],
+    useCases: [
+      "Scan a rooftop unit to check discharge temps and fan status",
+      "Scan a thermostat to pull up its associated VAV controller",
+      "Scan a chiller to view operating parameters and alarms",
+      "Scan any equipment to add maintenance notes for your team",
+    ],
+    perfectFor: [
+      "HVAC technicians",
+      "Building automation professionals",
+      "Facility maintenance teams",
+      "Controls contractors",
+      "Property managers",
+    ],
+    pricing: [
+      { name: "Free", limit: "5 items", price: "$0" },
+      { name: "Basic", limit: "50 items", price: "$3/month" },
+      { name: "Pro", limit: "100 items", price: "$5/month", highlighted: true },
+      { name: "Unlimited", limit: "Unlimited", price: "$10/month" },
+    ],
+  },
 };
 
 // =============================================================================
@@ -241,6 +314,11 @@ export const USE_CASES: UseCase[] = [
     title: "Metasys site audit",
     description: "Review and document Metasys system configurations",
     tools: ["MSK"],
+  },
+  {
+    title: "Field equipment tracking",
+    description: "Scan QR codes to view live data and add maintenance notes",
+    tools: ["QSK"],
   },
 ];
 
@@ -269,6 +347,11 @@ export const NAV_ITEMS: NavNode[] = [
         id: VIEW_IDS.MSK,
         label: "MetasysSidekick",
         iconName: "Buildings",
+      },
+      {
+        id: VIEW_IDS.QSK,
+        label: "QR Sidekick",
+        iconName: "QrCode",
       },
     ],
   },
@@ -325,6 +408,15 @@ export const ICON_NAMES = [
   "Plugs",
   "Cpu",
   "Translate",
+  "QrCode",
+  "DeviceMobile",
+  "Scan",
+  "Note",
+  "Lock",
+  "Thermometer",
+  "Gauge",
+  "Fan",
+  "WarningCircle",
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { ToolDetailView } from "@/components/views/tool-detail-view";
 
 // Valid tool IDs
-const VALID_TOOL_IDS = ["nsk", "ssk", "msk"] as const;
+const VALID_TOOL_IDS = ["nsk", "ssk", "msk", "qsk"] as const;
 type ValidToolId = (typeof VALID_TOOL_IDS)[number];
 
 interface ToolPageProps {

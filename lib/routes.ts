@@ -39,6 +39,8 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.TOOL("ssk");
     case VIEW_IDS.MSK:
       return ROUTES.TOOL("msk");
+    case VIEW_IDS.QSK:
+      return ROUTES.TOOL("qsk");
     case VIEW_IDS.WIKI:
       return ROUTES.WIKI;
     case VIEW_IDS.FORUM:
@@ -88,6 +90,7 @@ export function getViewIdFromPath(pathname: string): string {
     if (toolId === "nsk") return VIEW_IDS.NSK;
     if (toolId === "ssk") return VIEW_IDS.SSK;
     if (toolId === "msk") return VIEW_IDS.MSK;
+    if (toolId === "qsk") return VIEW_IDS.QSK;
     return VIEW_IDS.TOOLS;
   }
 

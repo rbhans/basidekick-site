@@ -4,12 +4,13 @@ import { SectionLabel } from "@/components/section-label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CircuitBackground } from "@/components/circuit-background";
-import { Play } from "@phosphor-icons/react";
+import { Play, AppleLogo, GooglePlayLogo, CheckCircle } from "@phosphor-icons/react";
 import { TOOL_DETAILS } from "@/lib/constants";
 import { getIcon } from "@/lib/icons";
+import { cn } from "@/lib/utils";
 
 interface ToolDetailViewProps {
-  toolId: "nsk" | "ssk" | "msk";
+  toolId: "nsk" | "ssk" | "msk" | "qsk";
 }
 
 export function ToolDetailView({ toolId }: ToolDetailViewProps) {
@@ -53,7 +54,22 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            {renderPurchaseButton("lg")}
+            {tool.mobileApp ? (
+              <>
+                <Button size="lg" disabled className="gap-2">
+                  <AppleLogo className="size-5" weight="fill" />
+                  App Store
+                  <Badge variant="outline" className="ml-1 text-xs">Coming Soon</Badge>
+                </Button>
+                <Button size="lg" variant="outline" disabled className="gap-2">
+                  <GooglePlayLogo className="size-5" weight="fill" />
+                  Google Play
+                  <Badge variant="outline" className="ml-1 text-xs">Coming Soon</Badge>
+                </Button>
+              </>
+            ) : (
+              renderPurchaseButton("lg")
+            )}
           </div>
         </div>
       </section>
@@ -145,11 +161,92 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
         </div>
       </section>
 
+      {/* Use Cases - Only for tools that have them */}
+      {tool.useCases && tool.useCases.length > 0 && (
+        <section className="py-12 bg-card/30">
+          <div className="container mx-auto px-4">
+            <SectionLabel>use cases</SectionLabel>
+
+            <div className="mt-6 max-w-lg space-y-3">
+              {tool.useCases.map((useCase, index) => (
+                <div key={index} className="flex gap-3 items-start">
+                  <CheckCircle className="size-5 text-primary mt-0.5 flex-shrink-0" weight="fill" />
+                  <p className="text-sm text-muted-foreground">{useCase}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Perfect For - Only for tools that have them */}
+      {tool.perfectFor && tool.perfectFor.length > 0 && (
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <SectionLabel>perfect for</SectionLabel>
+
+            <div className="mt-6 flex flex-wrap gap-2">
+              {tool.perfectFor.map((persona, index) => (
+                <Badge key={index} variant="secondary" className="text-sm py-1.5 px-3">
+                  {persona}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Pricing - Only for tools that have pricing tiers */}
+      {tool.pricing && tool.pricing.length > 0 && (
+        <section className="py-12 bg-card/30">
+          <div className="container mx-auto px-4">
+            <SectionLabel>pricing</SectionLabel>
+            <p className="mt-2 text-sm text-muted-foreground">Free to scan and use. Upgrade for more equipment.</p>
+
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-3xl">
+              {tool.pricing.map((tier) => (
+                <div
+                  key={tier.name}
+                  className={cn(
+                    "p-5 border bg-card",
+                    tier.highlighted ? "border-primary" : "border-border"
+                  )}
+                >
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="font-semibold">{tier.name}</h3>
+                    {tier.highlighted && (
+                      <Badge variant="default" className="text-xs">Popular</Badge>
+                    )}
+                  </div>
+                  <p className="text-2xl font-bold">{tier.price}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{tier.limit}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CTA */}
       <section className="py-12 bg-card/30">
         <div className="container mx-auto px-4 text-center">
           <div>
-            {renderPurchaseButton("lg")}
+            {tool.mobileApp ? (
+              <div className="flex flex-wrap justify-center gap-3">
+                <Button size="lg" disabled className="gap-2">
+                  <AppleLogo className="size-5" weight="fill" />
+                  App Store
+                  <Badge variant="outline" className="ml-1 text-xs">Coming Soon</Badge>
+                </Button>
+                <Button size="lg" variant="outline" disabled className="gap-2">
+                  <GooglePlayLogo className="size-5" weight="fill" />
+                  Google Play
+                  <Badge variant="outline" className="ml-1 text-xs">Coming Soon</Badge>
+                </Button>
+              </div>
+            ) : (
+              renderPurchaseButton("lg")
+            )}
           </div>
         </div>
       </section>

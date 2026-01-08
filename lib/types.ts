@@ -36,11 +36,23 @@ export interface ToolRequirement {
   value: string;
 }
 
+// Pricing tier for tools with subscription pricing
+export interface ToolPricingTier {
+  name: string;
+  limit: string;
+  price: string;
+  highlighted?: boolean;
+}
+
 // Full tool detail (used in detail pages)
 export interface ToolDetail extends Tool {
   detailedFeatures: ToolFeature[];
   steps: ToolStep[];
   requirements: ToolRequirement[];
+  pricing?: ToolPricingTier[];
+  mobileApp?: boolean;
+  useCases?: string[];
+  perfectFor?: string[];
 }
 
 // Use case for tools page
@@ -70,6 +82,7 @@ export const VIEW_IDS = {
   NSK: "nsk",
   SSK: "ssk",
   MSK: "msk",
+  QSK: "qsk",
   RESOURCES: "resources",
   BABEL: "babel",
   REFERENCES: "references",

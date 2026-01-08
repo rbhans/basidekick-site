@@ -23,6 +23,15 @@ import {
   Cpu,
   Warning,
   Translate,
+  QrCode,
+  DeviceMobile,
+  Scan,
+  Note,
+  Lock,
+  Thermometer,
+  Gauge,
+  Fan,
+  WarningCircle,
 } from "@phosphor-icons/react";
 import { IconName } from "./constants";
 
@@ -73,6 +82,24 @@ export function getIcon(name: IconName | string, className = "size-4"): ReactNod
       return <Warning {...iconProps} />;
     case "Translate":
       return <Translate {...iconProps} />;
+    case "QrCode":
+      return <QrCode {...iconProps} />;
+    case "DeviceMobile":
+      return <DeviceMobile {...iconProps} />;
+    case "Scan":
+      return <Scan {...iconProps} />;
+    case "Note":
+      return <Note {...iconProps} />;
+    case "Lock":
+      return <Lock {...iconProps} />;
+    case "Thermometer":
+      return <Thermometer {...iconProps} />;
+    case "Gauge":
+      return <Gauge {...iconProps} />;
+    case "Fan":
+      return <Fan {...iconProps} />;
+    case "WarningCircle":
+      return <WarningCircle {...iconProps} />;
     default:
       return null;
   }
