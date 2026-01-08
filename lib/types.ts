@@ -411,9 +411,12 @@ export interface BabelEquipmentSubtype {
 export interface BabelEquipmentEntry {
   id: string;
   name: string;
-  full_name: string;
+  full_name?: string;
+  abbreviation?: string;
   category: string;
   description: string;
+  haystack?: string;
+  brick?: string;
   aliases: BabelAliases;
   subtypes?: BabelEquipmentSubtype[];
   typical_points?: string[];

@@ -18,7 +18,8 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
   const id = isPoint ? pointEntry.concept.id : equipEntry.id;
   const name = isPoint ? pointEntry.concept.name : equipEntry.name;
   const description = isPoint ? pointEntry.concept.description : equipEntry.description;
-  const haystack = isPoint ? pointEntry.concept.haystack : undefined;
+  const haystack = isPoint ? pointEntry.concept.haystack : equipEntry.haystack;
+  const brick = isPoint ? pointEntry.concept.brick : equipEntry.brick;
   const aliases = isPoint ? pointEntry.aliases : equipEntry.aliases;
 
   // Get top 4 common aliases
@@ -34,11 +35,20 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
           <h3 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
             {name}
           </h3>
-          {haystack && (
-            <p className="text-xs text-primary/70 font-mono mt-0.5 truncate">
-              {haystack}
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
+            <p className="text-xs font-mono">
+              <span className="text-muted-foreground">Haystack:</span>{" "}
+              <span className={haystack && haystack !== "-" ? "text-primary/70" : "text-muted-foreground/50"}>
+                {haystack || "-"}
+              </span>
             </p>
-          )}
+            <p className="text-xs font-mono">
+              <span className="text-muted-foreground">Brick:</span>{" "}
+              <span className={brick && brick !== "-" ? "text-primary/70" : "text-muted-foreground/50"}>
+                {brick || "-"}
+              </span>
+            </p>
+          </div>
           <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
             {description}
           </p>
