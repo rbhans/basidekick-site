@@ -22,6 +22,7 @@ import {
   Plugs,
   Cpu,
   Warning,
+  Translate,
 } from "@phosphor-icons/react";
 import { IconName } from "./constants";
 
@@ -70,6 +71,8 @@ export function getIcon(name: IconName | string, className = "size-4"): ReactNod
       return <Cpu {...iconProps} />;
     case "Warning":
       return <Warning {...iconProps} />;
+    case "Translate":
+      return <Translate {...iconProps} />;
     default:
       return null;
   }

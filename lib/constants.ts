@@ -17,6 +17,7 @@ export const VIEW_TITLES: Record<string, string> = {
   [VIEW_IDS.SSK]: "SimulatorSidekick",
   [VIEW_IDS.MSK]: "MetasysSidekick",
   [VIEW_IDS.RESOURCES]: "Resources",
+  [VIEW_IDS.BABEL]: "BAS Babel",
   [VIEW_IDS.REFERENCES]: "References",
   [VIEW_IDS.WIKI]: "Wiki",
   [VIEW_IDS.FORUM]: "Forum",
@@ -35,6 +36,7 @@ export const VIEW_LOADING_TEXT: Record<string, string> = {
   [VIEW_IDS.SSK]: "SIMULATOR_SIDEKICK",
   [VIEW_IDS.MSK]: "METASYS_SIDEKICK",
   [VIEW_IDS.RESOURCES]: "RESOURCES",
+  [VIEW_IDS.BABEL]: "BAS_BABEL",
   [VIEW_IDS.REFERENCES]: "REFERENCES",
   [VIEW_IDS.WIKI]: "WIKI",
   [VIEW_IDS.FORUM]: "FORUM",
@@ -276,11 +278,12 @@ export const NAV_ITEMS: NavNode[] = [
     iconName: "Book",
     defaultExpanded: true,
     children: [
-      { id: VIEW_IDS.WIKI, label: "Wiki", iconName: "BookOpen" },
-      { id: VIEW_IDS.REFERENCES, label: "References", iconName: "BookmarksSimple" },
-      { id: VIEW_IDS.FORUM, label: "Forum", iconName: "Chats" },
+      { id: VIEW_IDS.BABEL, label: "BAS Babel", iconName: "Translate" },
       { id: VIEW_IDS.CALCULATORS, label: "Calculators", iconName: "Calculator" },
+      { id: VIEW_IDS.FORUM, label: "Forum", iconName: "Chats" },
       { id: VIEW_IDS.PSK, label: "ProjectSidekick", iconName: "Kanban" },
+      { id: VIEW_IDS.REFERENCES, label: "References", iconName: "BookmarksSimple" },
+      { id: VIEW_IDS.WIKI, label: "Wiki", iconName: "BookOpen" },
     ],
   },
   {
@@ -321,6 +324,7 @@ export const ICON_NAMES = [
   "FileText",
   "Plugs",
   "Cpu",
+  "Translate",
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];
