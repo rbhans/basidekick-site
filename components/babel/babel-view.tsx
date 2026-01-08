@@ -139,7 +139,7 @@ export function BabelView() {
               href="https://github.com/rbhans/bas-babel"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background rounded-md hover:bg-foreground/90 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors"
             >
               <GithubLogo className="size-4" weight="bold" />
               View on GitHub
@@ -147,7 +147,7 @@ export function BabelView() {
             </a>
             <button
               onClick={() => setShowApi(!showApi)}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border rounded-md hover:bg-muted transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
             >
               <Code className="size-4" weight="bold" />
               API Access
