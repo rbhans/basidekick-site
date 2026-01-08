@@ -23,17 +23,17 @@ export function BabelView() {
   const apiEndpoints = [
     {
       name: "Full Dataset",
-      url: "https://cdn.jsdelivr.net/gh/rbhans/bas-babel@main/dist/index.json",
+      url: "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json",
       description: "Complete point and equipment definitions",
     },
     {
       name: "Categories",
-      url: "https://cdn.jsdelivr.net/gh/rbhans/bas-babel@main/dist/categories.json",
+      url: "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/categories.json",
       description: "Category tree with counts",
     },
     {
       name: "Search Index",
-      url: "https://cdn.jsdelivr.net/gh/rbhans/bas-babel@main/dist/search-index.json",
+      url: "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/search-index.json",
       description: "Pre-tokenized search data",
     },
   ];
@@ -190,7 +190,7 @@ export function BabelView() {
               <div className="mt-4 pt-4 border-t">
                 <p className="text-xs text-muted-foreground mb-2">Example usage:</p>
                 <pre className="text-xs bg-background p-3 rounded border overflow-x-auto">
-{`fetch("https://cdn.jsdelivr.net/gh/rbhans/bas-babel@main/dist/index.json")
+{`fetch("https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json")
   .then(res => res.json())
   .then(data => console.log(data));`}
                 </pre>
