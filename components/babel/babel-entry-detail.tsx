@@ -33,9 +33,11 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
   const category = isPoint ? pointEntry.concept.category : equipEntry.category;
   const aliases = isPoint ? pointEntry.aliases : equipEntry.aliases;
 
+  // Shared fields
+  const haystack = isPoint ? pointEntry.concept.haystack : equipEntry.haystack;
+  const brick = isPoint ? pointEntry.concept.brick : equipEntry.brick;
+
   // Point-specific fields
-  const haystack = isPoint ? pointEntry.concept.haystack : undefined;
-  const brick = isPoint ? pointEntry.concept.brick : undefined;
   const unit = isPoint ? pointEntry.concept.unit : undefined;
   const typicalRange = isPoint ? pointEntry.concept.typical_range : undefined;
   const objectType = isPoint ? pointEntry.concept.object_type : undefined;
@@ -85,18 +87,18 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
 
       {/* Metadata */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-card border border-border rounded mb-6">
-        {haystack && (
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Haystack</p>
-            <p className="font-mono text-sm mt-1">{haystack}</p>
-          </div>
-        )}
-        {brick && (
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Brick</p>
-            <p className="font-mono text-sm mt-1">{brick}</p>
-          </div>
-        )}
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">Haystack</p>
+          <p className={`font-mono text-sm mt-1 ${haystack && haystack !== "-" ? "" : "text-muted-foreground/50"}`}>
+            {haystack || "-"}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">Brick</p>
+          <p className={`font-mono text-sm mt-1 ${brick && brick !== "-" ? "" : "text-muted-foreground/50"}`}>
+            {brick || "-"}
+          </p>
+        </div>
         {unit && (
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Unit</p>
@@ -138,50 +140,6 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-muted/50 hover:bg-muted rounded font-mono transition-colors group"
                 >
                   <Tag className="size-3.5 opacity-50" />
-                  {alias}
-                  {copiedAlias === alias ? (
-                    <Check className="size-3.5 text-green-500" />
-                  ) : (
-                    <Copy className="size-3.5 opacity-0 group-hover:opacity-50 transition-opacity" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {aliases.abbreviated && aliases.abbreviated.length > 0 && (
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Abbreviated</p>
-            <div className="flex flex-wrap gap-2">
-              {aliases.abbreviated.map((alias, index) => (
-                <button
-                  key={index}
-                  onClick={() => copyToClipboard(alias)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-muted/50 hover:bg-muted rounded font-mono transition-colors group"
-                >
-                  {alias}
-                  {copiedAlias === alias ? (
-                    <Check className="size-3.5 text-green-500" />
-                  ) : (
-                    <Copy className="size-3.5 opacity-0 group-hover:opacity-50 transition-opacity" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {aliases.verbose && aliases.verbose.length > 0 && (
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Verbose</p>
-            <div className="flex flex-wrap gap-2">
-              {aliases.verbose.map((alias, index) => (
-                <button
-                  key={index}
-                  onClick={() => copyToClipboard(alias)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-muted/50 hover:bg-muted rounded font-mono transition-colors group"
-                >
                   {alias}
                   {copiedAlias === alias ? (
                     <Check className="size-3.5 text-green-500" />
