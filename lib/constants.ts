@@ -113,7 +113,7 @@ export const TOOLS: Record<string, Tool> = {
     webVersion: false,
     features: [
       "Instant QR scanning",
-      "Live BACnet data",
+      "Live Niagara data",
       "Maintenance notes",
       "Cross-platform (iOS/Android)",
     ],
@@ -244,7 +244,7 @@ export const TOOL_DETAILS: Record<string, ToolDetail> = {
       },
       {
         iconName: "Gauge",
-        title: "Live BACnet Data",
+        title: "Live Niagara Data",
         description: "View real-time values when connected to the building network.",
       },
       {
@@ -284,7 +284,7 @@ export const TOOL_DETAILS: Record<string, ToolDetail> = {
     pricing: [
       { name: "Free", limit: "5 items", price: "$0" },
       { name: "Basic", limit: "50 items", price: "$3/month" },
-      { name: "Pro", limit: "100 items", price: "$5/month", highlighted: true },
+      { name: "Pro", limit: "100 items", price: "$5/month" },
       { name: "Unlimited", limit: "Unlimited", price: "$10/month" },
     ],
   },
