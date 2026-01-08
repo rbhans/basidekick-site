@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "lastUpdated": "2026-01-08T16:03:29.526Z",
+  "lastUpdated": "2026-01-08T17:09:19.612Z",
   "totalPoints": 292,
-  "totalEquipment": 62,
+  "totalEquipment": 42,
   "points": [
     {
       "concept": {
@@ -5489,910 +5489,899 @@
   ],
   "equipment": [
     {
-      "id": "ahu",
-      "name": "ahu",
-      "full_name": "air handling unit",
+      "id": "air-handling-unit",
+      "name": "Air Handling Unit",
+      "abbreviation": "AHU",
       "category": "air-handling",
-      "description": "air handling unit",
+      "description": "Central air conditioning unit that conditions and circulates air through ductwork",
+      "haystack": "ahu",
+      "brick": "Air_Handling_Unit",
       "aliases": {
         "common": [
-          "air handling unit"
+          "AHU",
+          "air handler",
+          "central air handler",
+          "air handling equipment"
         ],
-        "abbreviated": []
+        "abbreviated": [
+          "AH"
+        ]
       }
     },
     {
-      "id": "doas",
-      "name": "doas",
-      "full_name": "dedicated outside air system",
+      "id": "rooftop-unit",
+      "name": "Rooftop Unit",
+      "abbreviation": "RTU",
       "category": "air-handling",
-      "description": "dedicated outside air system",
+      "description": "Self-contained HVAC unit installed on building roof, combines heating, cooling, and ventilation",
+      "haystack": "rtu",
+      "brick": "Rooftop_Unit",
       "aliases": {
         "common": [
-          "dedicated outside air system",
+          "RTU",
+          "rooftop package unit",
+          "packaged rooftop unit",
+          "roof top unit",
+          "rooftop air handler"
+        ],
+        "abbreviated": [
+          "RT"
+        ]
+      }
+    },
+    {
+      "id": "makeup-air-unit",
+      "name": "Makeup Air Unit",
+      "abbreviation": "MAU",
+      "category": "air-handling",
+      "description": "Unit that conditions and supplies fresh outdoor air to replace exhausted air",
+      "haystack": "mau",
+      "brick": "Makeup_Air_Unit",
+      "aliases": {
+        "common": [
+          "MAU",
+          "MUA",
+          "makeup air handler",
+          "fresh air unit",
+          "makeup air",
+          "make-up air unit"
+        ],
+        "abbreviated": [
+          "MA"
+        ]
+      }
+    },
+    {
+      "id": "dedicated-outdoor-air-system",
+      "name": "Dedicated Outdoor Air System",
+      "abbreviation": "DOAS",
+      "category": "air-handling",
+      "description": "System that conditions 100% outdoor air for ventilation, separate from space conditioning",
+      "haystack": "doas",
+      "brick": "Dedicated_Outdoor_Air_System",
+      "aliases": {
+        "common": [
+          "DOAS",
+          "dedicated outside air unit",
+          "DOAU",
+          "100% OA unit",
           "dedicated outdoor air unit",
-          "doau"
+          "dedicated outside air system"
         ],
-        "abbreviated": []
+        "abbreviated": [
+          "DOA"
+        ]
       }
     },
     {
-      "id": "mau",
-      "name": "mau",
-      "full_name": "makeup air unit",
+      "id": "fan-coil-unit",
+      "name": "Fan Coil Unit",
+      "abbreviation": "FCU",
       "category": "air-handling",
-      "description": "makeup air unit",
+      "description": "Small terminal unit with fan and coil for local heating/cooling, typically without ductwork",
+      "haystack": "fcu",
+      "brick": "Fan_Coil_Unit",
       "aliases": {
         "common": [
-          "makeup air unit",
-          "makeup air"
+          "FCU",
+          "fan coil",
+          "fancoil",
+          "fan-coil",
+          "ceiling fan coil",
+          "horizontal fan coil",
+          "vertical fan coil"
         ],
-        "abbreviated": []
+        "abbreviated": [
+          "FC"
+        ]
       }
     },
     {
-      "id": "rtu",
-      "name": "rtu",
-      "full_name": "roof top unit",
+      "id": "computer-room-air-conditioner",
+      "name": "Computer Room Air Conditioner",
+      "abbreviation": "CRAC",
       "category": "air-handling",
-      "description": "roof top unit",
+      "description": "Precision cooling unit designed for data centers and computer rooms with tight temperature control",
+      "haystack": "crac",
+      "brick": "Computer_Room_Air_Conditioner",
       "aliases": {
         "common": [
-          "roof top unit"
+          "CRAC",
+          "precision cooling unit",
+          "data center cooling",
+          "computer room AC",
+          "precision air conditioner"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "fcu",
-      "name": "fcu",
-      "full_name": "fan coil unit",
+      "id": "computer-room-air-handler",
+      "name": "Computer Room Air Handler",
+      "abbreviation": "CRAH",
       "category": "air-handling",
-      "description": "fan coil unit",
+      "description": "Precision air handler for data centers using chilled water instead of DX cooling",
+      "haystack": "crah",
+      "brick": "Computer_Room_Air_Handler",
       "aliases": {
         "common": [
-          "fan coil unit",
-          "fan coil"
+          "CRAH",
+          "precision air handler",
+          "data center air handler",
+          "chilled water CRAC"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "crac",
-      "name": "crac",
-      "full_name": "computer room air conditioner",
+      "id": "unit-ventilator",
+      "name": "Unit Ventilator",
+      "abbreviation": "UV",
       "category": "air-handling",
-      "description": "computer room air conditioner",
+      "description": "Wall-mounted unit providing ventilation and heating/cooling, common in schools and offices",
+      "haystack": "unitVent",
+      "brick": "Unit_Ventilator",
       "aliases": {
         "common": [
-          "computer room air conditioner",
-          "crah"
+          "UV",
+          "unit vent",
+          "univent",
+          "classroom unit ventilator",
+          "wall unit ventilator"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "unitvent",
-      "name": "unitVent",
-      "full_name": "uv",
+      "id": "packaged-terminal-air-conditioner",
+      "name": "Packaged Terminal Air Conditioner",
+      "abbreviation": "PTAC",
       "category": "air-handling",
-      "description": "uv",
+      "description": "Through-wall self-contained unit for heating and cooling individual rooms, common in hotels",
+      "haystack": "ptac",
+      "brick": "Packaged_Terminal_Air_Conditioner",
       "aliases": {
         "common": [
-          "uv",
-          "unit ventilator",
-          "unit vent"
+          "PTAC",
+          "through-wall AC",
+          "wall unit",
+          "hotel AC unit",
+          "through-the-wall unit"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "heatpump",
-      "name": "heatPump",
-      "full_name": "hp",
+      "id": "packaged-terminal-heat-pump",
+      "name": "Packaged Terminal Heat Pump",
+      "abbreviation": "PTHP",
       "category": "air-handling",
-      "description": "hp",
+      "description": "Through-wall heat pump unit providing both heating and cooling for individual rooms",
+      "haystack": "pthp",
+      "brick": "Packaged_Terminal_Heat_Pump",
       "aliases": {
         "common": [
-          "hp",
-          "heat pump"
+          "PTHP",
+          "through-wall heat pump",
+          "wall heat pump",
+          "terminal heat pump"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "dxheating",
-      "name": "dxHeating",
-      "full_name": "dx heating",
+      "id": "water-source-heat-pump",
+      "name": "Water Source Heat Pump",
+      "abbreviation": "WSHP",
       "category": "air-handling",
-      "description": "dx heating",
+      "description": "Heat pump that exchanges heat with a water loop, often in multi-zone buildings",
+      "haystack": "wshp",
+      "brick": "Water_Source_Heat_Pump",
       "aliases": {
         "common": [
-          "dx heating",
-          "heating",
-          "heat"
+          "WSHP",
+          "water loop heat pump",
+          "geothermal heat pump",
+          "water-to-air heat pump",
+          "console heat pump"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "elecheating",
-      "name": "elecHeating",
-      "full_name": "electric heating",
+      "id": "air-source-heat-pump",
+      "name": "Air Source Heat Pump",
+      "abbreviation": "ASHP",
       "category": "air-handling",
-      "description": "electric heating",
+      "description": "Heat pump that exchanges heat with outdoor air for heating and cooling",
+      "haystack": "heatPump",
+      "brick": "Air_Source_Heat_Pump",
       "aliases": {
         "common": [
-          "electric heating",
-          "stage heat",
-          "heating",
-          "heat"
+          "ASHP",
+          "air-to-air heat pump",
+          "heat pump",
+          "HP",
+          "mini split",
+          "ductless mini split",
+          "VRF heat pump"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "hotwaterheating",
-      "name": "hotWaterHeating",
-      "full_name": "hot water heating",
+      "id": "energy-recovery-ventilator",
+      "name": "Energy Recovery Ventilator",
+      "abbreviation": "ERV",
       "category": "air-handling",
-      "description": "hot water heating",
+      "description": "Ventilation unit that transfers both heat and moisture between exhaust and supply air",
+      "haystack": "erv",
+      "brick": "Energy_Recovery_Ventilator",
       "aliases": {
         "common": [
-          "hot water heating",
-          "hw heating",
-          "heating",
-          "heat"
+          "ERV",
+          "energy recovery unit",
+          "enthalpy wheel",
+          "enthalpy recovery unit",
+          "total energy recovery",
+          "energy wheel"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "naturalgasheating",
-      "name": "naturalGasHeating",
-      "full_name": "natural gas heating",
+      "id": "heat-recovery-ventilator",
+      "name": "Heat Recovery Ventilator",
+      "abbreviation": "HRV",
       "category": "air-handling",
-      "description": "natural gas heating",
+      "description": "Ventilation unit that transfers sensible heat only between exhaust and supply air",
+      "haystack": "hrv",
+      "brick": "Heat_Recovery_Ventilator",
       "aliases": {
         "common": [
-          "natural gas heating",
-          "gas heating",
-          "gas fired heating",
-          "heating",
-          "heat"
+          "HRV",
+          "heat recovery unit",
+          "air-to-air heat exchanger",
+          "heat exchanger ventilator"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "steamheating",
-      "name": "steamHeating",
-      "full_name": "steam heating",
+      "id": "air-turnover-unit",
+      "name": "Air Turnover Unit",
+      "abbreviation": "ATU",
       "category": "air-handling",
-      "description": "steam heating",
+      "description": "High-volume unit for warehouses and large spaces that destratifies air and provides heating",
+      "haystack": "atu",
+      "brick": "Air_Turnover_Unit",
       "aliases": {
         "common": [
-          "steam heating",
-          "steam heat",
-          "heating",
-          "heat"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "chilledwatercooling",
-      "name": "chilledWaterCooling",
-      "full_name": "chilled water cooling",
-      "category": "air-handling",
-      "description": "chilled water cooling",
-      "aliases": {
-        "common": [
-          "chilled water cooling",
-          "chw cooling",
-          "cooling",
-          "cool"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "constantairvolume",
-      "name": "constantAirVolume",
-      "full_name": "constant air volume",
-      "category": "air-handling",
-      "description": "constant air volume",
-      "aliases": {
-        "common": [
-          "constant air volume",
-          "cv ahu"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "variableairvolume",
-      "name": "variableAirVolume",
-      "full_name": "variable air volume",
-      "category": "air-handling",
-      "description": "variable air volume",
-      "aliases": {
-        "common": [
-          "variable air volume",
-          "vav ahu"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "vavzone",
-      "name": "vavZone",
-      "full_name": "vav zone",
-      "category": "air-handling",
-      "description": "vav zone",
-      "aliases": {
-        "common": [
-          "vav zone"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "directzone",
-      "name": "directZone",
-      "full_name": "direct zone",
-      "category": "air-handling",
-      "description": "direct zone",
-      "aliases": {
-        "common": [
-          "direct zone"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "chilledbeamzone",
-      "name": "chilledBeamZone",
-      "full_name": "chilled beam zone",
-      "category": "air-handling",
-      "description": "chilled beam zone",
-      "aliases": {
-        "common": [
-          "chilled beam zone"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "multizone",
-      "name": "multiZone",
-      "full_name": "multi zone",
-      "category": "air-handling",
-      "description": "multi zone",
-      "aliases": {
-        "common": [
-          "multi zone"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "singleduct",
-      "name": "singleDuct",
-      "full_name": "single duct",
-      "category": "air-handling",
-      "description": "single duct",
-      "aliases": {
-        "common": [
-          "single duct"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "dualduct",
-      "name": "dualDuct",
-      "full_name": "dual duct",
-      "category": "air-handling",
-      "description": "dual duct",
-      "aliases": {
-        "common": [
-          "dual duct"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "tripleduct",
-      "name": "tripleDuct",
-      "full_name": "triple duct",
-      "category": "air-handling",
-      "description": "triple duct",
-      "aliases": {
-        "common": [
-          "triple duct"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "discharge",
-      "name": "discharge",
-      "full_name": "discharge air",
-      "category": "air-handling",
-      "description": "discharge air",
-      "aliases": {
-        "common": [
-          "discharge air",
-          "da"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "return",
-      "name": "return",
-      "full_name": "return air",
-      "category": "air-handling",
-      "description": "return air",
-      "aliases": {
-        "common": [
-          "return air",
-          "ra"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "outside",
-      "name": "outside",
-      "full_name": "outside air",
-      "category": "air-handling",
-      "description": "outside air",
-      "aliases": {
-        "common": [
-          "outside air",
-          "oa"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "exhaust",
-      "name": "exhaust",
-      "full_name": "exhaust air",
-      "category": "air-handling",
-      "description": "exhaust air",
-      "aliases": {
-        "common": [
-          "exhaust air",
-          "ea"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "mixed",
-      "name": "mixed",
-      "full_name": "mixed air",
-      "category": "air-handling",
-      "description": "mixed air",
-      "aliases": {
-        "common": [
-          "mixed air",
-          "ma"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "cool",
-      "name": "cool",
-      "full_name": "cooling",
-      "category": "air-handling",
-      "description": "cooling",
-      "aliases": {
-        "common": [
-          "cooling"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "heat",
-      "name": "heat",
-      "full_name": "heating",
-      "category": "air-handling",
-      "description": "heating",
-      "aliases": {
-        "common": [
-          "heating"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "zone",
-      "name": "zone",
-      "full_name": "room",
-      "category": "air-handling",
-      "description": "room",
-      "aliases": {
-        "common": [
-          "room",
-          "space"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "chilled-water-plant",
-      "name": "chilled-water-plant",
-      "full_name": "chilled water plant",
-      "category": "central-plant",
-      "description": "chilled water plant",
-      "aliases": {
-        "common": [
-          "chilled water plant",
-          "chilled water system",
-          "central plant"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "hot-water-plant",
-      "name": "hot-water-plant",
-      "full_name": "hot water plant",
-      "category": "central-plant",
-      "description": "hot water plant",
-      "aliases": {
-        "common": [
-          "hot water plant",
-          "hot water system",
-          "heating water system",
-          "heating water"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "steam-plant",
-      "name": "steam-plant",
-      "full_name": "steam plant",
-      "category": "central-plant",
-      "description": "steam plant",
-      "aliases": {
-        "common": [
-          "steam plant",
-          "steam water system",
-          "steam water",
-          "low pressure steam",
-          "high pressure steam"
+          "ATU",
+          "air turner",
+          "destratification unit",
+          "warehouse heater",
+          "high bay unit"
         ],
         "abbreviated": []
       }
     },
     {
       "id": "chiller",
-      "name": "chiller",
-      "full_name": "ch",
+      "name": "Chiller",
+      "abbreviation": "CH",
       "category": "central-plant",
-      "description": "ch",
+      "description": "Equipment that removes heat from liquid via refrigeration cycle to produce chilled water",
+      "haystack": "chiller",
+      "brick": "Chiller",
       "aliases": {
         "common": [
-          "ch",
-          "chlr"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "coolingtower",
-      "name": "coolingTower",
-      "full_name": "cooling tower",
-      "category": "central-plant",
-      "description": "cooling tower",
-      "aliases": {
-        "common": [
-          "cooling tower",
-          "ct",
-          "tower"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "heatexchanger",
-      "name": "heatExchanger",
-      "full_name": "heat exchanger",
-      "category": "central-plant",
-      "description": "heat exchanger",
-      "aliases": {
-        "common": [
-          "heat exchanger",
-          "hx"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "pump-motor",
-      "name": "pump-motor",
-      "full_name": "pump",
-      "category": "central-plant",
-      "description": "pump",
-      "aliases": {
-        "common": [
-          "pump",
-          "chw pump",
-          "chwp",
-          "hw pump",
-          "hwp"
+          "chiller",
+          "CH",
+          "CHLR",
+          "water chiller",
+          "chilled water machine",
+          "air-cooled chiller",
+          "water-cooled chiller",
+          "centrifugal chiller",
+          "screw chiller",
+          "scroll chiller",
+          "absorption chiller"
         ],
         "abbreviated": [
-          "pchwp",
-          "schwp",
-          "phwp",
-          "shwp"
+          "CHL"
         ]
       }
     },
     {
-      "id": "valve-actuator",
-      "name": "valve-actuator",
-      "full_name": "valve",
+      "id": "boiler",
+      "name": "Boiler",
+      "abbreviation": "BLR",
       "category": "central-plant",
-      "description": "valve",
+      "description": "Equipment that heats water or produces steam using gas, oil, or electric heat",
+      "haystack": "boiler",
+      "brick": "Boiler",
       "aliases": {
         "common": [
-          "valve",
-          "isolation valve",
-          "mixing valve",
-          "modulating valve"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "hot-water-boiler",
-      "name": "hot-water-boiler",
-      "full_name": "hot water boiler",
-      "category": "central-plant",
-      "description": "hot water boiler",
-      "aliases": {
-        "common": [
+          "boiler",
+          "BLR",
+          "B",
           "hot water boiler",
-          "boiler",
-          "b",
-          "blr"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "steam-boiler",
-      "name": "steam-boiler",
-      "full_name": "steam boiler",
-      "category": "central-plant",
-      "description": "steam boiler",
-      "aliases": {
-        "common": [
           "steam boiler",
-          "boiler",
-          "b",
-          "blr"
+          "heating boiler",
+          "condensing boiler",
+          "gas boiler",
+          "fire tube boiler",
+          "water tube boiler"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "ac-elec-meter",
-      "name": "ac-elec-meter",
-      "full_name": "elec meter",
-      "category": "metering",
-      "description": "elec meter",
+      "id": "cooling-tower",
+      "name": "Cooling Tower",
+      "abbreviation": "CT",
+      "category": "central-plant",
+      "description": "Heat rejection device that cools water by evaporation for condenser water systems",
+      "haystack": "coolingTower",
+      "brick": "Cooling_Tower",
       "aliases": {
         "common": [
-          "elec meter",
-          "electricity meter",
-          "kw meter",
-          "power meter"
+          "cooling tower",
+          "CT",
+          "tower",
+          "evaporative cooler",
+          "fluid cooler",
+          "condenser tower",
+          "wet cooling tower",
+          "dry cooler"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "dc-elec-meter",
-      "name": "dc-elec meter",
-      "full_name": "elec meter",
-      "category": "metering",
-      "description": "elec meter",
+      "id": "heat-exchanger",
+      "name": "Heat Exchanger",
+      "abbreviation": "HX",
+      "category": "central-plant",
+      "description": "Device that transfers heat between two fluids without mixing them",
+      "haystack": "heatExchanger",
+      "brick": "Heat_Exchanger",
       "aliases": {
         "common": [
-          "elec meter",
-          "electricity meter",
-          "kw meter",
-          "power meter"
+          "heat exchanger",
+          "HX",
+          "plate heat exchanger",
+          "shell and tube",
+          "plate and frame",
+          "brazed plate",
+          "PHX"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "elec-meter",
-      "name": "elec-meter",
-      "full_name": "elec meter",
-      "category": "metering",
-      "description": "elec meter",
+      "id": "pump",
+      "name": "Pump",
+      "abbreviation": "P",
+      "category": "central-plant",
+      "description": "Equipment that moves water through hydronic heating or cooling systems",
+      "haystack": "pump",
+      "brick": "Pump",
       "aliases": {
         "common": [
-          "elec meter",
-          "electricity meter",
-          "kw meter",
-          "power meter"
+          "pump",
+          "P",
+          "circulation pump",
+          "CHW pump",
+          "CHWP",
+          "HW pump",
+          "HWP",
+          "CW pump",
+          "CWP",
+          "condenser pump",
+          "booster pump",
+          "inline pump",
+          "base-mounted pump",
+          "end-suction pump"
+        ],
+        "abbreviated": [
+          "PCHWP",
+          "SCHWP",
+          "PHWP",
+          "SHWP"
+        ]
+      }
+    },
+    {
+      "id": "variable-frequency-drive",
+      "name": "Variable Frequency Drive",
+      "abbreviation": "VFD",
+      "category": "central-plant",
+      "description": "Electronic device that controls motor speed by varying frequency and voltage",
+      "haystack": "vfd",
+      "brick": "Variable_Frequency_Drive",
+      "aliases": {
+        "common": [
+          "VFD",
+          "variable frequency drive",
+          "variable speed drive",
+          "VSD",
+          "inverter",
+          "AC drive",
+          "adjustable speed drive",
+          "ASD",
+          "frequency converter"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "flow-meter",
-      "name": "flow-meter",
-      "full_name": "water meter",
+      "id": "expansion-tank",
+      "name": "Expansion Tank",
+      "abbreviation": "ET",
+      "category": "central-plant",
+      "description": "Tank that absorbs expansion of heated water and maintains system pressure",
+      "haystack": "expansionTank",
+      "brick": "Expansion_Tank",
+      "aliases": {
+        "common": [
+          "expansion tank",
+          "compression tank",
+          "bladder tank",
+          "diaphragm tank",
+          "expansion vessel"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "air-separator",
+      "name": "Air Separator",
+      "abbreviation": "AS",
+      "category": "central-plant",
+      "description": "Device that removes entrained air from hydronic systems to prevent air locks",
+      "haystack": "airSeparator",
+      "brick": "Air_Separator",
+      "aliases": {
+        "common": [
+          "air separator",
+          "air eliminator",
+          "microbubble separator",
+          "air removal device",
+          "deaerator",
+          "air vent"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "steam-to-hot-water-converter",
+      "name": "Steam-to-Hot-Water Converter",
+      "abbreviation": "SHX",
+      "category": "central-plant",
+      "description": "Heat exchanger that converts steam heat to hot water for building heating systems",
+      "haystack": "steamConverter",
+      "brick": "Steam_to_Hot_Water_Converter",
+      "aliases": {
+        "common": [
+          "steam-to-hot-water converter",
+          "steam HX",
+          "steam heat exchanger",
+          "steam converter",
+          "shell and tube converter",
+          "steam to water HX"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "electric-meter",
+      "name": "Electric Meter",
+      "abbreviation": "EM",
       "category": "metering",
-      "description": "water meter",
+      "description": "Device that measures electrical energy consumption in kWh or demand in kW",
+      "haystack": "elec-meter",
+      "brick": "Electrical_Meter",
+      "aliases": {
+        "common": [
+          "electric meter",
+          "power meter",
+          "kWh meter",
+          "energy meter",
+          "watt meter",
+          "electricity meter",
+          "electrical meter",
+          "demand meter",
+          "kilowatt meter",
+          "submeter"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "natural-gas-meter",
+      "name": "Natural Gas Meter",
+      "abbreviation": "GM",
+      "category": "metering",
+      "description": "Device that measures natural gas consumption, typically in cubic feet or therms",
+      "haystack": "gas-meter",
+      "brick": "Natural_Gas_Meter",
+      "aliases": {
+        "common": [
+          "gas meter",
+          "natural gas meter",
+          "fuel meter",
+          "gas flow meter",
+          "therm meter",
+          "CCF meter"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "water-meter",
+      "name": "Water Meter",
+      "abbreviation": "WM",
+      "category": "metering",
+      "description": "Device that measures water flow or consumption in gallons or cubic feet",
+      "haystack": "flow-meter",
+      "brick": "Water_Meter",
       "aliases": {
         "common": [
           "water meter",
-          "gpm meter"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "gas-meter",
-      "name": "gas-meter",
-      "full_name": "natural gas meter",
-      "category": "metering",
-      "description": "natural gas meter",
-      "aliases": {
-        "common": [
-          "natural gas meter",
-          "gas meter"
+          "flow meter",
+          "GPM meter",
+          "water flow meter",
+          "domestic water meter",
+          "makeup water meter",
+          "city water meter"
         ],
         "abbreviated": []
       }
     },
     {
       "id": "steam-meter",
-      "name": "steam-meter",
-      "full_name": "steam meter",
+      "name": "Steam Meter",
+      "abbreviation": "SM",
       "category": "metering",
-      "description": "steam meter",
+      "description": "Device that measures steam flow, typically in pounds per hour",
+      "haystack": "steam-meter",
+      "brick": "Steam_Meter",
       "aliases": {
         "common": [
-          "steam meter"
+          "steam meter",
+          "steam flow meter",
+          "condensate meter",
+          "steam mass flow meter"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "fan-motor",
-      "name": "fan-motor",
-      "full_name": "fan motor",
-      "category": "motors",
-      "description": "fan motor",
+      "id": "btu-meter",
+      "name": "BTU Meter",
+      "abbreviation": "BTU",
+      "category": "metering",
+      "description": "Device that measures thermal energy by calculating flow rate and temperature differential",
+      "haystack": "btu-meter",
+      "brick": "Thermal_Energy_Meter",
       "aliases": {
         "common": [
-          "fan motor",
-          "fan",
-          "supply fan",
-          "return fan",
-          "exhaust fan"
+          "BTU meter",
+          "energy meter",
+          "thermal meter",
+          "heat meter",
+          "thermal energy meter",
+          "Btu meter",
+          "British thermal unit meter",
+          "delta-T meter"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "elecheating",
-      "name": "elecHeating",
-      "full_name": "electric heating",
+      "id": "variable-air-volume-box",
+      "name": "Variable Air Volume Box",
+      "abbreviation": "VAV",
       "category": "terminal-units",
-      "description": "electric heating",
+      "description": "Terminal unit that varies airflow to control zone temperature, used in VAV HVAC systems",
+      "haystack": "vav",
+      "brick": "Variable_Air_Volume_Box",
       "aliases": {
         "common": [
-          "electric heating",
-          "stage heat",
-          "heating",
-          "heat"
+          "VAV",
+          "VAV box",
+          "VAV terminal",
+          "air terminal unit",
+          "VAV terminal unit",
+          "variable volume box"
         ],
-        "abbreviated": []
+        "abbreviated": [
+          "VV"
+        ]
       }
     },
     {
-      "id": "hotwaterheating",
-      "name": "hotWaterHeating",
-      "full_name": "hot water heating",
+      "id": "constant-air-volume-box",
+      "name": "Constant Air Volume Box",
+      "abbreviation": "CAV",
       "category": "terminal-units",
-      "description": "hot water heating",
+      "description": "Terminal unit that maintains constant airflow, temperature controlled by varying supply air temp",
+      "haystack": "cav",
+      "brick": "Constant_Air_Volume_Box",
       "aliases": {
         "common": [
-          "hot water heating",
-          "hw heating",
-          "heating",
-          "heat"
+          "CAV",
+          "CAV box",
+          "CAV terminal",
+          "constant volume box",
+          "CV box"
         ],
-        "abbreviated": []
+        "abbreviated": [
+          "CV"
+        ]
       }
     },
     {
-      "id": "steamheating",
-      "name": "steamHeating",
-      "full_name": "steam heating",
+      "id": "parallel-fan-powered-box",
+      "name": "Parallel Fan Powered Box",
+      "abbreviation": "PFPB",
       "category": "terminal-units",
-      "description": "steam heating",
+      "description": "VAV box with parallel fan that draws plenum air, fan runs intermittently during heating",
+      "haystack": "parallelFanVav",
+      "brick": "Parallel_Fan_Powered_Box",
       "aliases": {
         "common": [
-          "steam heating",
-          "steam heat",
-          "heating",
-          "heat"
+          "PFPB",
+          "parallel fan box",
+          "PFVAV",
+          "parallel fan VAV",
+          "fan powered box",
+          "FPB",
+          "parallel fan terminal"
         ],
-        "abbreviated": []
+        "abbreviated": [
+          "PFB"
+        ]
       }
     },
     {
-      "id": "pressuredependent",
-      "name": "pressureDependent",
-      "full_name": "pressure dependent",
+      "id": "series-fan-powered-box",
+      "name": "Series Fan Powered Box",
+      "abbreviation": "SFPB",
       "category": "terminal-units",
-      "description": "pressure dependent",
+      "description": "VAV box with series fan that runs continuously, mixing primary and plenum air",
+      "haystack": "seriesFanVav",
+      "brick": "Series_Fan_Powered_Box",
       "aliases": {
         "common": [
-          "pressure dependent"
+          "SFPB",
+          "series fan box",
+          "SFVAV",
+          "series fan VAV",
+          "series fan terminal"
         ],
-        "abbreviated": []
+        "abbreviated": [
+          "SFB"
+        ]
       }
     },
     {
-      "id": "pressureindependent",
-      "name": "pressureIndependent",
-      "full_name": "pressure independent",
+      "id": "chilled-beam",
+      "name": "Chilled Beam",
+      "abbreviation": "CB",
       "category": "terminal-units",
-      "description": "pressure independent",
+      "description": "Ceiling-mounted unit using chilled water coils for cooling via convection and radiation",
+      "haystack": "chilledBeam",
+      "brick": "Chilled_Beam",
       "aliases": {
         "common": [
-          "pressure independent"
+          "chilled beam",
+          "active chilled beam",
+          "passive chilled beam",
+          "induction beam",
+          "ceiling beam",
+          "chilled ceiling"
         ],
-        "abbreviated": []
+        "abbreviated": [
+          "ACB",
+          "PCB"
+        ]
       }
     },
     {
-      "id": "parallel",
-      "name": "parallel",
-      "full_name": "pfvav",
+      "id": "radiant-panel",
+      "name": "Radiant Panel",
+      "abbreviation": "RP",
       "category": "terminal-units",
-      "description": "pfvav",
+      "description": "Panel system using radiant heat transfer for heating or cooling, ceiling or floor mounted",
+      "haystack": "radiantPanel",
+      "brick": "Radiant_Panel",
       "aliases": {
         "common": [
-          "pfvav",
-          "parallel fan",
-          "parallel fan vav"
+          "radiant panel",
+          "radiant ceiling panel",
+          "radiant floor panel",
+          "radiant heating panel",
+          "radiant cooling panel",
+          "ceiling panel"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "series",
-      "name": "series",
-      "full_name": "sfvav",
+      "id": "baseboard-heater",
+      "name": "Baseboard Heater",
+      "abbreviation": "BB",
       "category": "terminal-units",
-      "description": "sfvav",
+      "description": "Wall-mounted heating element at floor level, using hot water or electric resistance",
+      "haystack": "baseboard",
+      "brick": "Baseboard_Heater",
       "aliases": {
         "common": [
-          "sfvav",
-          "series fan",
-          "series fan vav"
+          "baseboard heater",
+          "fin tube",
+          "baseboard radiator",
+          "convector",
+          "finned tube radiator",
+          "baseboard convector",
+          "hot water baseboard",
+          "electric baseboard"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "singleduct",
-      "name": "singleDuct",
-      "full_name": "single duct",
+      "id": "unit-heater",
+      "name": "Unit Heater",
+      "abbreviation": "UH",
       "category": "terminal-units",
-      "description": "single duct",
+      "description": "Self-contained heating unit with fan, using gas, hot water, or electric heat",
+      "haystack": "unitHeater",
+      "brick": "Unit_Heater",
       "aliases": {
         "common": [
-          "single duct"
+          "UH",
+          "unit heater",
+          "gas-fired unit heater",
+          "hot water unit heater",
+          "cabinet heater",
+          "cabinet unit heater",
+          "CUH",
+          "suspended heater",
+          "ceiling heater"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "dualduct",
-      "name": "dualDuct",
-      "full_name": "dual duct",
+      "id": "induction-unit",
+      "name": "Induction Unit",
+      "abbreviation": "IU",
       "category": "terminal-units",
-      "description": "dual duct",
+      "description": "Terminal unit that uses high-velocity primary air to induce room air across a coil",
+      "haystack": "inductionUnit",
+      "brick": "Induction_Unit",
       "aliases": {
         "common": [
-          "dual duct"
+          "induction unit",
+          "induction terminal",
+          "air induction unit",
+          "high pressure induction"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "inlet",
-      "name": "inlet",
-      "full_name": "supply air",
+      "id": "blower-coil-unit",
+      "name": "Blower Coil Unit",
+      "abbreviation": "BCU",
       "category": "terminal-units",
-      "description": "supply air",
+      "description": "Horizontal or vertical unit with blower and coil, similar to FCU but typically ductless",
+      "haystack": "blowerCoil",
+      "brick": "Blower_Coil_Unit",
       "aliases": {
         "common": [
-          "supply air",
-          "from ahu",
-          "sa"
+          "BCU",
+          "blower coil",
+          "horizontal blower coil",
+          "vertical blower coil",
+          "console unit"
         ],
-        "abbreviated": []
+        "abbreviated": [
+          "BC"
+        ]
       }
     },
     {
-      "id": "discharge",
-      "name": "discharge",
-      "full_name": "discharge air",
-      "category": "terminal-units",
-      "description": "discharge air",
-      "aliases": {
-        "common": [
-          "discharge air",
-          "da"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "zone",
-      "name": "zone",
-      "full_name": "space",
-      "category": "terminal-units",
-      "description": "space",
-      "aliases": {
-        "common": [
-          "space",
-          "room"
-        ],
-        "abbreviated": []
-      }
-    },
-    {
-      "id": "vrf-indoorunit",
-      "name": "vrf-indoorUnit",
-      "full_name": "vrf",
+      "id": "vrf-outdoor-unit",
+      "name": "VRF Outdoor Unit",
+      "abbreviation": "ODU",
       "category": "vrf",
-      "description": "vrf",
+      "description": "Outdoor condensing unit for VRF system, connects to multiple indoor units via refrigerant piping",
+      "haystack": "vrf-outdoorUnit",
+      "brick": "VRF_Outdoor_Unit",
       "aliases": {
         "common": [
-          "vrf",
-          "variable refrigerant flow",
+          "VRF outdoor unit",
+          "VRF ODU",
+          "outdoor unit",
+          "ODU",
+          "VRF condenser",
+          "VRF condensing unit",
+          "outdoor condensing unit",
+          "VRF heat recovery unit",
+          "VRF heat pump outdoor"
+        ],
+        "abbreviated": []
+      }
+    },
+    {
+      "id": "vrf-indoor-unit",
+      "name": "VRF Indoor Unit",
+      "abbreviation": "IDU",
+      "category": "vrf",
+      "description": "Indoor evaporator unit in VRF system, available in various configurations for zone cooling/heating",
+      "haystack": "vrf-indoorUnit",
+      "brick": "VRF_Indoor_Unit",
+      "aliases": {
+        "common": [
+          "VRF indoor unit",
+          "VRF IDU",
+          "indoor unit",
+          "IDU",
+          "VRF cassette",
           "ceiling cassette",
+          "concealed duct",
           "ceiling concealed duct",
-          "wall mounted"
+          "wall mounted",
+          "floor standing",
+          "high wall unit",
+          "ducted VRF"
         ],
         "abbreviated": []
       }
     },
     {
-      "id": "vrf-outdoorunit",
-      "name": "vrf-outdoorUnit",
-      "full_name": "vrf odu",
+      "id": "vrf-branch-selector-box",
+      "name": "VRF Branch Selector Box",
+      "abbreviation": "BSB",
       "category": "vrf",
-      "description": "vrf odu",
+      "description": "Distribution box that directs refrigerant flow to individual indoor units in heat recovery VRF systems",
+      "haystack": "vrf-branchBox",
+      "brick": "VRF_Branch_Selector_Box",
       "aliases": {
         "common": [
-          "vrf odu",
-          "odu",
-          "outdoor unit"
+          "VRF branch selector box",
+          "BSB",
+          "branch controller",
+          "refnet joint",
+          "branch box",
+          "VRF distribution box",
+          "heat recovery box",
+          "HR box",
+          "BC controller"
         ],
         "abbreviated": []
       }

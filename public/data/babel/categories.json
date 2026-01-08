@@ -5,37 +5,31 @@
       "id": "air-handling",
       "name": "Air Handling",
       "type": "equipment",
-      "count": 31
+      "count": 15
     },
     {
       "id": "central-plant",
       "name": "Central Plant",
       "type": "equipment",
-      "count": 10
+      "count": 9
     },
     {
       "id": "metering",
       "name": "Metering",
       "type": "equipment",
-      "count": 6
-    },
-    {
-      "id": "motors",
-      "name": "Motors",
-      "type": "equipment",
-      "count": 1
+      "count": 5
     },
     {
       "id": "terminal-units",
       "name": "Terminal Units",
       "type": "equipment",
-      "count": 12
+      "count": 10
     },
     {
       "id": "vrf",
       "name": "VRF",
       "type": "equipment",
-      "count": 2
+      "count": 3
     },
     {
       "id": "alarms",
