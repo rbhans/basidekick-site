@@ -79,8 +79,6 @@ export function BabelView() {
         // Search in aliases
         const allAliases = [
           ...entry.aliases.common,
-          ...(entry.aliases.abbreviated || []),
-          ...(entry.aliases.verbose || []),
           ...(entry.aliases.misspellings || []),
         ];
         return allAliases.some((a) => a.toLowerCase().includes(query));
@@ -88,13 +86,9 @@ export function BabelView() {
 
       equipment = equipment.filter((entry) => {
         if (entry.name.toLowerCase().includes(query)) return true;
-        if (entry.full_name.toLowerCase().includes(query)) return true;
+        if (entry.full_name?.toLowerCase().includes(query)) return true;
         if (entry.description?.toLowerCase().includes(query)) return true;
-        const allAliases = [
-          ...entry.aliases.common,
-          ...(entry.aliases.abbreviated || []),
-        ];
-        return allAliases.some((a) => a.toLowerCase().includes(query));
+        return entry.aliases.common.some((a) => a.toLowerCase().includes(query));
       });
     }
 
