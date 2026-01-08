@@ -134,22 +134,22 @@ export function BabelView() {
             that grows with contributions from the industry.
           </p>
 
-          <div className="mt-4 flex items-center gap-4">
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <a
               href="https://github.com/rbhans/bas-babel"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background rounded-md hover:bg-foreground/90 transition-colors"
             >
-              <GithubLogo className="size-4" />
+              <GithubLogo className="size-4" weight="bold" />
               View on GitHub
               <ArrowSquareOut className="size-3" />
             </a>
             <button
               onClick={() => setShowApi(!showApi)}
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border rounded-md hover:bg-muted transition-colors"
             >
-              <Code className="size-4" />
+              <Code className="size-4" weight="bold" />
               API Access
             </button>
           </div>
