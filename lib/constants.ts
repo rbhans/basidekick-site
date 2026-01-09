@@ -369,16 +369,6 @@ export const NAV_ITEMS: NavNode[] = [
       { id: VIEW_IDS.WIKI, label: "Wiki", iconName: "BookOpen" },
     ],
   },
-  {
-    id: VIEW_IDS.ACCOUNT,
-    label: "ACCOUNT",
-    iconName: "User",
-    defaultExpanded: false,
-    children: [
-      { id: VIEW_IDS.SIGNIN, label: "Sign In", iconName: "SignIn" },
-      { id: VIEW_IDS.SIGNUP, label: "Sign Up", iconName: "UserPlus" },
-    ],
-  },
 ];
 
 // =============================================================================
