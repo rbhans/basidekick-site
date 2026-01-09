@@ -11,7 +11,7 @@ export default function Icon() {
     (
       <div
         style={{
-          fontSize: 14,
+          fontSize: 16,
           background: "#000000",
           width: "100%",
           height: "100%",
@@ -20,7 +20,7 @@ export default function Icon() {
           justifyContent: "center",
           color: "#ffffff",
           fontFamily: "monospace",
-          fontWeight: 700,
+          fontWeight: 900,
         }}
       >
         [b]
