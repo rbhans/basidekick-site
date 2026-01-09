@@ -142,6 +142,7 @@ export function HomeView({ recentArticles = [], recentThreads = [] }: HomeViewPr
                 description={resource.description}
                 href={resource.href}
                 ctaText="Open"
+                showBadge={false}
               />
             ))}
           </div>

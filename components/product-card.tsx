@@ -7,6 +7,7 @@ interface ProductCardProps {
   description: string;
   href: string;
   ctaText?: string;
+  showBadge?: boolean;
 }
 
 export function ProductCard({
@@ -15,6 +16,7 @@ export function ProductCard({
   description,
   href,
   ctaText = "Learn More",
+  showBadge = true,
 }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col p-6 border border-border bg-card hover:border-primary/50 transition-all duration-200">
@@ -22,7 +24,7 @@ export function ProductCard({
         <span className="font-mono text-sm text-muted-foreground uppercase tracking-wide">
           {shortName}
         </span>
-        <Badge variant="outline">Coming Soon</Badge>
+        {showBadge && <Badge variant="outline">Coming Soon</Badge>}
       </div>
 
       <h3 className="text-xl font-semibold mb-2">{name}</h3>
