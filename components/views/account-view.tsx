@@ -25,7 +25,10 @@ import {
   ChatCircle,
   X,
   Check,
+  UserCircle,
 } from "@phosphor-icons/react";
+import { AvatarUpload } from "@/components/avatar-upload";
+import { UserAvatar } from "@/components/user-avatar";
 
 export function AccountView() {
   const router = useRouter();
@@ -184,22 +187,30 @@ export function AccountView() {
           <SectionLabel>account</SectionLabel>
 
           <div className="mt-6 flex items-start justify-between">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
-                {profile?.display_name || "Your Account"}
-              </h1>
-              <p className="mt-1 text-muted-foreground">{user?.email}</p>
-              {profile?.company && (
-                <p className="mt-1 text-sm text-muted-foreground flex items-center gap-1">
-                  <Buildings className="size-3" />
-                  {profile.company}
+            <div className="flex items-start gap-4">
+              <UserAvatar
+                name={profile?.display_name || null}
+                avatarUrl={profile?.avatar_url}
+                size="lg"
+                className="!size-16"
+              />
+              <div>
+                <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
+                  {profile?.display_name || "Your Account"}
+                </h1>
+                <p className="mt-1 text-muted-foreground">{user?.email}</p>
+                {profile?.company && (
+                  <p className="mt-1 text-sm text-muted-foreground flex items-center gap-1">
+                    <Buildings className="size-3" />
+                    {profile.company}
+                  </p>
+                )}
+                {/* Post count badge */}
+                <p className="mt-2 text-sm text-muted-foreground flex items-center gap-1">
+                  <ChatCircle className="size-3" />
+                  {profile?.post_count || 0} forum {(profile?.post_count || 0) === 1 ? "post" : "posts"}
                 </p>
-              )}
-              {/* Post count badge */}
-              <p className="mt-2 text-sm text-muted-foreground flex items-center gap-1">
-                <ChatCircle className="size-3" />
-                {profile?.post_count || 0} forum {(profile?.post_count || 0) === 1 ? "post" : "posts"}
-              </p>
+              </div>
             </div>
             <Button variant="outline" onClick={handleSignOut}>
               <SignOut className="size-4 mr-2" />
@@ -282,6 +293,28 @@ export function AccountView() {
               })}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Avatar Settings */}
+      <section className="py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-2 mb-6">
+            <UserCircle className="size-5 text-primary" />
+            <h2 className="text-xl font-semibold">Profile Picture</h2>
+          </div>
+
+          <div className="max-w-md">
+            <AvatarUpload
+              currentAvatarUrl={profile?.avatar_url || null}
+              displayName={profile?.display_name || null}
+              onAvatarChange={(newUrl) => {
+                setProfile((prev) =>
+                  prev ? { ...prev, avatar_url: newUrl } : null
+                );
+              }}
+            />
+          </div>
         </div>
       </section>
 

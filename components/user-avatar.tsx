@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface UserAvatarProps {
   name: string | null;
+  avatarUrl?: string | null;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
@@ -55,10 +57,39 @@ const sizeClasses = {
   lg: "size-10 text-base",
 };
 
-export function UserAvatar({ name, size = "md", className }: UserAvatarProps) {
+const imageSizes = {
+  sm: 24,
+  md: 32,
+  lg: 40,
+};
+
+export function UserAvatar({ name, avatarUrl, size = "md", className }: UserAvatarProps) {
   const initials = getInitials(name);
   const colorClass = name ? getAvatarColor(name) : "bg-muted";
 
+  // If avatar URL is provided, show the image
+  if (avatarUrl) {
+    return (
+      <div
+        className={cn(
+          "rounded-full overflow-hidden shrink-0 bg-muted",
+          sizeClasses[size],
+          className
+        )}
+        title={name || "Anonymous"}
+      >
+        <Image
+          src={avatarUrl}
+          alt={name || "User avatar"}
+          width={imageSizes[size]}
+          height={imageSizes[size]}
+          className="object-cover w-full h-full"
+        />
+      </div>
+    );
+  }
+
+  // Fall back to initials
   return (
     <div
       className={cn(

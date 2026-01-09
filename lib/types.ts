@@ -123,6 +123,7 @@ export interface License {
 export interface Profile {
   id: string;
   display_name: string | null;
+  avatar_url: string | null;
   company: string | null;
   subscription_tier: string | null;
   entitlements: {

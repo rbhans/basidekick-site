@@ -20,6 +20,7 @@ import {
   ArrowLeft,
   SignIn,
 } from "@phosphor-icons/react";
+import { ForumImageUpload } from "@/components/forum/forum-image-upload";
 
 interface ForumCategoryViewProps {
   category: ForumCategory;
@@ -197,6 +198,14 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
                     placeholder="Write your post..."
                     className="w-full min-h-[150px] p-4 bg-background border border-border resize-y focus:outline-none focus:ring-2 focus:ring-primary"
                   />
+                  <div className="mt-2 flex items-center gap-2">
+                    <ForumImageUpload
+                      onImageUploaded={(markdownImage) => {
+                        setNewThreadContent((prev) => prev + (prev ? "\n" : "") + markdownImage);
+                      }}
+                      disabled={submitting}
+                    />
+                  </div>
                   <div className="mt-1 text-xs text-muted-foreground text-right">
                     {newThreadContent.length}/{MAX_LENGTHS.POST_CONTENT}
                   </div>
