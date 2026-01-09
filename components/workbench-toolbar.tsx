@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Circle, List, Moon, Sun, Drop, Thermometer, User, SignOut, Gear } from "@phosphor-icons/react";
+import { Circle, List, Moon, Sun, Drop, Thermometer, User, SignOut, Gear, UserPlus } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { Logo } from "./logo";
 import { Button } from "./ui/button";
@@ -179,15 +179,26 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onNavigate?.("signin")}
-              className="text-xs group"
-            >
-              <User className="w-4 h-4 mr-1.5 transition-all duration-150 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
-              Sign In
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onNavigate?.("signin")}
+                className="text-xs group"
+              >
+                <User className="w-4 h-4 sm:mr-1.5 transition-all duration-150 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
+                <span className="hidden sm:inline">Sign In</span>
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => onNavigate?.("signup")}
+                className="text-xs group"
+              >
+                <UserPlus className="w-4 h-4 sm:mr-1.5 transition-all duration-150 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
+                <span className="hidden sm:inline">Sign Up</span>
+              </Button>
+            </div>
           )
         )}
       </div>

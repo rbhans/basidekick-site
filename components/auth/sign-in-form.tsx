@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { GoogleLogo } from "@phosphor-icons/react";
+import Link from "next/link";
+import { ROUTES } from "@/lib/routes";
 
 interface SignInFormProps {
   onSuccess?: () => void;
@@ -122,6 +124,13 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
         <GoogleLogo className="size-4 mr-2" weight="bold" />
         Google
       </Button>
+
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Don&apos;t have an account?{" "}
+        <Link href={ROUTES.SIGNUP} className="text-primary hover:underline underline-offset-4">
+          Sign up
+        </Link>
+      </p>
     </div>
   );
 }
