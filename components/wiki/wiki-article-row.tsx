@@ -4,6 +4,7 @@ import Link from "next/link";
 import { WikiArticle, WikiTag } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import { BookOpen, Calendar, Eye, YoutubeLogo } from "@phosphor-icons/react";
+import { BookmarkButton } from "@/components/bookmark-button";
 
 /**
  * Check if content contains YouTube video links
@@ -69,23 +70,36 @@ export function WikiArticleRow({ article, tags, onClick, href }: WikiArticleRowP
         </div>
       </div>
 
-      {tags && tags.length > 0 && (
-        <div className="hidden sm:flex flex-wrap gap-1 justify-end max-w-[200px]">
-          {tags.slice(0, 3).map((tag) => (
-            <span
-              key={tag.id}
-              className="px-2 py-0.5 text-xs border border-border bg-background"
-            >
-              {tag.name}
-            </span>
-          ))}
-          {tags.length > 3 && (
-            <span className="px-2 py-0.5 text-xs text-muted-foreground">
-              +{tags.length - 3}
-            </span>
-          )}
-        </div>
-      )}
+      <div className="flex items-start gap-2">
+        {tags && tags.length > 0 && (
+          <div className="hidden sm:flex flex-wrap gap-1 justify-end max-w-[200px]">
+            {tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag.id}
+                className="px-2 py-0.5 text-xs border border-border bg-background"
+              >
+                {tag.name}
+              </span>
+            ))}
+            {tags.length > 3 && (
+              <span className="px-2 py-0.5 text-xs text-muted-foreground">
+                +{tags.length - 3}
+              </span>
+            )}
+          </div>
+        )}
+        <BookmarkButton
+          item={{
+            id: article.id,
+            type: "wiki",
+            title: article.title,
+            slug: article.slug,
+            category: article.category?.name,
+          }}
+          variant="icon"
+          className="opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+        />
+      </div>
     </div>
   );
 

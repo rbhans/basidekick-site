@@ -24,6 +24,7 @@ import {
   Check,
   X,
 } from "@phosphor-icons/react";
+import { UserAvatar } from "@/components/user-avatar";
 
 interface ForumThreadDetailProps {
   thread: ForumThread;
@@ -444,9 +445,7 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="size-10 bg-primary/10 flex items-center justify-center font-mono text-sm text-primary">
-                        {(post.author?.display_name || "A")[0].toUpperCase()}
-                      </div>
+                      <UserAvatar name={post.author?.display_name || null} size="lg" />
                       <div>
                         <p className="font-semibold">
                           {post.author?.display_name || "Anonymous"}

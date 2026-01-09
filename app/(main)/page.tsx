@@ -113,19 +113,33 @@ async function getRecentContent() {
     author: thread.author_id ? authorsMap[thread.author_id] || null : null,
   }));
 
+  // Get counts for stats
+  const [articleCountResult, threadCountResult] = await Promise.all([
+    supabase.from("wiki_articles").select("id", { count: "exact", head: true }).eq("is_published", true),
+    supabase.from("forum_threads").select("id", { count: "exact", head: true }),
+  ]);
+
+  const stats = {
+    articleCount: articleCountResult.count || 0,
+    threadCount: threadCountResult.count || 0,
+    termCount: 500, // Babel terms - could be dynamic later
+  };
+
   return {
     recentArticles,
     recentThreads,
+    stats,
   };
 }
 
 export default async function HomePage() {
-  const { recentArticles, recentThreads } = await getRecentContent();
+  const { recentArticles, recentThreads, stats } = await getRecentContent();
 
   return (
     <HomeView
       recentArticles={recentArticles}
       recentThreads={recentThreads}
+      stats={stats}
     />
   );
 }

@@ -19,7 +19,7 @@ export function ProductCard({
   showBadge = true,
 }: ProductCardProps) {
   return (
-    <div className="group relative flex flex-col p-6 border border-border bg-card hover:border-primary/50 transition-all duration-200">
+    <div className="group relative flex flex-col p-6 border border-border bg-card hover:border-primary/50 transition-all duration-200 card-hover-lift">
       <div className="flex items-start justify-between mb-4">
         <span className="font-mono text-sm text-muted-foreground uppercase tracking-wide">
           {shortName}

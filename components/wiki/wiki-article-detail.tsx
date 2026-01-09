@@ -20,6 +20,7 @@ import {
 } from "@phosphor-icons/react";
 import { MarkdownContent } from "@/components/markdown-content";
 import { RelatedArticles } from "@/components/wiki/related-articles";
+import { BookmarkButton } from "@/components/bookmark-button";
 
 interface WikiArticleDetailProps {
   article: WikiArticle;
@@ -168,19 +169,31 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
             {article.title}
           </h1>
 
-          <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <User className="size-4" />
-              {article.author?.display_name || "Anonymous"}
-            </span>
-            <span className="flex items-center gap-1">
-              <Calendar className="size-4" />
-              {formatDate(article.created_at)}
-            </span>
-            <span className="flex items-center gap-1">
-              <Eye className="size-4" />
-              {viewCount} views
-            </span>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <User className="size-4" />
+                {article.author?.display_name || "Anonymous"}
+              </span>
+              <span className="flex items-center gap-1">
+                <Calendar className="size-4" />
+                {formatDate(article.created_at)}
+              </span>
+              <span className="flex items-center gap-1">
+                <Eye className="size-4" />
+                {viewCount} views
+              </span>
+            </div>
+            <BookmarkButton
+              item={{
+                id: article.id,
+                type: "wiki",
+                title: article.title,
+                slug: article.slug,
+                category: article.category?.name,
+              }}
+              size="sm"
+            />
           </div>
 
           {tags.length > 0 && (
