@@ -17,8 +17,8 @@ const cspDirectives = [
   "img-src 'self' data: blob: https://*.supabase.co",
   // Fonts: self + Google Fonts
   "font-src 'self' data:",
-  // Connect: self + Supabase + Google OAuth
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://accounts.google.com",
+  // Connect: self + Supabase + Google OAuth + Weather API + GitHub raw
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://accounts.google.com https://api.open-meteo.com https://raw.githubusercontent.com",
   // Frames: YouTube embeds
   "frame-src 'self' https://www.youtube.com https://youtube.com",
   // Object/media
