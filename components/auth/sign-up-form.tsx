@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import { getClient } from "@/lib/supabase/client";
 import { GoogleLogo } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
@@ -16,15 +16,22 @@ interface SignUpFormProps {
 export function SignUpForm({ onSuccess }: SignUpFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const supabase = createClient();
+  const supabase = getClient();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -103,7 +110,26 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
-            minLength={6}
+            minLength={8}
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$"
+            title="Password must be at least 8 characters with lowercase, uppercase, number, and symbol"
+            required
+          />
+          <p className="mt-1.5 text-xs text-muted-foreground">
+            Min 8 characters with uppercase, lowercase, number, and symbol
+          </p>
+        </div>
+        <div>
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            placeholder="••••••••"
+            className="mt-2"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={loading}
+            minLength={8}
             required
           />
         </div>

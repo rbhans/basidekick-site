@@ -6,8 +6,8 @@ import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { CircuitBackground } from "@/components/circuit-background";
 import { BuildingWireframe } from "@/components/building-wireframe";
-import { ArrowRight, GithubLogo, Chats, BookOpen, ChatCircle } from "@phosphor-icons/react";
-import { TOOLS_LIST } from "@/lib/constants";
+import { ArrowRight, GithubLogo, Chats, BookOpen, ChatCircle, Book } from "@phosphor-icons/react";
+import { TOOLS_LIST, RESOURCES } from "@/lib/constants";
 import { ROUTES } from "@/lib/routes";
 
 interface RecentArticle {
@@ -107,6 +107,42 @@ export function HomeView({ recentArticles = [], recentThreads = [] }: HomeViewPr
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {products.map((product) => (
               <ProductCard key={product.shortName} {...product} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Resources Section */}
+      <section className="relative py-12 overflow-hidden">
+        <CircuitBackground opacity={0.1} />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Book className="size-6 text-primary" />
+              <SectionLabel>resources</SectionLabel>
+            </div>
+            <Button variant="outline" size="sm" asChild>
+              <Link href={ROUTES.RESOURCES}>
+                View All
+                <ArrowRight className="size-3 ml-2" />
+              </Link>
+            </Button>
+          </div>
+
+          <p className="text-muted-foreground mb-6">
+            Free tools and references for BAS professionals.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {RESOURCES.map((resource) => (
+              <ProductCard
+                key={resource.id}
+                name={resource.name}
+                shortName={resource.shortName}
+                description={resource.description}
+                href={resource.href}
+                ctaText="Open"
+              />
             ))}
           </div>
         </div>

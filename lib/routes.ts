@@ -20,6 +20,8 @@ export const ROUTES = {
   ACCOUNT: "/account",
   SIGNIN: "/signin",
   SIGNUP: "/signup",
+  FORGOT_PASSWORD: "/forgot-password",
+  RESET_PASSWORD: "/reset-password",
   PSK: "/psk",
   PSK_PROJECT: (id: string) => `/psk/projects/${id}`,
   PSK_CLIENT: (id: string) => `/psk/clients/${id}`,

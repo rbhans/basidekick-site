@@ -34,13 +34,13 @@ function MermaidDiagram({ code }: { code: string }) {
           mermaid.initialize({
             startOnLoad: false,
             theme: "dark",
-            securityLevel: "loose",
+            securityLevel: "strict",
             fontFamily: "ui-monospace, monospace",
           });
           mermaidInitialized = true;
         }
 
-        const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+        const id = `mermaid-${Math.random().toString(36).slice(2, 11)}`;
         const { svg } = await mermaid.render(id, code);
         setSvg(svg);
         setError("");

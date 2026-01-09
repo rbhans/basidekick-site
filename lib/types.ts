@@ -62,6 +62,17 @@ export interface UseCase {
   tools: string[];
 }
 
+// Resource info (for resources section)
+export interface Resource {
+  id: string;
+  name: string;
+  shortName: string;
+  tagline: string;
+  description: string;
+  iconName: string;
+  href: string;
+}
+
 // Navigation tree node
 export interface NavNode {
   id: string;

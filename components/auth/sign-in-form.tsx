@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import { getClient } from "@/lib/supabase/client";
 import { GoogleLogo } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
@@ -19,7 +19,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const supabase = createClient();
+  const supabase = getClient();
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +88,15 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
           />
         </div>
         <div>
-          <Label htmlFor="password">Password</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            <Link
+              href={ROUTES.FORGOT_PASSWORD}
+              className="text-xs text-muted-foreground hover:text-primary"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <Input
             id="password"
             type="password"

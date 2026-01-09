@@ -3,6 +3,7 @@ import {
   ToolDetail,
   UseCase,
   NavNode,
+  Resource,
   VIEW_IDS,
 } from "./types";
 
@@ -122,6 +123,49 @@ export const TOOLS: Record<string, Tool> = {
 
 // Array version for iteration
 export const TOOLS_LIST = Object.values(TOOLS);
+
+// =============================================================================
+// RESOURCES DATA - Free resources (excluding Wiki/Forum which have their own sections)
+// =============================================================================
+
+export const RESOURCES: Resource[] = [
+  {
+    id: VIEW_IDS.BABEL,
+    name: "BAS Babel",
+    shortName: "Babel",
+    tagline: "Translate BAS terminology",
+    description: "Decode abbreviations, point names, and equipment tags across different BAS platforms.",
+    iconName: "Translate",
+    href: `/${VIEW_IDS.BABEL}`,
+  },
+  {
+    id: VIEW_IDS.CALCULATORS,
+    name: "Calculators",
+    shortName: "Calc",
+    tagline: "HVAC & electrical calculators",
+    description: "CFM, BTU, duct sizing, and other common calculations for BAS professionals.",
+    iconName: "Calculator",
+    href: `/${VIEW_IDS.CALCULATORS}`,
+  },
+  {
+    id: VIEW_IDS.PSK,
+    name: "ProjectSidekick",
+    shortName: "PSK",
+    tagline: "Project management for BAS",
+    description: "Track projects, clients, time, and budgets. Built for controls contractors.",
+    iconName: "Kanban",
+    href: `/${VIEW_IDS.PSK}`,
+  },
+  {
+    id: VIEW_IDS.REFERENCES,
+    name: "References",
+    shortName: "Refs",
+    tagline: "Quick reference sheets",
+    description: "Protocol specs, wiring diagrams, and cheat sheets for common BAS tasks.",
+    iconName: "BookmarksSimple",
+    href: `/${VIEW_IDS.REFERENCES}`,
+  },
+];
 
 // =============================================================================
 // TOOL DETAILS - Extended info for detail pages
