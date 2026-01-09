@@ -35,7 +35,7 @@ export function SidebarFooter() {
   return (
     <div className="px-3 py-3 border-t border-border bg-card/50">
       {/* Station info header */}
-      <div className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-wider mb-2">
+      <div className="text-[10px] font-mono text-violet-500 dark:text-violet-400 uppercase tracking-wider mb-2">
         Station Info
       </div>
 

@@ -48,7 +48,7 @@ export function ResourcesView() {
       <section className="relative py-12 overflow-hidden">
         <CircuitBackground opacity={0.15} />
         <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel>resources</SectionLabel>
+          <SectionLabel variant="resources">resources</SectionLabel>
 
           <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
             Free Resources
@@ -87,7 +87,7 @@ export function ResourcesView() {
       {/* Community Stats (placeholder) */}
       <section className="py-12 bg-card/30">
         <div className="container mx-auto px-4">
-          <SectionLabel>community</SectionLabel>
+          <SectionLabel variant="forum">community</SectionLabel>
 
           <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl">
             <div className="p-4 text-center">

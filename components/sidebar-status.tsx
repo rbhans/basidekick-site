@@ -68,7 +68,7 @@ export function SidebarStatus() {
   return (
     <div className="px-3 py-3 border-t border-border">
       {/* Section header */}
-      <div className="text-[10px] font-mono text-muted-foreground/60 uppercase tracking-wider mb-2">
+      <div className="text-[10px] font-mono text-cyan-500 dark:text-cyan-400 uppercase tracking-wider mb-2">
         System Status
       </div>
 
@@ -89,10 +89,10 @@ export function SidebarStatus() {
 
       {/* CPU Bar */}
       <div className="flex items-center gap-2 mb-1.5">
-        <Cpu className="w-3 h-3 text-muted-foreground" />
+        <Cpu className="w-3 h-3 text-cyan-500 dark:text-cyan-400" />
         <div className="flex-1 h-1.5 bg-muted overflow-hidden">
           <div
-            className="h-full bg-primary/70 transition-all duration-500"
+            className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 transition-all duration-500"
             style={{ width: mounted ? `${cpu}%` : "23%" }}
           />
         </div>
@@ -103,10 +103,10 @@ export function SidebarStatus() {
 
       {/* Memory Bar */}
       <div className="flex items-center gap-2 mb-2">
-        <HardDrive className="w-3 h-3 text-muted-foreground" />
+        <HardDrive className="w-3 h-3 text-violet-500 dark:text-violet-400" />
         <div className="flex-1 h-1.5 bg-muted overflow-hidden">
           <div
-            className="h-full bg-primary/70 transition-all duration-500"
+            className="h-full bg-gradient-to-r from-violet-500 to-purple-500 transition-all duration-500"
             style={{ width: mounted ? `${memory}%` : "47%" }}
           />
         </div>
@@ -117,9 +117,9 @@ export function SidebarStatus() {
 
       {/* Uptime */}
       <div className="flex items-center gap-2">
-        <Clock className="w-3 h-3 text-muted-foreground" />
+        <Clock className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
         <span className="text-[10px] font-mono text-muted-foreground">
-          Uptime: {mounted ? formatUptime(uptime) : "00:00:00"}
+          Uptime: <span className="text-emerald-500 dark:text-emerald-400">{mounted ? formatUptime(uptime) : "00:00:00"}</span>
         </span>
       </div>
     </div>

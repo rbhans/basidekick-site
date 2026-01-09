@@ -40,7 +40,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
         <CircuitBackground opacity={0.15} />
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center gap-3 mb-4">
-            <SectionLabel>{tool.id}</SectionLabel>
+            <SectionLabel variant="tools">{tool.id}</SectionLabel>
             <Badge variant="outline">
               Coming Soon
             </Badge>
@@ -77,7 +77,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {/* Demo Section */}
       <section className="py-12 bg-card/30">
         <div className="container mx-auto px-4">
-          <SectionLabel>demo</SectionLabel>
+          <SectionLabel variant="tools">demo</SectionLabel>
 
           <div className="mt-6 max-w-3xl">
             <div className="aspect-video bg-muted border border-border flex items-center justify-center">
@@ -95,7 +95,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {/* Features Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <SectionLabel>features</SectionLabel>
+          <SectionLabel variant="tools">features</SectionLabel>
 
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             {tool.detailedFeatures.map((feature) => (
@@ -117,7 +117,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {/* How It Works */}
       <section className="py-12 bg-card/30">
         <div className="container mx-auto px-4">
-          <SectionLabel>how it works</SectionLabel>
+          <SectionLabel variant="tools">how it works</SectionLabel>
 
           <div className="mt-6 max-w-lg">
             <div className="relative">
@@ -146,7 +146,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {/* Requirements */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <SectionLabel>requirements</SectionLabel>
+          <SectionLabel variant="tools">requirements</SectionLabel>
 
           <div className="mt-6 max-w-sm">
             <dl className="space-y-3">
@@ -165,7 +165,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {tool.useCases && tool.useCases.length > 0 && (
         <section className="py-12 bg-card/30">
           <div className="container mx-auto px-4">
-            <SectionLabel>use cases</SectionLabel>
+            <SectionLabel variant="tools">use cases</SectionLabel>
 
             <div className="mt-6 max-w-lg space-y-3">
               {tool.useCases.map((useCase, index) => (
@@ -183,7 +183,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {tool.perfectFor && tool.perfectFor.length > 0 && (
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <SectionLabel>perfect for</SectionLabel>
+            <SectionLabel variant="tools">perfect for</SectionLabel>
 
             <div className="mt-6 flex flex-wrap gap-2">
               {tool.perfectFor.map((persona, index) => (
@@ -200,7 +200,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {tool.pricing && tool.pricing.length > 0 && (
         <section className="py-12 bg-card/30">
           <div className="container mx-auto px-4">
-            <SectionLabel>pricing</SectionLabel>
+            <SectionLabel variant="tools">pricing</SectionLabel>
             <p className="mt-2 text-sm text-muted-foreground">Free to scan and use. Upgrade for more equipment.</p>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-3xl">

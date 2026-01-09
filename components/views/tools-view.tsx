@@ -17,7 +17,7 @@ export function ToolsView() {
       <section className="relative py-12 overflow-hidden">
         <CircuitBackground opacity={0.15} />
         <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel>tools</SectionLabel>
+          <SectionLabel variant="tools">tools</SectionLabel>
 
           <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
             BAS Tools
@@ -83,7 +83,7 @@ export function ToolsView() {
       {/* Use Cases */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <SectionLabel>use cases</SectionLabel>
+          <SectionLabel variant="tools">use cases</SectionLabel>
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl">
             {USE_CASES.map((useCase) => (

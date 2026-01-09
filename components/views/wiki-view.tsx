@@ -222,7 +222,7 @@ export function WikiView() {
         <section className="relative py-12 overflow-hidden">
           <CircuitBackground opacity={0.15} />
           <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel>wiki</SectionLabel>
+            <SectionLabel variant="wiki">wiki</SectionLabel>
             <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
               Knowledge Base
             </h1>

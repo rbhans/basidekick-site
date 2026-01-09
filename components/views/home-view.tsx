@@ -24,6 +24,7 @@ import {
   Users,
   Article,
   ClockCounterClockwise,
+  Wrench,
 } from "@phosphor-icons/react";
 import { TOOLS_LIST, RESOURCES } from "@/lib/constants";
 import { ROUTES } from "@/lib/routes";
@@ -93,7 +94,7 @@ export function HomeView({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             {/* Left: Text content */}
             <div className="text-center lg:text-left animate-fade-in-up">
-              <SectionLabel>building automation</SectionLabel>
+              <SectionLabel variant="default">building automation</SectionLabel>
 
               <h1 className="mt-6 text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight">
                 Tools, community, and{" "}
@@ -180,7 +181,10 @@ export function HomeView({
       {/* Tools Section */}
       <section className="py-12 bg-card/30">
         <div className="container mx-auto px-4">
-          <SectionLabel>tools</SectionLabel>
+          <div className="flex items-center gap-3">
+            <Wrench className="size-6 text-cyan-500 dark:text-cyan-400" />
+            <SectionLabel variant="tools">tools</SectionLabel>
+          </div>
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {products.map((product, index) => (
@@ -202,8 +206,8 @@ export function HomeView({
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Book className="size-6 text-primary" />
-              <SectionLabel>resources</SectionLabel>
+              <Book className="size-6 text-violet-500 dark:text-violet-400" />
+              <SectionLabel variant="resources">resources</SectionLabel>
             </div>
             <Button variant="outline" size="sm" asChild>
               <Link href={ROUTES.RESOURCES}>
@@ -243,8 +247,8 @@ export function HomeView({
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <BookOpen className="size-6 text-primary" />
-              <SectionLabel>wiki</SectionLabel>
+              <BookOpen className="size-6 text-blue-500 dark:text-blue-400" />
+              <SectionLabel variant="wiki">wiki</SectionLabel>
             </div>
             <Button variant="outline" size="sm" asChild>
               <Link href={ROUTES.WIKI}>
@@ -307,8 +311,8 @@ export function HomeView({
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Chats className="size-6 text-primary" />
-              <SectionLabel>forum</SectionLabel>
+              <Chats className="size-6 text-emerald-500 dark:text-emerald-400" />
+              <SectionLabel variant="forum">forum</SectionLabel>
             </div>
             <Button variant="outline" size="sm" asChild>
               <Link href={ROUTES.FORUM}>

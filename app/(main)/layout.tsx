@@ -54,6 +54,7 @@ function NavTreeWithLinks({
             id={node.id}
             label={node.label}
             icon={node.iconName ? getIcon(node.iconName) : undefined}
+            colorVariant={node.colorVariant}
             badge={node.badge}
             active={isActive}
             expanded={isExpanded}
@@ -77,6 +78,7 @@ function NavTreeWithLinks({
             id={node.id}
             label={node.label}
             icon={node.iconName ? getIcon(node.iconName) : undefined}
+            colorVariant={node.colorVariant}
             badge={node.badge}
             active={isActive}
             expanded={false}

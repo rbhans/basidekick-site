@@ -73,11 +73,15 @@ export interface Resource {
   href: string;
 }
 
+// Color variants for navigation sections
+export type NavColorVariant = "default" | "tools" | "resources" | "wiki" | "forum";
+
 // Navigation tree node
 export interface NavNode {
   id: string;
   label: string;
   iconName?: string;
+  colorVariant?: NavColorVariant;
   badge?: {
     text: string;
     variant: "default" | "secondary" | "destructive" | "outline";

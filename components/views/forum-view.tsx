@@ -541,7 +541,7 @@ export function ForumView() {
         <section className="relative py-12 overflow-hidden">
           <CircuitBackground opacity={0.15} />
           <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel>forum</SectionLabel>
+            <SectionLabel variant="forum">forum</SectionLabel>
 
             <div className="mt-6 flex items-start justify-between">
               <div>
@@ -620,7 +620,7 @@ export function ForumView() {
               Back to categories
             </button>
 
-            <SectionLabel>{viewState.categoryName.toLowerCase()}</SectionLabel>
+            <SectionLabel variant="forum">{viewState.categoryName.toLowerCase()}</SectionLabel>
 
             <div className="mt-6 flex items-start justify-between gap-4">
               <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">

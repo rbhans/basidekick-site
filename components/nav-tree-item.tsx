@@ -4,11 +4,37 @@ import { ReactNode } from "react";
 import { CaretRight } from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import type { NavColorVariant } from "@/lib/types";
+
+// Color classes for each variant
+const colorVariantClasses: Record<NavColorVariant, { icon: string; active: string }> = {
+  default: {
+    icon: "text-primary",
+    active: "bg-primary/10 text-primary",
+  },
+  tools: {
+    icon: "text-cyan-500 dark:text-cyan-400",
+    active: "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400",
+  },
+  resources: {
+    icon: "text-violet-500 dark:text-violet-400",
+    active: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
+  },
+  wiki: {
+    icon: "text-blue-500 dark:text-blue-400",
+    active: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  },
+  forum: {
+    icon: "text-emerald-500 dark:text-emerald-400",
+    active: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  },
+};
 
 export interface NavTreeItemProps {
   id: string;
   label: string;
   icon?: ReactNode;
+  colorVariant?: NavColorVariant;
   badge?: {
     text: string;
     variant: "default" | "secondary" | "destructive" | "outline";
@@ -24,6 +50,7 @@ export interface NavTreeItemProps {
 export function NavTreeItem({
   label,
   icon,
+  colorVariant = "default",
   badge,
   active = false,
   expanded = false,
@@ -32,6 +59,7 @@ export function NavTreeItem({
   onClick,
   onToggle,
 }: NavTreeItemProps) {
+  const colors = colorVariantClasses[colorVariant];
   // Clicking name/icon navigates only
   const handleClick = () => {
     onClick?.();
@@ -48,7 +76,7 @@ export function NavTreeItem({
       className={cn(
         "w-full flex items-center gap-2 px-2 py-1.5 text-left text-sm font-mono transition-colors",
         "hover:bg-muted/50",
-        active && "bg-primary/10 text-primary",
+        active && colors.active,
         !active && "text-muted-foreground hover:text-foreground"
       )}
       style={{ paddingLeft: `${8 + depth * 16}px` }}
@@ -84,8 +112,8 @@ export function NavTreeItem({
           <span className={cn(
             "flex-shrink-0 transition-all duration-150 motion-reduce:transition-none",
             "group-hover:scale-110 motion-reduce:group-hover:scale-100",
-            active && "scale-110 drop-shadow-[0_0_3px_hsl(var(--primary)/0.5)] motion-reduce:scale-100 motion-reduce:drop-shadow-none",
-            active ? "text-primary" : "text-muted-foreground"
+            active && "scale-110 motion-reduce:scale-100",
+            colors.icon
           )}>
             {icon}
           </span>
