@@ -6,14 +6,14 @@ import { CircuitBackground } from "@/components/circuit-background";
 import { BabelSidebar } from "./babel-sidebar";
 import { BabelSearch } from "./babel-search";
 import { BabelEntryCard } from "./babel-entry-card";
-import { useBabelData, useBabelCategories } from "./use-babel-data";
+import { useBabelAll } from "./use-babel-data";
 import { GithubLogo, ArrowSquareOut, Code, Copy, Check } from "@phosphor-icons/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
 
 export function BabelView() {
-  const { data, loading: dataLoading, error: dataError } = useBabelData();
-  const { categories, loading: categoriesLoading } = useBabelCategories();
+  // Use combined hook for parallel data fetching
+  const { data, categories, loading, error: dataError } = useBabelAll();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -97,8 +97,6 @@ export function BabelView() {
 
   const totalResults = filteredEntries.points.length + filteredEntries.equipment.length;
   const totalEntries = data ? data.totalPoints + data.totalEquipment : 0;
-
-  const loading = dataLoading || categoriesLoading;
 
   if (dataError) {
     return (

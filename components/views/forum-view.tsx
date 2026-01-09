@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
@@ -67,8 +67,12 @@ export function ForumView() {
   const [deletePostIndex, setDeletePostIndex] = useState<number>(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Fetch categories
+  // Fetch categories with AbortController
   useEffect(() => {
+    if (viewState.view !== "categories") return;
+
+    const controller = new AbortController();
+
     async function fetchCategories() {
       const supabase = createClient();
       if (!supabase) return;
@@ -76,24 +80,29 @@ export function ForumView() {
       const { data, error } = await supabase
         .from("forum_categories")
         .select("*")
-        .order("display_order");
+        .order("display_order")
+        .abortSignal(controller.signal);
 
-      if (data && !error) {
+      if (!controller.signal.aborted && data && !error) {
         setCategories(data as ForumCategory[]);
       }
-      setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
 
-    if (viewState.view === "categories") {
-      fetchCategories();
-    }
+    fetchCategories();
+    return () => controller.abort();
   }, [viewState.view]);
 
-  // Fetch threads for a category
+  // Fetch threads for a category with AbortController
   useEffect(() => {
-    async function fetchThreads() {
-      if (viewState.view !== "threads") return;
+    if (viewState.view !== "threads") return;
 
+    const categoryId = viewState.categoryId;
+    const controller = new AbortController();
+
+    async function fetchThreads() {
       setLoading(true);
       const supabase = createClient();
       if (!supabase) return;
@@ -106,72 +115,86 @@ export function ForumView() {
           *,
           author:profiles!forum_threads_author_id_fkey(display_name)
         `, { count: "exact" })
-        .eq("category_id", viewState.categoryId)
+        .eq("category_id", categoryId)
         .order("is_pinned", { ascending: false })
         .order("last_post_at", { ascending: false, nullsFirst: false })
-        .range(offset, offset + THREADS_PER_PAGE - 1);
+        .range(offset, offset + THREADS_PER_PAGE - 1)
+        .abortSignal(controller.signal);
 
-      if (data && !error) {
+      if (!controller.signal.aborted && data && !error) {
         setThreads(data as ForumThread[]);
         setTotalThreads(count || 0);
       }
-      setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
 
     fetchThreads();
+    return () => controller.abort();
   }, [viewState, threadPage]);
 
-  // Fetch posts for a thread
+  // Fetch thread and posts in parallel with AbortController
   useEffect(() => {
-    async function fetchPosts() {
-      if (viewState.view !== "thread") return;
+    if (viewState.view !== "thread") return;
 
+    const threadId = viewState.threadId;
+    const controller = new AbortController();
+
+    async function fetchThreadAndPosts() {
       setLoading(true);
       const supabase = createClient();
       if (!supabase) return;
 
-      // Fetch thread details
-      const { data: threadData } = await supabase
-        .from("forum_threads")
-        .select(`
-          *,
-          author:profiles!forum_threads_author_id_fkey(display_name)
-        `)
-        .eq("id", viewState.threadId)
-        .single();
+      // Fetch thread details and posts in parallel
+      const [threadResult, postsResult] = await Promise.all([
+        supabase
+          .from("forum_threads")
+          .select(`
+            *,
+            author:profiles!forum_threads_author_id_fkey(display_name)
+          `)
+          .eq("id", threadId)
+          .single()
+          .abortSignal(controller.signal),
+        supabase
+          .from("forum_posts")
+          .select(`
+            *,
+            author:profiles!forum_posts_author_id_fkey(display_name)
+          `)
+          .eq("thread_id", threadId)
+          .order("created_at")
+          .abortSignal(controller.signal),
+      ]);
 
-      if (threadData) {
-        setCurrentThread(threadData as ForumThread);
+      if (controller.signal.aborted) return;
 
-        // Increment view count with session deduplication
-        const viewedKey = `viewed_forum_${viewState.threadId}`;
+      if (threadResult.data) {
+        setCurrentThread(threadResult.data as ForumThread);
+
+        // Increment view count with session deduplication (fire and forget)
+        const viewedKey = `viewed_forum_${threadId}`;
         if (!hasIncrementedViewRef.current && typeof window !== "undefined" && !sessionStorage.getItem(viewedKey)) {
           hasIncrementedViewRef.current = true;
-          await supabase
+          supabase
             .from("forum_threads")
-            .update({ view_count: (threadData.view_count || 0) + 1 })
-            .eq("id", viewState.threadId);
-          sessionStorage.setItem(viewedKey, "1");
+            .update({ view_count: (threadResult.data.view_count || 0) + 1 })
+            .eq("id", threadId)
+            .then(() => {
+              sessionStorage.setItem(viewedKey, "1");
+            });
         }
       }
 
-      // Fetch posts
-      const { data: postsData, error } = await supabase
-        .from("forum_posts")
-        .select(`
-          *,
-          author:profiles!forum_posts_author_id_fkey(display_name)
-        `)
-        .eq("thread_id", viewState.threadId)
-        .order("created_at");
-
-      if (postsData && !error) {
-        setPosts(postsData as ForumPost[]);
+      if (postsResult.data && !postsResult.error) {
+        setPosts(postsResult.data as ForumPost[]);
       }
       setLoading(false);
     }
 
-    fetchPosts();
+    fetchThreadAndPosts();
+    return () => controller.abort();
   }, [viewState]);
 
   const navigateToCategory = (category: ForumCategory) => {

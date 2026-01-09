@@ -5,6 +5,9 @@ import { WikiArticleDetail } from "@/components/wiki/wiki-article-detail";
 import { WikiTag } from "@/lib/types";
 import { escapeJsonLd } from "@/lib/security";
 
+// ISR: Revalidate every hour - articles rarely change
+export const revalidate = 3600;
+
 // Create a Supabase client for server-side data fetching
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -120,6 +123,7 @@ export default async function WikiArticlePage({ params }: WikiArticlePageProps) 
     notFound();
   }
 
+  // Fetch article with related data
   const { data: article } = await supabase
     .from("wiki_articles")
     .select(`

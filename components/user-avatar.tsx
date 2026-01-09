@@ -83,7 +83,9 @@ export function UserAvatar({ name, avatarUrl, size = "md", className }: UserAvat
           alt={name || "User avatar"}
           width={imageSizes[size]}
           height={imageSizes[size]}
+          sizes={`${imageSizes[size]}px`}
           className="object-cover w-full h-full"
+          loading="lazy"
         />
       </div>
     );
