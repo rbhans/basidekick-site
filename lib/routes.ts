@@ -26,6 +26,7 @@ export const ROUTES = {
   PSK_PROJECT: (id: string) => `/psk/projects/${id}`,
   PSK_CLIENT: (id: string) => `/psk/clients/${id}`,
   PSK_JOIN: (inviteCode: string) => `/psk/join/${inviteCode}`,
+  ADMIN: "/admin",
 } as const;
 
 // Map VIEW_ID to route path
@@ -63,6 +64,8 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.SIGNUP;
     case VIEW_IDS.PSK:
       return ROUTES.PSK;
+    case VIEW_IDS.ADMIN:
+      return ROUTES.ADMIN;
     default:
       return ROUTES.HOME;
   }
@@ -85,6 +88,7 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/signup") return VIEW_IDS.SIGNUP;
   if (pathname === "/psk") return VIEW_IDS.PSK;
   if (pathname.startsWith("/psk/")) return VIEW_IDS.PSK;
+  if (pathname === "/admin") return VIEW_IDS.ADMIN;
 
   // Tool detail pages
   if (pathname.startsWith("/tools/")) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Circle, List, Moon, Sun, Drop, Thermometer, User, SignOut, Gear, UserPlus } from "@phosphor-icons/react";
+import { Circle, List, Moon, Sun, Drop, Thermometer, User, SignOut, Gear, UserPlus, ShieldCheck } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { Logo } from "./logo";
 import { Button } from "./ui/button";
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
+import { createClient } from "@/lib/supabase/client";
 
 interface WorkbenchToolbarProps {
   onMenuClick?: () => void;
@@ -47,6 +48,7 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
   const { user, loading: authLoading, signOut } = useAuth();
   const [weather, setWeather] = useState<WeatherData>({ temp: 72, humidity: 45, city: "NYC", loading: true });
   const [locationIndex, setLocationIndex] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Fetch weather for current location
   useEffect(() => {
@@ -79,6 +81,24 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
 
     return () => clearInterval(interval);
   }, []);
+
+  // Check if user is admin
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        return;
+      }
+      const supabase = createClient();
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", user.id)
+        .single();
+      setIsAdmin(profile?.is_admin || false);
+    };
+    checkAdmin();
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -171,6 +191,12 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
                   <Gear className="w-4 h-4 mr-2" />
                   Account
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem onClick={() => onNavigate?.("admin")}>
+                    <ShieldCheck className="w-4 h-4 mr-2" />
+                    Admin
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                   <SignOut className="w-4 h-4 mr-2" />

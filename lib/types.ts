@@ -104,6 +104,7 @@ export const VIEW_IDS = {
   ACCOUNT: "account",
   SIGNIN: "signin",
   SIGNUP: "signup",
+  ADMIN: "admin",
 } as const;
 
 export type ViewId = (typeof VIEW_IDS)[keyof typeof VIEW_IDS];
