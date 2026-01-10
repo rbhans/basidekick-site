@@ -35,14 +35,14 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
           <h3 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
             {name}
           </h3>
-          <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
-            <p className="text-xs font-mono">
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 min-w-0">
+            <p className="text-xs font-mono truncate max-w-full">
               <span className="text-muted-foreground">Haystack:</span>{" "}
               <span className={haystack && haystack !== "-" ? "text-primary/70" : "text-muted-foreground/50"}>
                 {haystack || "-"}
               </span>
             </p>
-            <p className="text-xs font-mono">
+            <p className="text-xs font-mono truncate max-w-full">
               <span className="text-muted-foreground">Brick:</span>{" "}
               <span className={brick && brick !== "-" ? "text-primary/70" : "text-muted-foreground/50"}>
                 {brick || "-"}

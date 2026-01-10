@@ -86,23 +86,25 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
       </div>
 
       {/* Metadata */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 bg-card border border-border rounded mb-6">
-        <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-card border border-border rounded mb-6">
+        <div className="min-w-0">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Haystack</p>
-          <p className={`font-mono text-sm mt-1 ${haystack && haystack !== "-" ? "" : "text-muted-foreground/50"}`}>
+          <p className={`font-mono text-sm mt-1 break-words ${haystack && haystack !== "-" ? "" : "text-muted-foreground/50"}`}>
             {haystack || "-"}
           </p>
         </div>
-        <div>
+        <div className="min-w-0">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Brick</p>
-          <p className={`font-mono text-sm mt-1 ${brick && brick !== "-" ? "" : "text-muted-foreground/50"}`}>
+          <p className={`font-mono text-sm mt-1 break-words ${brick && brick !== "-" ? "" : "text-muted-foreground/50"}`}>
             {brick || "-"}
           </p>
         </div>
         {unit && (
-          <div>
+          <div className="min-w-0">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Unit</p>
-            <p className="font-mono text-sm mt-1">{unit}</p>
+            <p className="font-mono text-sm mt-1">
+              {Array.isArray(unit) ? unit.join(" / ") : unit}
+            </p>
           </div>
         )}
         {typicalRange && (
