@@ -41,6 +41,7 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
   const unit = isPoint ? pointEntry.concept.unit : undefined;
   const typicalRange = isPoint ? pointEntry.concept.typical_range : undefined;
   const objectType = isPoint ? pointEntry.concept.object_type : undefined;
+  const states = isPoint ? pointEntry.concept.states : undefined;
   const notes = isPoint ? pointEntry.notes : undefined;
   const related = isPoint ? pointEntry.related : undefined;
 
@@ -119,6 +120,19 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider">Object Type</p>
             <p className="font-mono text-sm mt-1">{objectType}</p>
+          </div>
+        )}
+        {states && Object.keys(states).length > 0 && (
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">States</p>
+            <div className="mt-1 space-y-0.5">
+              {Object.entries(states).map(([value, label]) => (
+                <p key={value} className="text-sm">
+                  <span className="font-mono text-muted-foreground">{value}:</span>{" "}
+                  <span>{label}</span>
+                </p>
+              ))}
+            </div>
           </div>
         )}
         <div>

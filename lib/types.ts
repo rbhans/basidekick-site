@@ -422,6 +422,8 @@ export interface BabelPointConcept {
   typical_range?: BabelTypicalRange;
   object_type?: string;
   engineering_units?: string;
+  point_function?: string;
+  states?: Record<string, string>;
 }
 
 export interface BabelPointEntry {
