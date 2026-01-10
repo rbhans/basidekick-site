@@ -423,7 +423,7 @@ export interface BabelPointConcept {
   object_type?: string;
   engineering_units?: string;
   point_function?: string;
-  states?: Record<string, string>;
+  states?: Record<string, string | string[]>;
 }
 
 export interface BabelPointEntry {

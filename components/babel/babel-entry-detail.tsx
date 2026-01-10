@@ -123,15 +123,26 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
           </div>
         )}
         {states && Object.keys(states).length > 0 && (
-          <div>
+          <div className="sm:col-span-2 lg:col-span-3">
             <p className="text-xs text-muted-foreground uppercase tracking-wider">States</p>
-            <div className="mt-1 space-y-0.5">
-              {Object.entries(states).map(([value, label]) => (
-                <p key={value} className="text-sm">
-                  <span className="font-mono text-muted-foreground">{value}:</span>{" "}
-                  <span>{label}</span>
-                </p>
-              ))}
+            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {Object.entries(states).map(([value, labels]) => {
+                const labelArray = Array.isArray(labels) ? labels : [labels];
+                const [primary, ...alternatives] = labelArray;
+                return (
+                  <div key={value} className="p-2 bg-muted/30 rounded">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-mono text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{value}</span>
+                      <span className="font-medium">{primary}</span>
+                    </div>
+                    {alternatives.length > 0 && (
+                      <p className="text-xs text-muted-foreground mt-1 pl-6">
+                        Also: {alternatives.join(", ")}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
