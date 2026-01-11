@@ -61,6 +61,11 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
     ? `https://github.com/rbhans/bas-babel/edit/main/data/points/${category}/${id}.yaml`
     : `https://github.com/rbhans/bas-babel/edit/main/data/equipment/${category}.yaml`;
 
+  // Helper for empty state
+  const EmptyState = ({ text = "-" }: { text?: string }) => (
+    <span className="text-muted-foreground/50">{text}</span>
+  );
+
   return (
     <div className="max-w-3xl mx-auto">
       {/* Back link */}
@@ -83,49 +88,59 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
         {fullName && fullName !== name && (
           <p className="text-lg text-muted-foreground mt-1">{fullName}</p>
         )}
-        <p className="text-muted-foreground mt-2">{description}</p>
+        <p className="text-muted-foreground mt-2">{description || <EmptyState text="No description" />}</p>
       </div>
 
       {/* Metadata */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-card border border-border rounded mb-6">
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Haystack</p>
-          <p className={`font-mono text-sm mt-1 break-words ${haystack && haystack !== "-" ? "" : "text-muted-foreground/50"}`}>
+          <p className={`font-mono text-sm mt-1 break-words ${haystack ? "" : "text-muted-foreground/50"}`}>
             {haystack || "-"}
           </p>
         </div>
         <div className="min-w-0">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Brick</p>
-          <p className={`font-mono text-sm mt-1 break-words ${brick && brick !== "-" ? "" : "text-muted-foreground/50"}`}>
+          <p className={`font-mono text-sm mt-1 break-words ${brick ? "" : "text-muted-foreground/50"}`}>
             {brick || "-"}
           </p>
         </div>
-        {unit && (
-          <div className="min-w-0">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Unit</p>
-            <p className="font-mono text-sm mt-1">
-              {Array.isArray(unit) ? unit.join(" / ") : unit}
-            </p>
-          </div>
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">Category</p>
+          <p className="text-sm mt-1 capitalize">{category.replace("-", " ")}</p>
+        </div>
+
+        {/* Point-specific metadata */}
+        {isPoint && (
+          <>
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Unit</p>
+              <p className={`font-mono text-sm mt-1 ${unit ? "" : "text-muted-foreground/50"}`}>
+                {unit ? (Array.isArray(unit) ? unit.join(" / ") : unit) : "-"}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Typical Range</p>
+              <p className={`font-mono text-sm mt-1 ${typicalRange ? "" : "text-muted-foreground/50"}`}>
+                {typicalRange ? `${typicalRange.min} - ${typicalRange.max}` : "-"}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Object Type</p>
+              <p className={`font-mono text-sm mt-1 ${objectType ? "" : "text-muted-foreground/50"}`}>
+                {objectType || "-"}
+              </p>
+            </div>
+          </>
         )}
-        {typicalRange && (
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Typical Range</p>
-            <p className="font-mono text-sm mt-1">
-              {typicalRange.min} - {typicalRange.max}
-            </p>
-          </div>
-        )}
-        {objectType && (
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Object Type</p>
-            <p className="font-mono text-sm mt-1">{objectType}</p>
-          </div>
-        )}
-        {states && Object.keys(states).length > 0 && (
-          <div className="sm:col-span-2 lg:col-span-3">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">States</p>
-            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+      </div>
+
+      {/* States (points only) */}
+      {isPoint && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">States</h2>
+          {states && Object.keys(states).length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {Object.entries(states).map(([value, labels]) => {
                 const labelArray = Array.isArray(labels) ? labels : [labels];
                 return (
@@ -138,21 +153,19 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
                 );
               })}
             </div>
-          </div>
-        )}
-        <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Category</p>
-          <p className="text-sm mt-1 capitalize">{category.replace("-", " ")}</p>
+          ) : (
+            <p className="text-sm text-muted-foreground/50">-</p>
+          )}
         </div>
-      </div>
+      )}
 
       {/* Aliases */}
       <div className="space-y-4 mb-6">
         <h2 className="text-lg font-semibold">Aliases</h2>
 
-        {aliases.common.length > 0 && (
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Common</p>
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Common</p>
+          {aliases.common && aliases.common.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {aliases.common.map((alias, index) => (
                 <button
@@ -170,12 +183,14 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
                 </button>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-sm text-muted-foreground/50">-</p>
+          )}
+        </div>
 
-        {aliases.misspellings && aliases.misspellings.length > 0 && (
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Common Misspellings</p>
+        <div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Common Misspellings</p>
+          {aliases.misspellings && aliases.misspellings.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {aliases.misspellings.map((alias, index) => (
                 <span
@@ -186,86 +201,104 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
                 </span>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-sm text-muted-foreground/50">-</p>
+          )}
+        </div>
       </div>
 
       {/* Subtypes (equipment only) */}
-      {subtypes && subtypes.length > 0 && (
+      {!isPoint && (
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Subtypes</h2>
-          <div className="space-y-3">
-            {subtypes.map((subtype) => (
-              <div key={subtype.id} className="p-3 bg-card border border-border rounded">
-                <p className="font-medium">{subtype.name}</p>
-                {subtype.description && (
-                  <p className="text-sm text-muted-foreground mt-1">{subtype.description}</p>
-                )}
-                {subtype.aliases && subtype.aliases.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-2">
-                    {subtype.aliases.map((alias, index) => (
-                      <span
-                        key={index}
-                        className="text-xs px-2 py-0.5 bg-muted/50 rounded font-mono"
-                      >
-                        {alias}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          {subtypes && subtypes.length > 0 ? (
+            <div className="space-y-3">
+              {subtypes.map((subtype) => (
+                <div key={subtype.id} className="p-3 bg-card border border-border rounded">
+                  <p className="font-medium">{subtype.name}</p>
+                  {subtype.description && (
+                    <p className="text-sm text-muted-foreground mt-1">{subtype.description}</p>
+                  )}
+                  {subtype.aliases && subtype.aliases.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {subtype.aliases.map((alias, index) => (
+                        <span
+                          key={index}
+                          className="text-xs px-2 py-0.5 bg-muted/50 rounded font-mono"
+                        >
+                          {alias}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground/50">-</p>
+          )}
         </div>
       )}
 
-      {/* Notes */}
-      {notes && notes.length > 0 && (
+      {/* Notes (points only) */}
+      {isPoint && (
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Notes</h2>
-          <ul className="space-y-2">
-            {notes.map((note, index) => (
-              <li key={index} className="text-sm text-muted-foreground pl-4 border-l-2 border-muted">
-                {note}
-              </li>
-            ))}
-          </ul>
+          {notes && notes.length > 0 ? (
+            <ul className="space-y-2">
+              {notes.map((note, index) => (
+                <li key={index} className="text-sm text-muted-foreground pl-4 border-l-2 border-muted">
+                  {note}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground/50">-</p>
+          )}
         </div>
       )}
 
-      {/* Related entries */}
-      {related && related.length > 0 && (
+      {/* Related entries (points only) */}
+      {isPoint && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-3">Related</h2>
-          <div className="flex flex-wrap gap-2">
-            {related.map((relatedId) => (
-              <Link
-                key={relatedId}
-                href={ROUTES.BABEL_ENTRY(relatedId)}
-                className="text-sm px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded transition-colors"
-              >
-                {relatedId}
-              </Link>
-            ))}
-          </div>
+          <h2 className="text-lg font-semibold mb-3">Related Points</h2>
+          {related && related.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {related.map((relatedId) => (
+                <Link
+                  key={relatedId}
+                  href={ROUTES.BABEL_ENTRY(relatedId)}
+                  className="text-sm px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded transition-colors"
+                >
+                  {relatedId}
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground/50">-</p>
+          )}
         </div>
       )}
 
       {/* Typical points (equipment only) */}
-      {typicalPoints && typicalPoints.length > 0 && (
+      {!isPoint && (
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">Typical Points</h2>
-          <div className="flex flex-wrap gap-2">
-            {typicalPoints.map((pointId) => (
-              <Link
-                key={pointId}
-                href={ROUTES.BABEL_ENTRY(pointId)}
-                className="text-sm px-3 py-1.5 bg-muted/50 hover:bg-muted rounded font-mono transition-colors"
-              >
-                {pointId}
-              </Link>
-            ))}
-          </div>
+          {typicalPoints && typicalPoints.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {typicalPoints.map((pointId) => (
+                <Link
+                  key={pointId}
+                  href={ROUTES.BABEL_ENTRY(pointId)}
+                  className="text-sm px-3 py-1.5 bg-muted/50 hover:bg-muted rounded font-mono transition-colors"
+                >
+                  {pointId}
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground/50">-</p>
+          )}
         </div>
       )}
 
