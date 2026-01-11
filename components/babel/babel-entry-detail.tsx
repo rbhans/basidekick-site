@@ -128,18 +128,12 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
             <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
               {Object.entries(states).map(([value, labels]) => {
                 const labelArray = Array.isArray(labels) ? labels : [labels];
-                const [primary, ...alternatives] = labelArray;
                 return (
                   <div key={value} className="p-2 bg-muted/30 rounded">
                     <div className="flex items-baseline gap-2">
                       <span className="font-mono text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{value}</span>
-                      <span className="font-medium">{primary}</span>
+                      <span className="text-sm">{labelArray.join(", ")}</span>
                     </div>
-                    {alternatives.length > 0 && (
-                      <p className="text-xs text-muted-foreground mt-1 pl-6">
-                        Also: {alternatives.join(", ")}
-                      </p>
-                    )}
                   </div>
                 );
               })}
