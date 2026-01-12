@@ -30,18 +30,18 @@ interface WeatherData {
   loading: boolean;
 }
 
-// Global cities for rotating weather display
-const WORLD_LOCATIONS = [
+// US cities for rotating weather display
+const US_LOCATIONS = [
   { name: "NYC", lat: 40.7128, lon: -74.006 },
-  { name: "London", lat: 51.5074, lon: -0.1278 },
-  { name: "Tokyo", lat: 35.6762, lon: 139.6503 },
-  { name: "Sydney", lat: -33.8688, lon: 151.2093 },
-  { name: "Dubai", lat: 25.2048, lon: 55.2708 },
-  { name: "Singapore", lat: 1.3521, lon: 103.8198 },
-  { name: "Berlin", lat: 52.52, lon: 13.405 },
-  { name: "Toronto", lat: 43.6532, lon: -79.3832 },
-  { name: "Mumbai", lat: 19.076, lon: 72.8777 },
-  { name: "Seoul", lat: 37.5665, lon: 126.978 },
+  { name: "LA", lat: 34.0522, lon: -118.2437 },
+  { name: "Chicago", lat: 41.8781, lon: -87.6298 },
+  { name: "Houston", lat: 29.7604, lon: -95.3698 },
+  { name: "Phoenix", lat: 33.4484, lon: -112.074 },
+  { name: "Denver", lat: 39.7392, lon: -104.9903 },
+  { name: "Seattle", lat: 47.6062, lon: -122.3321 },
+  { name: "Miami", lat: 25.7617, lon: -80.1918 },
+  { name: "Atlanta", lat: 33.749, lon: -84.388 },
+  { name: "Dallas", lat: 32.7767, lon: -96.797 },
 ];
 
 export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTitle = "Home" }: WorkbenchToolbarProps) {
@@ -54,7 +54,7 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
   // Fetch weather for current location
   useEffect(() => {
     const fetchWeather = async () => {
-      const location = WORLD_LOCATIONS[locationIndex];
+      const location = US_LOCATIONS[locationIndex];
       try {
         const response = await fetch(
           `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current=temperature_2m,relative_humidity_2m&temperature_unit=fahrenheit`
@@ -77,7 +77,7 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
   // Rotate through locations every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setLocationIndex((prev) => (prev + 1) % WORLD_LOCATIONS.length);
+      setLocationIndex((prev) => (prev + 1) % US_LOCATIONS.length);
     }, 30000);
 
     return () => clearInterval(interval);
