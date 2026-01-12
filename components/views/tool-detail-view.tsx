@@ -4,7 +4,8 @@ import { SectionLabel } from "@/components/section-label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CircuitBackground } from "@/components/circuit-background";
-import { Play, AppleLogo, GooglePlayLogo, CheckCircle } from "@phosphor-icons/react";
+import { Play, AppleLogo, GooglePlayLogo, CheckCircle, ShieldCheck } from "@phosphor-icons/react";
+import Link from "next/link";
 import { TOOL_DETAILS } from "@/lib/constants";
 import { getIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
@@ -248,6 +249,19 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
               renderPurchaseButton("lg")
             )}
           </div>
+
+          {/* Privacy Policy Link for QSK */}
+          {toolId === "qsk" && (
+            <div className="mt-6">
+              <Link
+                href="/tools/qsk/privacy"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ShieldCheck className="size-4" />
+                Privacy Policy
+              </Link>
+            </div>
+          )}
         </div>
       </section>
     </div>
