@@ -72,6 +72,12 @@ export function CircuitBackground({ className = "", opacity = 0.15 }: CircuitBac
       const t4 = elapsed * 0.0008; // Very slow breathing
       const t5 = elapsed * 0.003;  // Fast ripple
 
+      // Guard against division by zero
+      if (rect.width === 0 || rect.height === 0) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
           const baseX = col * dotSpacing;

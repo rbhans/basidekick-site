@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Clock, Calendar, CurrencyDollar, Export } from "@phosphor-icons/react";
+import { Clock, Calendar, Export } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useProjects, useClients, useTimeEntries } from "./project-hooks";
@@ -125,18 +125,27 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
   };
 
   const handleExportCSV = () => {
+    // CSV escape function - handles commas, quotes, and newlines
+    const escapeCSV = (value: string | number): string => {
+      const str = String(value);
+      if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
     const headers = ["Name", "Hours", "Rate", "Billable Amount"];
     const rows = groupedData.map((group) => [
-      group.name,
-      formatHours(group.totalMinutes),
-      group.hourlyRate.toFixed(2),
-      group.billableAmount.toFixed(2),
+      escapeCSV(group.name),
+      escapeCSV(formatHours(group.totalMinutes)),
+      escapeCSV(group.hourlyRate.toFixed(2)),
+      escapeCSV(group.billableAmount.toFixed(2)),
     ]);
     rows.push([
-      "TOTAL",
-      formatHours(totals.minutes),
-      "",
-      totals.billable.toFixed(2),
+      escapeCSV("TOTAL"),
+      escapeCSV(formatHours(totals.minutes)),
+      escapeCSV(""),
+      escapeCSV(totals.billable.toFixed(2)),
     ]);
 
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");

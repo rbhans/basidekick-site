@@ -68,6 +68,11 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
       return;
     }
 
+    if (formState.is_shared && !userCompany) {
+      alert("Unable to share project - no team available");
+      return;
+    }
+
     const projectData = {
       name: formState.name.trim(),
       description: formState.description.trim() || null,

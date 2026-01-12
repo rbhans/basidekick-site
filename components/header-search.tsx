@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { MagnifyingGlass, Command, X, Spinner, Article, ChatCircle, Translate } from "@phosphor-icons/react";
+import { MagnifyingGlass, Command, X, Spinner, Article, ChatCircle, Translate, WarningCircle } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/lib/routes";
@@ -32,34 +32,38 @@ export function HeaderSearch() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Debounced search
   useEffect(() => {
-    if (!query.trim()) {
+    const currentQuery = query.trim();
+    if (!currentQuery) {
       setResults([]);
       setIsLoading(false);
+      setSearchError(null);
       return;
     }
 
     setIsLoading(true);
+    setSearchError(null);
+
     const timer = setTimeout(async () => {
+      // Capture query at start to detect staleness
+      const searchQuery = currentQuery;
       const supabase = createClient();
       const searchResults: SearchResult[] = [];
-      const lowerQuery = query.toLowerCase();
+      const lowerQuery = searchQuery.toLowerCase();
+      let hasError = false;
 
       try {
         // Search Babel entries (from external JSON)
         if (!babelDataCache) {
           try {
-            console.log("[Search] Fetching Babel data from:", BABEL_DATA_URL);
             const response = await fetch(BABEL_DATA_URL);
             if (response.ok) {
               babelDataCache = await response.json();
-              console.log("[Search] Babel data loaded:", babelDataCache?.equipment?.length, "equipment,", babelDataCache?.points?.length, "points");
-            } else {
-              console.error("[Search] Failed to fetch Babel data:", response.status);
             }
           } catch (e) {
             console.error("[Search] Failed to fetch Babel data:", e);
@@ -78,8 +82,6 @@ export function HeaderSearch() {
               e.aliases?.verbose?.some(a => a.toLowerCase().includes(lowerQuery))
             )
             .slice(0, 3);
-
-          console.log("[Search] Babel equipment matches:", matchingEquipment.length);
 
           searchResults.push(
             ...matchingEquipment.map(e => ({
@@ -102,8 +104,6 @@ export function HeaderSearch() {
             )
             .slice(0, 3);
 
-          console.log("[Search] Babel point matches:", matchingPoints.length);
-
           searchResults.push(
             ...matchingPoints.map(p => ({
               id: `point-${p.concept.id}`,
@@ -119,20 +119,21 @@ export function HeaderSearch() {
         const { data: articles, error: articlesError } = await supabase
           .from("wiki_articles")
           .select("id, title, slug, summary, category:wiki_categories(name)")
-          .ilike("title", `%${query}%`)
+          .ilike("title", `%${searchQuery}%`)
           .eq("is_published", true)
           .limit(5);
 
-        console.log("[Search] Wiki articles query result:", articles?.length, "articles, error:", articlesError);
-
-        if (articles) {
+        if (articlesError) {
+          console.error("[Search] Wiki articles error:", articlesError);
+          hasError = true;
+        } else if (articles) {
           searchResults.push(
             ...articles.map((a: { id: string; title: string; slug: string; summary: string | null; category: { name: string } | null }) => ({
               id: a.id,
               title: a.title,
               type: "article" as const,
               href: ROUTES.WIKI_ARTICLE(a.slug),
-              subtitle: a.category?.name || (a.summary?.slice(0, 50) + (a.summary && a.summary.length > 50 ? "..." : "")),
+              subtitle: a.category?.name || (a.summary ? a.summary.slice(0, 50) + (a.summary.length > 50 ? "..." : "") : undefined),
             }))
           );
         }
@@ -141,12 +142,13 @@ export function HeaderSearch() {
         const { data: threads, error: threadsError } = await supabase
           .from("forum_threads")
           .select("id, title, slug, category:forum_categories(name, slug)")
-          .ilike("title", `%${query}%`)
+          .ilike("title", `%${searchQuery}%`)
           .limit(5);
 
-        console.log("[Search] Forum threads query result:", threads?.length, "threads, error:", threadsError);
-
-        if (threads) {
+        if (threadsError) {
+          console.error("[Search] Forum threads error:", threadsError);
+          hasError = true;
+        } else if (threads) {
           searchResults.push(
             ...threads.map((t: { id: string; title: string; slug: string; category: { name: string; slug: string } | null }) => ({
               id: t.id,
@@ -158,12 +160,20 @@ export function HeaderSearch() {
           );
         }
 
-        console.log("[Search] Total results:", searchResults.length);
-        setResults(searchResults);
+        // Only update if query hasn't changed (prevent race condition)
+        if (query.trim() === searchQuery) {
+          setResults(searchResults);
+          setSearchError(hasError ? "Some results may be incomplete" : null);
+        }
       } catch (error) {
         console.error("[Search] Search error:", error);
+        if (query.trim() === searchQuery) {
+          setSearchError("Search failed. Please try again.");
+        }
       } finally {
-        setIsLoading(false);
+        if (query.trim() === searchQuery) {
+          setIsLoading(false);
+        }
       }
     }, 200);
 
@@ -189,10 +199,10 @@ export function HeaderSearch() {
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" && results.length > 0) {
       e.preventDefault();
       setSelectedIndex((prev) => Math.min(prev + 1, results.length - 1));
-    } else if (e.key === "ArrowUp") {
+    } else if (e.key === "ArrowUp" && results.length > 0) {
       e.preventDefault();
       setSelectedIndex((prev) => Math.max(prev - 1, 0));
     } else if (e.key === "Enter" && results[selectedIndex]) {
@@ -231,16 +241,7 @@ export function HeaderSearch() {
     }
   };
 
-  const getTypeLabel = (type: SearchResult["type"]) => {
-    switch (type) {
-      case "babel":
-        return "Babel";
-      case "article":
-        return "Wiki";
-      case "thread":
-        return "Forum";
-    }
-  };
+  const activeResultId = results[selectedIndex] ? `search-result-${results[selectedIndex].id}` : undefined;
 
   return (
     <div ref={containerRef} className="relative">
@@ -254,6 +255,11 @@ export function HeaderSearch() {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
+          role="combobox"
+          aria-expanded={isOpen && !!query.trim()}
+          aria-controls="search-results"
+          aria-autocomplete="list"
+          aria-activedescendant={activeResultId}
           className="w-[180px] md:w-[240px] h-8 pl-9 pr-16 bg-background border border-border rounded-md text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary transition-all"
         />
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-muted-foreground">
@@ -264,6 +270,7 @@ export function HeaderSearch() {
                 inputRef.current?.focus();
               }}
               className="p-0.5 hover:text-foreground"
+              aria-label="Clear search"
             >
               <X className="size-3" />
             </button>
@@ -276,7 +283,11 @@ export function HeaderSearch() {
 
       {/* Results dropdown */}
       {isOpen && query.trim() && (
-        <div className="absolute top-full mt-2 left-0 right-0 md:w-[320px] bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50">
+        <div
+          id="search-results"
+          role="listbox"
+          className="absolute top-full mt-2 left-0 right-0 md:w-[320px] bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50"
+        >
           {isLoading ? (
             <div className="p-4 flex items-center justify-center text-muted-foreground">
               <Spinner className="size-4 animate-spin mr-2" />
@@ -284,17 +295,28 @@ export function HeaderSearch() {
             </div>
           ) : results.length > 0 ? (
             <div className="py-1">
+              {/* Error banner if partial failure */}
+              {searchError && (
+                <div className="px-3 py-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 flex items-center gap-2">
+                  <WarningCircle className="size-3.5" />
+                  {searchError}
+                </div>
+              )}
+
               {/* Babel Terms Section */}
               {results.filter(r => r.type === "babel").length > 0 && (
                 <>
                   <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-muted/30 border-b border-border">
                     Babel Terms
                   </div>
-                  {results.filter(r => r.type === "babel").map((result, idx) => {
+                  {results.filter(r => r.type === "babel").map((result) => {
                     const globalIndex = results.findIndex(r => r.id === result.id);
                     return (
                       <Link
                         key={`${result.type}-${result.id}`}
+                        id={`search-result-${result.id}`}
+                        role="option"
+                        aria-selected={globalIndex === selectedIndex}
                         href={result.href}
                         onClick={() => {
                           setIsOpen(false);
@@ -324,11 +346,14 @@ export function HeaderSearch() {
                   <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-muted/30 border-b border-border">
                     Wiki Articles
                   </div>
-                  {results.filter(r => r.type === "article").map((result, idx) => {
+                  {results.filter(r => r.type === "article").map((result) => {
                     const globalIndex = results.findIndex(r => r.id === result.id);
                     return (
                       <Link
                         key={`${result.type}-${result.id}`}
+                        id={`search-result-${result.id}`}
+                        role="option"
+                        aria-selected={globalIndex === selectedIndex}
                         href={result.href}
                         onClick={() => {
                           setIsOpen(false);
@@ -358,11 +383,14 @@ export function HeaderSearch() {
                   <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-muted/30 border-b border-border">
                     Forum Discussions
                   </div>
-                  {results.filter(r => r.type === "thread").map((result, idx) => {
+                  {results.filter(r => r.type === "thread").map((result) => {
                     const globalIndex = results.findIndex(r => r.id === result.id);
                     return (
                       <Link
                         key={`${result.type}-${result.id}`}
+                        id={`search-result-${result.id}`}
+                        role="option"
+                        aria-selected={globalIndex === selectedIndex}
                         href={result.href}
                         onClick={() => {
                           setIsOpen(false);
@@ -385,6 +413,11 @@ export function HeaderSearch() {
                   })}
                 </>
               )}
+            </div>
+          ) : searchError ? (
+            <div className="p-4 text-center">
+              <WarningCircle className="size-5 text-destructive mx-auto mb-2" />
+              <p className="text-sm text-destructive">{searchError}</p>
             </div>
           ) : (
             <div className="p-4 text-center text-sm text-muted-foreground">
