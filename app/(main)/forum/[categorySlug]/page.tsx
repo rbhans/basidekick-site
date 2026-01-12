@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: ForumCategoryPageProps): Prom
 
   if (!supabase) {
     return {
-      title: "Category Not Found | basidekick Forum",
+      title: "Category Not Found | BASidekick Forum",
     };
   }
 
@@ -36,20 +36,20 @@ export async function generateMetadata({ params }: ForumCategoryPageProps): Prom
 
   if (!category) {
     return {
-      title: "Category Not Found | basidekick Forum",
+      title: "Category Not Found | BASidekick Forum",
     };
   }
 
   const description = category.description || `Discuss ${category.name} topics with the BAS community`;
 
   return {
-    title: `${category.name} | basidekick Forum`,
+    title: `${category.name} | BASidekick Forum`,
     description,
     openGraph: {
-      title: `${category.name} - basidekick Forum`,
+      title: `${category.name} - BASidekick Forum`,
       description,
       type: "website",
-      siteName: "basidekick",
+      siteName: "BASidekick",
       url: `https://basidekick.com/forum/${categorySlug}`,
     },
     alternates: {

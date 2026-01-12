@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Circle, List, Moon, Sun, Drop, Thermometer, User, SignOut, Gear, UserPlus, ShieldCheck } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { Logo } from "./logo";
+import { HeaderSearch } from "./header-search";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -140,10 +141,15 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
         </h1>
       </div>
 
-      {/* Right side: Weather + Actions */}
+      {/* Right side: Search + Weather + Actions */}
       <div className="flex items-center gap-4">
+        {/* Search */}
+        <div className="hidden sm:block">
+          <HeaderSearch />
+        </div>
+
         {/* Weather display - rotating world cities */}
-        <div className="hidden sm:flex items-center gap-3 text-xs font-mono text-muted-foreground">
+        <div className="hidden lg:flex items-center gap-3 text-xs font-mono text-muted-foreground">
           <span className="text-primary">{weather.city}</span>
           <div className="flex items-center gap-1 group cursor-default">
             <Thermometer className="w-3.5 h-3.5 text-primary transition-all duration-150 group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />

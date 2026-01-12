@@ -8,6 +8,7 @@ import {
   Trash,
   MagnifyingGlass,
   User,
+  UsersThree,
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import {
@@ -167,6 +168,12 @@ export function ProjectsList() {
                         {project.is_internal && (
                           <p className="text-xs text-muted-foreground">
                             Internal project
+                          </p>
+                        )}
+                        {project.company_id && (
+                          <p className="flex items-center gap-1 text-xs text-primary">
+                            <UsersThree className="size-3" weight="fill" />
+                            Shared
                           </p>
                         )}
                       </div>

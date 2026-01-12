@@ -4,12 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 
 const STORAGE_KEY = "basidekick_bookmarks";
 
+export type BookmarkType = "wiki" | "forum" | "babel" | "calculator" | "reference";
+
 export interface Bookmark {
   id: string;
-  type: "wiki" | "forum";
+  type: BookmarkType;
   title: string;
   slug: string;
   category?: string;
+  babelType?: "point" | "equipment";
+  section?: string;
   addedAt: string;
 }
 
@@ -57,7 +61,7 @@ export function useBookmarks() {
     });
   }, []);
 
-  const removeBookmark = useCallback((id: string, type: "wiki" | "forum") => {
+  const removeBookmark = useCallback((id: string, type: BookmarkType) => {
     setBookmarks((prev) => prev.filter((b) => !(b.id === id && b.type === type)));
   }, []);
 
@@ -76,14 +80,14 @@ export function useBookmarks() {
   );
 
   const isBookmarked = useCallback(
-    (id: string, type: "wiki" | "forum") => {
+    (id: string, type: BookmarkType) => {
       return bookmarks.some((b) => b.id === id && b.type === type);
     },
     [bookmarks]
   );
 
   const getBookmarksByType = useCallback(
-    (type: "wiki" | "forum") => {
+    (type: BookmarkType) => {
       return bookmarks.filter((b) => b.type === type);
     },
     [bookmarks]

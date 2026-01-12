@@ -33,3 +33,5 @@ export { ClientForm } from "./client-form";
 export { ProjectForm } from "./project-form";
 export { ProjectCalendar } from "./project-calendar";
 export { DailyTaskList } from "./daily-task-list";
+export { BillableHoursReport } from "./billable-hours-report";
+export { QuickTimeEntry } from "./quick-time-entry";

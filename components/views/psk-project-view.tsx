@@ -22,6 +22,7 @@ import {
   useTimeEntries,
   useBudgetLineItems,
   useFiles,
+  useProjects,
   ProjectForm,
 } from "@/components/projects";
 import { useAuth } from "@/components/providers/auth-provider";
@@ -39,6 +40,8 @@ import {
   PencilSimple,
   File,
   LinkSimple,
+  Copy,
+  UsersThree,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 
@@ -60,9 +63,11 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
   const { budgetLineItems, addBudgetLineItem, deleteBudgetLineItem } =
     useBudgetLineItems(projectId);
   const { files, addFile, deleteFile } = useFiles(projectId);
+  const { addProject } = useProjects();
 
   // Edit dialog state
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isCloning, setIsCloning] = useState(false);
 
   // Task form state
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -255,6 +260,37 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
     setFileForm({ name: "", url: "", type: "" });
   };
 
+  // Clone project handler
+  const handleCloneProject = async () => {
+    if (!user?.id || !project) return;
+
+    setIsCloning(true);
+    try {
+      await addProject({
+        user_id: user.id,
+        created_by: user.id,
+        name: `${project.name} (Copy)`,
+        description: project.description,
+        client_id: project.client_id,
+        status: "backlog",
+        is_internal: project.is_internal,
+        is_archived: false,
+        due_date: null, // Reset due date for the clone
+        budget: project.budget,
+        hourly_rate: project.hourly_rate,
+        proton_drive_link: null, // Don't copy cloud storage link
+        notes: project.notes,
+        color: project.color,
+        company_id: project.company_id,
+      });
+      router.push(ROUTES.PSK);
+    } catch (error) {
+      console.error("Failed to clone project:", error);
+    } finally {
+      setIsCloning(false);
+    }
+  };
+
   return (
     <div className="min-h-full">
       {/* Header */}
@@ -310,17 +346,33 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                     Cloud Storage
                   </a>
                 )}
+                {project.company_id && (
+                  <span className="flex items-center gap-1 text-primary">
+                    <UsersThree className="size-4" weight="fill" />
+                    Shared with team
+                  </span>
+                )}
               </div>
             </div>
 
-            {/* Edit button */}
-            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <PencilSimple className="mr-1 size-4" />
-                  Edit
-                </Button>
-              </DialogTrigger>
+            {/* Action buttons */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCloneProject}
+                disabled={isCloning}
+              >
+                <Copy className="mr-1 size-4" />
+                {isCloning ? "Cloning..." : "Clone"}
+              </Button>
+              <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <PencilSimple className="mr-1 size-4" />
+                    Edit
+                  </Button>
+                </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Edit Project</DialogTitle>
@@ -331,7 +383,8 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                   onCancel={() => setIsEditDialogOpen(false)}
                 />
               </DialogContent>
-            </Dialog>
+              </Dialog>
+            </div>
           </div>
         </div>
       </section>

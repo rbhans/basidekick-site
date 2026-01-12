@@ -67,7 +67,7 @@ export function Footer() {
 
         <div className="flex items-center justify-between mt-12 pt-8 border-t border-border">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} basidekick
+            &copy; {new Date().getFullYear()} BASidekick
           </p>
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}

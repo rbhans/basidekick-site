@@ -30,22 +30,20 @@ interface ProjectStoreState {
   clients: PSKClient[];
   budgetLineItems: PSKBudgetLineItem[];
 
-  // Workspace & Companies
-  currentWorkspace: PSKWorkspaceContext;
+  // Companies (for team sharing)
   companies: PSKCompany[];
 
   // Status
   isLoading: boolean;
   error: string | null;
 
-  // Workspace Management
-  setWorkspace: (workspace: PSKWorkspaceContext) => Promise<void>;
+  // Company Management
   initializeCompanies: () => Promise<void>;
   createCompany: (name: string, userId: string) => Promise<PSKCompany>;
   deleteCompany: (id: string) => Promise<void>;
 
   // Initialization
-  initialize: (workspace?: PSKWorkspaceContext) => Promise<void>;
+  initialize: () => Promise<void>;
 
   // Projects
   addProject: (
@@ -96,21 +94,14 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   clients: [],
   budgetLineItems: [],
 
-  // Workspace & Companies
-  currentWorkspace: DEFAULT_WORKSPACE,
+  // Companies
   companies: [],
 
   // Status
   isLoading: false,
   error: null,
 
-  // Workspace Management
-  setWorkspace: async (workspace) => {
-    set({ currentWorkspace: workspace });
-    // Re-initialize data with new workspace context
-    await get().initialize(workspace);
-  },
-
+  // Company Management
   initializeCompanies: async () => {
     try {
       const companies = await companyApi.getCompanies();
@@ -130,30 +121,31 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
     await companyApi.deleteCompany(id);
     set((state) => ({
       companies: state.companies.filter((c) => c.id !== id),
-      // If we were in that company's workspace, switch to personal
-      currentWorkspace:
-        state.currentWorkspace.companyId === id
-          ? DEFAULT_WORKSPACE
-          : state.currentWorkspace,
     }));
+    // Re-initialize to refresh projects list
+    await get().initialize();
   },
 
-  initialize: async (workspace) => {
-    const ws = workspace || get().currentWorkspace;
-    set({ isLoading: true, error: null, currentWorkspace: ws });
+  initialize: async () => {
+    set({ isLoading: true, error: null });
 
     try {
+      // First, load companies to know which shared projects to fetch
+      const companies = await companyApi.getCompanies();
+      const companyIds = companies.map((c) => c.id);
+      set({ companies });
+
       // Always fetch daily tasks (personal only)
       const dailyTasks = await api.getTasks(undefined, { dailyOnly: true });
 
-      // Fetch workspace-specific data
+      // Fetch all data - projects include personal + shared from all companies
       const [projects, projectTasks, timeEntries, files, clients, budgetLineItems] =
         await Promise.all([
-          api.getProjects(ws),
-          api.getTasks(ws, { projectTasksOnly: true }),
+          api.getProjects(companyIds),
+          api.getTasks(undefined, { projectTasksOnly: true }),
           api.getTimeEntries(),
           api.getFiles(),
-          api.getClients(ws),
+          api.getClients(companyIds),
           api.getBudgetLineItems(),
         ]);
 

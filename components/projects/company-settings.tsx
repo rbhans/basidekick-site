@@ -49,7 +49,7 @@ export function CompanySettings({
   onOpenChange,
 }: CompanySettingsProps) {
   const { user } = useAuth();
-  const { companies, deleteCompany, setWorkspace, initializeCompanies } = useProjectStore();
+  const { companies, deleteCompany, initializeCompanies } = useProjectStore();
 
   const [company, setCompany] = useState<PSKCompany | null>(null);
   const [members, setMembers] = useState<PSKCompanyMember[]>([]);
@@ -132,12 +132,6 @@ export function CompanySettings({
 
     try {
       await companyApi.leaveCompany(company.id);
-      // Switch to personal workspace
-      await setWorkspace({
-        type: "personal",
-        companyId: null,
-        companyName: null,
-      });
       await initializeCompanies();
       onOpenChange(false);
     } catch (error) {

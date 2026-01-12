@@ -25,7 +25,7 @@ export function CreateCompanyDialog({
   onOpenChange,
 }: CreateCompanyDialogProps) {
   const { user } = useAuth();
-  const { createCompany, setWorkspace } = useProjectStore();
+  const { createCompany } = useProjectStore();
 
   const [name, setName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -38,14 +38,7 @@ export function CreateCompanyDialog({
     setError(null);
 
     try {
-      const company = await createCompany(name.trim(), user.id);
-
-      // Switch to the new company workspace
-      await setWorkspace({
-        type: "company",
-        companyId: company.id,
-        companyName: company.name,
-      });
+      await createCompany(name.trim(), user.id);
 
       // Reset and close
       setName("");

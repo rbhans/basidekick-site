@@ -13,32 +13,57 @@ import type {
 // Projects
 // ============================================================================
 
+/**
+ * Get all projects user has access to:
+ * - Personal projects (company_id is null, user_id matches)
+ * - Shared projects (company_id matches any company user is a member of)
+ *
+ * @param companyIds - Optional array of company IDs the user is a member of.
+ *                     If not provided, fetches personal projects only.
+ */
 export async function getProjects(
-  workspace?: PSKWorkspaceContext
+  companyIds?: string[]
 ): Promise<PSKProject[]> {
   const supabase = createSupabaseClient();
   if (!supabase) return [];
 
-  let query = supabase
+  // Fetch personal projects (no company)
+  const personalQuery = supabase
     .from("psk_projects")
     .select(`
       *,
       client:psk_clients(*)
     `)
+    .is("company_id", null)
     .order("updated_at", { ascending: false });
 
-  // Apply workspace filter
-  if (workspace?.type === "company" && workspace.companyId) {
-    query = query.eq("company_id", workspace.companyId);
-  } else {
-    // Personal workspace - only projects with no company_id
-    query = query.is("company_id", null);
+  const { data: personalProjects, error: personalError } = await personalQuery;
+  if (personalError) throw personalError;
+
+  // If user has companies, also fetch shared projects
+  let sharedProjects: PSKProject[] = [];
+  if (companyIds && companyIds.length > 0) {
+    const sharedQuery = supabase
+      .from("psk_projects")
+      .select(`
+        *,
+        client:psk_clients(*)
+      `)
+      .in("company_id", companyIds)
+      .order("updated_at", { ascending: false });
+
+    const { data, error } = await sharedQuery;
+    if (error) throw error;
+    sharedProjects = data as PSKProject[];
   }
 
-  const { data, error } = await query;
+  // Combine and sort by updated_at
+  const allProjects = [...(personalProjects as PSKProject[]), ...sharedProjects];
+  allProjects.sort((a, b) =>
+    new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  );
 
-  if (error) throw error;
-  return data as PSKProject[];
+  return allProjects;
 }
 
 export async function createProject(
@@ -179,29 +204,46 @@ export async function deleteTask(id: string): Promise<void> {
 // Clients
 // ============================================================================
 
+/**
+ * Get all clients user has access to:
+ * - Personal clients (company_id is null)
+ * - Shared clients (company_id matches any company user is a member of)
+ */
 export async function getClients(
-  workspace?: PSKWorkspaceContext
+  companyIds?: string[]
 ): Promise<PSKClient[]> {
   const supabase = createSupabaseClient();
   if (!supabase) return [];
 
-  let query = supabase
+  // Fetch personal clients
+  const personalQuery = supabase
     .from("psk_clients")
     .select("*")
+    .is("company_id", null)
     .order("name", { ascending: true });
 
-  // Apply workspace filter
-  if (workspace?.type === "company" && workspace.companyId) {
-    query = query.eq("company_id", workspace.companyId);
-  } else {
-    // Personal workspace - only clients with no company_id
-    query = query.is("company_id", null);
+  const { data: personalClients, error: personalError } = await personalQuery;
+  if (personalError) throw personalError;
+
+  // If user has companies, also fetch shared clients
+  let sharedClients: PSKClient[] = [];
+  if (companyIds && companyIds.length > 0) {
+    const sharedQuery = supabase
+      .from("psk_clients")
+      .select("*")
+      .in("company_id", companyIds)
+      .order("name", { ascending: true });
+
+    const { data, error } = await sharedQuery;
+    if (error) throw error;
+    sharedClients = data as PSKClient[];
   }
 
-  const { data, error } = await query;
+  // Combine and sort by name
+  const allClients = [...(personalClients as PSKClient[]), ...sharedClients];
+  allClients.sort((a, b) => a.name.localeCompare(b.name));
 
-  if (error) throw error;
-  return data as PSKClient[];
+  return allClients;
 }
 
 export async function createClient(

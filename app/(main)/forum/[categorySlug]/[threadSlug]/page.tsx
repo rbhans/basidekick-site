@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: ForumThreadPageProps): Promis
 
   if (!supabase) {
     return {
-      title: "Thread Not Found | basidekick Forum",
+      title: "Thread Not Found | BASidekick Forum",
     };
   }
 
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: ForumThreadPageProps): Promis
 
   if (!thread) {
     return {
-      title: "Thread Not Found | basidekick Forum",
+      title: "Thread Not Found | BASidekick Forum",
     };
   }
 
@@ -68,14 +68,14 @@ export async function generateMetadata({ params }: ForumThreadPageProps): Promis
   const authorName = Array.isArray(author) ? author[0]?.display_name : author?.display_name;
 
   return {
-    title: `${thread.title} | basidekick Forum`,
+    title: `${thread.title} | BASidekick Forum`,
     description,
     authors: authorName ? [{ name: authorName }] : undefined,
     openGraph: {
       title: thread.title,
       description,
       type: "article",
-      siteName: "basidekick",
+      siteName: "BASidekick",
       url: `https://basidekick.com/forum/${categorySlug}/${threadSlug}`,
     },
     twitter: {
@@ -133,7 +133,7 @@ function generateDiscussionJsonLd(
     },
     publisher: {
       "@type": "Organization",
-      name: "basidekick",
+      name: "BASidekick",
       url: "https://basidekick.com",
     },
     about: {

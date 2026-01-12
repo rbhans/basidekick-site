@@ -9,12 +9,12 @@ interface LogoProps {
 
 export function Logo({ size = "md", onClick }: LogoProps) {
   const [isHovering, setIsHovering] = useState(false);
-  const [displayText, setDisplayText] = useState("basidekick");
+  const [displayText, setDisplayText] = useState("BASidekick");
   const [cursorVisible, setCursorVisible] = useState(false);
   const animationRef = useRef<NodeJS.Timeout | null>(null);
   const cursorRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fullText = "basidekick";
+  const fullText = "BASidekick";
   const typingSpeed = 50; // ms per character
 
   const sizeClasses = {
@@ -70,10 +70,10 @@ export function Logo({ size = "md", onClick }: LogoProps) {
       onClick={onClick}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      className={`font-mono font-medium ${sizeClasses[size]} transition-colors hover:text-primary`}
+      className={`font-mono font-medium ${sizeClasses[size]} transition-colors hover:text-primary cursor-pointer`}
     >
       <span className="text-muted-foreground">[</span>
-      <span className="inline-block min-w-[7.5ch] pointer-events-none">
+      <span className="inline-block min-w-[10ch] pointer-events-none">
         {displayText}
         <span
           className={`pointer-events-none inline-block w-[2px] h-[1em] bg-primary ml-[1px] align-middle transition-opacity ${

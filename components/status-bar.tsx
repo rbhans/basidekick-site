@@ -84,7 +84,7 @@ export function StatusBar({ status = "ready" }: StatusBarProps) {
           rob@basidekick.com
         </a>
         <span className="text-muted-foreground/60">|</span>
-        <span suppressHydrationWarning>&copy; 2025 basidekick</span>
+        <span suppressHydrationWarning>&copy; 2025 BASidekick</span>
       </div>
     </div>
   );

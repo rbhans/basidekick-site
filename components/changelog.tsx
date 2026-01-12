@@ -41,7 +41,7 @@ const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     date: "Nov 2024",
     title: "Initial Launch",
     items: [
-      "Launched basidekick.com",
+      "Launched BASidekick.com",
       "Added core tools section",
       "Implemented dark/light theme",
       "Basic site structure and design",

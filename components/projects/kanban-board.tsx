@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { DotsSixVertical, User } from "@phosphor-icons/react";
+import { DotsSixVertical, User, UsersThree } from "@phosphor-icons/react";
 import { useProjects, useClients } from "./project-hooks";
 import { ROUTES } from "@/lib/routes";
 import type { PSKKanbanStatus } from "@/lib/types";
@@ -113,6 +113,12 @@ export function KanbanBoard() {
                   {project.is_internal && (
                     <p className="mt-1 text-xs text-muted-foreground italic">
                       Internal project
+                    </p>
+                  )}
+                  {project.company_id && (
+                    <p className="mt-1 flex items-center gap-1 text-xs text-primary">
+                      <UsersThree className="size-3" weight="fill" />
+                      Shared
                     </p>
                   )}
                 </div>

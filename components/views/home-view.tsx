@@ -6,16 +6,13 @@ import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CircuitBackground } from "@/components/circuit-background";
-import { BuildingWireframe } from "@/components/building-wireframe";
+import { BuildingWireframeIsometric } from "@/components/building-wireframe-isometric";
 import { AnimatedCounter } from "@/components/animated-counter";
-import { HeroSearch } from "@/components/hero-search";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { UserAvatar } from "@/components/user-avatar";
-import { CommandMenu, useCommandMenu } from "@/components/command-menu";
 import { Changelog } from "@/components/changelog";
 import {
   ArrowRight,
-  GithubLogo,
   Chats,
   BookOpen,
   ChatCircle,
@@ -63,7 +60,6 @@ export function HomeView({
   recentThreads = [],
   stats = { articleCount: 0, threadCount: 0, termCount: 0 },
 }: HomeViewProps) {
-  const { open: commandOpen, setOpen: setCommandOpen } = useCommandMenu();
 
   // Map tools to product card format
   const products = TOOLS_LIST.map((tool) => ({
@@ -84,9 +80,6 @@ export function HomeView({
 
   return (
     <div className="min-h-full">
-      {/* Command Menu (Cmd+K) */}
-      <CommandMenu open={commandOpen} onOpenChange={setCommandOpen} />
-
       {/* Hero Section */}
       <section className="relative py-12 md:py-16 overflow-hidden">
         <CircuitBackground opacity={0.15} />
@@ -104,47 +97,23 @@ export function HomeView({
                 Assistive tools, shared knowledge, and a community for BAS
                 professionals.
               </p>
-
-              {/* Hero Search */}
-              <div className="mt-6 flex justify-center lg:justify-start">
-                <HeroSearch onCommandMenuOpen={() => setCommandOpen(true)} />
-              </div>
-
-              <div className="mt-6 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
-                <Button size="lg" asChild>
-                  <Link href={ROUTES.TOOLS}>
-                    Browse Tools
-                    <ArrowRight className="size-4 ml-2" />
-                  </Link>
-                </Button>
-                <Button variant="outline" size="lg" asChild>
-                  <a
-                    href="https://github.com/basidekick"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <GithubLogo className="size-4 mr-2" />
-                    GitHub
-                  </a>
-                </Button>
-              </div>
             </div>
 
             {/* Right: Building wireframe */}
             <div className="hidden lg:block animate-fade-in animation-delay-200">
-              <BuildingWireframe className="w-full" />
+              <BuildingWireframeIsometric className="w-full" />
             </div>
           </div>
 
           {/* Mobile: Building wireframe below */}
           <div className="lg:hidden mt-8 animate-fade-in">
-            <BuildingWireframe className="w-full max-w-md mx-auto" />
+            <BuildingWireframeIsometric className="w-full max-w-md mx-auto" />
           </div>
         </div>
       </section>
 
       {/* Stats Bar */}
-      <section className="py-6 border-y border-border bg-card/50">
+      <section className="py-3 border-y border-border bg-card/50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-3 gap-4 text-center">
             <div className="space-y-1">
@@ -179,7 +148,7 @@ export function HomeView({
       </section>
 
       {/* Tools Section */}
-      <section className="py-12 bg-card/30">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-3">
             <Wrench className="size-6 text-cyan-500 dark:text-cyan-400" />
@@ -201,9 +170,8 @@ export function HomeView({
       </section>
 
       {/* Resources Section */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.1} />
-        <div className="container mx-auto px-4 relative z-10">
+      <section className="py-12">
+        <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <Book className="size-6 text-violet-500 dark:text-violet-400" />
@@ -243,8 +211,8 @@ export function HomeView({
       </section>
 
       {/* Wiki Section - Recent Articles */}
-      <section className="relative py-12 overflow-hidden bg-card/30">
-        <div className="container mx-auto px-4 relative z-10">
+      <section className="py-12">
+        <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <BookOpen className="size-6 text-blue-500 dark:text-blue-400" />
@@ -392,7 +360,7 @@ export function HomeView({
       </section>
 
       {/* Newsletter & Changelog Section */}
-      <section className="py-12 bg-card/30 border-y border-border">
+      <section className="py-12 border-y border-border">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
             {/* Newsletter */}

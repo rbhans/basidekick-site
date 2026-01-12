@@ -86,7 +86,7 @@ export function NavTreeItem({
         <button
           type="button"
           onClick={handleToggleClick}
-          className="flex items-center justify-center w-5 h-5 hover:bg-muted rounded -ml-1"
+          className="flex items-center justify-center w-5 h-5 hover:bg-muted rounded -ml-1 cursor-pointer"
           aria-label={expanded ? "Collapse" : "Expand"}
         >
           <CaretRight
@@ -105,7 +105,7 @@ export function NavTreeItem({
       <button
         type="button"
         onClick={handleClick}
-        className="group flex items-center gap-2 flex-grow min-w-0"
+        className="group flex items-center gap-2 flex-grow min-w-0 cursor-pointer"
       >
         {/* Icon */}
         {icon && (

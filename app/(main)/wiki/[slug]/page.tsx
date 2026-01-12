@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: WikiArticlePageProps): Promis
 
   if (!supabase) {
     return {
-      title: "Article Not Found | basidekick Wiki",
+      title: "Article Not Found | BASidekick Wiki",
     };
   }
 
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: WikiArticlePageProps): Promis
 
   if (!article) {
     return {
-      title: "Article Not Found | basidekick Wiki",
+      title: "Article Not Found | BASidekick Wiki",
     };
   }
 
@@ -55,14 +55,14 @@ export async function generateMetadata({ params }: WikiArticlePageProps): Promis
   const authorName = Array.isArray(author) ? author[0]?.display_name : author?.display_name;
 
   return {
-    title: `${article.title} | basidekick Wiki`,
+    title: `${article.title} | BASidekick Wiki`,
     description,
     authors: authorName ? [{ name: authorName }] : undefined,
     openGraph: {
       title: article.title,
       description,
       type: "article",
-      siteName: "basidekick",
+      siteName: "BASidekick",
       url: `https://basidekick.com/wiki/${slug}`,
     },
     twitter: {
@@ -94,11 +94,11 @@ function generateArticleJsonLd(article: {
     description: article.summary || article.content?.slice(0, 160),
     author: {
       "@type": "Person",
-      name: article.author?.display_name || "basidekick Community",
+      name: article.author?.display_name || "BASidekick Community",
     },
     publisher: {
       "@type": "Organization",
-      name: "basidekick",
+      name: "BASidekick",
       url: "https://basidekick.com",
     },
     datePublished: article.created_at,

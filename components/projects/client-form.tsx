@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useClients } from "./project-hooks";
-import { useProjectStore } from "./project-store";
 import { useAuth } from "@/components/providers/auth-provider";
 import { createClient } from "@/lib/supabase/client";
 import type { PSKClient, PSKClientContact } from "@/lib/types";
@@ -20,7 +19,6 @@ interface ClientFormProps {
 export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
   const { addClient, updateClient } = useClients();
   const { user } = useAuth();
-  const currentWorkspace = useProjectStore((state) => state.currentWorkspace);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formState, setFormState] = useState(() => ({
@@ -194,7 +192,7 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
     } else {
       await addClient({
         user_id: user.id,
-        company_id: currentWorkspace.companyId,
+        company_id: null,
         name: formState.name,
         contacts: filteredContacts,
         logo: formState.logo.trim() || null,

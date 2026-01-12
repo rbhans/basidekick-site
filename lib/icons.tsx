@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import {
   Wrench,
   Book,
+  Books,
   User,
   Desktop,
   WaveTriangle,
@@ -28,6 +29,7 @@ import {
   Scan,
   Note,
   Lock,
+  Lifebuoy,
   Thermometer,
   Gauge,
   Fan,
@@ -100,6 +102,10 @@ export function getIcon(name: IconName | string, className = "size-4"): ReactNod
       return <Fan {...iconProps} />;
     case "WarningCircle":
       return <WarningCircle {...iconProps} />;
+    case "Books":
+      return <Books {...iconProps} />;
+    case "Lifebuoy":
+      return <Lifebuoy {...iconProps} />;
     default:
       return null;
   }

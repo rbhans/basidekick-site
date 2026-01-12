@@ -43,7 +43,7 @@ export function SidebarFooter() {
       <div className="space-y-1 text-[10px] font-mono text-muted-foreground">
         <div className="flex justify-between">
           <span className="text-muted-foreground/60">Station:</span>
-          <span>basidekick-01</span>
+          <span>BASidekick-01</span>
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground/60">Host:</span>

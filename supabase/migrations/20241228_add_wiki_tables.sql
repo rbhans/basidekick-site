@@ -124,7 +124,7 @@ INSERT INTO wiki_categories (name, slug, description, icon_name, display_order) 
   ('Issues & Solutions', 'issues-solutions', 'Troubleshooting guides and fixes for common problems', 'Warning', 1),
   ('How-To Guides', 'how-to-guides', 'Step-by-step tutorials and procedures', 'Book', 2),
   ('Best Practices', 'best-practices', 'Industry standards and recommended approaches', 'CheckCircle', 3),
-  ('basidekick Documentation', 'basidekick-docs', 'Official documentation for basidekick tools', 'Desktop', 4);
+  ('BASidekick Documentation', 'basidekick-docs', 'Official documentation for BASidekick tools', 'Desktop', 4);
 
 -- Add subcategories
 INSERT INTO wiki_categories (parent_id, name, slug, description, icon_name, display_order)

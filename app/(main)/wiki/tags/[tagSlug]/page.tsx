@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: WikiTagPageProps): Promise<Me
 
   if (!supabase) {
     return {
-      title: "Tag Not Found | basidekick Wiki",
+      title: "Tag Not Found | BASidekick Wiki",
     };
   }
 
@@ -37,20 +37,20 @@ export async function generateMetadata({ params }: WikiTagPageProps): Promise<Me
 
   if (!tag) {
     return {
-      title: "Tag Not Found | basidekick Wiki",
+      title: "Tag Not Found | BASidekick Wiki",
     };
   }
 
   const description = `Browse all BAS knowledge articles tagged with ${tag.name}`;
 
   return {
-    title: `${tag.name} Articles | basidekick Wiki`,
+    title: `${tag.name} Articles | BASidekick Wiki`,
     description,
     openGraph: {
-      title: `${tag.name} - basidekick Wiki`,
+      title: `${tag.name} - BASidekick Wiki`,
       description,
       type: "website",
-      siteName: "basidekick",
+      siteName: "BASidekick",
       url: `https://basidekick.com/wiki/tags/${tagSlug}`,
     },
     alternates: {

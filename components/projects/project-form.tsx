@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { useState, useEffect } from "react";
+import { X, UsersThree } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,7 +27,18 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
   const { addProject, updateProject } = useProjects();
   const { clients } = useClients();
   const { user } = useAuth();
-  const currentWorkspace = useProjectStore((state) => state.currentWorkspace);
+  const companies = useProjectStore((state) => state.companies);
+  const initializeCompanies = useProjectStore((state) => state.initializeCompanies);
+
+  // Load companies if not already loaded
+  useEffect(() => {
+    if (user && companies.length === 0) {
+      initializeCompanies();
+    }
+  }, [user, companies.length, initializeCompanies]);
+
+  // User's first company (for simple sharing)
+  const userCompany = companies[0] ?? null;
 
   const [formState, setFormState] = useState({
     name: project?.name ?? "",
@@ -35,6 +46,7 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
     client_id: project?.client_id ?? "",
     status: project?.status ?? ("backlog" as PSKKanbanStatus),
     is_internal: project?.is_internal ?? false,
+    is_shared: project?.company_id != null, // Shared if has company_id
     due_date: project?.due_date
       ? new Date(project.due_date).toISOString().split("T")[0]
       : "",
@@ -76,12 +88,15 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
     };
 
     if (project) {
-      await updateProject(project.id, projectData);
+      await updateProject(project.id, {
+        ...projectData,
+        company_id: formState.is_shared && userCompany ? userCompany.id : null,
+      });
     } else {
       await addProject({
         ...projectData,
         user_id: user.id,
-        company_id: currentWorkspace.companyId,
+        company_id: formState.is_shared && userCompany ? userCompany.id : null,
         created_by: user.id,
       });
     }
@@ -119,9 +134,9 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
         </div>
       </div>
 
-      {/* Project Type */}
+      {/* Project Type & Sharing */}
       <div className="space-y-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -137,6 +152,26 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
             />
             <span className="text-sm">Internal Project (no client)</span>
           </label>
+
+          {/* Share with team toggle - only show if user has a company */}
+          {userCompany && (
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formState.is_shared}
+                onChange={(e) =>
+                  setFormState((prev) => ({
+                    ...prev,
+                    is_shared: e.target.checked,
+                  }))
+                }
+                className="size-4"
+              />
+              <UsersThree className="size-4 text-primary" />
+              <span className="text-sm">Share with team</span>
+              <span className="text-xs text-muted-foreground">({userCompany.name})</span>
+            </label>
+          )}
         </div>
 
         {!formState.is_internal && (

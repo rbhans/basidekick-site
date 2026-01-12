@@ -12,6 +12,8 @@ import {
   ClientsList,
   ProjectCalendar,
   DailyTaskList,
+  BillableHoursReport,
+  QuickTimeEntry,
 } from "@/components/projects";
 import { useAuth } from "@/components/providers/auth-provider";
 import { SignIn } from "@phosphor-icons/react";
@@ -126,8 +128,13 @@ export function PSKView() {
             </div>
           ) : (
             <div className="space-y-8">
-              {/* Stats */}
-              <DashboardStats />
+              {/* Stats and Quick Time Entry */}
+              <div className="grid gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-2">
+                  <DashboardStats />
+                </div>
+                <QuickTimeEntry />
+              </div>
 
               {/* Kanban Board - Full Width */}
               <KanbanBoard />
@@ -149,6 +156,9 @@ export function PSKView() {
                 <ProjectCalendar />
                 <DailyTaskList />
               </div>
+
+              {/* Billable Hours Report */}
+              <BillableHoursReport />
             </div>
           )}
         </div>
