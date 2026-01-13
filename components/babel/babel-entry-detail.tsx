@@ -135,8 +135,8 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
         )}
       </div>
 
-      {/* States (points only) */}
-      {isPoint && (
+      {/* States (points only, not for numeric/analog points with units) */}
+      {isPoint && !unit && (
         <div className="mb-6">
           <h2 className="text-lg font-semibold mb-3">States</h2>
           {states && Object.keys(states).length > 0 ? (
