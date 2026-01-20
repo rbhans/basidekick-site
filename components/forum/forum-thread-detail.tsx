@@ -364,7 +364,7 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
   return (
     <div className="min-h-full">
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <Link
             href={ROUTES.FORUM_CATEGORY(category.slug)}

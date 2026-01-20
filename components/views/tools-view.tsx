@@ -15,7 +15,7 @@ export function ToolsView() {
     <div className="min-h-full">
       {/* Header */}
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <SectionLabel variant="tools">tools</SectionLabel>
 
@@ -30,7 +30,7 @@ export function ToolsView() {
       </section>
 
       {/* Expanded Tool Cards */}
-      <section className="py-8 bg-card/30">
+      <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {TOOLS_LIST.map((tool) => (

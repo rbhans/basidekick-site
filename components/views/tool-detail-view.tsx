@@ -38,7 +38,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
     <div className="min-h-full">
       {/* Hero Section */}
       <section className="relative py-12 md:py-16 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <SectionLabel variant="tools">{tool.id}</SectionLabel>
@@ -76,7 +76,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       </section>
 
       {/* Demo Section */}
-      <section className="py-12 bg-card/30">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <SectionLabel variant="tools">demo</SectionLabel>
 
@@ -116,7 +116,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       </section>
 
       {/* How It Works */}
-      <section className="py-12 bg-card/30">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <SectionLabel variant="tools">how it works</SectionLabel>
 
@@ -164,7 +164,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
 
       {/* Use Cases - Only for tools that have them */}
       {tool.useCases && tool.useCases.length > 0 && (
-        <section className="py-12 bg-card/30">
+        <section className="py-12">
           <div className="container mx-auto px-4">
             <SectionLabel variant="tools">use cases</SectionLabel>
 
@@ -199,7 +199,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
 
       {/* Pricing - Only for tools that have pricing tiers */}
       {tool.pricing && tool.pricing.length > 0 && (
-        <section className="py-12 bg-card/30">
+        <section className="py-12">
           <div className="container mx-auto px-4">
             <SectionLabel variant="tools">pricing</SectionLabel>
             <p className="mt-2 text-sm text-muted-foreground">Free to scan and use. Upgrade for more equipment.</p>
@@ -229,7 +229,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       )}
 
       {/* CTA */}
-      <section className="py-12 bg-card/30">
+      <section className="py-12">
         <div className="container mx-auto px-4 text-center">
           <div>
             {tool.mobileApp ? (

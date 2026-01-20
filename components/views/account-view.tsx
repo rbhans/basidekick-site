@@ -139,7 +139,7 @@ export function AccountView() {
     return (
       <div className="min-h-full">
         <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} />
+          <CircuitBackground opacity={0.15} colorGradient />
           <div className="container mx-auto px-4 relative z-10">
             <SectionLabel>account</SectionLabel>
 
@@ -182,7 +182,7 @@ export function AccountView() {
     <div className="min-h-full">
       {/* Header */}
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <SectionLabel>account</SectionLabel>
 
@@ -319,7 +319,7 @@ export function AccountView() {
       </section>
 
       {/* Account Info */}
-      <section className="py-8 bg-card/30">
+      <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">

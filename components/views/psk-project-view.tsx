@@ -132,7 +132,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
     return (
       <div className="min-h-full">
         <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} />
+          <CircuitBackground opacity={0.15} colorGradient />
           <div className="container mx-auto px-4 relative z-10">
             <SectionLabel>project</SectionLabel>
             <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
@@ -148,7 +148,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
     return (
       <div className="min-h-full">
         <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} />
+          <CircuitBackground opacity={0.15} colorGradient />
           <div className="container mx-auto px-4 relative z-10">
             <SectionLabel>project</SectionLabel>
             <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
@@ -384,7 +384,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
     <div className="min-h-full">
       {/* Header */}
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex items-start justify-between">
             <div>

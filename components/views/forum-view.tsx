@@ -539,7 +539,7 @@ export function ForumView() {
     return (
       <div className="min-h-full">
         <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} />
+          <CircuitBackground opacity={0.15} colorGradient />
           <div className="container mx-auto px-4 relative z-10">
             <SectionLabel variant="forum">forum</SectionLabel>
 
@@ -610,7 +610,7 @@ export function ForumView() {
     return (
       <div className="min-h-full">
         <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} />
+          <CircuitBackground opacity={0.15} colorGradient />
           <div className="container mx-auto px-4 relative z-10">
             <button
               onClick={goBack}
@@ -786,7 +786,7 @@ export function ForumView() {
   return (
     <div className="min-h-full">
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <button
             onClick={goBack}

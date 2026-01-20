@@ -16,7 +16,7 @@ export function WikiTagView({ tag, articles }: WikiTagViewProps) {
   return (
     <div className="min-h-full">
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <Link
             href={ROUTES.WIKI}

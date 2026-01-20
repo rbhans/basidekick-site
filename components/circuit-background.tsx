@@ -170,8 +170,8 @@ export function CircuitBackground({ className = "", opacity = 0.15, colorGradien
             const colorWave2 = (Math.sin((nx * 1.5 - ny * 2) * 2.5 - colorTime * 0.7) + 1) / 2;
             const colorWave3 = (Math.sin(distFromCenter * 4 + colorTime * 1.3) + 1) / 2;
 
-            // Amber is always the base (60%), other colors blend in subtly (40%)
-            const secondaryWeight = 0.4;
+            // Amber is the base (40%), other colors blend in more prominently (60%)
+            const secondaryWeight = 0.6;
 
             // Determine which secondary color based on position quadrants + wave
             const colorSelector = (colorWave1 * 0.5 + colorWave2 * 0.3 + ny * 0.2) % 1;
@@ -187,8 +187,8 @@ export function CircuitBackground({ className = "", opacity = 0.15, colorGradien
               secondaryColor = palette.emerald;
             }
 
-            // Blend intensity varies with wave
-            const blendIntensity = secondaryWeight * (0.3 + colorWave3 * 0.7);
+            // Blend intensity varies with wave - more prominent colors
+            const blendIntensity = secondaryWeight * (0.5 + colorWave3 * 0.5);
 
             // Final color: lerp between amber and the selected secondary color
             const finalColor = lerpColor(palette.amber, secondaryColor, blendIntensity);

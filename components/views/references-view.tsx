@@ -229,7 +229,7 @@ export function ReferencesView() {
     <div className="min-h-full">
       {/* Header */}
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <SectionLabel variant="resources">resources</SectionLabel>
 

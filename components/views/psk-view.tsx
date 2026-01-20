@@ -39,7 +39,7 @@ export function PSKView() {
     return (
       <div className="min-h-full">
         <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} />
+          <CircuitBackground opacity={0.15} colorGradient />
           <div className="container mx-auto px-4 relative z-10">
             <SectionLabel variant="tools">project sidekick</SectionLabel>
             <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
@@ -57,7 +57,7 @@ export function PSKView() {
     return (
       <div className="min-h-full">
         <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} />
+          <CircuitBackground opacity={0.15} colorGradient />
           <div className="container mx-auto px-4 relative z-10">
             <SectionLabel variant="tools">project sidekick</SectionLabel>
             <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
@@ -99,7 +99,7 @@ export function PSKView() {
     <div className="min-h-full">
       {/* Header */}
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <SectionLabel variant="tools">project sidekick</SectionLabel>
           <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">

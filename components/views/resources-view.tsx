@@ -46,7 +46,7 @@ export function ResourcesView() {
     <div className="min-h-full">
       {/* Header */}
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <SectionLabel variant="resources">resources</SectionLabel>
 
@@ -85,7 +85,7 @@ export function ResourcesView() {
       </section>
 
       {/* Community Stats (placeholder) */}
-      <section className="py-12 bg-card/30">
+      <section className="py-12">
         <div className="container mx-auto px-4">
           <SectionLabel variant="forum">community</SectionLabel>
 

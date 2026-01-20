@@ -149,7 +149,7 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
   return (
     <div className="min-h-full">
       <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <Link
             href={ROUTES.WIKI}
@@ -220,7 +220,7 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
       </section>
 
       {/* Comments */}
-      <section className="py-8 bg-card/30">
+      <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-2 mb-6">
             <ChatCircle className="size-5 text-primary" />
