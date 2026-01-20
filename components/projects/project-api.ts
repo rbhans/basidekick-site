@@ -6,6 +6,7 @@ import type {
   PSKTimeEntry,
   PSKFile,
   PSKBudgetLineItem,
+  PSKNote,
   PSKWorkspaceContext,
 } from "@/lib/types";
 
@@ -321,6 +322,28 @@ export async function createTimeEntry(
   return data as PSKTimeEntry;
 }
 
+export async function updateTimeEntry(
+  id: string,
+  updates: Partial<PSKTimeEntry>
+): Promise<PSKTimeEntry> {
+  const supabase = createSupabaseClient();
+  if (!supabase) throw new Error("Supabase client not available");
+
+  // Remove joined data from updates
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { project, creator, ...updateData } = updates;
+
+  const { data, error } = await supabase
+    .from("psk_time_entries")
+    .update(updateData)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as PSKTimeEntry;
+}
+
 export async function deleteTimeEntry(id: string): Promise<void> {
   const supabase = createSupabaseClient();
   if (!supabase) throw new Error("Supabase client not available");
@@ -414,5 +437,68 @@ export async function deleteBudgetLineItem(id: string): Promise<void> {
     .from("psk_budget_line_items")
     .delete()
     .eq("id", id);
+  if (error) throw error;
+}
+
+// ============================================================================
+// Notes (Site Log / Work Notes)
+// ============================================================================
+
+export async function getNotes(): Promise<PSKNote[]> {
+  const supabase = createSupabaseClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("psk_notes")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data as PSKNote[];
+}
+
+export async function createNote(
+  note: Omit<PSKNote, "id" | "created_at" | "creator">
+): Promise<PSKNote> {
+  const supabase = createSupabaseClient();
+  if (!supabase) throw new Error("Supabase client not available");
+
+  const { data, error } = await supabase
+    .from("psk_notes")
+    .insert(note)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as PSKNote;
+}
+
+export async function updateNote(
+  id: string,
+  updates: Partial<PSKNote>
+): Promise<PSKNote> {
+  const supabase = createSupabaseClient();
+  if (!supabase) throw new Error("Supabase client not available");
+
+  // Remove joined data from updates
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { creator, ...updateData } = updates;
+
+  const { data, error } = await supabase
+    .from("psk_notes")
+    .update(updateData)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as PSKNote;
+}
+
+export async function deleteNote(id: string): Promise<void> {
+  const supabase = createSupabaseClient();
+  if (!supabase) throw new Error("Supabase client not available");
+
+  const { error } = await supabase.from("psk_notes").delete().eq("id", id);
   if (error) throw error;
 }

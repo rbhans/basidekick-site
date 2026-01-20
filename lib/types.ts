@@ -397,6 +397,17 @@ export interface PSKFile {
   creator?: { display_name: string | null };
 }
 
+export interface PSKNote {
+  id: string;
+  user_id: string;
+  created_by: string | null;
+  project_id: string;
+  content: string;
+  created_at: string;
+  // Joined data
+  creator?: { display_name: string | null };
+}
+
 // BAS Babel types
 export interface BabelTypicalRange {
   min: number;

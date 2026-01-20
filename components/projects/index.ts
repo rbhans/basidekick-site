@@ -18,6 +18,7 @@ export {
   useProjectStats,
   useClientProjects,
   useBudgetLineItems,
+  useNotes,
   useProjectBudget,
 } from "./project-hooks";
 

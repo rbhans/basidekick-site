@@ -131,6 +131,7 @@ export function useProjectTasks(projectId: string | undefined) {
 export function useTimeEntries(projectId?: string) {
   const timeEntries = useProjectStore((state) => state.timeEntries);
   const addTimeEntry = useProjectStore((state) => state.addTimeEntry);
+  const updateTimeEntry = useProjectStore((state) => state.updateTimeEntry);
   const deleteTimeEntry = useProjectStore((state) => state.deleteTimeEntry);
 
   const filteredEntries = useMemo(() => {
@@ -138,7 +139,7 @@ export function useTimeEntries(projectId?: string) {
     return timeEntries.filter((entry) => entry.project_id === projectId);
   }, [timeEntries, projectId]);
 
-  return { timeEntries: filteredEntries, addTimeEntry, deleteTimeEntry };
+  return { timeEntries: filteredEntries, addTimeEntry, updateTimeEntry, deleteTimeEntry };
 }
 
 export function useFiles(projectId?: string) {
@@ -207,6 +208,25 @@ export function useBudgetLineItems(projectId?: string) {
     budgetLineItems: filteredItems,
     addBudgetLineItem,
     deleteBudgetLineItem,
+  };
+}
+
+export function useNotes(projectId?: string) {
+  const notes = useProjectStore((state) => state.notes);
+  const addNote = useProjectStore((state) => state.addNote);
+  const updateNote = useProjectStore((state) => state.updateNote);
+  const deleteNote = useProjectStore((state) => state.deleteNote);
+
+  const filteredNotes = useMemo(() => {
+    if (!projectId) return notes;
+    return notes.filter((note) => note.project_id === projectId);
+  }, [notes, projectId]);
+
+  return {
+    notes: filteredNotes,
+    addNote,
+    updateNote,
+    deleteNote,
   };
 }
 

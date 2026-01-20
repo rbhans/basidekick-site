@@ -23,6 +23,7 @@ import {
   useBudgetLineItems,
   useFiles,
   useProjects,
+  useNotes,
   ProjectForm,
 } from "@/components/projects";
 import { useAuth } from "@/components/providers/auth-provider";
@@ -42,6 +43,8 @@ import {
   LinkSimple,
   Copy,
   UsersThree,
+  Notepad,
+  X,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 
@@ -58,11 +61,12 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
   const stats = useProjectStats(projectId);
   const { tasks, addTask, deleteTask, toggleTaskComplete } =
     useProjectTasks(projectId);
-  const { timeEntries, addTimeEntry, deleteTimeEntry } =
+  const { timeEntries, addTimeEntry, updateTimeEntry, deleteTimeEntry } =
     useTimeEntries(projectId);
   const { budgetLineItems, addBudgetLineItem, deleteBudgetLineItem } =
     useBudgetLineItems(projectId);
   const { files, addFile, deleteFile } = useFiles(projectId);
+  const { notes, addNote, updateNote, deleteNote } = useNotes(projectId);
   const { addProject } = useProjects();
 
   // Edit dialog state
@@ -93,6 +97,20 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
     name: "",
     url: "",
     type: "",
+  });
+
+  // Note form state
+  const [newNoteContent, setNewNoteContent] = useState("");
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [editingNoteContent, setEditingNoteContent] = useState("");
+
+  // Time entry edit state
+  const [editingTimeEntryId, setEditingTimeEntryId] = useState<string | null>(null);
+  const [editingTimeEntry, setEditingTimeEntry] = useState({
+    description: "",
+    hours: "",
+    minutes: "",
+    date: "",
   });
 
   // Initialize store when user is authenticated
@@ -258,6 +276,77 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
       size: null,
     });
     setFileForm({ name: "", url: "", type: "" });
+  };
+
+  // Note handlers
+  const handleAddNote = async () => {
+    if (!user?.id || !newNoteContent.trim()) return;
+
+    await addNote({
+      user_id: user.id,
+      created_by: user.id,
+      project_id: projectId,
+      content: newNoteContent.trim(),
+    });
+    setNewNoteContent("");
+  };
+
+  const handleEditNote = (noteId: string, content: string) => {
+    setEditingNoteId(noteId);
+    setEditingNoteContent(content);
+  };
+
+  const handleSaveNote = async () => {
+    if (!editingNoteId || !editingNoteContent.trim()) return;
+    await updateNote(editingNoteId, { content: editingNoteContent.trim() });
+    setEditingNoteId(null);
+    setEditingNoteContent("");
+  };
+
+  const handleCancelEditNote = () => {
+    setEditingNoteId(null);
+    setEditingNoteContent("");
+  };
+
+  // Time entry edit handlers
+  const handleEditTimeEntry = (entryId: string) => {
+    const entry = timeEntries.find((e) => e.id === entryId);
+    if (!entry) return;
+
+    const hours = Math.floor(entry.duration / 60);
+    const minutes = entry.duration % 60;
+
+    setEditingTimeEntryId(entryId);
+    setEditingTimeEntry({
+      description: entry.description || "",
+      hours: hours.toString(),
+      minutes: minutes.toString(),
+      date: entry.date,
+    });
+  };
+
+  const handleSaveTimeEntry = async () => {
+    if (!editingTimeEntryId) return;
+
+    const hours = parseInt(editingTimeEntry.hours) || 0;
+    const minutes = parseInt(editingTimeEntry.minutes) || 0;
+    const duration = hours * 60 + minutes;
+
+    if (duration <= 0) return;
+
+    await updateTimeEntry(editingTimeEntryId, {
+      description: editingTimeEntry.description || null,
+      duration,
+      date: editingTimeEntry.date,
+    });
+
+    setEditingTimeEntryId(null);
+    setEditingTimeEntry({ description: "", hours: "", minutes: "", date: "" });
+  };
+
+  const handleCancelEditTimeEntry = () => {
+    setEditingTimeEntryId(null);
+    setEditingTimeEntry({ description: "", hours: "", minutes: "", date: "" });
   };
 
   // Clone project handler
@@ -612,26 +701,107 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                       {timeEntries.map((entry) => (
                         <li
                           key={entry.id}
-                          className="flex items-center gap-3 p-2 border border-border"
+                          className="border border-border"
                         >
-                          <Clock className="size-4 text-muted-foreground" />
-                          <span className="flex-1 text-sm">
-                            {entry.description || "No description"}
-                          </span>
-                          <span className="text-sm font-medium">
-                            {formatMinutes(entry.duration)}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {formatDate(entry.date)}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-6"
-                            onClick={() => deleteTimeEntry(entry.id)}
-                          >
-                            <Trash className="size-3.5 text-muted-foreground" />
-                          </Button>
+                          {editingTimeEntryId === entry.id ? (
+                            <div className="p-2 space-y-2">
+                              <div className="grid gap-2 sm:grid-cols-2">
+                                <Input
+                                  placeholder="Description..."
+                                  value={editingTimeEntry.description}
+                                  onChange={(e) =>
+                                    setEditingTimeEntry((prev) => ({
+                                      ...prev,
+                                      description: e.target.value,
+                                    }))
+                                  }
+                                />
+                                <Input
+                                  type="date"
+                                  value={editingTimeEntry.date}
+                                  onChange={(e) =>
+                                    setEditingTimeEntry((prev) => ({
+                                      ...prev,
+                                      date: e.target.value,
+                                    }))
+                                  }
+                                />
+                              </div>
+                              <div className="flex gap-2">
+                                <Input
+                                  type="number"
+                                  placeholder="Hours"
+                                  min="0"
+                                  value={editingTimeEntry.hours}
+                                  onChange={(e) =>
+                                    setEditingTimeEntry((prev) => ({
+                                      ...prev,
+                                      hours: e.target.value,
+                                    }))
+                                  }
+                                  className="w-24"
+                                />
+                                <Input
+                                  type="number"
+                                  placeholder="Minutes"
+                                  min="0"
+                                  max="59"
+                                  value={editingTimeEntry.minutes}
+                                  onChange={(e) =>
+                                    setEditingTimeEntry((prev) => ({
+                                      ...prev,
+                                      minutes: e.target.value,
+                                    }))
+                                  }
+                                  className="w-24"
+                                />
+                                <div className="ml-auto flex gap-1">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={handleCancelEditTimeEntry}
+                                  >
+                                    <X className="size-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    onClick={handleSaveTimeEntry}
+                                  >
+                                    <Check className="size-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-3 p-2">
+                              <Clock className="size-4 text-muted-foreground" />
+                              <span className="flex-1 text-sm">
+                                {entry.description || "No description"}
+                              </span>
+                              <span className="text-sm font-medium">
+                                {formatMinutes(entry.duration)}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {formatDate(entry.date)}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-6"
+                                onClick={() => handleEditTimeEntry(entry.id)}
+                              >
+                                <PencilSimple className="size-3.5 text-muted-foreground" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-6"
+                                onClick={() => deleteTimeEntry(entry.id)}
+                              >
+                                <Trash className="size-3.5 text-muted-foreground" />
+                              </Button>
+                            </div>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -841,11 +1011,111 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                 </div>
               </div>
 
-              {/* Notes */}
+              {/* Work Notes / Site Log */}
+              <div className="border border-border bg-card">
+                <div className="p-4 border-b border-border">
+                  <h2 className="font-semibold">Work Notes</h2>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Site log and project updates
+                  </p>
+                </div>
+                <div className="p-4 border-b border-border">
+                  <textarea
+                    placeholder="Add a note..."
+                    value={newNoteContent}
+                    onChange={(e) => setNewNoteContent(e.target.value)}
+                    className="w-full min-h-[80px] px-3 py-2 text-sm border border-border bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                  <div className="flex justify-end mt-2">
+                    <Button
+                      onClick={handleAddNote}
+                      disabled={!newNoteContent.trim()}
+                    >
+                      <Plus className="size-4 mr-1" />
+                      Add Note
+                    </Button>
+                  </div>
+                </div>
+                <div className="p-4 max-h-[350px] overflow-y-auto">
+                  {notes.length === 0 ? (
+                    <p className="text-sm text-muted-foreground py-4 text-center">
+                      No notes yet. Add one to keep track of project updates.
+                    </p>
+                  ) : (
+                    <ul className="space-y-3">
+                      {notes.map((note) => (
+                        <li
+                          key={note.id}
+                          className="border border-border"
+                        >
+                          {editingNoteId === note.id ? (
+                            <div className="p-3 space-y-2">
+                              <textarea
+                                value={editingNoteContent}
+                                onChange={(e) => setEditingNoteContent(e.target.value)}
+                                className="w-full min-h-[80px] px-3 py-2 text-sm border border-border bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
+                              />
+                              <div className="flex justify-end gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={handleCancelEditNote}
+                                >
+                                  <X className="size-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  onClick={handleSaveNote}
+                                >
+                                  <Check className="size-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="p-3">
+                              <div className="flex items-start gap-2">
+                                <Notepad className="size-4 text-muted-foreground mt-0.5 shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm whitespace-pre-wrap break-words">
+                                    {note.content}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-2">
+                                    {formatDate(note.created_at)}
+                                  </p>
+                                </div>
+                                <div className="flex gap-1 shrink-0">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-6"
+                                    onClick={() => handleEditNote(note.id, note.content)}
+                                  >
+                                    <PencilSimple className="size-3.5 text-muted-foreground" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="size-6"
+                                    onClick={() => deleteNote(note.id)}
+                                  >
+                                    <Trash className="size-3.5 text-muted-foreground" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              {/* Project Notes (from project form) */}
               {project.notes && (
                 <div className="border border-border bg-card">
                   <div className="p-4 border-b border-border">
-                    <h2 className="font-semibold">Notes</h2>
+                    <h2 className="font-semibold">Project Description</h2>
                   </div>
                   <div className="p-4">
                     <p className="text-sm text-muted-foreground whitespace-pre-wrap">

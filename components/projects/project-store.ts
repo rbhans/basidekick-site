@@ -8,6 +8,7 @@ import type {
   PSKTimeEntry,
   PSKFile,
   PSKBudgetLineItem,
+  PSKNote,
   PSKCompany,
   PSKWorkspaceContext,
 } from "@/lib/types";
@@ -29,6 +30,7 @@ interface ProjectStoreState {
   files: PSKFile[];
   clients: PSKClient[];
   budgetLineItems: PSKBudgetLineItem[];
+  notes: PSKNote[];
 
   // Companies (for team sharing)
   companies: PSKCompany[];
@@ -65,6 +67,7 @@ interface ProjectStoreState {
   addTimeEntry: (
     entry: Omit<PSKTimeEntry, "id" | "created_at" | "project">
   ) => Promise<void>;
+  updateTimeEntry: (id: string, updates: Partial<PSKTimeEntry>) => Promise<void>;
   deleteTimeEntry: (id: string) => Promise<void>;
 
   // Files
@@ -83,6 +86,13 @@ interface ProjectStoreState {
     item: Omit<PSKBudgetLineItem, "id" | "created_at">
   ) => Promise<void>;
   deleteBudgetLineItem: (id: string) => Promise<void>;
+
+  // Notes
+  addNote: (
+    note: Omit<PSKNote, "id" | "created_at" | "creator">
+  ) => Promise<void>;
+  updateNote: (id: string, updates: Partial<PSKNote>) => Promise<void>;
+  deleteNote: (id: string) => Promise<void>;
 }
 
 export const useProjectStore = create<ProjectStoreState>((set, get) => ({
@@ -93,6 +103,7 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
   files: [],
   clients: [],
   budgetLineItems: [],
+  notes: [],
 
   // Companies
   companies: [],
@@ -139,7 +150,7 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
       const dailyTasks = await api.getTasks(undefined, { dailyOnly: true });
 
       // Fetch all data - projects include personal + shared from all companies
-      const [projects, projectTasks, timeEntries, files, clients, budgetLineItems] =
+      const [projects, projectTasks, timeEntries, files, clients, budgetLineItems, notes] =
         await Promise.all([
           api.getProjects(companyIds),
           api.getTasks(undefined, { projectTasksOnly: true }),
@@ -147,12 +158,13 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
           api.getFiles(),
           api.getClients(companyIds),
           api.getBudgetLineItems(),
+          api.getNotes(),
         ]);
 
       // Combine daily tasks with project tasks
       const tasks = [...dailyTasks, ...projectTasks];
 
-      set({ projects, tasks, timeEntries, files, clients, budgetLineItems });
+      set({ projects, tasks, timeEntries, files, clients, budgetLineItems, notes });
     } catch (error) {
       console.error("Failed to initialize store:", error);
       set({ error: "Failed to load data" });
@@ -197,6 +209,7 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
         budgetLineItems: state.budgetLineItems.filter(
           (b) => b.project_id !== id
         ),
+        notes: state.notes.filter((n) => n.project_id !== id),
       }));
     } catch (error) {
       console.error("Failed to delete project:", error);
@@ -283,6 +296,20 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
     } catch (error) {
       console.error("Failed to add time entry:", error);
       set({ error: "Failed to add time entry" });
+    }
+  },
+
+  updateTimeEntry: async (id, updates) => {
+    try {
+      const updatedEntry = await api.updateTimeEntry(id, updates);
+      set((state) => ({
+        timeEntries: state.timeEntries.map((t) =>
+          t.id === id ? updatedEntry : t
+        ),
+      }));
+    } catch (error) {
+      console.error("Failed to update time entry:", error);
+      set({ error: "Failed to update time entry" });
     }
   },
 
@@ -381,6 +408,41 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => ({
     } catch (error) {
       console.error("Failed to delete budget item:", error);
       set({ error: "Failed to delete budget item" });
+    }
+  },
+
+  // Notes
+  addNote: async (note) => {
+    try {
+      const newNote = await api.createNote(note);
+      set((state) => ({ notes: [newNote, ...state.notes] }));
+    } catch (error) {
+      console.error("Failed to add note:", error);
+      set({ error: "Failed to add note" });
+    }
+  },
+
+  updateNote: async (id, updates) => {
+    try {
+      const updatedNote = await api.updateNote(id, updates);
+      set((state) => ({
+        notes: state.notes.map((n) => (n.id === id ? updatedNote : n)),
+      }));
+    } catch (error) {
+      console.error("Failed to update note:", error);
+      set({ error: "Failed to update note" });
+    }
+  },
+
+  deleteNote: async (id) => {
+    try {
+      await api.deleteNote(id);
+      set((state) => ({
+        notes: state.notes.filter((n) => n.id !== id),
+      }));
+    } catch (error) {
+      console.error("Failed to delete note:", error);
+      set({ error: "Failed to delete note" });
     }
   },
 }));
