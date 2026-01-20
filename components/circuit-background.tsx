@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 interface CircuitBackgroundProps {
   className?: string;
   opacity?: number;
+  colorGradient?: boolean; // Enable multi-color gradient (default: amber only)
 }
 
 // Color palette matching site theme (RGB values)
@@ -34,7 +35,7 @@ function lerpColor(c1: number[], c2: number[], t: number): number[] {
   ];
 }
 
-export function CircuitBackground({ className = "", opacity = 0.15 }: CircuitBackgroundProps) {
+export function CircuitBackground({ className = "", opacity = 0.15, colorGradient = false }: CircuitBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
   const [isDark, setIsDark] = useState(false);
@@ -157,41 +158,45 @@ export function CircuitBackground({ className = "", opacity = 0.15 }: CircuitBac
           const sizeVariation = 1 + combinedOpacity * 0.25;
           const dotSize = baseDotSize * Math.max(0.5, sizeVariation);
 
-          // === COLOR GRADIENT BASED ON POSITION AND WAVE ===
-          // Create slow-moving color regions using position + time
-          const colorTime = elapsed * 0.0003; // Very slow color shift
+          // === COLOR ===
+          let colorRgb: string;
 
-          // Calculate color blend factors based on position and wave
-          // Different diagonal directions for variety
-          const colorWave1 = (Math.sin((nx * 2 + ny * 1.5) * 3 + colorTime) + 1) / 2;
-          const colorWave2 = (Math.sin((nx * 1.5 - ny * 2) * 2.5 - colorTime * 0.7) + 1) / 2;
-          const colorWave3 = (Math.sin(distFromCenter * 4 + colorTime * 1.3) + 1) / 2;
+          if (colorGradient) {
+            // Multi-color gradient based on position and wave
+            const colorTime = elapsed * 0.0003; // Very slow color shift
 
-          // Blend the waves to create smooth color transitions
-          // Amber is always the base (60%), other colors blend in subtly (40%)
-          const secondaryWeight = 0.4;
+            // Calculate color blend factors based on position and wave
+            const colorWave1 = (Math.sin((nx * 2 + ny * 1.5) * 3 + colorTime) + 1) / 2;
+            const colorWave2 = (Math.sin((nx * 1.5 - ny * 2) * 2.5 - colorTime * 0.7) + 1) / 2;
+            const colorWave3 = (Math.sin(distFromCenter * 4 + colorTime * 1.3) + 1) / 2;
 
-          // Determine which secondary color based on position quadrants + wave
-          // This creates flowing color regions
-          const colorSelector = (colorWave1 * 0.5 + colorWave2 * 0.3 + ny * 0.2) % 1;
+            // Amber is always the base (60%), other colors blend in subtly (40%)
+            const secondaryWeight = 0.4;
 
-          let secondaryColor: number[];
-          if (colorSelector < 0.25) {
-            secondaryColor = palette.cyan;
-          } else if (colorSelector < 0.5) {
-            secondaryColor = palette.violet;
-          } else if (colorSelector < 0.75) {
-            secondaryColor = palette.blue;
+            // Determine which secondary color based on position quadrants + wave
+            const colorSelector = (colorWave1 * 0.5 + colorWave2 * 0.3 + ny * 0.2) % 1;
+
+            let secondaryColor: number[];
+            if (colorSelector < 0.25) {
+              secondaryColor = palette.cyan;
+            } else if (colorSelector < 0.5) {
+              secondaryColor = palette.violet;
+            } else if (colorSelector < 0.75) {
+              secondaryColor = palette.blue;
+            } else {
+              secondaryColor = palette.emerald;
+            }
+
+            // Blend intensity varies with wave
+            const blendIntensity = secondaryWeight * (0.3 + colorWave3 * 0.7);
+
+            // Final color: lerp between amber and the selected secondary color
+            const finalColor = lerpColor(palette.amber, secondaryColor, blendIntensity);
+            colorRgb = `${finalColor[0]}, ${finalColor[1]}, ${finalColor[2]}`;
           } else {
-            secondaryColor = palette.emerald;
+            // Simple amber-only color
+            colorRgb = `${palette.amber[0]}, ${palette.amber[1]}, ${palette.amber[2]}`;
           }
-
-          // Blend intensity varies with wave (subtle pulsing between amber and secondary)
-          const blendIntensity = secondaryWeight * (0.3 + colorWave3 * 0.7);
-
-          // Final color: lerp between amber and the selected secondary color
-          const finalColor = lerpColor(palette.amber, secondaryColor, blendIntensity);
-          const colorRgb = `${finalColor[0]}, ${finalColor[1]}, ${finalColor[2]}`;
 
           ctx.beginPath();
           ctx.arc(x, y, dotSize, 0, Math.PI * 2);
@@ -213,7 +218,7 @@ export function CircuitBackground({ className = "", opacity = 0.15 }: CircuitBac
       cancelAnimationFrame(animationRef.current);
       window.removeEventListener("resize", handleResize);
     };
-  }, [isDark, opacity]);
+  }, [isDark, opacity, colorGradient]);
 
   return (
     <canvas

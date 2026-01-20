@@ -82,7 +82,7 @@ export function HomeView({
     <div className="min-h-full">
       {/* Hero Section */}
       <section className="relative py-12 md:py-16 overflow-hidden">
-        <CircuitBackground opacity={0.15} />
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             {/* Left: Text content */}
