@@ -1,0 +1,288 @@
+import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { Octokit } from "octokit";
+import { z } from "zod";
+
+// Validation schema for action requests
+const actionSchema = z.object({
+  action: z.enum(["approve", "reject"]),
+  reviewer_id: z.string().uuid(),
+  reviewer_notes: z.string().optional(),
+});
+
+// Helper to get Supabase client
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    return null;
+  }
+
+  return createClient(supabaseUrl, supabaseServiceKey);
+}
+
+// Helper to create GitHub issue
+async function createGitHubIssue(contribution: {
+  id: string;
+  type: string;
+  entry_id: string | null;
+  entry_type: string | null;
+  entry_category: string | null;
+  title: string;
+  description: string;
+  suggested_changes: Record<string, unknown> | null;
+  submitter_email?: string;
+  submitter_name?: string;
+}) {
+  const githubToken = process.env.GITHUB_TOKEN;
+  if (!githubToken) {
+    throw new Error("GitHub token not configured");
+  }
+
+  const octokit = new Octokit({ auth: githubToken });
+
+  // Format the issue type label
+  const typeLabel = {
+    error: "Error Report",
+    edit: "Edit Suggestion",
+    new_entry: "New Entry Request",
+  }[contribution.type] || contribution.type;
+
+  // Build the issue body
+  let body = `## Contribution Type: ${typeLabel}\n\n`;
+
+  if (contribution.entry_id) {
+    body += `**Entry:** \`${contribution.entry_id}\``;
+    if (contribution.entry_type) {
+      body += ` (${contribution.entry_type}`;
+      if (contribution.entry_category) {
+        body += ` in ${contribution.entry_category}`;
+      }
+      body += `)`;
+    }
+    body += `\n`;
+  }
+
+  if (contribution.submitter_name || contribution.submitter_email) {
+    body += `**Submitted by:** ${contribution.submitter_name || "Anonymous"}`;
+    if (contribution.submitter_email) {
+      body += ` (${contribution.submitter_email})`;
+    }
+    body += `\n`;
+  }
+
+  body += `\n### Description\n${contribution.description}\n`;
+
+  if (contribution.suggested_changes && Object.keys(contribution.suggested_changes).length > 0) {
+    body += `\n### Suggested Changes\n\`\`\`json\n${JSON.stringify(contribution.suggested_changes, null, 2)}\n\`\`\`\n`;
+  }
+
+  body += `\n---\n*Submitted via BASidekick contribution system*\n`;
+  body += `*Contribution ID: ${contribution.id}*`;
+
+  // Determine labels based on type
+  const labels = ["contribution"];
+  if (contribution.type === "error") {
+    labels.push("bug");
+  } else if (contribution.type === "edit") {
+    labels.push("enhancement");
+  } else if (contribution.type === "new_entry") {
+    labels.push("new-entry");
+  }
+
+  // Create the issue
+  const response = await octokit.rest.issues.create({
+    owner: "rbhans",
+    repo: "bas-babel",
+    title: contribution.title,
+    body,
+    labels,
+  });
+
+  return response.data.html_url;
+}
+
+// POST - Approve or reject a contribution
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      console.error("Supabase not configured");
+      return NextResponse.json(
+        { error: "Server not configured" },
+        { status: 500 }
+      );
+    }
+
+    // Parse and validate request body
+    const body = await request.json();
+    const parseResult = actionSchema.safeParse(body);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        { error: "Invalid input", details: parseResult.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const { action, reviewer_id, reviewer_notes } = parseResult.data;
+
+    // Verify reviewer is an admin
+    const { data: reviewerProfile, error: profileError } = await supabase
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", reviewer_id)
+      .single();
+
+    if (profileError || !reviewerProfile?.is_admin) {
+      return NextResponse.json(
+        { error: "Unauthorized: Admin access required" },
+        { status: 403 }
+      );
+    }
+
+    // Fetch the contribution
+    const { data: contribution, error: fetchError } = await supabase
+      .from("babel_contributions")
+      .select(`
+        *,
+        submitter:profiles!babel_contributions_user_id_fkey(display_name)
+      `)
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !contribution) {
+      console.error("Fetch error:", fetchError);
+      return NextResponse.json(
+        { error: "Contribution not found" },
+        { status: 404 }
+      );
+    }
+
+    // Check if already processed
+    if (contribution.status !== "pending") {
+      return NextResponse.json(
+        { error: `Contribution already ${contribution.status}` },
+        { status: 400 }
+      );
+    }
+
+    let github_issue_url: string | null = null;
+
+    // If approving, create GitHub issue
+    if (action === "approve") {
+      try {
+        // Get submitter info
+        const { data: submitter } = await supabase
+          .from("profiles")
+          .select("display_name")
+          .eq("id", contribution.user_id)
+          .single();
+
+        // Get submitter email
+        const { data: userData } = await supabase.auth.admin.getUserById(
+          contribution.user_id
+        );
+
+        github_issue_url = await createGitHubIssue({
+          id: contribution.id,
+          type: contribution.type,
+          entry_id: contribution.entry_id,
+          entry_type: contribution.entry_type,
+          entry_category: contribution.entry_category,
+          title: contribution.title,
+          description: contribution.description,
+          suggested_changes: contribution.suggested_changes,
+          submitter_name: submitter?.display_name || undefined,
+          submitter_email: userData?.user?.email || undefined,
+        });
+      } catch (githubError) {
+        console.error("GitHub issue creation failed:", githubError);
+        return NextResponse.json(
+          { error: "Failed to create GitHub issue" },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Update the contribution status
+    const { error: updateError } = await supabase
+      .from("babel_contributions")
+      .update({
+        status: action === "approve" ? "approved" : "rejected",
+        reviewed_by: reviewer_id,
+        reviewed_at: new Date().toISOString(),
+        reviewer_notes: reviewer_notes || null,
+        github_issue_url,
+      })
+      .eq("id", id);
+
+    if (updateError) {
+      console.error("Update error:", updateError);
+      return NextResponse.json(
+        { error: "Failed to update contribution" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      action,
+      github_issue_url,
+    });
+  } catch (err) {
+    console.error("API error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+// GET - Fetch a single contribution (for admin view)
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Server not configured" },
+        { status: 500 }
+      );
+    }
+
+    const { data: contribution, error } = await supabase
+      .from("babel_contributions")
+      .select(`
+        *,
+        submitter:profiles!babel_contributions_user_id_fkey(display_name),
+        reviewer:profiles!babel_contributions_reviewed_by_fkey(display_name)
+      `)
+      .eq("id", id)
+      .single();
+
+    if (error || !contribution) {
+      return NextResponse.json(
+        { error: "Contribution not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ contribution });
+  } catch (err) {
+    console.error("API error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

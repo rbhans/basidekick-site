@@ -34,6 +34,7 @@ export default async function AdminPage() {
     articlesResult,
     threadsResult,
     suggestionsResult,
+    babelContributionsResult,
     statsResult,
   ] = await Promise.all([
     // Users with profiles
@@ -72,6 +73,16 @@ export default async function AdminPage() {
       `)
       .order("created_at", { ascending: false })
       .limit(50),
+    // Babel contributions
+    supabase
+      .from("babel_contributions")
+      .select(`
+        id, type, entry_id, entry_type, entry_category, title, description,
+        suggested_changes, status, reviewer_notes, github_issue_url, created_at,
+        submitter:profiles!babel_contributions_user_id_fkey(display_name)
+      `)
+      .order("created_at", { ascending: false })
+      .limit(50),
     // Stats
     Promise.all([
       supabase.from("profiles").select("id", { count: "exact", head: true }),
@@ -79,6 +90,7 @@ export default async function AdminPage() {
       supabase.from("forum_threads").select("id", { count: "exact", head: true }),
       supabase.from("forum_posts").select("id", { count: "exact", head: true }),
       supabase.from("wiki_suggestions").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("babel_contributions").select("id", { count: "exact", head: true }).eq("status", "pending"),
     ]),
   ]);
 
@@ -88,6 +100,7 @@ export default async function AdminPage() {
     threadCount: statsResult[2].count || 0,
     postCount: statsResult[3].count || 0,
     pendingSuggestions: statsResult[4].count || 0,
+    pendingBabelContributions: statsResult[5].count || 0,
   };
 
   return (
@@ -96,6 +109,7 @@ export default async function AdminPage() {
       articles={articlesResult.data || []}
       threads={threadsResult.data || []}
       suggestions={suggestionsResult.data || []}
+      babelContributions={babelContributionsResult.data || []}
       stats={stats}
     />
   );

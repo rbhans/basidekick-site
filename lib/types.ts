@@ -498,3 +498,29 @@ export interface BabelSearchIndexData {
   version: string;
   entries: BabelSearchIndexEntry[];
 }
+
+// BAS Babel Contribution types
+export type BabelContributionType = "error" | "edit" | "new_entry";
+export type BabelContributionStatus = "pending" | "approved" | "rejected";
+
+export interface BabelContribution {
+  id: string;
+  user_id: string;
+  type: BabelContributionType;
+  entry_id: string | null;
+  entry_type: "point" | "equipment" | null;
+  entry_category: string | null;
+  title: string;
+  description: string;
+  suggested_changes: Record<string, unknown> | null;
+  status: BabelContributionStatus;
+  reviewer_notes: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  github_issue_url: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  submitter?: { display_name: string | null; email?: string };
+  reviewer?: { display_name: string | null };
+}

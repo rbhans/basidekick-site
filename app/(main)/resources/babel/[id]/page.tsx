@@ -7,6 +7,7 @@ import { CircuitBackground } from "@/components/circuit-background";
 import { BabelEntryDetail } from "@/components/babel";
 import { useBabelData } from "@/components/babel/use-babel-data";
 import { Skeleton } from "@/components/ui/skeleton";
+import { createClient } from "@/lib/supabase/client";
 import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
 
 export default function BabelEntryPage() {
@@ -19,6 +20,27 @@ export default function BabelEntryPage() {
     type: "point" | "equipment";
   } | null>(null);
   const [notFoundState, setNotFoundState] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check authentication status
+  useEffect(() => {
+    const supabase = createClient();
+    if (!supabase) return;
+
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsAuthenticated(!!user);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (!data || !id) return;
@@ -87,7 +109,7 @@ export default function BabelEntryPage() {
               <Skeleton className="h-24 w-full" />
             </div>
           ) : (
-            <BabelEntryDetail entry={entry.data} type={entry.type} />
+            <BabelEntryDetail entry={entry.data} type={entry.type} isAuthenticated={isAuthenticated} />
           )}
         </div>
       </section>

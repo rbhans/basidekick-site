@@ -7,21 +7,24 @@ import {
   Tag,
   Copy,
   Check,
-  GithubLogo,
+  Bug,
   PencilSimple,
-  ArrowSquareOut,
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
+import type { BabelPointEntry, BabelEquipmentEntry, BabelContributionType } from "@/lib/types";
+import { BabelContributionDialog } from "./babel-contribution-dialog";
 
 interface BabelEntryDetailProps {
   entry: BabelPointEntry | BabelEquipmentEntry;
   type: "point" | "equipment";
+  isAuthenticated?: boolean;
 }
 
-export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
+export function BabelEntryDetail({ entry, type, isAuthenticated = false }: BabelEntryDetailProps) {
   const [copiedAlias, setCopiedAlias] = useState<string | null>(null);
+  const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
+  const [contributionType, setContributionType] = useState<BabelContributionType>("edit");
 
   const isPoint = type === "point";
   const pointEntry = entry as BabelPointEntry;
@@ -56,10 +59,10 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
     setTimeout(() => setCopiedAlias(null), 2000);
   };
 
-  // Construct GitHub edit URL
-  const githubEditUrl = isPoint
-    ? `https://github.com/rbhans/bas-babel/edit/main/data/points/${category}/${id}.yaml`
-    : `https://github.com/rbhans/bas-babel/edit/main/data/equipment/${category}.yaml`;
+  const openContributionDialog = (dialogType: BabelContributionType) => {
+    setContributionType(dialogType);
+    setContributionDialogOpen(true);
+  };
 
   // Helper for empty state
   const EmptyState = ({ text = "-" }: { text?: string }) => (
@@ -304,24 +307,27 @@ export function BabelEntryDetail({ entry, type }: BabelEntryDetailProps) {
 
       {/* Actions */}
       <div className="flex items-center gap-3 pt-6 border-t border-border">
-        <Button variant="outline" asChild>
-          <a href={githubEditUrl} target="_blank" rel="noopener noreferrer">
-            <PencilSimple className="size-4 mr-2" />
-            Suggest Edit
-            <ArrowSquareOut className="size-3 ml-2 opacity-50" />
-          </a>
+        <Button variant="outline" onClick={() => openContributionDialog("edit")}>
+          <PencilSimple className="size-4 mr-2" />
+          Suggest Edit
         </Button>
-        <Button variant="ghost" asChild>
-          <a
-            href="https://github.com/rbhans/bas-babel/issues/new"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <GithubLogo className="size-4 mr-2" />
-            Report Issue
-          </a>
+        <Button variant="ghost" onClick={() => openContributionDialog("error")}>
+          <Bug className="size-4 mr-2" />
+          Report Issue
         </Button>
       </div>
+
+      {/* Contribution Dialog */}
+      <BabelContributionDialog
+        open={contributionDialogOpen}
+        onOpenChange={setContributionDialogOpen}
+        initialType={contributionType}
+        entryId={id}
+        entryType={type}
+        entryCategory={category}
+        entryName={name}
+        isAuthenticated={isAuthenticated}
+      />
     </div>
   );
 }

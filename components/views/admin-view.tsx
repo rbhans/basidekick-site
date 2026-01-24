@@ -26,6 +26,11 @@ import {
   ArrowSquareOut,
   CaretDown,
   CaretUp,
+  Translate,
+  Bug,
+  PencilSimple,
+  Plus,
+  GithubLogo,
 } from "@phosphor-icons/react";
 
 interface AdminUser {
@@ -75,12 +80,29 @@ interface AdminSuggestion {
   suggested_by: { display_name: string | null } | null;
 }
 
+interface AdminBabelContribution {
+  id: string;
+  type: "error" | "edit" | "new_entry";
+  entry_id: string | null;
+  entry_type: "point" | "equipment" | null;
+  entry_category: string | null;
+  title: string;
+  description: string;
+  suggested_changes: Record<string, unknown> | null;
+  status: "pending" | "approved" | "rejected";
+  reviewer_notes: string | null;
+  github_issue_url: string | null;
+  created_at: string;
+  submitter: { display_name: string | null } | null;
+}
+
 interface AdminStats {
   userCount: number;
   articleCount: number;
   threadCount: number;
   postCount: number;
   pendingSuggestions: number;
+  pendingBabelContributions: number;
 }
 
 interface AdminViewProps {
@@ -88,16 +110,18 @@ interface AdminViewProps {
   articles: AdminArticle[];
   threads: AdminThread[];
   suggestions: AdminSuggestion[];
+  babelContributions: AdminBabelContribution[];
   stats: AdminStats;
 }
 
-type TabId = "overview" | "users" | "wiki" | "forum" | "suggestions";
+type TabId = "overview" | "users" | "wiki" | "forum" | "suggestions" | "babel";
 
 export function AdminView({
   users: initialUsers,
   articles: initialArticles,
   threads: initialThreads,
   suggestions: initialSuggestions,
+  babelContributions: initialBabelContributions,
   stats,
 }: AdminViewProps) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
@@ -105,7 +129,9 @@ export function AdminView({
   const [articles, setArticles] = useState(initialArticles);
   const [threads, setThreads] = useState(initialThreads);
   const [suggestions, setSuggestions] = useState(initialSuggestions);
+  const [babelContributions, setBabelContributions] = useState(initialBabelContributions);
   const [loading, setLoading] = useState<string | null>(null);
+  const [expandedContribution, setExpandedContribution] = useState<string | null>(null);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -237,6 +263,79 @@ export function AdminView({
     setLoading(null);
   };
 
+  // Babel contribution actions
+  const handleBabelContributionAction = async (
+    contributionId: string,
+    action: "approve" | "reject"
+  ) => {
+    setLoading(`babel-${contributionId}`);
+    const supabase = createClient();
+    if (!supabase) return;
+
+    // Get the current user for reviewer_id
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setLoading(null);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/babel/contributions/${contributionId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action,
+          reviewer_id: user.id,
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setBabelContributions((prev) =>
+          prev.map((c) =>
+            c.id === contributionId
+              ? {
+                  ...c,
+                  status: action === "approve" ? "approved" : "rejected",
+                  github_issue_url: result.github_issue_url || null,
+                }
+              : c
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update contribution:", error);
+    }
+
+    setLoading(null);
+  };
+
+  const getContributionTypeIcon = (type: string) => {
+    switch (type) {
+      case "error":
+        return <Bug className="size-4" />;
+      case "edit":
+        return <PencilSimple className="size-4" />;
+      case "new_entry":
+        return <Plus className="size-4" />;
+      default:
+        return null;
+    }
+  };
+
+  const getContributionTypeLabel = (type: string) => {
+    switch (type) {
+      case "error":
+        return "Error Report";
+      case "edit":
+        return "Edit Suggestion";
+      case "new_entry":
+        return "New Entry Request";
+      default:
+        return type;
+    }
+  };
+
   const tabs: { id: TabId; label: string; icon: React.ReactNode; count?: number }[] = [
     { id: "overview", label: "Overview", icon: <ChartBar className="size-4" /> },
     { id: "users", label: "Users", icon: <Users className="size-4" />, count: stats.userCount },
@@ -247,6 +346,12 @@ export function AdminView({
       label: "Suggestions",
       icon: <BookBookmark className="size-4" />,
       count: stats.pendingSuggestions,
+    },
+    {
+      id: "babel",
+      label: "Babel",
+      icon: <Translate className="size-4" />,
+      count: stats.pendingBabelContributions,
     },
   ];
 
@@ -301,7 +406,7 @@ export function AdminView({
           {activeTab === "overview" && (
             <div className="space-y-8">
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div className="p-6 border border-border bg-card">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Users className="size-4" />
@@ -333,9 +438,16 @@ export function AdminView({
                 <div className="p-6 border border-border bg-card">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <BookBookmark className="size-4" />
-                    <span className="text-sm">Pending</span>
+                    <span className="text-sm">Wiki Pending</span>
                   </div>
                   <p className="text-3xl font-bold text-primary">{stats.pendingSuggestions}</p>
+                </div>
+                <div className="p-6 border border-border bg-card">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                    <Translate className="size-4" />
+                    <span className="text-sm">Babel Pending</span>
+                  </div>
+                  <p className="text-3xl font-bold text-primary">{stats.pendingBabelContributions}</p>
                 </div>
               </div>
 
@@ -753,6 +865,173 @@ export function AdminView({
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* Babel Contributions Tab */}
+          {activeTab === "babel" && (
+            <div className="space-y-4">
+              <div className="border border-border bg-card overflow-hidden">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 text-sm font-medium">Contribution</th>
+                      <th className="text-left p-4 text-sm font-medium hidden md:table-cell">Type</th>
+                      <th className="text-left p-4 text-sm font-medium hidden sm:table-cell">Entry</th>
+                      <th className="text-left p-4 text-sm font-medium hidden lg:table-cell">Submitted By</th>
+                      <th className="text-left p-4 text-sm font-medium">Status</th>
+                      <th className="text-right p-4 text-sm font-medium">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {babelContributions.map((contribution) => (
+                      <>
+                        <tr
+                          key={contribution.id}
+                          className="hover:bg-muted/30 cursor-pointer"
+                          onClick={() =>
+                            setExpandedContribution(
+                              expandedContribution === contribution.id ? null : contribution.id
+                            )
+                          }
+                        >
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              <button className="text-muted-foreground">
+                                {expandedContribution === contribution.id ? (
+                                  <CaretUp className="size-4" />
+                                ) : (
+                                  <CaretDown className="size-4" />
+                                )}
+                              </button>
+                              <span className="font-medium">{contribution.title}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 hidden md:table-cell">
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                              {getContributionTypeIcon(contribution.type)}
+                              <span className="text-sm">{getContributionTypeLabel(contribution.type)}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 hidden sm:table-cell">
+                            {contribution.entry_id ? (
+                              <Link
+                                href={ROUTES.BABEL_ENTRY(contribution.entry_id)}
+                                className="font-mono text-sm text-primary hover:underline"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {contribution.entry_id}
+                              </Link>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">New entry</span>
+                            )}
+                          </td>
+                          <td className="p-4 text-muted-foreground hidden lg:table-cell">
+                            {contribution.submitter?.display_name || "Anonymous"}
+                          </td>
+                          <td className="p-4">
+                            {contribution.status === "pending" && (
+                              <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5">
+                                Pending
+                              </span>
+                            )}
+                            {contribution.status === "approved" && (
+                              <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-0.5">
+                                Approved
+                              </span>
+                            )}
+                            {contribution.status === "rejected" && (
+                              <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5">
+                                Rejected
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                            {contribution.status === "pending" ? (
+                              <div className="flex justify-end gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleBabelContributionAction(contribution.id, "approve")}
+                                  disabled={loading === `babel-${contribution.id}`}
+                                  className="text-emerald-500 hover:text-emerald-600"
+                                  title="Approve and create GitHub issue"
+                                >
+                                  <Check className="size-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleBabelContributionAction(contribution.id, "reject")}
+                                  disabled={loading === `babel-${contribution.id}`}
+                                  className="text-destructive hover:text-destructive"
+                                  title="Reject"
+                                >
+                                  <X className="size-4" />
+                                </Button>
+                              </div>
+                            ) : contribution.github_issue_url ? (
+                              <a
+                                href={contribution.github_issue_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-muted-foreground hover:text-primary"
+                                title="View GitHub issue"
+                              >
+                                <GithubLogo className="size-4" />
+                              </a>
+                            ) : null}
+                          </td>
+                        </tr>
+                        {expandedContribution === contribution.id && (
+                          <tr key={`${contribution.id}-detail`} className="bg-muted/20">
+                            <td colSpan={6} className="p-4">
+                              <div className="space-y-3">
+                                <div>
+                                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                    Description
+                                  </p>
+                                  <p className="text-sm whitespace-pre-wrap">{contribution.description}</p>
+                                </div>
+                                {contribution.suggested_changes && (
+                                  <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                      Suggested Changes
+                                    </p>
+                                    <pre className="text-xs bg-muted p-2 rounded overflow-x-auto">
+                                      {JSON.stringify(contribution.suggested_changes, null, 2)}
+                                    </pre>
+                                  </div>
+                                )}
+                                <div className="flex gap-4 text-xs text-muted-foreground">
+                                  <span>
+                                    Submitted: {formatDate(contribution.created_at)}
+                                  </span>
+                                  {contribution.entry_type && (
+                                    <span>
+                                      Type: {contribution.entry_type}
+                                    </span>
+                                  )}
+                                  {contribution.entry_category && (
+                                    <span>
+                                      Category: {contribution.entry_category}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    ))}
+                  </tbody>
+                </table>
+                {babelContributions.length === 0 && (
+                  <div className="p-8 text-center text-muted-foreground">
+                    No babel contributions yet
+                  </div>
+                )}
               </div>
             </div>
           )}
