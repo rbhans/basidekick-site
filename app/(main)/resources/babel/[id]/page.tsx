@@ -8,6 +8,7 @@ import { BabelEntryDetail } from "@/components/babel";
 import { useBabelData } from "@/components/babel/use-babel-data";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
 
 export default function BabelEntryPage() {
@@ -35,7 +36,7 @@ export default function BabelEntryPage() {
     checkAuth();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       setIsAuthenticated(!!session?.user);
     });
 
