@@ -10,7 +10,7 @@ const createContributionSchema = z.object({
   entry_category: z.string().nullable().optional(),
   title: z.string().min(1, "Title is required").max(200, "Title too long"),
   description: z.string().min(1, "Description is required").max(5000, "Description too long"),
-  suggested_changes: z.record(z.unknown()).nullable().optional(),
+  suggested_changes: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
 // Helper to get authenticated Supabase client
