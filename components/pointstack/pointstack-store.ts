@@ -29,6 +29,7 @@ interface PointStackState {
   notifications: PointStackNotification[];
   unreadNotificationCount: number;
   notificationsLoading: boolean;
+  notificationsError: string | null;
 
   // Messages
   conversations: PointStackConversation[];
@@ -36,6 +37,7 @@ interface PointStackState {
   currentMessages: PointStackMessage[];
   unreadMessageCount: number;
   messagesLoading: boolean;
+  messagesError: string | null;
 
   // Current user profile
   currentUserProfile: PointStackProfile | null;
@@ -97,12 +99,14 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
   notifications: [],
   unreadNotificationCount: 0,
   notificationsLoading: false,
+  notificationsError: null,
 
   conversations: [],
   currentConversation: null,
   currentMessages: [],
   unreadMessageCount: 0,
   messagesLoading: false,
+  messagesError: null,
 
   currentUserProfile: null,
 
@@ -132,18 +136,19 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
   },
 
   loadMorePosts: async () => {
-    const state = get();
-    if (state.feedLoading || !state.hasMorePosts) return;
+    const { feedLoading, hasMorePosts, feedFilter, posts: currentPosts } = get();
+    if (feedLoading || !hasMorePosts) return;
 
     set({ feedLoading: true });
 
     try {
-      const posts = await api.fetchPosts(state.feedFilter, POSTS_PER_PAGE, state.posts.length);
-      set({
-        posts: [...state.posts, ...posts],
+      const newPosts = await api.fetchPosts(feedFilter, POSTS_PER_PAGE, currentPosts.length);
+      // Use functional update to avoid race conditions
+      set((state) => ({
+        posts: [...state.posts, ...newPosts],
         feedLoading: false,
-        hasMorePosts: posts.length === POSTS_PER_PAGE,
-      });
+        hasMorePosts: newPosts.length === POSTS_PER_PAGE,
+      }));
     } catch (error) {
       console.error("Error loading more posts:", error);
       set({ feedLoading: false });
@@ -296,13 +301,13 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
 
   // Notification actions
   fetchNotifications: async () => {
-    set({ notificationsLoading: true });
+    set({ notificationsLoading: true, notificationsError: null });
     try {
       const notifications = await api.fetchNotifications();
       set({ notifications, notificationsLoading: false });
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      set({ notificationsLoading: false });
+      set({ notificationsLoading: false, notificationsError: "Failed to load notifications" });
     }
   },
 
@@ -333,25 +338,26 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
 
   // Message actions
   fetchConversations: async () => {
-    set({ messagesLoading: true });
+    set({ messagesLoading: true, messagesError: null });
     try {
       const conversations = await api.fetchConversations();
       set({ conversations, messagesLoading: false });
     } catch (error) {
       console.error("Error fetching conversations:", error);
-      set({ messagesLoading: false });
+      set({ messagesLoading: false, messagesError: "Failed to load conversations" });
     }
   },
 
   fetchMessages: async (conversationId) => {
-    set({ messagesLoading: true });
+    // Clear old messages immediately to prevent showing stale data
+    set({ messagesLoading: true, messagesError: null, currentMessages: [] });
     try {
       const messages = await api.fetchMessages(conversationId);
       const conversation = get().conversations.find((c) => c.id === conversationId) || null;
       set({ currentMessages: messages, currentConversation: conversation, messagesLoading: false });
     } catch (error) {
       console.error("Error fetching messages:", error);
-      set({ messagesLoading: false });
+      set({ messagesLoading: false, messagesError: "Failed to load messages" });
     }
   },
 
@@ -411,11 +417,13 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
       notifications: [],
       unreadNotificationCount: 0,
       notificationsLoading: false,
+      notificationsError: null,
       conversations: [],
       currentConversation: null,
       currentMessages: [],
       unreadMessageCount: 0,
       messagesLoading: false,
+      messagesError: null,
       currentUserProfile: null,
     });
   },

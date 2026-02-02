@@ -38,20 +38,28 @@ export function FeedCard({ post }: FeedCardProps) {
 
   const handleShare = async () => {
     const url = `${window.location.origin}${ROUTES.POINTSTACK_POST(post.slug)}`;
-    if (navigator.share) {
-      await navigator.share({ title: post.title, url });
-    } else {
-      await navigator.clipboard.writeText(url);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: post.title, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+      }
+    } catch {
+      // User cancelled share or clipboard access denied - silently ignore
     }
   };
 
   const isAuthor = user?.id === post.author_id;
+  // Use author_id for profile link if display_name is missing
+  const profileLink = post.author?.display_name
+    ? ROUTES.POINTSTACK_PROFILE(post.author.display_name)
+    : ROUTES.POINTSTACK;
 
   return (
     <article className="p-5 border border-border rounded-lg bg-card hover:border-primary/30 transition-colors">
       {/* Header */}
       <div className="flex items-start gap-3 mb-3">
-        <Link href={ROUTES.POINTSTACK_PROFILE(post.author?.display_name || "")}>
+        <Link href={profileLink}>
           <UserAvatar
             displayName={post.author?.display_name || null}
             avatarUrl={post.author?.avatar_url}
@@ -60,7 +68,7 @@ export function FeedCard({ post }: FeedCardProps) {
         </Link>
         <div className="flex-1 min-w-0">
           <Link
-            href={ROUTES.POINTSTACK_PROFILE(post.author?.display_name || "")}
+            href={profileLink}
             className="font-medium hover:underline"
           >
             {post.author?.display_name || "Anonymous"}

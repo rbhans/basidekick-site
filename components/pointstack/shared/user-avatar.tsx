@@ -21,10 +21,11 @@ export function UserAvatar({ displayName, avatarUrl, size = "md", className }: U
   const initials = displayName
     ? displayName
         .split(" ")
+        .filter((n) => n.length > 0) // Filter out empty strings from multiple spaces
         .map((n) => n[0])
         .join("")
         .toUpperCase()
-        .slice(0, 2)
+        .slice(0, 2) || "?"
     : "?";
 
   return (

@@ -48,12 +48,20 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
 
   const handleShare = async () => {
     const url = window.location.href;
-    if (navigator.share) {
-      await navigator.share({ title: post?.title || "Post", url });
-    } else {
-      await navigator.clipboard.writeText(url);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: post?.title || "Post", url });
+      } else {
+        await navigator.clipboard.writeText(url);
+      }
+    } catch {
+      // User cancelled share or clipboard access denied - silently ignore
     }
   };
+
+  // Helper to get safe profile link
+  const getProfileLink = (displayName: string | null | undefined) =>
+    displayName ? ROUTES.POINTSTACK_PROFILE(displayName) : ROUTES.POINTSTACK;
 
   if (loading) {
     return <PostDetailSkeleton />;
@@ -116,7 +124,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
 
             <div className="flex items-center gap-3">
               <Link
-                href={ROUTES.POINTSTACK_PROFILE(post.author?.display_name || "")}
+                href={getProfileLink(post.author?.display_name)}
                 className="flex items-center gap-2"
               >
                 <UserAvatar
@@ -197,7 +205,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <Link
-                        href={ROUTES.POINTSTACK_PROFILE(comment.author?.display_name || "")}
+                        href={getProfileLink(comment.author?.display_name)}
                         className="flex items-center gap-2"
                       >
                         <UserAvatar

@@ -20,15 +20,91 @@ import {
   UpdatePointStackProfileInput,
   PointStackPostType,
 } from "@/lib/types";
+import { User } from "@supabase/supabase-js";
 
-// Helper to generate URL-friendly slugs
+// ============================================================
+// AUTH HELPERS
+// ============================================================
+
+/** Require authentication, throws if not authenticated */
+async function requireAuth(): Promise<User> {
+  const supabase = getClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+  return user;
+}
+
+/** Verify user owns a post */
+async function verifyPostOwnership(postId: string, userId: string): Promise<void> {
+  const supabase = getClient();
+  const { data } = await supabase
+    .from("pointstack_posts")
+    .select("author_id")
+    .eq("id", postId)
+    .single();
+  if (!data || data.author_id !== userId) {
+    throw new Error("Not authorized to modify this post");
+  }
+}
+
+/** Verify user owns a comment */
+async function verifyCommentOwnership(commentId: string, userId: string): Promise<void> {
+  const supabase = getClient();
+  const { data } = await supabase
+    .from("pointstack_post_comments")
+    .select("author_id")
+    .eq("id", commentId)
+    .single();
+  if (!data || data.author_id !== userId) {
+    throw new Error("Not authorized to modify this comment");
+  }
+}
+
+/** Verify user owns a notification */
+async function verifyNotificationOwnership(notificationId: string, userId: string): Promise<void> {
+  const supabase = getClient();
+  const { data } = await supabase
+    .from("pointstack_notifications")
+    .select("user_id")
+    .eq("id", notificationId)
+    .single();
+  if (!data || data.user_id !== userId) {
+    throw new Error("Not authorized to modify this notification");
+  }
+}
+
+/** Verify user is participant in conversation */
+async function verifyConversationParticipant(conversationId: string, userId: string): Promise<void> {
+  const supabase = getClient();
+  const { data } = await supabase
+    .from("pointstack_conversation_participants")
+    .select("user_id")
+    .eq("conversation_id", conversationId)
+    .eq("user_id", userId)
+    .single();
+  if (!data) {
+    throw new Error("Not authorized to access this conversation");
+  }
+}
+
+/** Sanitize search input to escape SQL LIKE wildcards */
+function sanitizeSearchInput(input: string): string {
+  return input
+    .replace(/[%_]/g, "\\$&") // Escape LIKE wildcards
+    .slice(0, 100); // Limit length
+}
+
+// Helper to generate URL-friendly slugs with cryptographic randomness
 function generateSlug(title: string): string {
   const base = title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "")
     .slice(0, 50);
-  const suffix = Math.random().toString(36).slice(2, 8);
+  // Use crypto for better randomness
+  const array = new Uint8Array(6);
+  crypto.getRandomValues(array);
+  const suffix = Array.from(array, b => b.toString(36)).join("").slice(0, 8);
   return `${base}-${suffix}`;
 }
 
@@ -122,6 +198,9 @@ export async function updatePost(
   postId: string,
   updates: Partial<CreatePointStackPostInput>
 ): Promise<PointStackPost> {
+  const user = await requireAuth();
+  await verifyPostOwnership(postId, user.id);
+
   const supabase = getClient();
   const { data, error } = await supabase
     .from("pointstack_posts")
@@ -138,6 +217,9 @@ export async function updatePost(
 }
 
 export async function deletePost(postId: string): Promise<void> {
+  const user = await requireAuth();
+  await verifyPostOwnership(postId, user.id);
+
   const supabase = getClient();
   const { error } = await supabase.from("pointstack_posts").delete().eq("id", postId);
   if (error) throw error;
@@ -232,6 +314,9 @@ export async function createComment(input: CreatePointStackCommentInput): Promis
 }
 
 export async function updateComment(commentId: string, content: string): Promise<PointStackPostComment> {
+  const user = await requireAuth();
+  await verifyCommentOwnership(commentId, user.id);
+
   const supabase = getClient();
   const { data, error } = await supabase
     .from("pointstack_post_comments")
@@ -248,12 +333,19 @@ export async function updateComment(commentId: string, content: string): Promise
 }
 
 export async function deleteComment(commentId: string): Promise<void> {
+  const user = await requireAuth();
+  await verifyCommentOwnership(commentId, user.id);
+
   const supabase = getClient();
   const { error } = await supabase.from("pointstack_post_comments").delete().eq("id", commentId);
   if (error) throw error;
 }
 
 export async function acceptAnswer(commentId: string, postId: string): Promise<void> {
+  const user = await requireAuth();
+  // Only the post author can accept answers
+  await verifyPostOwnership(postId, user.id);
+
   const supabase = getClient();
   // First, unaccept any existing accepted answer
   await supabase
@@ -316,12 +408,13 @@ export async function fetchProfiles(
   const supabase = getClient();
   let query = supabase
     .from("profiles")
-    .select("*")
+    .select("id, display_name, avatar_url, skills, headline, location, availability_status, reputation_score, is_verified")
     .order("reputation_score", { ascending: false })
     .range(offset, offset + limit - 1);
 
   if (search) {
-    query = query.ilike("display_name", `%${search}%`);
+    const sanitizedSearch = sanitizeSearchInput(search);
+    query = query.ilike("display_name", `%${sanitizedSearch}%`);
   }
 
   if (skills && skills.length > 0) {
@@ -477,7 +570,8 @@ export async function fetchCompanies(search?: string, limit = 20, offset = 0): P
     .range(offset, offset + limit - 1);
 
   if (search) {
-    query = query.ilike("name", `%${search}%`);
+    const sanitizedSearch = sanitizeSearchInput(search);
+    query = query.ilike("name", `%${sanitizedSearch}%`);
   }
 
   const { data, error } = await query;
@@ -884,6 +978,9 @@ export async function getUnreadNotificationCount(): Promise<number> {
 }
 
 export async function markNotificationRead(notificationId: string): Promise<void> {
+  const user = await requireAuth();
+  await verifyNotificationOwnership(notificationId, user.id);
+
   const supabase = getClient();
   const { error } = await supabase
     .from("pointstack_notifications")
@@ -941,6 +1038,9 @@ export async function fetchConversations(): Promise<PointStackConversation[]> {
 }
 
 export async function fetchMessages(conversationId: string): Promise<PointStackMessage[]> {
+  const user = await requireAuth();
+  await verifyConversationParticipant(conversationId, user.id);
+
   const supabase = getClient();
   const { data, error } = await supabase
     .from("pointstack_messages")
@@ -978,9 +1078,24 @@ export async function sendMessage(conversationId: string, content: string): Prom
 }
 
 export async function startConversation(otherUserId: string, initialMessage: string): Promise<PointStackConversation> {
+  const user = await requireAuth();
+
+  // Validate target user exists
   const supabase = getClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  const { data: targetUser } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("id", otherUserId)
+    .single();
+
+  if (!targetUser) {
+    throw new Error("Target user does not exist");
+  }
+
+  // Prevent messaging yourself
+  if (otherUserId === user.id) {
+    throw new Error("Cannot start a conversation with yourself");
+  }
 
   // Create conversation
   const { data: conversation, error: convError } = await supabase
@@ -992,10 +1107,18 @@ export async function startConversation(otherUserId: string, initialMessage: str
   if (convError) throw convError;
 
   // Add participants
-  await supabase.from("pointstack_conversation_participants").insert([
-    { conversation_id: conversation.id, user_id: user.id },
-    { conversation_id: conversation.id, user_id: otherUserId },
-  ]);
+  const { error: participantError } = await supabase
+    .from("pointstack_conversation_participants")
+    .insert([
+      { conversation_id: conversation.id, user_id: user.id },
+      { conversation_id: conversation.id, user_id: otherUserId },
+    ]);
+
+  if (participantError) {
+    // Clean up conversation if participant insert fails
+    await supabase.from("pointstack_conversations").delete().eq("id", conversation.id);
+    throw participantError;
+  }
 
   // Send initial message
   await supabase.from("pointstack_messages").insert({
