@@ -54,12 +54,14 @@ export function PointStackFeedView() {
 
       {/* Error state */}
       {feedError && (
-        <div className="flex items-center gap-2 p-4 mb-6 border border-destructive/50 rounded-lg bg-destructive/10 text-destructive">
-          <WarningCircle className="w-5 h-5" />
-          <span>{feedError}</span>
-          <Button variant="outline" size="sm" onClick={() => fetchFeed()} className="ml-auto">
-            Retry
-          </Button>
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-lg bg-card text-center">
+          <WarningCircle className="w-8 h-8 text-muted-foreground" />
+          <div>
+            <p className="font-medium mb-1">Community launching soon</p>
+            <p className="text-sm text-muted-foreground">
+              PointStack is being set up. Check back shortly!
+            </p>
+          </div>
         </div>
       )}
 

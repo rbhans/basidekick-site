@@ -34,6 +34,7 @@ import {
   Gauge,
   Fan,
   WarningCircle,
+  UsersThree,
 } from "@phosphor-icons/react";
 import { IconName } from "./constants";
 
@@ -106,6 +107,8 @@ export function getIcon(name: IconName | string, className = "size-4"): ReactNod
       return <Books {...iconProps} />;
     case "Lifebuoy":
       return <Lifebuoy {...iconProps} />;
+    case "UsersThree":
+      return <UsersThree {...iconProps} />;
     default:
       return null;
   }

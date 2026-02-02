@@ -13,7 +13,6 @@ import { UserAvatar } from "@/components/user-avatar";
 import { Changelog } from "@/components/changelog";
 import {
   ArrowRight,
-  Chats,
   BookOpen,
   ChatCircle,
   Book,
@@ -22,6 +21,7 @@ import {
   Article,
   ClockCounterClockwise,
   Wrench,
+  UsersThree,
 } from "@phosphor-icons/react";
 import { TOOLS_LIST, RESOURCES } from "@/lib/constants";
 import { ROUTES } from "@/lib/routes";
@@ -274,16 +274,16 @@ export function HomeView({
         </div>
       </section>
 
-      {/* Forum Section - Recent Threads */}
+      {/* PointStack Community Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Chats className="size-6 text-emerald-500 dark:text-emerald-400" />
-              <SectionLabel variant="forum">forum</SectionLabel>
+              <UsersThree className="size-6 text-emerald-500 dark:text-emerald-400" />
+              <SectionLabel variant="forum">community</SectionLabel>
             </div>
             <Button variant="outline" size="sm" asChild>
-              <Link href={ROUTES.FORUM}>
+              <Link href={ROUTES.POINTSTACK}>
                 View All
                 <ArrowRight className="size-3 ml-2" />
               </Link>
@@ -291,8 +291,8 @@ export function HomeView({
           </div>
 
           <p className="text-muted-foreground mb-6">
-            Connect with other BAS professionals. Ask questions, share
-            knowledge.
+            Connect with other BAS professionals. Ask questions, share projects,
+            and find resources.
           </p>
 
           {recentThreads.length === 0 ? (
