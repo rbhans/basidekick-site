@@ -26,6 +26,19 @@ export const ROUTES = {
   PSK_PROJECT: (id: string) => `/psk/projects/${encodeURIComponent(id)}`,
   PSK_CLIENT: (id: string) => `/psk/clients/${encodeURIComponent(id)}`,
   PSK_JOIN: (inviteCode: string) => `/psk/join/${encodeURIComponent(inviteCode)}`,
+  // PointStack Community Platform
+  POINTSTACK: "/pointstack",
+  POINTSTACK_PROFILE: (username: string) => `/pointstack/people/@${encodeURIComponent(username)}`,
+  POINTSTACK_COMPANY: (slug: string) => `/pointstack/companies/${encodeURIComponent(slug)}`,
+  POINTSTACK_PROJECT: (slug: string) => `/pointstack/projects/${encodeURIComponent(slug)}`,
+  POINTSTACK_QUESTION: (slug: string) => `/pointstack/questions/${encodeURIComponent(slug)}`,
+  POINTSTACK_POST: (slug: string) => `/pointstack/posts/${encodeURIComponent(slug)}`,
+  POINTSTACK_JOB: (slug: string) => `/pointstack/jobs/${encodeURIComponent(slug)}`,
+  POINTSTACK_RESOURCE: (slug: string) => `/pointstack/resources/${encodeURIComponent(slug)}`,
+  POINTSTACK_MESSAGES: "/pointstack/messages",
+  POINTSTACK_CONVERSATION: (id: string) => `/pointstack/messages/${encodeURIComponent(id)}`,
+  POINTSTACK_NOTIFICATIONS: "/pointstack/notifications",
+  POINTSTACK_ONBOARDING: "/pointstack/onboarding",
   ADMIN: "/admin",
 } as const;
 
@@ -48,6 +61,8 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.WIKI;
     case VIEW_IDS.FORUM:
       return ROUTES.FORUM;
+    case VIEW_IDS.POINTSTACK:
+      return ROUTES.POINTSTACK;
     case VIEW_IDS.RESOURCES:
       return ROUTES.RESOURCES;
     case VIEW_IDS.BABEL:
@@ -78,6 +93,7 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/tools") return VIEW_IDS.TOOLS;
   if (pathname === "/wiki") return VIEW_IDS.WIKI;
   if (pathname === "/forum") return VIEW_IDS.FORUM;
+  if (pathname === "/pointstack") return VIEW_IDS.POINTSTACK;
   if (pathname === "/resources") return VIEW_IDS.RESOURCES;
   if (pathname === "/babel") return VIEW_IDS.BABEL;
   if (pathname.startsWith("/babel/")) return VIEW_IDS.BABEL;
@@ -108,6 +124,11 @@ export function getViewIdFromPath(pathname: string): string {
   // Forum sub-pages (categories, threads)
   if (pathname.startsWith("/forum/")) {
     return VIEW_IDS.FORUM;
+  }
+
+  // PointStack sub-pages
+  if (pathname.startsWith("/pointstack/")) {
+    return VIEW_IDS.POINTSTACK;
   }
 
   // References sub-pages

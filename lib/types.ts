@@ -103,6 +103,7 @@ export const VIEW_IDS = {
   REFERENCES: "references",
   WIKI: "wiki",
   FORUM: "forum",
+  POINTSTACK: "pointstack",
   PSK: "psk",
   CALCULATORS: "calculators",
   ACCOUNT: "account",
@@ -523,4 +524,412 @@ export interface BabelContribution {
   // Joined data
   submitter?: { display_name: string | null; email?: string };
   reviewer?: { display_name: string | null };
+}
+
+// ============================================================
+// PointStack Community Platform Types
+// ============================================================
+
+// Extended Profile fields for PointStack
+export interface PointStackProfile extends Profile {
+  skills: string[];
+  headline: string | null;
+  location: string | null;
+  website_url: string | null;
+  linkedin_url: string | null;
+  github_url: string | null;
+  availability_status: PointStackAvailabilityStatus;
+  reputation_score: number;
+  is_verified: boolean;
+  onboarding_completed: boolean;
+  // Computed/joined
+  follower_count?: number;
+  following_count?: number;
+}
+
+export type PointStackAvailabilityStatus = "available" | "busy" | "not-looking";
+
+// Company
+export interface PointStackCompany {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  description: string | null;
+  website_url: string | null;
+  location: string | null;
+  size_range: PointStackCompanySizeRange | null;
+  industry: string | null;
+  owner_id: string;
+  is_verified: boolean;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  owner?: { display_name: string | null };
+  members?: PointStackCompanyMember[];
+  member_count?: number;
+}
+
+export type PointStackCompanySizeRange = "1-10" | "11-50" | "51-200" | "201-500" | "500+";
+
+export interface PointStackCompanyMember {
+  id: string;
+  company_id: string;
+  user_id: string;
+  role: PointStackCompanyMemberRole;
+  title: string | null;
+  joined_at: string;
+  // Joined data
+  profile?: { display_name: string | null; avatar_url: string | null };
+}
+
+export type PointStackCompanyMemberRole = "owner" | "admin" | "member";
+
+// User Follow relationship
+export interface PointStackUserFollow {
+  follower_id: string;
+  following_id: string;
+  created_at: string;
+  // Joined data
+  follower?: { display_name: string | null; avatar_url: string | null };
+  following?: { display_name: string | null; avatar_url: string | null };
+}
+
+// Unified Post
+export interface PointStackPost {
+  id: string;
+  author_id: string;
+  post_type: PointStackPostType;
+  title: string;
+  content: string;
+  slug: string;
+  is_published: boolean;
+  is_pinned: boolean;
+  view_count: number;
+  upvote_count: number;
+  comment_count: number;
+  tags: string[];
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  author?: { display_name: string | null; avatar_url: string | null };
+  user_vote?: number | null; // Current user's vote: 1, -1, or null
+}
+
+export type PointStackPostType = "discussion" | "question" | "project" | "job" | "tip";
+
+// Post Vote
+export interface PointStackPostVote {
+  user_id: string;
+  post_id: string;
+  vote_type: 1 | -1;
+  created_at: string;
+}
+
+// Post Comment
+export interface PointStackPostComment {
+  id: string;
+  post_id: string;
+  author_id: string;
+  parent_id: string | null;
+  content: string;
+  is_accepted: boolean;
+  upvote_count: number;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  author?: { display_name: string | null; avatar_url: string | null };
+  replies?: PointStackPostComment[];
+  user_vote?: number | null;
+}
+
+// Comment Vote
+export interface PointStackCommentVote {
+  user_id: string;
+  comment_id: string;
+  vote_type: 1 | -1;
+  created_at: string;
+}
+
+// Showcase Project
+export interface PointStackShowcaseProject {
+  id: string;
+  author_id: string;
+  company_id: string | null;
+  title: string;
+  slug: string;
+  description: string | null;
+  content: string | null;
+  cover_image_url: string | null;
+  images: string[];
+  building_types: string[];
+  systems: string[];
+  technologies: string[];
+  location: string | null;
+  completion_date: string | null;
+  square_footage: number | null;
+  is_featured: boolean;
+  view_count: number;
+  like_count: number;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  author?: { display_name: string | null; avatar_url: string | null };
+  company?: { name: string; slug: string };
+  credits?: PointStackProjectCredit[];
+  user_liked?: boolean;
+}
+
+// Project Credit
+export interface PointStackProjectCredit {
+  id: string;
+  project_id: string;
+  user_id: string | null;
+  role: string;
+  display_name: string | null;
+  // Joined data
+  user?: { display_name: string | null; avatar_url: string | null };
+}
+
+// Project Like
+export interface PointStackProjectLike {
+  user_id: string;
+  project_id: string;
+  created_at: string;
+}
+
+// Job Listing
+export interface PointStackJob {
+  id: string;
+  company_id: string | null;
+  posted_by: string;
+  title: string;
+  slug: string;
+  description: string;
+  requirements: string | null;
+  job_type: PointStackJobType;
+  experience_level: PointStackExperienceLevel | null;
+  location: string | null;
+  is_remote: boolean;
+  salary_min: number | null;
+  salary_max: number | null;
+  salary_currency: string;
+  application_url: string | null;
+  application_email: string | null;
+  is_active: boolean;
+  expires_at: string | null;
+  view_count: number;
+  application_count: number;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  company?: { name: string; slug: string; logo_url: string | null };
+  poster?: { display_name: string | null };
+  user_applied?: boolean;
+}
+
+export type PointStackJobType = "full-time" | "part-time" | "contract" | "freelance" | "internship";
+export type PointStackExperienceLevel = "entry" | "mid" | "senior" | "lead" | "executive";
+
+// Job Application
+export interface PointStackJobApplication {
+  id: string;
+  job_id: string;
+  user_id: string;
+  cover_letter: string | null;
+  resume_url: string | null;
+  status: PointStackApplicationStatus;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  job?: PointStackJob;
+  applicant?: { display_name: string | null; avatar_url: string | null; headline: string | null };
+}
+
+export type PointStackApplicationStatus = "pending" | "reviewed" | "interviewing" | "rejected" | "accepted";
+
+// Resource Listing
+export interface PointStackResourceListing {
+  id: string;
+  author_id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  category: PointStackResourceCategory;
+  preview_images: string[];
+  file_url: string | null;
+  is_free: boolean;
+  external_link: string | null;
+  download_count: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  author?: { display_name: string | null; avatar_url: string | null };
+}
+
+export type PointStackResourceCategory = "template" | "script" | "document" | "guide" | "tool" | "other";
+
+// Notification
+export interface PointStackNotification {
+  id: string;
+  user_id: string;
+  type: PointStackNotificationType;
+  title: string;
+  body: string | null;
+  link: string | null;
+  is_read: boolean;
+  actor_id: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  // Joined data
+  actor?: { display_name: string | null; avatar_url: string | null };
+}
+
+export type PointStackNotificationType =
+  | "mention"
+  | "reply"
+  | "follow"
+  | "like"
+  | "answer_accepted"
+  | "job_application"
+  | "system";
+
+// Notification Preferences
+export interface PointStackNotificationPreferences {
+  user_id: string;
+  email_mentions: boolean;
+  email_replies: boolean;
+  email_follows: boolean;
+  email_digest_frequency: PointStackDigestFrequency;
+  push_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type PointStackDigestFrequency = "never" | "daily" | "weekly";
+
+// Conversation (DM)
+export interface PointStackConversation {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  participants?: PointStackConversationParticipant[];
+  last_message?: PointStackMessage;
+  unread_count?: number;
+}
+
+// Conversation Participant
+export interface PointStackConversationParticipant {
+  conversation_id: string;
+  user_id: string;
+  last_read_at: string | null;
+  is_muted: boolean;
+  // Joined data
+  profile?: { display_name: string | null; avatar_url: string | null };
+}
+
+// Message
+export interface PointStackMessage {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  content: string;
+  is_edited: boolean;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  sender?: { display_name: string | null; avatar_url: string | null };
+}
+
+// Message Request
+export interface PointStackMessageRequest {
+  id: string;
+  from_user_id: string;
+  to_user_id: string;
+  message: string | null;
+  status: PointStackMessageRequestStatus;
+  created_at: string;
+  // Joined data
+  from_user?: { display_name: string | null; avatar_url: string | null; headline: string | null };
+}
+
+export type PointStackMessageRequestStatus = "pending" | "accepted" | "declined";
+
+// Feed filter options
+export interface PointStackFeedFilter {
+  type?: PointStackPostType;
+  tags?: string[];
+  following?: boolean;
+  sortBy?: "recent" | "popular" | "unanswered";
+}
+
+// Create/Update input types
+export interface CreatePointStackPostInput {
+  post_type: PointStackPostType;
+  title: string;
+  content: string;
+  tags?: string[];
+  metadata?: Record<string, unknown>;
+}
+
+export interface CreatePointStackCommentInput {
+  post_id: string;
+  content: string;
+  parent_id?: string;
+}
+
+export interface CreatePointStackShowcaseProjectInput {
+  title: string;
+  description?: string;
+  content?: string;
+  cover_image_url?: string;
+  images?: string[];
+  building_types?: string[];
+  systems?: string[];
+  technologies?: string[];
+  location?: string;
+  completion_date?: string;
+  square_footage?: number;
+  company_id?: string;
+}
+
+export interface CreatePointStackJobInput {
+  title: string;
+  description: string;
+  requirements?: string;
+  job_type: PointStackJobType;
+  experience_level?: PointStackExperienceLevel;
+  location?: string;
+  is_remote?: boolean;
+  salary_min?: number;
+  salary_max?: number;
+  salary_currency?: string;
+  application_url?: string;
+  application_email?: string;
+  company_id?: string;
+}
+
+export interface CreatePointStackResourceInput {
+  title: string;
+  description?: string;
+  category: PointStackResourceCategory;
+  preview_images?: string[];
+  file_url?: string;
+  is_free?: boolean;
+  external_link?: string;
+}
+
+export interface UpdatePointStackProfileInput {
+  display_name?: string;
+  avatar_url?: string;
+  headline?: string;
+  location?: string;
+  skills?: string[];
+  website_url?: string;
+  linkedin_url?: string;
+  github_url?: string;
+  availability_status?: PointStackAvailabilityStatus;
 }

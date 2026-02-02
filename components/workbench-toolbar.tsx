@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Circle, List, Moon, Sun, Drop, Thermometer, User, SignOut, Gear, UserPlus, ShieldCheck } from "@phosphor-icons/react";
+import { Circle, List, Moon, Sun, Drop, Thermometer, User, SignOut, Gear, UserPlus, ShieldCheck, Bell } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { Logo } from "./logo";
 import { HeaderSearch } from "./header-search";
@@ -15,6 +15,7 @@ import {
 } from "./ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
+import { NotificationBell } from "@/components/pointstack/notifications/notification-bell";
 
 interface WorkbenchToolbarProps {
   onMenuClick?: () => void;
@@ -160,6 +161,9 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
             <span>{weather.loading ? "--" : `${weather.humidity}%`}</span>
           </div>
         </div>
+
+        {/* Notification bell for logged-in users */}
+        {user && <NotificationBell />}
 
         <Button
           variant="ghost"

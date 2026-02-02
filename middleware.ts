@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Routes that require authentication
-const PROTECTED_ROUTES = ["/account"];
+const PROTECTED_ROUTES = ["/account", "/pointstack/messages", "/pointstack/notifications", "/pointstack/onboarding"];
 
 // Routes that should redirect to home if already authenticated
 const AUTH_ROUTES = ["/signin", "/signup"];
