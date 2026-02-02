@@ -26,7 +26,17 @@ function generateLicenseKey(toolId: string, orderNumber: string): string {
 function verifySignature(payload: string, signature: string, secret: string): boolean {
   const hmac = crypto.createHmac("sha256", secret);
   const digest = hmac.update(payload).digest("hex");
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest));
+
+  // Convert to buffers for comparison
+  const signatureBuffer = Buffer.from(signature);
+  const digestBuffer = Buffer.from(digest);
+
+  // Check lengths match before timing-safe comparison (timingSafeEqual throws if lengths differ)
+  if (signatureBuffer.length !== digestBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(signatureBuffer, digestBuffer);
 }
 
 export async function POST(request: Request) {

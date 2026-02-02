@@ -1,17 +1,16 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, User } from "@supabase/supabase-js";
 import { Octokit } from "octokit";
 import { z } from "zod";
 
-// Validation schema for action requests
+// Validation schema for action requests (reviewer_id is now derived from JWT)
 const actionSchema = z.object({
   action: z.enum(["approve", "reject"]),
-  reviewer_id: z.string().uuid(),
   reviewer_notes: z.string().optional(),
 });
 
-// Helper to get Supabase client
-function getSupabaseClient() {
+// Helper to get service role Supabase client
+function getServiceClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -20,6 +19,38 @@ function getSupabaseClient() {
   }
 
   return createClient(supabaseUrl, supabaseServiceKey);
+}
+
+// Helper to verify JWT and get authenticated user
+async function getAuthenticatedUser(request: Request): Promise<User | null> {
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return null;
+  }
+
+  const token = authHeader.slice(7);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+
+  // Create a client with the user's JWT to verify it
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
+    return null;
+  }
+
+  return user;
 }
 
 // Helper to create GitHub issue
@@ -111,7 +142,16 @@ export async function POST(
   try {
     const { id } = await params;
 
-    const supabase = getSupabaseClient();
+    // Verify JWT and get authenticated user
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const supabase = getServiceClient();
     if (!supabase) {
       console.error("Supabase not configured");
       return NextResponse.json(
@@ -130,7 +170,10 @@ export async function POST(
       );
     }
 
-    const { action, reviewer_id, reviewer_notes } = parseResult.data;
+    const { action, reviewer_notes } = parseResult.data;
+
+    // Derive reviewer_id from verified JWT, not from request body
+    const reviewer_id = user.id;
 
     // Verify reviewer is an admin
     const { data: reviewerProfile, error: profileError } = await supabase
@@ -244,7 +287,7 @@ export async function POST(
   }
 }
 
-// GET - Fetch a single contribution (for admin view)
+// GET - Fetch a single contribution (for admin view or owner)
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -252,7 +295,16 @@ export async function GET(
   try {
     const { id } = await params;
 
-    const supabase = getSupabaseClient();
+    // Verify JWT and get authenticated user
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const supabase = getServiceClient();
     if (!supabase) {
       return NextResponse.json(
         { error: "Server not configured" },
@@ -274,6 +326,23 @@ export async function GET(
       return NextResponse.json(
         { error: "Contribution not found" },
         { status: 404 }
+      );
+    }
+
+    // Verify user is either the owner or an admin
+    const { data: userProfile } = await supabase
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", user.id)
+      .single();
+
+    const isOwner = contribution.user_id === user.id;
+    const isAdmin = userProfile?.is_admin === true;
+
+    if (!isOwner && !isAdmin) {
+      return NextResponse.json(
+        { error: "Unauthorized: You can only view your own contributions" },
+        { status: 403 }
       );
     }
 

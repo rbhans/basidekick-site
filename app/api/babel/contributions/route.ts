@@ -13,8 +13,8 @@ const createContributionSchema = z.object({
   suggested_changes: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
-// Helper to get authenticated Supabase client
-function getSupabaseClient() {
+// Helper to get service role Supabase client (for database operations)
+function getServiceClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -25,13 +25,51 @@ function getSupabaseClient() {
   return createClient(supabaseUrl, supabaseServiceKey);
 }
 
+// Helper to verify JWT and get authenticated user
+async function getAuthenticatedUser(request: Request) {
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return null;
+  }
+
+  const token = authHeader.slice(7);
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+
+  // Create a client with the user's JWT to verify it
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  });
+
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
+    return null;
+  }
+
+  return user;
+}
+
 // POST - Create new contribution
 export async function POST(request: Request) {
   try {
-    // Get authorization header for user identification
-    const authHeader = request.headers.get("authorization");
+    // Verify JWT and get authenticated user
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
-    const supabase = getSupabaseClient();
+    const supabase = getServiceClient();
     if (!supabase) {
       console.error("Supabase not configured");
       return NextResponse.json(
@@ -62,20 +100,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get user from the request (this requires the user_id to be passed in the body)
-    // In a real implementation, you'd verify the JWT token
-    if (!body.user_id) {
-      return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 401 }
-      );
-    }
-
-    // Insert contribution
+    // Insert contribution using authenticated user's ID from JWT
     const { data: contribution, error: insertError } = await supabase
       .from("babel_contributions")
       .insert({
-        user_id: body.user_id,
+        user_id: user.id, // Use verified user ID from JWT, not from request body
         type: data.type,
         entry_id: data.entry_id || null,
         entry_type: data.entry_type || null,
@@ -109,17 +138,16 @@ export async function POST(request: Request) {
 // GET - List user's contributions
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get("user_id");
-
-    if (!userId) {
+    // Verify JWT and get authenticated user
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
       return NextResponse.json(
-        { error: "User ID is required" },
-        { status: 400 }
+        { error: "Unauthorized" },
+        { status: 401 }
       );
     }
 
-    const supabase = getSupabaseClient();
+    const supabase = getServiceClient();
     if (!supabase) {
       console.error("Supabase not configured");
       return NextResponse.json(
@@ -128,10 +156,11 @@ export async function GET(request: Request) {
       );
     }
 
+    // Fetch contributions for the authenticated user only
     const { data: contributions, error: fetchError } = await supabase
       .from("babel_contributions")
       .select("*")
-      .eq("user_id", userId)
+      .eq("user_id", user.id) // Use verified user ID from JWT
       .order("created_at", { ascending: false });
 
     if (fetchError) {
