@@ -716,15 +716,7 @@ CREATE TABLE IF NOT EXISTS public.pointstack_conversations (
 -- Enable RLS
 ALTER TABLE public.pointstack_conversations ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies (handled via participants)
-CREATE POLICY "Participants can view conversations"
-  ON public.pointstack_conversations FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.pointstack_conversation_participants cp
-      WHERE cp.conversation_id = id AND cp.user_id = auth.uid()
-    )
-  );
+-- Note: RLS policy for conversations is created after participants table
 
 -- ============================================================
 -- CONVERSATION PARTICIPANTS
@@ -752,6 +744,16 @@ CREATE POLICY "Users can update their participation"
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_pointstack_conv_participants_user ON public.pointstack_conversation_participants (user_id);
+
+-- RLS Policy for conversations (created after participants table)
+CREATE POLICY "Participants can view conversations"
+  ON public.pointstack_conversations FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.pointstack_conversation_participants cp
+      WHERE cp.conversation_id = id AND cp.user_id = auth.uid()
+    )
+  );
 
 -- ============================================================
 -- MESSAGES
