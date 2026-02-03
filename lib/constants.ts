@@ -141,6 +141,15 @@ export const RESOURCES: Resource[] = [
     href: `/${VIEW_IDS.BABEL}`,
   },
   {
+    id: VIEW_IDS.EQUIPMENT,
+    name: "BAS Atlas",
+    shortName: "Atlas",
+    tagline: "Equipment database",
+    description: "Community-driven equipment reference for BAS professionals.",
+    iconName: "Gauge",
+    href: ROUTES.EQUIPMENT,
+  },
+  {
     id: VIEW_IDS.CALCULATORS,
     name: "Calculators",
     shortName: "Calc",
@@ -487,6 +496,7 @@ export const NAV_ITEMS: NavNode[] = [
     defaultExpanded: true,
     children: [
       { id: VIEW_IDS.BABEL, label: "BAS Babel", iconName: "Translate", colorVariant: "resources" },
+      { id: VIEW_IDS.EQUIPMENT, label: "BAS Atlas", iconName: "Gauge", colorVariant: "resources" },
       { id: VIEW_IDS.CALCULATORS, label: "Calculators", iconName: "Calculator", colorVariant: "resources" },
       { id: VIEW_IDS.PSK, label: "ProjectSidekick", iconName: "Kanban", colorVariant: "resources" },
       { id: VIEW_IDS.REFERENCES, label: "References", iconName: "BookmarksSimple", colorVariant: "resources" },

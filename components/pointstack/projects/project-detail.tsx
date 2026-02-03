@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { ArrowLeft, Heart, MapPin, Calendar, Ruler } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
+import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,6 +24,30 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+
+  const { data: atlasData } = useAtlasData();
+
+  const brandById = useMemo(() => new Map(atlasData?.brands.map((b) => [b.id, b]) || []), [atlasData]);
+  const typeById = useMemo(() => new Map(atlasData?.types.map((t) => [t.id, t]) || []), [atlasData]);
+  const modelById = useMemo(() => new Map(atlasData?.models.map((m) => [m.id, m]) || []), [atlasData]);
+
+  const equipmentLinks = useMemo(() => {
+    if (!atlasData || !project?.equipment_ids) return [];
+    return project.equipment_ids
+      .map((id) => {
+        const model = modelById.get(id);
+        if (!model) return null;
+        const brand = brandById.get(model.brand);
+        const type = typeById.get(model.type);
+        if (!brand || !type) return null;
+        return {
+          id,
+          name: model.name,
+          href: ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
+        };
+      })
+      .filter(Boolean) as { id: string; name: string; href: string }[];
+  }, [atlasData, project, brandById, typeById, modelById]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -182,6 +207,11 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
         ))}
         {project.technologies?.map((tech) => (
           <Badge key={tech}>{tech}</Badge>
+        ))}
+        {equipmentLinks.map((item) => (
+          <Link key={item.id} href={item.href}>
+            <Badge variant="secondary">{item.name}</Badge>
+          </Link>
         ))}
       </div>
 

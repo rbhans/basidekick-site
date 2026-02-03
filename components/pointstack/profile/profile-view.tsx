@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -13,6 +13,8 @@ import {
   PencilSimple,
 } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
+import { useAtlasAll } from "@/components/atlas/use-atlas-data";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -35,8 +37,66 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
+  const [equipmentIds, setEquipmentIds] = useState<string[]>([]);
+  const { data: atlasData } = useAtlasAll();
+
+  const brandById = useMemo(() => new Map(atlasData?.brands.map((b) => [b.id, b]) || []), [atlasData]);
+  const typeById = useMemo(() => new Map(atlasData?.types.map((t) => [t.id, t]) || []), [atlasData]);
+  const modelById = useMemo(() => new Map(atlasData?.models.map((m) => [m.id, m]) || []), [atlasData]);
 
   const isOwnProfile = user && profile && user.id === profile.id;
+
+  const equipmentByBrand = useMemo(() => {
+    if (!atlasData || equipmentIds.length === 0) return [];
+    const brandById = new Map(atlasData.brands.map((b) => [b.id, b]));
+    const typeById = new Map(atlasData.types.map((t) => [t.id, t]));
+
+    const grouped = new Map<string, { brandName: string; brandSlug: string; items: { id: string; name: string; href: string }[] }>();
+
+    for (const id of equipmentIds) {
+      const model = atlasData.models.find((m) => m.id === id);
+      if (!model) continue;
+      const brand = brandById.get(model.brand);
+      const type = typeById.get(model.type);
+      if (!brand || !type) continue;
+
+      const entry = grouped.get(brand.id) || {
+        brandName: brand.name,
+        brandSlug: brand.slug || brand.id,
+        items: [],
+      };
+
+      entry.items.push({
+        id: model.id,
+        name: model.name,
+        href: ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
+      });
+      grouped.set(brand.id, entry);
+    }
+
+    return Array.from(grouped.values()).map((group) => ({
+      ...group,
+      items: group.items.sort((a, b) => a.name.localeCompare(b.name)),
+    })).sort((a, b) => a.brandName.localeCompare(b.brandName));
+  }, [atlasData, equipmentIds]);
+
+  const getEquipmentLinks = (ids: string[] = []) => {
+    if (!atlasData) return [];
+    return ids
+      .map((id) => {
+        const model = modelById.get(id);
+        if (!model) return null;
+        const brand = brandById.get(model.brand);
+        const type = typeById.get(model.type);
+        if (!brand || !type) return null;
+        return {
+          id,
+          name: model.name,
+          href: ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
+        };
+      })
+      .filter(Boolean) as { id: string; name: string; href: string }[];
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -61,6 +121,17 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
           // Fetch user's posts
           const userPosts = await api.fetchPosts({ following: false }, 20, 0);
           setPosts(userPosts.filter((p) => p.author_id === profileData.id));
+
+          // Fetch equipment experience
+          const supabase = createClient();
+          if (supabase) {
+            const { data: experienceRows } = await supabase
+              .from("equipment_experience")
+              .select("equipment_id")
+              .eq("user_id", profileData.id);
+
+            setEquipmentIds((experienceRows || []).map((row) => row.equipment_id));
+          }
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -250,6 +321,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
       <Tabs defaultValue="posts">
         <TabsList>
           <TabsTrigger value="posts">Posts ({posts.length})</TabsTrigger>
+          <TabsTrigger value="equipment">Equipment</TabsTrigger>
           <TabsTrigger value="projects">Projects</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
         </TabsList>
@@ -258,12 +330,41 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
           {posts.length > 0 ? (
             <div className="space-y-4">
               {posts.map((post) => (
-                <FeedCard key={post.id} post={post} />
+                <FeedCard
+                  key={post.id}
+                  post={post}
+                  equipmentLinks={getEquipmentLinks(post.equipment_ids || [])}
+                />
               ))}
             </div>
           ) : (
             <div className="text-center py-12 text-muted-foreground">
               No posts yet.
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="equipment" className="mt-6">
+          {equipmentByBrand.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              No equipment experience yet.
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {equipmentByBrand.map((group) => (
+                <div key={group.brandSlug}>
+                  <h3 className="text-sm font-semibold mb-2">{group.brandName}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {group.items.map((item) => (
+                      <Link key={item.id} href={item.href}>
+                        <Badge variant="secondary" className="text-xs">
+                          {item.name}
+                        </Badge>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </TabsContent>

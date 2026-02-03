@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { MagnifyingGlass, Command, X, Spinner, Article, ChatCircle, Translate, WarningCircle } from "@phosphor-icons/react";
+import { MagnifyingGlass, Command, X, Spinner, Article, ChatCircle, Translate, WarningCircle, Gauge } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/lib/routes";
-import type { BabelData } from "@/lib/types";
+import type { BabelData, AtlasData } from "@/lib/types";
 
 // Babel data URL
 const BABEL_DATA_URL = process.env.NODE_ENV === "development"
@@ -17,10 +17,18 @@ const BABEL_DATA_URL = process.env.NODE_ENV === "development"
 // Cache babel data to avoid refetching on every search
 let babelDataCache: BabelData | null = null;
 
+// Atlas data URL
+const ATLAS_DATA_URL = process.env.NODE_ENV === "development"
+  ? "/data/atlas/index.json"
+  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/index.json";
+
+// Cache atlas data to avoid refetching on every search
+let atlasDataCache: AtlasData | null = null;
+
 interface SearchResult {
   id: string;
   title: string;
-  type: "babel" | "article" | "thread";
+  type: "babel" | "atlas" | "article" | "thread";
   href: string;
   subtitle?: string;
 }
@@ -111,6 +119,70 @@ export function HeaderSearch() {
               type: "babel" as const,
               href: `${ROUTES.BABEL}?q=${encodeURIComponent(p.concept.id)}`,
               subtitle: p.concept.category,
+            }))
+          );
+
+        }
+
+        // Search Atlas entries (equipment database)
+        if (!atlasDataCache) {
+          try {
+            const response = await fetch(ATLAS_DATA_URL);
+            if (response.ok) {
+              atlasDataCache = await response.json();
+            }
+          } catch (e) {
+            console.error("[Search] Failed to fetch Atlas data:", e);
+          }
+        }
+
+        if (atlasDataCache) {
+          const brandById = new Map(atlasDataCache.brands.map(b => [b.id, b]));
+          const typeById = new Map(atlasDataCache.types.map(t => [t.id, t]));
+
+          const matchingModels = atlasDataCache.models
+            .filter(m => {
+              const brandName = brandById.get(m.brand)?.name || "";
+              const typeName = typeById.get(m.type)?.name || "";
+              const inModel = m.name.toLowerCase().includes(lowerQuery) || m.id.toLowerCase().includes(lowerQuery) || m.slug?.toLowerCase().includes(lowerQuery);
+              const inNumbers = (m.model_numbers || []).some(n => n.toLowerCase().includes(lowerQuery));
+              const inBrand = brandName.toLowerCase().includes(lowerQuery);
+              const inType = typeName.toLowerCase().includes(lowerQuery);
+              return inModel || inNumbers || inBrand || inType;
+            })
+            .slice(0, 3);
+
+          searchResults.push(
+            ...matchingModels.map(m => {
+              const brand = brandById.get(m.brand);
+              const type = typeById.get(m.type);
+              const brandSlug = brand?.slug || brand?.id || m.brand;
+              const typeSlug = type?.slug || type?.id || m.type;
+              return {
+                id: `atlas-model-${m.id}`,
+                title: m.name,
+                type: "atlas" as const,
+                href: ROUTES.EQUIPMENT_MODEL(brandSlug, typeSlug, m.slug || m.id),
+                subtitle: brand?.name || "",
+              };
+            })
+          );
+
+          const matchingBrands = atlasDataCache.brands
+            .filter(b =>
+              b.name.toLowerCase().includes(lowerQuery) ||
+              b.id.toLowerCase().includes(lowerQuery) ||
+              b.slug?.toLowerCase().includes(lowerQuery)
+            )
+            .slice(0, 2);
+
+          searchResults.push(
+            ...matchingBrands.map(b => ({
+              id: `atlas-brand-${b.id}`,
+              title: b.name,
+              type: "atlas" as const,
+              href: ROUTES.EQUIPMENT_BRAND(b.slug || b.id),
+              subtitle: "Brand",
             }))
           );
         }
@@ -234,6 +306,8 @@ export function HeaderSearch() {
     switch (type) {
       case "babel":
         return <Translate className="size-4 text-amber-500" />;
+      case "atlas":
+        return <Gauge className="size-4 text-sky-500" />;
       case "article":
         return <Article className="size-4 text-blue-500" />;
       case "thread":
@@ -304,6 +378,44 @@ export function HeaderSearch() {
               )}
 
               {/* Babel Terms Section */}
+
+              {/* Atlas Equipment Section */}
+              {results.filter(r => r.type === "atlas").length > 0 && (
+                <>
+                  <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-muted/30 border-b border-border">
+                    BAS Atlas
+                  </div>
+                  {results.filter(r => r.type === "atlas").map((result) => {
+                    const globalIndex = results.findIndex(r => r.id === result.id);
+                    return (
+                      <Link
+                        key={`${result.type}-${result.id}`}
+                        id={`search-result-${result.id}`}
+                        role="option"
+                        aria-selected={globalIndex === selectedIndex}
+                        href={result.href}
+                        onClick={() => {
+                          setIsOpen(false);
+                          setQuery("");
+                        }}
+                        className={cn(
+                          "flex items-start gap-3 px-3 py-2 hover:bg-muted/50 transition-colors",
+                          globalIndex === selectedIndex && "bg-muted/50"
+                        )}
+                      >
+                        <div className="mt-0.5">{getIcon(result.type)}</div>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium truncate block">{result.title}</span>
+                          {result.subtitle && (
+                            <p className="text-xs text-muted-foreground truncate mt-0.5">{result.subtitle}</p>
+                          )}
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </>
+              )}
+
               {results.filter(r => r.type === "babel").length > 0 && (
                 <>
                   <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-muted/30 border-b border-border">

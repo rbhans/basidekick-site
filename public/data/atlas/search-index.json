@@ -1,0 +1,329 @@
+{
+  "version": "1.0.0",
+  "entries": [
+    {
+      "id": "automated-logic",
+      "type": "brand",
+      "name": "Automated Logic",
+      "tokens": [
+        "automated",
+        "logic",
+        "automated-logic"
+      ]
+    },
+    {
+      "id": "belimo",
+      "type": "brand",
+      "name": "Belimo",
+      "tokens": [
+        "belimo"
+      ]
+    },
+    {
+      "id": "delta-controls",
+      "type": "brand",
+      "name": "Delta Controls",
+      "tokens": [
+        "delta",
+        "controls",
+        "delta-controls"
+      ]
+    },
+    {
+      "id": "distech-controls",
+      "type": "brand",
+      "name": "Distech Controls",
+      "tokens": [
+        "distech",
+        "controls",
+        "distech-controls"
+      ]
+    },
+    {
+      "id": "honeywell",
+      "type": "brand",
+      "name": "Honeywell",
+      "tokens": [
+        "honeywell"
+      ]
+    },
+    {
+      "id": "johnson-controls",
+      "type": "brand",
+      "name": "Johnson Controls",
+      "tokens": [
+        "johnson",
+        "controls",
+        "johnson-controls"
+      ]
+    },
+    {
+      "id": "schneider-electric",
+      "type": "brand",
+      "name": "Schneider Electric",
+      "tokens": [
+        "schneider",
+        "electric",
+        "schneider-electric"
+      ]
+    },
+    {
+      "id": "siemens",
+      "type": "brand",
+      "name": "Siemens",
+      "tokens": [
+        "siemens"
+      ]
+    },
+    {
+      "id": "trane",
+      "type": "brand",
+      "name": "Trane",
+      "tokens": [
+        "trane"
+      ]
+    },
+    {
+      "id": "veris",
+      "type": "brand",
+      "name": "Veris",
+      "tokens": [
+        "veris"
+      ]
+    },
+    {
+      "id": "air-quality-sensors",
+      "type": "type",
+      "name": "Air Quality Sensors",
+      "tokens": [
+        "air",
+        "quality",
+        "sensors",
+        "air-quality-sensors"
+      ]
+    },
+    {
+      "id": "co2-sensors",
+      "type": "type",
+      "name": "CO2 Sensors",
+      "tokens": [
+        "co2",
+        "sensors",
+        "co2-sensors"
+      ]
+    },
+    {
+      "id": "damper-actuators",
+      "type": "type",
+      "name": "Damper Actuators",
+      "tokens": [
+        "damper",
+        "actuators",
+        "damper-actuators"
+      ]
+    },
+    {
+      "id": "gateways",
+      "type": "type",
+      "name": "Gateways",
+      "tokens": [
+        "gateways"
+      ]
+    },
+    {
+      "id": "humidity-sensors",
+      "type": "type",
+      "name": "Humidity Sensors",
+      "tokens": [
+        "humidity",
+        "sensors",
+        "humidity-sensors"
+      ]
+    },
+    {
+      "id": "meters",
+      "type": "type",
+      "name": "Meters",
+      "tokens": [
+        "meters"
+      ]
+    },
+    {
+      "id": "network-controllers",
+      "type": "type",
+      "name": "Network Controllers",
+      "tokens": [
+        "network",
+        "controllers",
+        "network-controllers"
+      ]
+    },
+    {
+      "id": "occupancy-sensors",
+      "type": "type",
+      "name": "Occupancy Sensors",
+      "tokens": [
+        "occupancy",
+        "sensors",
+        "occupancy-sensors"
+      ]
+    },
+    {
+      "id": "other",
+      "type": "type",
+      "name": "Other",
+      "tokens": [
+        "other"
+      ]
+    },
+    {
+      "id": "pressure-sensors",
+      "type": "type",
+      "name": "Pressure Sensors",
+      "tokens": [
+        "pressure",
+        "sensors",
+        "pressure-sensors"
+      ]
+    },
+    {
+      "id": "software",
+      "type": "type",
+      "name": "Software",
+      "tokens": [
+        "software"
+      ]
+    },
+    {
+      "id": "supervisory-controllers",
+      "type": "type",
+      "name": "Supervisory Controllers",
+      "tokens": [
+        "supervisory",
+        "controllers",
+        "supervisory-controllers"
+      ]
+    },
+    {
+      "id": "temperature-sensors",
+      "type": "type",
+      "name": "Temperature Sensors",
+      "tokens": [
+        "temperature",
+        "sensors",
+        "temperature-sensors"
+      ]
+    },
+    {
+      "id": "thermostats",
+      "type": "type",
+      "name": "Thermostats",
+      "tokens": [
+        "thermostats"
+      ]
+    },
+    {
+      "id": "unitary-controllers",
+      "type": "type",
+      "name": "Unitary Controllers",
+      "tokens": [
+        "unitary",
+        "controllers",
+        "unitary-controllers"
+      ]
+    },
+    {
+      "id": "valve-actuators",
+      "type": "type",
+      "name": "Valve Actuators",
+      "tokens": [
+        "valve",
+        "actuators",
+        "valve-actuators"
+      ]
+    },
+    {
+      "id": "vav-controllers",
+      "type": "type",
+      "name": "VAV Controllers",
+      "tokens": [
+        "vav",
+        "controllers",
+        "vav-controllers"
+      ]
+    },
+    {
+      "id": "vfds-drives",
+      "type": "type",
+      "name": "VFDs / Drives",
+      "tokens": [
+        "vfds",
+        "/",
+        "drives",
+        "vfds-drives"
+      ]
+    },
+    {
+      "id": "zone-controllers",
+      "type": "type",
+      "name": "Zone Controllers",
+      "tokens": [
+        "zone",
+        "controllers",
+        "zone-controllers"
+      ]
+    },
+    {
+      "id": "belimo-lrb24-3-t",
+      "type": "model",
+      "name": "LRB24-3-T",
+      "brand": "belimo",
+      "model_numbers": [
+        "LRB24-3-T"
+      ],
+      "tokens": [
+        "lrb24-3-t",
+        "belimo-lrb24-3-t",
+        "belimo",
+        "valve",
+        "actuators"
+      ]
+    },
+    {
+      "id": "trane-tracer-sc-plus",
+      "type": "model",
+      "name": "Tracer SC+",
+      "brand": "trane",
+      "model_numbers": [
+        "SC+"
+      ],
+      "tokens": [
+        "tracer",
+        "sc+",
+        "trane-tracer-sc-plus",
+        "tracer-sc-plus",
+        "bacnet",
+        "n2",
+        "trane",
+        "supervisory",
+        "controllers"
+      ]
+    },
+    {
+      "id": "veris-tw2x",
+      "type": "model",
+      "name": "TW2X",
+      "brand": "veris",
+      "model_numbers": [
+        "TW2X"
+      ],
+      "tokens": [
+        "tw2x",
+        "veris-tw2x",
+        "veris",
+        "temperature",
+        "sensors"
+      ]
+    }
+  ]
+}

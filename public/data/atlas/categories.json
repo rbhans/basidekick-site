@@ -1,0 +1,212 @@
+{
+  "version": "1.0.0",
+  "brands": [
+    {
+      "id": "automated-logic",
+      "name": "Automated Logic",
+      "slug": "automated-logic",
+      "count": 0,
+      "types": []
+    },
+    {
+      "id": "belimo",
+      "name": "Belimo",
+      "slug": "belimo",
+      "count": 1,
+      "types": [
+        {
+          "id": "valve-actuators",
+          "name": "Valve Actuators",
+          "slug": "valve-actuators",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "delta-controls",
+      "name": "Delta Controls",
+      "slug": "delta-controls",
+      "count": 0,
+      "types": []
+    },
+    {
+      "id": "distech-controls",
+      "name": "Distech Controls",
+      "slug": "distech-controls",
+      "count": 0,
+      "types": []
+    },
+    {
+      "id": "honeywell",
+      "name": "Honeywell",
+      "slug": "honeywell",
+      "count": 0,
+      "types": []
+    },
+    {
+      "id": "johnson-controls",
+      "name": "Johnson Controls",
+      "slug": "johnson-controls",
+      "count": 0,
+      "types": []
+    },
+    {
+      "id": "schneider-electric",
+      "name": "Schneider Electric",
+      "slug": "schneider-electric",
+      "count": 0,
+      "types": []
+    },
+    {
+      "id": "siemens",
+      "name": "Siemens",
+      "slug": "siemens",
+      "count": 0,
+      "types": []
+    },
+    {
+      "id": "trane",
+      "name": "Trane",
+      "slug": "trane",
+      "count": 1,
+      "types": [
+        {
+          "id": "supervisory-controllers",
+          "name": "Supervisory Controllers",
+          "slug": "supervisory-controllers",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "veris",
+      "name": "Veris",
+      "slug": "veris",
+      "count": 1,
+      "types": [
+        {
+          "id": "temperature-sensors",
+          "name": "Temperature Sensors",
+          "slug": "temperature-sensors",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "types": [
+    {
+      "id": "air-quality-sensors",
+      "name": "Air Quality Sensors",
+      "slug": "air-quality-sensors",
+      "count": 0
+    },
+    {
+      "id": "co2-sensors",
+      "name": "CO2 Sensors",
+      "slug": "co2-sensors",
+      "count": 0
+    },
+    {
+      "id": "damper-actuators",
+      "name": "Damper Actuators",
+      "slug": "damper-actuators",
+      "count": 0
+    },
+    {
+      "id": "gateways",
+      "name": "Gateways",
+      "slug": "gateways",
+      "count": 0
+    },
+    {
+      "id": "humidity-sensors",
+      "name": "Humidity Sensors",
+      "slug": "humidity-sensors",
+      "count": 0
+    },
+    {
+      "id": "meters",
+      "name": "Meters",
+      "slug": "meters",
+      "count": 0
+    },
+    {
+      "id": "network-controllers",
+      "name": "Network Controllers",
+      "slug": "network-controllers",
+      "count": 0
+    },
+    {
+      "id": "occupancy-sensors",
+      "name": "Occupancy Sensors",
+      "slug": "occupancy-sensors",
+      "count": 0
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "slug": "other",
+      "count": 0
+    },
+    {
+      "id": "pressure-sensors",
+      "name": "Pressure Sensors",
+      "slug": "pressure-sensors",
+      "count": 0
+    },
+    {
+      "id": "software",
+      "name": "Software",
+      "slug": "software",
+      "count": 0
+    },
+    {
+      "id": "supervisory-controllers",
+      "name": "Supervisory Controllers",
+      "slug": "supervisory-controllers",
+      "count": 1
+    },
+    {
+      "id": "temperature-sensors",
+      "name": "Temperature Sensors",
+      "slug": "temperature-sensors",
+      "count": 1
+    },
+    {
+      "id": "thermostats",
+      "name": "Thermostats",
+      "slug": "thermostats",
+      "count": 0
+    },
+    {
+      "id": "unitary-controllers",
+      "name": "Unitary Controllers",
+      "slug": "unitary-controllers",
+      "count": 0
+    },
+    {
+      "id": "valve-actuators",
+      "name": "Valve Actuators",
+      "slug": "valve-actuators",
+      "count": 1
+    },
+    {
+      "id": "vav-controllers",
+      "name": "VAV Controllers",
+      "slug": "vav-controllers",
+      "count": 0
+    },
+    {
+      "id": "vfds-drives",
+      "name": "VFDs / Drives",
+      "slug": "vfds-drives",
+      "count": 0
+    },
+    {
+      "id": "zone-controllers",
+      "name": "Zone Controllers",
+      "slug": "zone-controllers",
+      "count": 0
+    }
+  ]
+}

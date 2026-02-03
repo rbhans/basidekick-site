@@ -14,6 +14,11 @@ export const ROUTES = {
     `/forum/${encodeURIComponent(categorySlug)}/${encodeURIComponent(threadSlug)}`,
   RESOURCES: "/resources",
   BABEL: "/babel",
+  EQUIPMENT: "/equipment",
+  EQUIPMENT_BRAND: (brand: string) => `/equipment/${encodeURIComponent(brand)}`,
+  EQUIPMENT_TYPE: (brand: string, type: string) => `/equipment/${encodeURIComponent(brand)}/${encodeURIComponent(type)}`,
+  EQUIPMENT_MODEL: (brand: string, type: string, model: string) => `/equipment/${encodeURIComponent(brand)}/${encodeURIComponent(type)}/${encodeURIComponent(model)}`,
+  EQUIPMENT_ADD: "/equipment/add",
   BABEL_ENTRY: (id: string) => `/babel/${encodeURIComponent(id)}`,
   REFERENCES: "/references",
   CALCULATORS: "/calculators",
@@ -67,6 +72,8 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.RESOURCES;
     case VIEW_IDS.BABEL:
       return ROUTES.BABEL;
+    case VIEW_IDS.EQUIPMENT:
+      return ROUTES.EQUIPMENT;
     case VIEW_IDS.REFERENCES:
       return ROUTES.REFERENCES;
     case VIEW_IDS.CALCULATORS:
@@ -97,6 +104,8 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/resources") return VIEW_IDS.RESOURCES;
   if (pathname === "/babel") return VIEW_IDS.BABEL;
   if (pathname.startsWith("/babel/")) return VIEW_IDS.BABEL;
+  if (pathname === "/equipment") return VIEW_IDS.EQUIPMENT;
+  if (pathname.startsWith("/equipment/")) return VIEW_IDS.EQUIPMENT;
   if (pathname === "/references") return VIEW_IDS.REFERENCES;
   if (pathname === "/calculators") return VIEW_IDS.CALCULATORS;
   if (pathname === "/account") return VIEW_IDS.ACCOUNT;

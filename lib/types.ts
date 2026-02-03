@@ -102,6 +102,7 @@ export const VIEW_IDS = {
   QSK: "qsk",
   RESOURCES: "resources",
   BABEL: "babel",
+  EQUIPMENT: "equipment",
   REFERENCES: "references",
   WIKI: "wiki",
   FORUM: "forum",
@@ -502,6 +503,97 @@ export interface BabelSearchIndexData {
   entries: BabelSearchIndexEntry[];
 }
 
+// BAS Atlas types
+export interface AtlasAliases {
+  common?: string[];
+  misspellings?: string[];
+}
+
+export type AtlasModelStatus = "current" | "discontinued";
+
+export interface AtlasBrand {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url?: string;
+  website?: string;
+  description?: string;
+}
+
+export interface AtlasType {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+}
+
+export interface AtlasModel {
+  id: string;
+  brand: string;
+  type: string;
+  name: string;
+  slug: string;
+  model_numbers?: string[];
+  protocols?: string[];
+  status?: AtlasModelStatus;
+  description?: string;
+  manufacturer_url?: string;
+  image_url?: string;
+  added_at?: string;
+  aliases?: AtlasAliases;
+}
+
+export interface AtlasData {
+  version: string;
+  lastUpdated: string;
+  totalBrands: number;
+  totalTypes: number;
+  totalModels: number;
+  brands: AtlasBrand[];
+  types: AtlasType[];
+  models: AtlasModel[];
+}
+
+export interface AtlasBrandCategory {
+  id: string;
+  name: string;
+  slug: string;
+  count: number;
+  types: Array<{
+    id: string;
+    name: string;
+    slug: string;
+    count: number;
+  }>;
+}
+
+export interface AtlasTypeCategory {
+  id: string;
+  name: string;
+  slug: string;
+  count: number;
+}
+
+export interface AtlasCategoriesData {
+  version: string;
+  brands: AtlasBrandCategory[];
+  types: AtlasTypeCategory[];
+}
+
+export interface AtlasSearchIndexEntry {
+  id: string;
+  type: "brand" | "type" | "model";
+  name: string;
+  brand?: string;
+  model_numbers?: string[];
+  tokens: string[];
+}
+
+export interface AtlasSearchIndexData {
+  version: string;
+  entries: AtlasSearchIndexEntry[];
+}
+
 // BAS Babel Contribution types
 export type BabelContributionType = "error" | "edit" | "new_entry";
 export type BabelContributionStatus = "pending" | "approved" | "rejected";
@@ -611,6 +703,7 @@ export interface PointStackPost {
   upvote_count: number;
   comment_count: number;
   tags: string[];
+  equipment_ids?: string[];
   metadata: Record<string, unknown>;
   created_at: string;
   updated_at: string;
@@ -668,6 +761,7 @@ export interface PointStackShowcaseProject {
   building_types: string[];
   systems: string[];
   technologies: string[];
+  equipment_ids?: string[];
   location: string | null;
   completion_date: string | null;
   square_footage: number | null;
@@ -874,6 +968,7 @@ export interface CreatePointStackPostInput {
   title: string;
   content: string;
   tags?: string[];
+  equipment_ids?: string[];
   metadata?: Record<string, unknown>;
 }
 
@@ -892,6 +987,7 @@ export interface CreatePointStackShowcaseProjectInput {
   building_types?: string[];
   systems?: string[];
   technologies?: string[];
+  equipment_ids?: string[];
   location?: string;
   completion_date?: string;
   square_footage?: number;

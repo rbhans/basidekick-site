@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { usePointStackStore } from "../pointstack-store";
 import { FeedCard } from "./feed-card";
 import { FeedFilters } from "./feed-filters";
 import { CreatePostDialog } from "./create-post-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ROUTES } from "@/lib/routes";
 import { PencilSimple, WarningCircle } from "@phosphor-icons/react";
 
 export function PointStackFeedView() {
@@ -22,6 +24,30 @@ export function PointStackFeedView() {
     loadMorePosts,
     setFeedFilter,
   } = usePointStackStore();
+
+  const { data: atlasData } = useAtlasData();
+
+  const brandById = useMemo(() => new Map(atlasData?.brands.map((b) => [b.id, b]) || []), [atlasData]);
+  const typeById = useMemo(() => new Map(atlasData?.types.map((t) => [t.id, t]) || []), [atlasData]);
+  const modelById = useMemo(() => new Map(atlasData?.models.map((m) => [m.id, m]) || []), [atlasData]);
+
+  const getEquipmentLinks = (ids: string[] = []) => {
+    if (!atlasData) return [];
+    return ids
+      .map((id) => {
+        const model = modelById.get(id);
+        if (!model) return null;
+        const brand = brandById.get(model.brand);
+        const type = typeById.get(model.type);
+        if (!brand || !type) return null;
+        return {
+          id,
+          name: model.name,
+          href: ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
+        };
+      })
+      .filter(Boolean) as { id: string; name: string; href: string }[];
+  };
 
   useEffect(() => {
     fetchFeed();
@@ -78,7 +104,11 @@ export function PointStackFeedView() {
       {posts.length > 0 && (
         <div className="space-y-4">
           {posts.map((post) => (
-            <FeedCard key={post.id} post={post} />
+            <FeedCard
+              key={post.id}
+              post={post}
+              equipmentLinks={getEquipmentLinks(post.equipment_ids || [])}
+            />
           ))}
 
           {/* Load more */}

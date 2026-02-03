@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
-import { BookOpen, Chats, Kanban, ArrowRight, Translate } from "@phosphor-icons/react";
+import { BookOpen, Chats, Kanban, ArrowRight, Translate, Gauge } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 
 const resources = [
@@ -14,6 +14,14 @@ const resources = [
     icon: Translate,
     cta: "Browse Standards",
     href: ROUTES.BABEL,
+  },
+  {
+    id: "atlas",
+    title: "BAS Atlas",
+    description: "Community-driven equipment database with brands, types, and models for BAS professionals.",
+    icon: Gauge,
+    cta: "Browse Equipment",
+    href: ROUTES.EQUIPMENT,
   },
   {
     id: "wiki",

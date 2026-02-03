@@ -1,0 +1,258 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-02-03T18:50:58.364Z",
+  "totalBrands": 10,
+  "totalTypes": 19,
+  "totalModels": 3,
+  "brands": [
+    {
+      "id": "automated-logic",
+      "name": "Automated Logic",
+      "slug": "automated-logic",
+      "logo_url": "",
+      "website": "https://www.automatedlogic.com",
+      "description": ""
+    },
+    {
+      "id": "belimo",
+      "name": "Belimo",
+      "slug": "belimo",
+      "logo_url": "",
+      "website": "https://www.belimo.com",
+      "description": ""
+    },
+    {
+      "id": "delta-controls",
+      "name": "Delta Controls",
+      "slug": "delta-controls",
+      "logo_url": "",
+      "website": "https://www.deltacontrols.com",
+      "description": ""
+    },
+    {
+      "id": "distech-controls",
+      "name": "Distech Controls",
+      "slug": "distech-controls",
+      "logo_url": "",
+      "website": "https://www.distech-controls.com",
+      "description": ""
+    },
+    {
+      "id": "honeywell",
+      "name": "Honeywell",
+      "slug": "honeywell",
+      "logo_url": "",
+      "website": "https://www.honeywell.com",
+      "description": ""
+    },
+    {
+      "id": "johnson-controls",
+      "name": "Johnson Controls",
+      "slug": "johnson-controls",
+      "logo_url": "",
+      "website": "https://www.johnsoncontrols.com",
+      "description": ""
+    },
+    {
+      "id": "schneider-electric",
+      "name": "Schneider Electric",
+      "slug": "schneider-electric",
+      "logo_url": "",
+      "website": "https://www.se.com",
+      "description": ""
+    },
+    {
+      "id": "siemens",
+      "name": "Siemens",
+      "slug": "siemens",
+      "logo_url": "",
+      "website": "https://www.siemens.com",
+      "description": ""
+    },
+    {
+      "id": "trane",
+      "name": "Trane",
+      "slug": "trane",
+      "logo_url": "",
+      "website": "https://www.trane.com",
+      "description": ""
+    },
+    {
+      "id": "veris",
+      "name": "Veris",
+      "slug": "veris",
+      "logo_url": "",
+      "website": "https://www.veris.com",
+      "description": ""
+    }
+  ],
+  "types": [
+    {
+      "id": "air-quality-sensors",
+      "name": "Air Quality Sensors",
+      "slug": "air-quality-sensors",
+      "description": ""
+    },
+    {
+      "id": "co2-sensors",
+      "name": "CO2 Sensors",
+      "slug": "co2-sensors",
+      "description": ""
+    },
+    {
+      "id": "damper-actuators",
+      "name": "Damper Actuators",
+      "slug": "damper-actuators",
+      "description": ""
+    },
+    {
+      "id": "gateways",
+      "name": "Gateways",
+      "slug": "gateways",
+      "description": ""
+    },
+    {
+      "id": "humidity-sensors",
+      "name": "Humidity Sensors",
+      "slug": "humidity-sensors",
+      "description": ""
+    },
+    {
+      "id": "meters",
+      "name": "Meters",
+      "slug": "meters",
+      "description": ""
+    },
+    {
+      "id": "network-controllers",
+      "name": "Network Controllers",
+      "slug": "network-controllers",
+      "description": ""
+    },
+    {
+      "id": "occupancy-sensors",
+      "name": "Occupancy Sensors",
+      "slug": "occupancy-sensors",
+      "description": ""
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "slug": "other",
+      "description": ""
+    },
+    {
+      "id": "pressure-sensors",
+      "name": "Pressure Sensors",
+      "slug": "pressure-sensors",
+      "description": ""
+    },
+    {
+      "id": "software",
+      "name": "Software",
+      "slug": "software",
+      "description": ""
+    },
+    {
+      "id": "supervisory-controllers",
+      "name": "Supervisory Controllers",
+      "slug": "supervisory-controllers",
+      "description": ""
+    },
+    {
+      "id": "temperature-sensors",
+      "name": "Temperature Sensors",
+      "slug": "temperature-sensors",
+      "description": ""
+    },
+    {
+      "id": "thermostats",
+      "name": "Thermostats",
+      "slug": "thermostats",
+      "description": ""
+    },
+    {
+      "id": "unitary-controllers",
+      "name": "Unitary Controllers",
+      "slug": "unitary-controllers",
+      "description": ""
+    },
+    {
+      "id": "valve-actuators",
+      "name": "Valve Actuators",
+      "slug": "valve-actuators",
+      "description": ""
+    },
+    {
+      "id": "vav-controllers",
+      "name": "VAV Controllers",
+      "slug": "vav-controllers",
+      "description": ""
+    },
+    {
+      "id": "vfds-drives",
+      "name": "VFDs / Drives",
+      "slug": "vfds-drives",
+      "description": ""
+    },
+    {
+      "id": "zone-controllers",
+      "name": "Zone Controllers",
+      "slug": "zone-controllers",
+      "description": ""
+    }
+  ],
+  "models": [
+    {
+      "id": "belimo-lrb24-3-t",
+      "brand": "belimo",
+      "type": "valve-actuators",
+      "name": "LRB24-3-T",
+      "slug": "lrb24-3-t",
+      "model_numbers": [
+        "LRB24-3-T"
+      ],
+      "protocols": [],
+      "status": "current",
+      "description": "Non-spring return rotary actuator.",
+      "manufacturer_url": "https://www.belimo.com",
+      "image_url": "",
+      "added_at": "2026-02-01"
+    },
+    {
+      "id": "trane-tracer-sc-plus",
+      "brand": "trane",
+      "type": "supervisory-controllers",
+      "name": "Tracer SC+",
+      "slug": "tracer-sc-plus",
+      "model_numbers": [
+        "SC+"
+      ],
+      "protocols": [
+        "BACnet",
+        "N2"
+      ],
+      "status": "current",
+      "description": "Building automation system supervisory controller.",
+      "manufacturer_url": "https://www.trane.com",
+      "image_url": "",
+      "added_at": "2026-02-01"
+    },
+    {
+      "id": "veris-tw2x",
+      "brand": "veris",
+      "type": "temperature-sensors",
+      "name": "TW2X",
+      "slug": "tw2x",
+      "model_numbers": [
+        "TW2X"
+      ],
+      "protocols": [],
+      "status": "current",
+      "description": "Wall temperature sensor series.",
+      "manufacturer_url": "https://www.veris.com",
+      "image_url": "",
+      "added_at": "2026-02-01"
+    }
+  ]
+}

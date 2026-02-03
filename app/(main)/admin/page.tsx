@@ -35,6 +35,7 @@ export default async function AdminPage() {
     threadsResult,
     suggestionsResult,
     babelContributionsResult,
+    equipmentSubmissionsResult,
     statsResult,
   ] = await Promise.all([
     // Users with profiles
@@ -83,6 +84,17 @@ export default async function AdminPage() {
       `)
       .order("created_at", { ascending: false })
       .limit(50),
+    // Equipment submissions
+    supabase
+      .from("equipment_submissions")
+      .select(`
+        id, type, entry_id, brand_id, brand_name, brand_logo_url, type_id, type_name,
+        model_name, model_numbers, protocols, model_status, description, manufacturer_url, image_url,
+        suggested_changes, review_status, reviewer_notes, github_issue_url, created_at,
+        submitter:profiles!equipment_submissions_user_id_fkey(display_name)
+      `)
+      .order("created_at", { ascending: false })
+      .limit(50),
     // Stats
     Promise.all([
       supabase.from("profiles").select("id", { count: "exact", head: true }),
@@ -91,6 +103,7 @@ export default async function AdminPage() {
       supabase.from("forum_posts").select("id", { count: "exact", head: true }),
       supabase.from("wiki_suggestions").select("id", { count: "exact", head: true }).eq("status", "pending"),
       supabase.from("babel_contributions").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("equipment_submissions").select("id", { count: "exact", head: true }).eq("review_status", "pending"),
     ]),
   ]);
 
@@ -101,6 +114,7 @@ export default async function AdminPage() {
     postCount: statsResult[3].count || 0,
     pendingSuggestions: statsResult[4].count || 0,
     pendingBabelContributions: statsResult[5].count || 0,
+    pendingEquipmentSubmissions: statsResult[6].count || 0,
   };
 
   return (
@@ -110,6 +124,7 @@ export default async function AdminPage() {
       threads={threadsResult.data || []}
       suggestions={suggestionsResult.data || []}
       babelContributions={babelContributionsResult.data || []}
+      equipmentSubmissions={equipmentSubmissionsResult.data || []}
       stats={stats}
     />
   );

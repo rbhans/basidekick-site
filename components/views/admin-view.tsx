@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
@@ -31,6 +31,7 @@ import {
   PencilSimple,
   Plus,
   GithubLogo,
+  Gauge,
 } from "@phosphor-icons/react";
 
 interface AdminUser {
@@ -96,6 +97,30 @@ interface AdminBabelContribution {
   submitter: { display_name: string | null } | null;
 }
 
+interface AdminEquipmentSubmission {
+  id: string;
+  type: "error" | "edit" | "new_entry";
+  entry_id: string | null;
+  brand_id: string | null;
+  brand_name: string | null;
+  brand_logo_url: string | null;
+  type_id: string | null;
+  type_name: string | null;
+  model_name: string | null;
+  model_numbers: string[] | null;
+  protocols: string[] | null;
+  model_status: string | null;
+  description: string | null;
+  manufacturer_url: string | null;
+  image_url: string | null;
+  suggested_changes: Record<string, unknown> | null;
+  review_status: "pending" | "approved" | "rejected";
+  reviewer_notes: string | null;
+  github_issue_url: string | null;
+  created_at: string;
+  submitter: { display_name: string | null } | null;
+}
+
 interface AdminStats {
   userCount: number;
   articleCount: number;
@@ -103,6 +128,7 @@ interface AdminStats {
   postCount: number;
   pendingSuggestions: number;
   pendingBabelContributions: number;
+  pendingEquipmentSubmissions: number;
 }
 
 interface AdminViewProps {
@@ -111,10 +137,11 @@ interface AdminViewProps {
   threads: AdminThread[];
   suggestions: AdminSuggestion[];
   babelContributions: AdminBabelContribution[];
+  equipmentSubmissions: AdminEquipmentSubmission[];
   stats: AdminStats;
 }
 
-type TabId = "overview" | "users" | "wiki" | "forum" | "suggestions" | "babel";
+type TabId = "overview" | "users" | "wiki" | "forum" | "suggestions" | "babel" | "equipment";
 
 export function AdminView({
   users: initialUsers,
@@ -122,6 +149,7 @@ export function AdminView({
   threads: initialThreads,
   suggestions: initialSuggestions,
   babelContributions: initialBabelContributions,
+  equipmentSubmissions: initialEquipmentSubmissions,
   stats,
 }: AdminViewProps) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
@@ -130,8 +158,10 @@ export function AdminView({
   const [threads, setThreads] = useState(initialThreads);
   const [suggestions, setSuggestions] = useState(initialSuggestions);
   const [babelContributions, setBabelContributions] = useState(initialBabelContributions);
+  const [equipmentSubmissions, setEquipmentSubmissions] = useState(initialEquipmentSubmissions);
   const [loading, setLoading] = useState<string | null>(null);
   const [expandedContribution, setExpandedContribution] = useState<string | null>(null);
+  const [expandedEquipmentSubmission, setExpandedEquipmentSubmission] = useState<string | null>(null);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -310,6 +340,41 @@ export function AdminView({
     setLoading(null);
   };
 
+  const handleEquipmentSubmissionAction = async (
+    submissionId: string,
+    action: "approve" | "reject"
+  ) => {
+    setLoading(`equipment-${submissionId}`);
+    try {
+      const response = await fetch(`/api/equipment/submissions/${submissionId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.error || "Failed to update submission");
+        return;
+      }
+
+      const result = await response.json();
+
+      setEquipmentSubmissions((prev) =>
+        prev.map((submission) =>
+          submission.id === submissionId
+            ? { ...submission, review_status: action === "approve" ? "approved" : "rejected", github_issue_url: result.github_issue_url || submission.github_issue_url }
+            : submission
+        )
+      );
+    } catch (error) {
+      console.error("Error updating equipment submission:", error);
+      alert("Failed to update submission. Please try again.");
+    } finally {
+      setLoading(null);
+    }
+  };
+
   const getContributionTypeIcon = (type: string) => {
     switch (type) {
       case "error":
@@ -352,6 +417,12 @@ export function AdminView({
       label: "Babel",
       icon: <Translate className="size-4" />,
       count: stats.pendingBabelContributions,
+    },
+    {
+      id: "equipment",
+      label: "Atlas",
+      icon: <Gauge className="size-4" />,
+      count: stats.pendingEquipmentSubmissions,
     },
   ];
 
@@ -448,6 +519,13 @@ export function AdminView({
                     <span className="text-sm">Babel Pending</span>
                   </div>
                   <p className="text-3xl font-bold text-primary">{stats.pendingBabelContributions}</p>
+                </div>
+                <div className="p-6 border border-border bg-card">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                    <Gauge className="size-4" />
+                    <span className="text-sm">Atlas Pending</span>
+                  </div>
+                  <p className="text-3xl font-bold text-primary">{stats.pendingEquipmentSubmissions}</p>
                 </div>
               </div>
 
@@ -869,6 +947,168 @@ export function AdminView({
             </div>
           )}
 
+          {/* Equipment Submissions Tab */}
+          {activeTab === "equipment" && (
+            <div className="space-y-4">
+              <div className="border border-border bg-card overflow-hidden">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 text-sm font-medium">Submission</th>
+                      <th className="text-left p-4 text-sm font-medium hidden md:table-cell">Type</th>
+                      <th className="text-left p-4 text-sm font-medium hidden sm:table-cell">Brand</th>
+                      <th className="text-left p-4 text-sm font-medium hidden lg:table-cell">Submitted By</th>
+                      <th className="text-left p-4 text-sm font-medium">Status</th>
+                      <th className="text-right p-4 text-sm font-medium">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {equipmentSubmissions.map((submission) => (
+                      <Fragment key={submission.id}>
+                        <tr
+                          className="hover:bg-muted/30 cursor-pointer"
+                          onClick={() =>
+                            setExpandedEquipmentSubmission(
+                              expandedEquipmentSubmission === submission.id ? null : submission.id
+                            )
+                          }
+                        >
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              <button className="text-muted-foreground">
+                                {expandedEquipmentSubmission === submission.id ? (
+                                  <CaretUp className="size-4" />
+                                ) : (
+                                  <CaretDown className="size-4" />
+                                )}
+                              </button>
+                              <span className="font-medium">{submission.model_name || submission.entry_id || "New equipment"}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 hidden md:table-cell">
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                              {getContributionTypeIcon(submission.type)}
+                              <span className="text-sm">{getContributionTypeLabel(submission.type)}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 hidden sm:table-cell">
+                            <span className="text-sm">{submission.brand_name || submission.brand_id || "-"}</span>
+                          </td>
+                          <td className="p-4 text-muted-foreground hidden lg:table-cell">
+                            {submission.submitter?.display_name || "Anonymous"}
+                          </td>
+                          <td className="p-4">
+                            {submission.review_status === "pending" && (
+                              <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5">
+                                Pending
+                              </span>
+                            )}
+                            {submission.review_status === "approved" && (
+                              <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-0.5">
+                                Approved
+                              </span>
+                            )}
+                            {submission.review_status === "rejected" && (
+                              <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5">
+                                Rejected
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                            {submission.review_status === "pending" ? (
+                              <div className="flex justify-end gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEquipmentSubmissionAction(submission.id, "approve")}
+                                  disabled={loading === `equipment-${submission.id}`}
+                                  className="text-emerald-500 hover:text-emerald-600"
+                                  title="Approve and create GitHub issue"
+                                >
+                                  <Check className="size-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEquipmentSubmissionAction(submission.id, "reject")}
+                                  disabled={loading === `equipment-${submission.id}`}
+                                  className="text-destructive hover:text-destructive"
+                                  title="Reject"
+                                >
+                                  <X className="size-4" />
+                                </Button>
+                              </div>
+                            ) : submission.github_issue_url ? (
+                              <a
+                                href={submission.github_issue_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-muted-foreground hover:text-primary"
+                                title="View GitHub issue"
+                              >
+                                <GithubLogo className="size-4" />
+                              </a>
+                            ) : null}
+                          </td>
+                        </tr>
+                        {expandedEquipmentSubmission === submission.id && (
+                          <tr key={`${submission.id}-detail`} className="bg-muted/20">
+                            <td colSpan={6} className="p-4">
+                              <div className="space-y-3">
+                                {submission.description && (
+                                  <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                      Description
+                                    </p>
+                                    <p className="text-sm whitespace-pre-wrap">{submission.description}</p>
+                                  </div>
+                                )}
+                                <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+                                  {submission.type_name && <span>Type: {submission.type_name}</span>}
+                                  {submission.model_numbers && submission.model_numbers.length > 0 && (
+                                    <span>Model Numbers: {submission.model_numbers.join(", ")}</span>
+                                  )}
+                                  {submission.protocols && submission.protocols.length > 0 && (
+                                    <span>Protocols: {submission.protocols.join(", ")}</span>
+                                  )}
+                                  {submission.model_status && <span>Status: {submission.model_status}</span>}
+                                </div>
+                                {submission.image_url && (
+                                  <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Image</p>
+                                    <img src={submission.image_url} alt="Submission" className="max-h-48 rounded" />
+                                  </div>
+                                )}
+                                {submission.suggested_changes && (
+                                  <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                      Suggested Changes
+                                    </p>
+                                    <pre className="text-xs bg-muted p-2 rounded overflow-x-auto">
+                                      {JSON.stringify(submission.suggested_changes, null, 2)}
+                                    </pre>
+                                  </div>
+                                )}
+                                <div className="flex gap-4 text-xs text-muted-foreground">
+                                  <span>Submitted: {formatDate(submission.created_at)}</span>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    ))}
+                  </tbody>
+                </table>
+                {equipmentSubmissions.length === 0 && (
+                  <div className="p-8 text-center text-muted-foreground">
+                    No equipment submissions yet
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Babel Contributions Tab */}
           {activeTab === "babel" && (
             <div className="space-y-4">
@@ -886,9 +1126,8 @@ export function AdminView({
                   </thead>
                   <tbody className="divide-y divide-border">
                     {babelContributions.map((contribution) => (
-                      <>
+                      <Fragment key={contribution.id}>
                         <tr
-                          key={contribution.id}
                           className="hover:bg-muted/30 cursor-pointer"
                           onClick={() =>
                             setExpandedContribution(
@@ -1023,7 +1262,7 @@ export function AdminView({
                             </td>
                           </tr>
                         )}
-                      </>
+                      </Fragment>
                     ))}
                   </tbody>
                 </table>

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { ArrowLeft, ChatCircle, Eye, Share, Check } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
+import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { usePointStackStore } from "../pointstack-store";
 import { UserAvatar } from "../shared/user-avatar";
 import { VoteButton } from "../shared/vote-button";
@@ -30,6 +31,7 @@ const POST_TYPE_LABELS: Record<PointStackPostType, { label: string; color: strin
 
 export function PointStackPostDetail({ slug }: PostDetailProps) {
   const { user } = useAuth();
+  const { data: atlasData } = useAtlasData();
   const {
     currentPost: post,
     currentPostComments: comments,
@@ -85,6 +87,28 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
   const isAuthor = user?.id === post.author_id;
   const isQuestion = post.post_type === "question";
 
+  const equipmentLinks = useMemo(() => {
+    if (!atlasData || !post?.equipment_ids) return [];
+    const brandById = new Map(atlasData.brands.map((b) => [b.id, b]));
+    const typeById = new Map(atlasData.types.map((t) => [t.id, t]));
+    const modelById = new Map(atlasData.models.map((m) => [m.id, m]));
+
+    return post.equipment_ids
+      .map((id) => {
+        const model = modelById.get(id);
+        if (!model) return null;
+        const brand = brandById.get(model.brand);
+        const type = typeById.get(model.type);
+        if (!brand || !type) return null;
+        return {
+          id,
+          name: model.name,
+          href: ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
+        };
+      })
+      .filter(Boolean) as { id: string; name: string; href: string }[];
+  }, [atlasData, post]);
+
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6">
       {/* Back link */}
@@ -119,6 +143,17 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
                 </Badge>
               ))}
             </div>
+            {equipmentLinks.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-2">
+                {equipmentLinks.map((item) => (
+                  <Link key={item.id} href={item.href}>
+                    <Badge variant="secondary" className="text-xs">
+                      {item.name}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            )}
 
             <h1 className="text-2xl font-bold mb-3">{post.title}</h1>
 

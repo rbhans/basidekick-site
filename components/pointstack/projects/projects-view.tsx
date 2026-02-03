@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Plus, Heart, Eye, MapPin } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,37 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
 import { PointStackShowcaseProject } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
+import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import * as api from "../pointstack-api";
 
 export function PointStackProjectsView() {
   const { user } = useAuth();
   const [projects, setProjects] = useState<PointStackShowcaseProject[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const { data: atlasData } = useAtlasData();
+
+  const brandById = useMemo(() => new Map(atlasData?.brands.map((b) => [b.id, b]) || []), [atlasData]);
+  const typeById = useMemo(() => new Map(atlasData?.types.map((t) => [t.id, t]) || []), [atlasData]);
+  const modelById = useMemo(() => new Map(atlasData?.models.map((m) => [m.id, m]) || []), [atlasData]);
+
+  const getEquipmentLinks = (ids: string[] = []) => {
+    if (!atlasData) return [];
+    return ids
+      .map((id) => {
+        const model = modelById.get(id);
+        if (!model) return null;
+        const brand = brandById.get(model.brand);
+        const type = typeById.get(model.type);
+        if (!brand || !type) return null;
+        return {
+          id,
+          name: model.name,
+          href: ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
+        };
+      })
+      .filter(Boolean) as { id: string; name: string; href: string }[];
+  };
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -106,6 +131,20 @@ export function PointStackProjectsView() {
                     ))}
                   </div>
                 )}
+
+                {(() => {
+                  const equipmentLinks = getEquipmentLinks(project.equipment_ids || []);
+                  if (equipmentLinks.length === 0) return null;
+                  return (
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {equipmentLinks.slice(0, 3).map((item) => (
+                        <Badge key={item.id} variant="secondary" className="text-xs">
+                          {item.name}
+                        </Badge>
+                      ))}
+                    </div>
+                  );
+                })()}
 
                 {/* Meta */}
                 <div className="flex items-center justify-between text-xs text-muted-foreground">

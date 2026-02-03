@@ -14,6 +14,7 @@ import {
   BookmarksSimple,
   User,
   X,
+  Gauge,
 } from "@phosphor-icons/react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,7 @@ const SEARCH_ITEMS: SearchItem[] = [
   { id: "wiki", title: "Wiki", description: "Knowledge base", href: ROUTES.WIKI, icon: <BookOpen className="size-4" />, category: "Navigation" },
   { id: "forum", title: "Forum", description: "Community discussions", href: ROUTES.FORUM, icon: <Chats className="size-4" />, category: "Navigation" },
   { id: "babel", title: "BAS Babel", description: "Translate BAS terminology", href: ROUTES.BABEL, icon: <Translate className="size-4" />, category: "Resources" },
+  { id: "atlas", title: "BAS Atlas", description: "Equipment database", href: ROUTES.EQUIPMENT, icon: <Gauge className="size-4" />, category: "Resources" },
   { id: "calculators", title: "Calculators", description: "HVAC & electrical calculators", href: ROUTES.CALCULATORS, icon: <Calculator className="size-4" />, category: "Resources" },
   { id: "psk", title: "ProjectSidekick", description: "Project management", href: ROUTES.PSK, icon: <Kanban className="size-4" />, category: "Resources" },
   { id: "references", title: "References", description: "Quick reference sheets", href: ROUTES.REFERENCES, icon: <BookmarksSimple className="size-4" />, category: "Resources" },

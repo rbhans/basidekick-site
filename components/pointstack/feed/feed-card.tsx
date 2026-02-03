@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 
 interface FeedCardProps {
   post: PointStackPost;
+  equipmentLinks?: { id: string; name: string; href: string }[];
 }
 
 const POST_TYPE_LABELS: Record<PointStackPostType, { label: string; color: string }> = {
@@ -31,7 +32,7 @@ const POST_TYPE_LABELS: Record<PointStackPostType, { label: string; color: strin
   tip: { label: "Tip", color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
 };
 
-export function FeedCard({ post }: FeedCardProps) {
+export function FeedCard({ post, equipmentLinks = [] }: FeedCardProps) {
   const { user } = useAuth();
   const { votePost, deletePost } = usePointStackStore();
   const typeInfo = POST_TYPE_LABELS[post.post_type];
@@ -130,6 +131,18 @@ export function FeedCard({ post }: FeedCardProps) {
               +{post.tags.length - 5}
             </Badge>
           )}
+        </div>
+      )}
+
+      {equipmentLinks.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {equipmentLinks.map((item) => (
+            <Link key={item.id} href={item.href}>
+              <Badge variant="secondary" className="text-xs">
+                {item.name}
+              </Badge>
+            </Link>
+          ))}
         </div>
       )}
 

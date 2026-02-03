@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { useMemo, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TagInput } from "../shared/tag-input";
+import { useAtlasAll } from "@/components/atlas/use-atlas-data";
 import { usePointStackStore } from "../pointstack-store";
 import { PointStackPostType } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
@@ -66,6 +67,43 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const { data: atlasData } = useAtlasAll();
+  const [equipmentIds, setEquipmentIds] = useState<string[]>([]);
+  const [equipmentQuery, setEquipmentQuery] = useState("");
+
+
+  const brandById = useMemo(() => {
+    return new Map(atlasData?.brands.map((b) => [b.id, b]) || []);
+  }, [atlasData]);
+
+  const equipmentMatches = useMemo(() => {
+    if (!atlasData || !equipmentQuery.trim()) return [];
+    const lower = equipmentQuery.toLowerCase();
+    return atlasData.models
+      .filter((model) => {
+        const brandName = brandById.get(model.brand)?.name || "";
+        return (
+          model.name.toLowerCase().includes(lower) ||
+          model.id.toLowerCase().includes(lower) ||
+          (model.slug || "").toLowerCase().includes(lower) ||
+          (model.model_numbers || []).some((num) => num.toLowerCase().includes(lower)) ||
+          brandName.toLowerCase().includes(lower)
+        );
+      })
+      .filter((model) => !equipmentIds.includes(model.id))
+      .slice(0, 6);
+  }, [atlasData, equipmentQuery, equipmentIds, brandById]);
+
+  const addEquipment = (id: string) => {
+    if (!equipmentIds.includes(id)) {
+      setEquipmentIds((prev) => [...prev, id]);
+      setEquipmentQuery("");
+    }
+  };
+
+  const removeEquipment = (id: string) => {
+    setEquipmentIds((prev) => prev.filter((item) => item !== id));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,6 +130,7 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
         title: title.trim(),
         content: content.trim(),
         tags,
+        equipment_ids: equipmentIds,
       });
 
       setOpen(false);
@@ -99,6 +138,8 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
       setTitle("");
       setContent("");
       setTags([]);
+      setEquipmentIds([]);
+      setEquipmentQuery("");
 
       // Navigate to the new post
       router.push(ROUTES.POINTSTACK_POST(post.slug));
@@ -192,6 +233,64 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
               suggestions={SUGGESTED_TAGS}
             />
           </div>
+
+          {/* Equipment Tags */}
+          {(postType === "question" || postType === "project") && (
+            <div className="space-y-2">
+              <Label>Tag equipment (optional)</Label>
+              {equipmentIds.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {equipmentIds.map((id) => {
+                    const model = atlasData?.models.find((m) => m.id === id);
+                    const brand = model ? brandById.get(model.brand) : null;
+                    return (
+                      <span
+                        key={id}
+                        className="inline-flex items-center gap-2 px-2 py-1 text-xs bg-muted rounded"
+                      >
+                        {model?.name || id}
+                        {brand?.name ? <span className="text-muted-foreground">· {brand.name}</span> : null}
+                        <button
+                          type="button"
+                          onClick={() => removeEquipment(id)}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+              <div className="relative">
+                <Input
+                  value={equipmentQuery}
+                  onChange={(e) => setEquipmentQuery(e.target.value)}
+                  placeholder="Search equipment..."
+                />
+                {equipmentQuery.trim() && equipmentMatches.length > 0 && (
+                  <div className="absolute z-10 mt-2 w-full border border-border bg-card rounded shadow">
+                    {equipmentMatches.map((model) => {
+                      const brand = brandById.get(model.brand);
+                      return (
+                        <button
+                          key={model.id}
+                          type="button"
+                          className="w-full text-left px-3 py-2 text-sm hover:bg-muted/50"
+                          onClick={() => addEquipment(model.id)}
+                        >
+                          {model.name}
+                          {brand?.name ? (
+                            <span className="text-xs text-muted-foreground ml-2">{brand.name}</span>
+                          ) : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Error */}
           {error && (

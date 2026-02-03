@@ -182,6 +182,7 @@ export async function createPost(input: CreatePointStackPostInput): Promise<Poin
       content: input.content,
       slug,
       tags: input.tags || [],
+      equipment_ids: input.equipment_ids || [],
       metadata: input.metadata || {},
     })
     .select(`
@@ -709,6 +710,7 @@ export async function createShowcaseProject(input: CreatePointStackShowcaseProje
       building_types: input.building_types || [],
       systems: input.systems || [],
       technologies: input.technologies || [],
+      equipment_ids: input.equipment_ids || [],
       location: input.location,
       completion_date: input.completion_date,
       square_footage: input.square_footage,

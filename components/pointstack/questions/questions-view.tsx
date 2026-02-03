@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { Check, ChatCircle, Eye, Plus } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
+import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { usePointStackStore } from "../pointstack-store";
 import { UserAvatar } from "../shared/user-avatar";
 import { CreatePostDialog } from "../feed/create-post-dialog";
@@ -16,12 +17,35 @@ import { ROUTES } from "@/lib/routes";
 export function PointStackQuestionsView() {
   const { user } = useAuth();
   const { posts, feedLoading, fetchFeed, setFeedFilter } = usePointStackStore();
+  const { data: atlasData } = useAtlasData();
 
   useEffect(() => {
     setFeedFilter({ type: "question" });
   }, [setFeedFilter]);
 
   const questions = posts.filter((p) => p.post_type === "question");
+
+  const brandById = useMemo(() => new Map(atlasData?.brands.map((b) => [b.id, b]) || []), [atlasData]);
+  const typeById = useMemo(() => new Map(atlasData?.types.map((t) => [t.id, t]) || []), [atlasData]);
+  const modelById = useMemo(() => new Map(atlasData?.models.map((m) => [m.id, m]) || []), [atlasData]);
+
+  const getEquipmentLinks = (ids: string[] = []) => {
+    if (!atlasData) return [];
+    return ids
+      .map((id) => {
+        const model = modelById.get(id);
+        if (!model) return null;
+        const brand = brandById.get(model.brand);
+        const type = typeById.get(model.type);
+        if (!brand || !type) return null;
+        return {
+          id,
+          name: model.name,
+          href: ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
+        };
+      })
+      .filter(Boolean) as { id: string; name: string; href: string }[];
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
@@ -123,6 +147,17 @@ export function PointStackQuestionsView() {
                           <Badge key={tag} variant="secondary" className="text-xs">
                             {tag}
                           </Badge>
+                        ))}
+                      </div>
+                    )}
+                    {question.equipment_ids && question.equipment_ids.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-3">
+                        {getEquipmentLinks(question.equipment_ids).map((item) => (
+                          <Link key={item.id} href={item.href}>
+                            <Badge variant="secondary" className="text-xs">
+                              {item.name}
+                            </Badge>
+                          </Link>
                         ))}
                       </div>
                     )}
