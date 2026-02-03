@@ -29,6 +29,7 @@ export function NavTree({ activeView, onViewChange }: NavTreeProps) {
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded = expanded[node.id] ?? false;
     const isActive = activeView === node.id;
+    const target = node.href ?? node.id;
 
     return (
       <div key={node.id}>
@@ -41,7 +42,7 @@ export function NavTree({ activeView, onViewChange }: NavTreeProps) {
           expanded={isExpanded}
           hasChildren={hasChildren}
           depth={depth}
-          onClick={() => onViewChange(node.id)}
+          onClick={() => onViewChange(target)}
           onToggle={hasChildren ? () => toggleExpanded(node.id) : undefined}
         />
 

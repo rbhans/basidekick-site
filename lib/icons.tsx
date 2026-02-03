@@ -12,6 +12,7 @@ import {
   BookOpen,
   BookmarksSimple,
   Chats,
+  ChatCircle,
   Kanban,
   Calculator,
   SignIn,
@@ -20,6 +21,7 @@ import {
   TextAa,
   CheckCircle,
   FileText,
+  Folder,
   Plugs,
   Cpu,
   Warning,
@@ -35,6 +37,10 @@ import {
   Fan,
   WarningCircle,
   UsersThree,
+  Briefcase,
+  Image,
+  Question,
+  Bell,
 } from "@phosphor-icons/react";
 import { IconName } from "./constants";
 
@@ -61,6 +67,8 @@ export function getIcon(name: IconName | string, className = "size-4"): ReactNod
       return <BookmarksSimple {...iconProps} />;
     case "Chats":
       return <Chats {...iconProps} />;
+    case "ChatCircle":
+      return <ChatCircle {...iconProps} />;
     case "Kanban":
       return <Kanban {...iconProps} />;
     case "Calculator":
@@ -77,6 +85,8 @@ export function getIcon(name: IconName | string, className = "size-4"): ReactNod
       return <CheckCircle {...iconProps} weight="fill" />;
     case "FileText":
       return <FileText {...iconProps} />;
+    case "Folder":
+      return <Folder {...iconProps} />;
     case "Plugs":
       return <Plugs {...iconProps} />;
     case "Cpu":
@@ -109,6 +119,14 @@ export function getIcon(name: IconName | string, className = "size-4"): ReactNod
       return <Lifebuoy {...iconProps} />;
     case "UsersThree":
       return <UsersThree {...iconProps} />;
+    case "Briefcase":
+      return <Briefcase {...iconProps} />;
+    case "Image":
+      return <Image {...iconProps} />;
+    case "Question":
+      return <Question {...iconProps} />;
+    case "Bell":
+      return <Bell {...iconProps} />;
     default:
       return null;
   }

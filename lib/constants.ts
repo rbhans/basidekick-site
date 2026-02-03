@@ -407,6 +407,79 @@ export const NAV_ITEMS: NavNode[] = [
     ],
   },
   {
+    id: VIEW_IDS.POINTSTACK,
+    label: "POINTSTACK",
+    iconName: "UsersThree",
+    colorVariant: "forum",
+    defaultExpanded: true,
+    children: [
+      {
+        id: "pointstack-feed",
+        label: "Feed",
+        iconName: "Chats",
+        colorVariant: "forum",
+        href: "/pointstack",
+        exact: true,
+      },
+      {
+        id: "pointstack-people",
+        label: "People",
+        iconName: "UsersThree",
+        colorVariant: "forum",
+        href: "/pointstack/people",
+      },
+      {
+        id: "pointstack-companies",
+        label: "Companies",
+        iconName: "Buildings",
+        colorVariant: "forum",
+        href: "/pointstack/companies",
+      },
+      {
+        id: "pointstack-projects",
+        label: "Projects",
+        iconName: "Image",
+        colorVariant: "forum",
+        href: "/pointstack/projects",
+      },
+      {
+        id: "pointstack-questions",
+        label: "Q&A",
+        iconName: "Question",
+        colorVariant: "forum",
+        href: "/pointstack/questions",
+      },
+      {
+        id: "pointstack-jobs",
+        label: "Jobs",
+        iconName: "Briefcase",
+        colorVariant: "forum",
+        href: "/pointstack/jobs",
+      },
+      {
+        id: "pointstack-resources",
+        label: "Resources",
+        iconName: "Folder",
+        colorVariant: "forum",
+        href: "/pointstack/resources",
+      },
+      {
+        id: "pointstack-messages",
+        label: "Messages",
+        iconName: "ChatCircle",
+        colorVariant: "forum",
+        href: "/pointstack/messages",
+      },
+      {
+        id: "pointstack-notifications",
+        label: "Notifications",
+        iconName: "Bell",
+        colorVariant: "forum",
+        href: "/pointstack/notifications",
+      },
+    ],
+  },
+  {
     id: VIEW_IDS.RESOURCES,
     label: "RESOURCES",
     iconName: "Book",
@@ -415,7 +488,6 @@ export const NAV_ITEMS: NavNode[] = [
     children: [
       { id: VIEW_IDS.BABEL, label: "BAS Babel", iconName: "Translate", colorVariant: "resources" },
       { id: VIEW_IDS.CALCULATORS, label: "Calculators", iconName: "Calculator", colorVariant: "resources" },
-      { id: VIEW_IDS.POINTSTACK, label: "PointStack", iconName: "UsersThree", colorVariant: "forum" },
       { id: VIEW_IDS.PSK, label: "ProjectSidekick", iconName: "Kanban", colorVariant: "resources" },
       { id: VIEW_IDS.REFERENCES, label: "References", iconName: "BookmarksSimple", colorVariant: "resources" },
       { id: VIEW_IDS.WIKI, label: "Wiki", iconName: "BookOpen", colorVariant: "wiki" },
@@ -473,6 +545,7 @@ export const ICON_NAMES = [
   "MapPin",
   "Link",
   "PaperPlaneTilt",
+  "Folder",
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

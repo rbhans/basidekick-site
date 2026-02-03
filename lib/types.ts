@@ -82,6 +82,8 @@ export interface NavNode {
   label: string;
   iconName?: string;
   colorVariant?: NavColorVariant;
+  href?: string;
+  exact?: boolean;
   badge?: {
     text: string;
     variant: "default" | "secondary" | "destructive" | "outline";

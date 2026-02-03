@@ -22,10 +22,10 @@ interface MainLayoutProps {
 
 // NavTree that uses Links instead of callbacks
 function NavTreeWithLinks({
-  activeView,
+  pathname,
   onLinkClick,
 }: {
-  activeView: string;
+  pathname: string;
   onLinkClick?: () => void;
 }) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
@@ -40,11 +40,20 @@ function NavTreeWithLinks({
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const resolveHref = (node: NavNode) => node.href ?? getRouteForViewId(node.id);
+
+  const isNodeActive = (node: NavNode) => {
+    const href = resolveHref(node);
+    if (!href) return false;
+    if (node.exact) return pathname === href;
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
   const renderNode = (node: NavNode, depth: number = 0) => {
     const hasChildren = node.children && node.children.length > 0;
     const isExpanded = expanded[node.id] ?? false;
-    const isActive = activeView === node.id;
-    const href = getRouteForViewId(node.id);
+    const isActive = !hasChildren && isNodeActive(node);
+    const href = resolveHref(node);
 
     // Parent folders (with children) toggle expansion, don't navigate
     if (hasChildren) {
@@ -194,7 +203,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
         {/* Desktop sidebar */}
         <aside className="hidden lg:flex w-[260px] flex-shrink-0 border-r border-border flex-col bg-card/30">
           <div className="flex-1 overflow-y-auto">
-            <NavTreeWithLinks activeView={activeView} />
+            <NavTreeWithLinks pathname={pathname} />
           </div>
           <SidebarStatus />
           <SidebarFooter />
@@ -223,7 +232,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </div>
           <div className="flex-1 overflow-y-auto">
             <NavTreeWithLinks
-              activeView={activeView}
+              pathname={pathname}
               onLinkClick={() => setSidebarOpen(false)}
             />
           </div>
