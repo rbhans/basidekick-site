@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
 import {
   MapPin,
   Globe,
@@ -21,6 +20,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "../shared/user-avatar";
 import { FeedCard } from "../feed/feed-card";
+import { ProfileEditDialog } from "./profile-edit-dialog";
+import { FollowersDialog } from "./followers-dialog";
+import { ActivityFeed } from "./activity-feed";
+import { ContributionsTab } from "./contributions-tab";
 import { PointStackProfile, PointStackPost } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import * as api from "../pointstack-api";
@@ -33,11 +36,15 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
   const { user } = useAuth();
   const [profile, setProfile] = useState<PointStackProfile | null>(null);
   const [posts, setPosts] = useState<PointStackPost[]>([]);
+  const [showcaseProjects, setShowcaseProjects] = useState<PointStackPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [equipmentIds, setEquipmentIds] = useState<string[]>([]);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [followersDialogOpen, setFollowersDialogOpen] = useState(false);
+  const [followersDialogTab, setFollowersDialogTab] = useState<"followers" | "following">("followers");
   const { data: atlasData } = useAtlasAll();
 
   const brandById = useMemo(() => new Map(atlasData?.brands.map((b) => [b.id, b]) || []), [atlasData]);
@@ -121,6 +128,10 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
           // Fetch user's posts
           const userPosts = await api.fetchPosts({ following: false }, 20, 0);
           setPosts(userPosts.filter((p) => p.author_id === profileData.id));
+
+          // Fetch showcase projects
+          const projects = await api.fetchUserShowcaseProjects(profileData.id);
+          setShowcaseProjects(projects);
 
           // Fetch equipment experience
           const supabase = createClient();
@@ -259,25 +270,35 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
                 <span className="font-semibold">{profile.reputation_score}</span>
                 <span className="text-muted-foreground ml-1">reputation</span>
               </div>
-              <div>
+              <button
+                onClick={() => {
+                  setFollowersDialogTab("followers");
+                  setFollowersDialogOpen(true);
+                }}
+                className="hover:text-primary transition-colors"
+              >
                 <span className="font-semibold">{followerCount}</span>
                 <span className="text-muted-foreground ml-1">followers</span>
-              </div>
-              <div>
+              </button>
+              <button
+                onClick={() => {
+                  setFollowersDialogTab("following");
+                  setFollowersDialogOpen(true);
+                }}
+                className="hover:text-primary transition-colors"
+              >
                 <span className="font-semibold">{followingCount}</span>
                 <span className="text-muted-foreground ml-1">following</span>
-              </div>
+              </button>
             </div>
           </div>
 
           {/* Actions */}
           <div className="flex flex-col gap-2">
             {isOwnProfile ? (
-              <Button asChild variant="outline">
-                <Link href={ROUTES.ACCOUNT}>
-                  <PencilSimple className="w-4 h-4 mr-2" />
-                  Edit Profile
-                </Link>
+              <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
+                <PencilSimple className="w-4 h-4 mr-2" />
+                Edit Profile
               </Button>
             ) : user ? (
               <>
@@ -319,10 +340,11 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
 
       {/* Tabs */}
       <Tabs defaultValue="posts">
-        <TabsList>
+        <TabsList className="flex-wrap h-auto gap-1">
           <TabsTrigger value="posts">Posts ({posts.length})</TabsTrigger>
           <TabsTrigger value="equipment">Equipment</TabsTrigger>
-          <TabsTrigger value="projects">Projects</TabsTrigger>
+          <TabsTrigger value="projects">Projects ({showcaseProjects.length})</TabsTrigger>
+          <TabsTrigger value="contributions">Contributions</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
         </TabsList>
 
@@ -370,17 +392,50 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
         </TabsContent>
 
         <TabsContent value="projects" className="mt-6">
-          <div className="text-center py-12 text-muted-foreground">
-            No projects yet.
-          </div>
+          {showcaseProjects.length > 0 ? (
+            <div className="space-y-4">
+              {showcaseProjects.map((project) => (
+                <FeedCard
+                  key={project.id}
+                  post={project}
+                  equipmentLinks={getEquipmentLinks(project.equipment_ids || [])}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              No showcase projects yet.
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="contributions" className="mt-6">
+          <ContributionsTab userId={profile.id} />
         </TabsContent>
 
         <TabsContent value="activity" className="mt-6">
-          <div className="text-center py-12 text-muted-foreground">
-            No recent activity.
-          </div>
+          <ActivityFeed userId={profile.id} />
         </TabsContent>
       </Tabs>
+
+      {/* Dialogs */}
+      {isOwnProfile && (
+        <ProfileEditDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          profile={profile}
+          onSave={(updatedProfile) => setProfile(updatedProfile)}
+        />
+      )}
+
+      <FollowersDialog
+        open={followersDialogOpen}
+        onOpenChange={setFollowersDialogOpen}
+        userId={profile.id}
+        initialTab={followersDialogTab}
+        followerCount={followerCount}
+        followingCount={followingCount}
+      />
     </div>
   );
 }

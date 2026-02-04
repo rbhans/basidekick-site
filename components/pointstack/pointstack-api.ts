@@ -17,6 +17,12 @@ import {
   CreatePointStackResourceInput,
   UpdatePointStackProfileInput,
   PointStackPostType,
+  ActivityItem,
+  BabelContribution,
+  EquipmentSubmission,
+  EquipmentNote,
+  WikiArticle,
+  ForumThread,
 } from "@/lib/types";
 import { User } from "@supabase/supabase-js";
 
@@ -1092,4 +1098,241 @@ export async function markConversationRead(conversationId: string): Promise<void
     .eq("user_id", user.id);
 
   if (error) throw error;
+}
+
+// ============================================================
+// USER SHOWCASE PROJECTS API
+// ============================================================
+
+export async function fetchUserShowcaseProjects(userId: string): Promise<PointStackPost[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("pointstack_posts")
+    .select(`
+      *,
+      author:profiles!author_id(display_name, avatar_url),
+      company:pointstack_companies!company_id(name, slug)
+    `)
+    .eq("author_id", userId)
+    .eq("is_showcase", true)
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+// ============================================================
+// USER ACTIVITY API
+// ============================================================
+
+export async function fetchUserActivity(userId: string, limit = 20): Promise<ActivityItem[]> {
+  const supabase = getClient();
+  const activities: ActivityItem[] = [];
+
+  // Fetch posts
+  const { data: posts } = await supabase
+    .from("pointstack_posts")
+    .select("id, title, slug, post_type, created_at")
+    .eq("author_id", userId)
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (posts) {
+    for (const post of posts) {
+      activities.push({
+        id: `post-${post.id}`,
+        type: "post",
+        title: post.title,
+        description: `Created a ${post.post_type}`,
+        link: `/pointstack/posts/${post.slug}`,
+        created_at: post.created_at,
+      });
+    }
+  }
+
+  // Fetch comments
+  const { data: comments } = await supabase
+    .from("pointstack_post_comments")
+    .select(`
+      id, content, created_at,
+      post:pointstack_posts!post_id(title, slug)
+    `)
+    .eq("author_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (comments) {
+    for (const comment of comments) {
+      const post = comment.post as { title: string; slug: string } | null;
+      activities.push({
+        id: `comment-${comment.id}`,
+        type: "comment",
+        title: `Commented on "${post?.title || "a post"}"`,
+        description: comment.content.slice(0, 100) + (comment.content.length > 100 ? "..." : ""),
+        link: post ? `/pointstack/posts/${post.slug}` : undefined,
+        created_at: comment.created_at,
+      });
+    }
+  }
+
+  // Fetch equipment notes
+  const { data: notes } = await supabase
+    .from("equipment_notes")
+    .select("id, equipment_id, content, created_at")
+    .eq("author_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (notes) {
+    for (const note of notes) {
+      activities.push({
+        id: `note-${note.id}`,
+        type: "equipment_note",
+        title: "Added equipment note",
+        description: note.content.slice(0, 100) + (note.content.length > 100 ? "..." : ""),
+        created_at: note.created_at,
+        metadata: { equipment_id: note.equipment_id },
+      });
+    }
+  }
+
+  // Sort by created_at descending and take limit
+  return activities
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .slice(0, limit);
+}
+
+// ============================================================
+// USER CONTRIBUTIONS API
+// ============================================================
+
+export async function fetchUserBabelContributions(userId: string, limit = 20): Promise<BabelContribution[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("babel_contributions")
+    .select(`
+      *,
+      submitter:profiles!user_id(display_name)
+    `)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return (data || []) as BabelContribution[];
+}
+
+export async function fetchUserEquipmentSubmissions(userId: string, limit = 20): Promise<EquipmentSubmission[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("equipment_submissions")
+    .select(`
+      *,
+      submitter:profiles!user_id(display_name)
+    `)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return (data || []) as EquipmentSubmission[];
+}
+
+export async function fetchUserEquipmentNotes(userId: string, limit = 20): Promise<EquipmentNote[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("equipment_notes")
+    .select(`
+      *,
+      author:profiles!author_id(display_name, avatar_url)
+    `)
+    .eq("author_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return (data || []) as EquipmentNote[];
+}
+
+export async function fetchUserWikiArticles(userId: string, limit = 20): Promise<WikiArticle[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("wiki_articles")
+    .select(`
+      *,
+      author:profiles!author_id(display_name),
+      category:wiki_categories!category_id(name, slug)
+    `)
+    .eq("author_id", userId)
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return (data || []) as WikiArticle[];
+}
+
+export async function fetchUserForumThreads(userId: string, limit = 20): Promise<(ForumThread & { category?: { slug: string; name: string } })[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("forum_threads")
+    .select(`
+      *,
+      author:profiles!author_id(display_name),
+      category:forum_categories!category_id(slug, name)
+    `)
+    .eq("author_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return (data || []) as (ForumThread & { category?: { slug: string; name: string } })[];
+}
+
+// ============================================================
+// FOLLOWERS/FOLLOWING LISTS API
+// ============================================================
+
+export async function fetchFollowers(userId: string, limit = 50): Promise<PointStackProfile[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("pointstack_user_follows")
+    .select(`
+      follower:profiles!follower_id(
+        id, display_name, avatar_url, headline, skills, reputation_score, is_verified
+      )
+    `)
+    .eq("following_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+
+  // Extract profiles from join
+  return (data || [])
+    .map((row) => row.follower as unknown as PointStackProfile)
+    .filter(Boolean);
+}
+
+export async function fetchFollowing(userId: string, limit = 50): Promise<PointStackProfile[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("pointstack_user_follows")
+    .select(`
+      following:profiles!following_id(
+        id, display_name, avatar_url, headline, skills, reputation_score, is_verified
+      )
+    `)
+    .eq("follower_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+
+  // Extract profiles from join
+  return (data || [])
+    .map((row) => row.following as unknown as PointStackProfile)
+    .filter(Boolean);
 }

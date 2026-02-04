@@ -1014,3 +1014,66 @@ export interface UpdatePointStackProfileInput {
   github_url?: string;
   availability_status?: PointStackAvailabilityStatus;
 }
+
+// ============================================================
+// Activity & Contribution Types
+// ============================================================
+
+export type ActivityItemType =
+  | "post"
+  | "comment"
+  | "babel_contribution"
+  | "equipment_submission"
+  | "equipment_note"
+  | "wiki_article"
+  | "forum_thread";
+
+export interface ActivityItem {
+  id: string;
+  type: ActivityItemType;
+  title: string;
+  description?: string;
+  link?: string;
+  created_at: string;
+  metadata?: Record<string, unknown>;
+}
+
+export type EquipmentSubmissionType = "error" | "edit" | "new_entry";
+export type EquipmentSubmissionStatus = "pending" | "approved" | "rejected";
+
+export interface EquipmentSubmission {
+  id: string;
+  user_id: string;
+  type: EquipmentSubmissionType;
+  entry_id: string | null;
+  brand_id: string | null;
+  brand_name: string | null;
+  type_id: string | null;
+  type_name: string | null;
+  model_name: string | null;
+  model_numbers: string[] | null;
+  protocols: string[] | null;
+  description: string | null;
+  review_status: EquipmentSubmissionStatus;
+  reviewer_notes: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  github_issue_url: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  submitter?: { display_name: string | null };
+  reviewer?: { display_name: string | null };
+}
+
+export interface EquipmentNote {
+  id: string;
+  equipment_id: string;
+  author_id: string;
+  content: string;
+  upvote_count: number;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  author?: { display_name: string | null; avatar_url: string | null };
+}
