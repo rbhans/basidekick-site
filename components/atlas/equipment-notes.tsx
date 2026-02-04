@@ -44,7 +44,7 @@ export function EquipmentNotes({ equipmentId }: EquipmentNotesProps) {
       if (!error && data) {
         setNotes(data as EquipmentNote[]);
         if (user) {
-          const noteIds = data.map((n) => n.id);
+          const noteIds = data.map((n: { id: string }) => n.id);
           if (noteIds.length > 0) {
             const { data: votes } = await supabase
               .from("equipment_note_votes")
@@ -52,7 +52,7 @@ export function EquipmentNotes({ equipmentId }: EquipmentNotesProps) {
               .eq("user_id", user.id)
               .in("note_id", noteIds);
 
-            setVoted(new Set((votes || []).map((v) => v.note_id)));
+            setVoted(new Set((votes || []).map((v: { note_id: string }) => v.note_id)));
           }
         }
       }

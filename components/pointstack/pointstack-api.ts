@@ -1312,7 +1312,7 @@ export async function fetchFollowers(userId: string, limit = 50): Promise<PointS
 
   // Extract profiles from join
   return (data || [])
-    .map((row) => row.follower as unknown as PointStackProfile)
+    .map((row: { follower: unknown }) => row.follower as PointStackProfile)
     .filter(Boolean);
 }
 
@@ -1333,6 +1333,6 @@ export async function fetchFollowing(userId: string, limit = 50): Promise<PointS
 
   // Extract profiles from join
   return (data || [])
-    .map((row) => row.following as unknown as PointStackProfile)
+    .map((row: { following: unknown }) => row.following as PointStackProfile)
     .filter(Boolean);
 }

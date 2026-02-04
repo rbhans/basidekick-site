@@ -122,8 +122,7 @@ async function createGitHubIssue(submission: {
     if (submission.submitter_email) {
       body += ` (${submission.submitter_email})`;
     }
-    body += "
-";
+    body += "\n";
   }
 
   if (submission.description) {

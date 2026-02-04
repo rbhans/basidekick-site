@@ -6,6 +6,7 @@ import {
   Resource,
   VIEW_IDS,
 } from "./types";
+import { ROUTES } from "./routes";
 
 // =============================================================================
 // VIEW TITLES - Used in toolbar, page transitions, etc.

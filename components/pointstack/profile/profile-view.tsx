@@ -141,7 +141,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
               .select("equipment_id")
               .eq("user_id", profileData.id);
 
-            setEquipmentIds((experienceRows || []).map((row) => row.equipment_id));
+            setEquipmentIds((experienceRows || []).map((row: { equipment_id: string }) => row.equipment_id));
           }
         }
       } catch (error) {
