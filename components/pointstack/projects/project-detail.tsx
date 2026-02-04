@@ -2,16 +2,16 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
 import { ArrowLeft, Heart, MapPin, Calendar, Ruler } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
+import { createClient } from "@/lib/supabase/client";
 import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "../shared/user-avatar";
 import { ROUTES } from "@/lib/routes";
-import { PointStackShowcaseProject } from "@/lib/types";
+import { PointStackPost } from "@/lib/types";
 import * as api from "../pointstack-api";
 
 interface ProjectDetailProps {
@@ -20,7 +20,7 @@ interface ProjectDetailProps {
 
 export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
   const { user } = useAuth();
-  const [project, setProject] = useState<PointStackShowcaseProject | null>(null);
+  const [project, setProject] = useState<PointStackPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
@@ -49,6 +49,31 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
       .filter(Boolean) as { id: string; name: string; href: string }[];
   }, [atlasData, project, brandById, typeById, modelById]);
 
+  const getDocumentName = (url: string) => {
+    const clean = url.split("?")[0] || "";
+    const name = clean.split("/").pop() || "Document";
+    return decodeURIComponent(name);
+  };
+
+  useEffect(() => {
+    const fetchVote = async () => {
+      if (!user || !project) return;
+      const supabase = createClient();
+      if (!supabase) return;
+
+      const { data } = await supabase
+        .from("pointstack_post_votes")
+        .select("vote_type")
+        .eq("user_id", user.id)
+        .eq("post_id", project.id)
+        .maybeSingle();
+
+      setLiked(data?.vote_type === 1);
+    };
+
+    fetchVote();
+  }, [project, user]);
+
   useEffect(() => {
     const fetchProject = async () => {
       setLoading(true);
@@ -56,8 +81,10 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
         const data = await api.fetchShowcaseProjectBySlug(slug);
         setProject(data);
         if (data) {
-          setLikeCount(data.like_count);
-          setLiked(data.user_liked || false);
+          setLikeCount(data.upvote_count);
+        }
+        if (data) {
+          api.incrementPostViewCount(data.id).catch(() => {});
         }
       } catch (error) {
         console.error("Error fetching project:", error);
@@ -72,15 +99,10 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
   const handleLike = async () => {
     if (!project || !user) return;
     try {
-      if (liked) {
-        await api.unlikeProject(project.id);
-        setLiked(false);
-        setLikeCount((c) => Math.max(0, c - 1));
-      } else {
-        await api.likeProject(project.id);
-        setLiked(true);
-        setLikeCount((c) => c + 1);
-      }
+      await api.votePost(project.id, 1);
+      const nextLiked = !liked;
+      setLiked(nextLiked);
+      setLikeCount((c) => (nextLiked ? c + 1 : Math.max(0, c - 1)));
     } catch (error) {
       console.error("Error toggling like:", error);
     }
@@ -122,10 +144,10 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
       </Link>
 
       {/* Cover image */}
-      {project.cover_image_url && (
+      {(project.cover_image_url || project.images?.length) && (
         <div className="aspect-video rounded-lg overflow-hidden mb-6">
           <img
-            src={project.cover_image_url}
+            src={project.cover_image_url || project.images?.[0] || ""}
             alt={project.title}
             className="w-full h-full object-cover"
           />
@@ -215,11 +237,6 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
         ))}
       </div>
 
-      {/* Description */}
-      {project.description && (
-        <p className="text-lg text-muted-foreground mb-6">{project.description}</p>
-      )}
-
       {/* Content */}
       {project.content && (
         <div className="prose prose-sm dark:prose-invert max-w-none">
@@ -241,6 +258,26 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
                 alt={`${project.title} image ${i + 1}`}
                 className="rounded-lg"
               />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Documents */}
+      {project.documents && project.documents.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-4">Documents</h2>
+          <div className="space-y-2">
+            {project.documents.map((doc) => (
+              <a
+                key={doc}
+                href={doc}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-sm text-primary hover:underline"
+              >
+                {getDocumentName(doc)}
+              </a>
             ))}
           </div>
         </div>

@@ -7,14 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
-import { PointStackShowcaseProject } from "@/lib/types";
+import { PointStackPost } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
+import { CreatePostDialog } from "../feed/create-post-dialog";
 import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import * as api from "../pointstack-api";
 
 export function PointStackProjectsView() {
   const { user } = useAuth();
-  const [projects, setProjects] = useState<PointStackShowcaseProject[]>([]);
+  const [projects, setProjects] = useState<PointStackPost[]>([]);
   const [loading, setLoading] = useState(true);
 
   const { data: atlasData } = useAtlasData();
@@ -67,10 +68,15 @@ export function PointStackProjectsView() {
           </p>
         </div>
         {user && (
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Project
-          </Button>
+          <CreatePostDialog
+            defaultType="project"
+            trigger={(
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Project
+              </Button>
+            )}
+          />
         )}
       </div>
 
@@ -94,9 +100,9 @@ export function PointStackProjectsView() {
             >
               {/* Cover image */}
               <div className="aspect-video bg-muted relative overflow-hidden">
-                {project.cover_image_url ? (
+                {project.cover_image_url || project.images?.length ? (
                   <img
-                    src={project.cover_image_url}
+                    src={project.cover_image_url || project.images?.[0] || ""}
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -115,9 +121,9 @@ export function PointStackProjectsView() {
                 <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">
                   {project.title}
                 </h3>
-                {project.description && (
+                {project.content && (
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                    {project.description}
+                    {project.content}
                   </p>
                 )}
 
@@ -159,7 +165,7 @@ export function PointStackProjectsView() {
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1">
                       <Heart className="w-3 h-3" />
-                      <span>{project.like_count}</span>
+                      <span>{project.upvote_count}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-3 h-3" />
@@ -180,10 +186,15 @@ export function PointStackProjectsView() {
             No projects yet. Be the first to showcase your work!
           </p>
           {user && (
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Project
-            </Button>
+            <CreatePostDialog
+              defaultType="project"
+              trigger={(
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Project
+                </Button>
+              )}
+            />
           )}
         </div>
       )}

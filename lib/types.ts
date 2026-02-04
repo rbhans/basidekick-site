@@ -704,11 +704,25 @@ export interface PointStackPost {
   comment_count: number;
   tags: string[];
   equipment_ids?: string[];
+  is_showcase?: boolean;
+  cover_image_url?: string | null;
+  images?: string[];
+  documents?: string[];
+  building_types?: string[];
+  systems?: string[];
+  technologies?: string[];
+  location?: string | null;
+  completion_date?: string | null;
+  square_footage?: number | null;
+  company_id?: string | null;
+  is_featured?: boolean;
   metadata: Record<string, unknown>;
   created_at: string;
   updated_at: string;
   // Joined data
   author?: { display_name: string | null; avatar_url: string | null };
+  company?: { name: string; slug: string } | null;
+  credits?: PointStackProjectCredit[];
   user_vote?: number | null; // Current user's vote: 1, -1, or null
 }
 
@@ -748,34 +762,7 @@ export interface PointStackCommentVote {
 }
 
 // Showcase Project
-export interface PointStackShowcaseProject {
-  id: string;
-  author_id: string;
-  company_id: string | null;
-  title: string;
-  slug: string;
-  description: string | null;
-  content: string | null;
-  cover_image_url: string | null;
-  images: string[];
-  building_types: string[];
-  systems: string[];
-  technologies: string[];
-  equipment_ids?: string[];
-  location: string | null;
-  completion_date: string | null;
-  square_footage: number | null;
-  is_featured: boolean;
-  view_count: number;
-  like_count: number;
-  created_at: string;
-  updated_at: string;
-  // Joined data
-  author?: { display_name: string | null; avatar_url: string | null };
-  company?: { name: string; slug: string };
-  credits?: PointStackProjectCredit[];
-  user_liked?: boolean;
-}
+export type PointStackShowcaseProject = PointStackPost;
 
 // Project Credit
 export interface PointStackProjectCredit {
@@ -969,6 +956,18 @@ export interface CreatePointStackPostInput {
   content: string;
   tags?: string[];
   equipment_ids?: string[];
+  is_showcase?: boolean;
+  cover_image_url?: string | null;
+  images?: string[];
+  documents?: string[];
+  building_types?: string[];
+  systems?: string[];
+  technologies?: string[];
+  location?: string;
+  completion_date?: string;
+  square_footage?: number;
+  company_id?: string;
+  is_featured?: boolean;
   metadata?: Record<string, unknown>;
 }
 
@@ -976,22 +975,6 @@ export interface CreatePointStackCommentInput {
   post_id: string;
   content: string;
   parent_id?: string;
-}
-
-export interface CreatePointStackShowcaseProjectInput {
-  title: string;
-  description?: string;
-  content?: string;
-  cover_image_url?: string;
-  images?: string[];
-  building_types?: string[];
-  systems?: string[];
-  technologies?: string[];
-  equipment_ids?: string[];
-  location?: string;
-  completion_date?: string;
-  square_footage?: number;
-  company_id?: string;
 }
 
 export interface CreatePointStackJobInput {

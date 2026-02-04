@@ -65,6 +65,12 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
   const getProfileLink = (displayName: string | null | undefined) =>
     displayName ? ROUTES.POINTSTACK_PROFILE(displayName) : ROUTES.POINTSTACK;
 
+  const getDocumentName = (url: string) => {
+    const clean = url.split("?")[0] || "";
+    const name = clean.split("/").pop() || "Document";
+    return decodeURIComponent(name);
+  };
+
   if (loading) {
     return <PostDetailSkeleton />;
   }
@@ -184,6 +190,42 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
             <p key={i}>{paragraph}</p>
           ))}
         </div>
+
+        {/* Attachments */}
+        {post.images && post.images.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-sm font-semibold mb-3">Images</h2>
+            <div className="grid gap-3 grid-cols-2 md:grid-cols-3">
+              {post.images.map((image, i) => (
+                <img
+                  key={i}
+                  src={image}
+                  alt={`${post.title} image ${i + 1}`}
+                  className="w-full h-32 object-cover rounded"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {post.documents && post.documents.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-sm font-semibold mb-3">Documents</h2>
+            <div className="space-y-2">
+              {post.documents.map((doc) => (
+                <a
+                  key={doc}
+                  href={doc}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-sm text-primary hover:underline"
+                >
+                  {getDocumentName(doc)}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="flex items-center gap-4 pt-4 border-t border-border text-sm text-muted-foreground">

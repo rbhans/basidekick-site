@@ -2,7 +2,6 @@ import { getClient } from "@/lib/supabase/client";
 import {
   PointStackPost,
   PointStackPostComment,
-  PointStackShowcaseProject,
   PointStackJob,
   PointStackResourceListing,
   PointStackCompany,
@@ -14,7 +13,6 @@ import {
   PointStackFeedFilter,
   CreatePointStackPostInput,
   CreatePointStackCommentInput,
-  CreatePointStackShowcaseProjectInput,
   CreatePointStackJobInput,
   CreatePointStackResourceInput,
   UpdatePointStackProfileInput,
@@ -183,6 +181,18 @@ export async function createPost(input: CreatePointStackPostInput): Promise<Poin
       slug,
       tags: input.tags || [],
       equipment_ids: input.equipment_ids || [],
+      is_showcase: input.is_showcase || false,
+      cover_image_url: input.cover_image_url || null,
+      images: input.images || [],
+      documents: input.documents || [],
+      building_types: input.building_types || [],
+      systems: input.systems || [],
+      technologies: input.technologies || [],
+      location: input.location || null,
+      completion_date: input.completion_date || null,
+      square_footage: input.square_footage || null,
+      company_id: input.company_id || null,
+      is_featured: input.is_featured || false,
       metadata: input.metadata || {},
     })
     .select(`
@@ -640,15 +650,17 @@ export async function fetchShowcaseProjects(
   filter?: { buildingTypes?: string[]; systems?: string[]; technologies?: string[] },
   limit = 20,
   offset = 0
-): Promise<PointStackShowcaseProject[]> {
+): Promise<PointStackPost[]> {
   const supabase = getClient();
   let query = supabase
-    .from("pointstack_showcase_projects")
+    .from("pointstack_posts")
     .select(`
       *,
       author:profiles!author_id(display_name, avatar_url),
       company:pointstack_companies!company_id(name, slug)
     `)
+    .eq("post_type", "project")
+    .eq("is_showcase", true)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -667,20 +679,18 @@ export async function fetchShowcaseProjects(
   return data || [];
 }
 
-export async function fetchShowcaseProjectBySlug(slug: string): Promise<PointStackShowcaseProject | null> {
+export async function fetchShowcaseProjectBySlug(slug: string): Promise<PointStackPost | null> {
   const supabase = getClient();
   const { data, error } = await supabase
-    .from("pointstack_showcase_projects")
+    .from("pointstack_posts")
     .select(`
       *,
       author:profiles!author_id(display_name, avatar_url),
-      company:pointstack_companies!company_id(name, slug),
-      credits:pointstack_project_credits(
-        *,
-        user:profiles!user_id(display_name, avatar_url)
-      )
+      company:pointstack_companies!company_id(name, slug)
     `)
     .eq("slug", slug)
+    .eq("post_type", "project")
+    .eq("is_showcase", true)
     .single();
 
   if (error) {
@@ -690,68 +700,6 @@ export async function fetchShowcaseProjectBySlug(slug: string): Promise<PointSta
   return data;
 }
 
-export async function createShowcaseProject(input: CreatePointStackShowcaseProjectInput): Promise<PointStackShowcaseProject> {
-  const supabase = getClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
-
-  const slug = generateSlug(input.title);
-
-  const { data, error } = await supabase
-    .from("pointstack_showcase_projects")
-    .insert({
-      author_id: user.id,
-      title: input.title,
-      slug,
-      description: input.description,
-      content: input.content,
-      cover_image_url: input.cover_image_url,
-      images: input.images || [],
-      building_types: input.building_types || [],
-      systems: input.systems || [],
-      technologies: input.technologies || [],
-      equipment_ids: input.equipment_ids || [],
-      location: input.location,
-      completion_date: input.completion_date,
-      square_footage: input.square_footage,
-      company_id: input.company_id,
-    })
-    .select(`
-      *,
-      author:profiles!author_id(display_name, avatar_url)
-    `)
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-export async function likeProject(projectId: string): Promise<void> {
-  const supabase = getClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
-
-  const { error } = await supabase.from("pointstack_project_likes").insert({
-    user_id: user.id,
-    project_id: projectId,
-  });
-
-  if (error && error.code !== "23505") throw error;
-}
-
-export async function unlikeProject(projectId: string): Promise<void> {
-  const supabase = getClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
-
-  const { error } = await supabase
-    .from("pointstack_project_likes")
-    .delete()
-    .eq("user_id", user.id)
-    .eq("project_id", projectId);
-
-  if (error) throw error;
-}
 
 // ============================================================
 // JOBS API
