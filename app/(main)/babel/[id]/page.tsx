@@ -93,6 +93,9 @@ function generateBabelJsonLd(entry: BabelEntryLookup, canonical: string) {
 
   const equipmentEntry = entry.data as BabelEquipmentEntry;
   const additionalProperty = [
+    equipmentEntry.category
+      ? { "@type": "PropertyValue", name: "Category", value: equipmentEntry.category }
+      : null,
     equipmentEntry.haystack
       ? { "@type": "PropertyValue", name: "Haystack", value: equipmentEntry.haystack }
       : null,
@@ -103,12 +106,17 @@ function generateBabelJsonLd(entry: BabelEntryLookup, canonical: string) {
 
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": "DefinedTerm",
     name: equipmentEntry.name,
     description: equipmentEntry.description,
-    sku: equipmentEntry.id,
-    category: equipmentEntry.category,
+    identifier: equipmentEntry.id,
+    termCode: equipmentEntry.id,
     url: canonical,
+    inDefinedTermSet: {
+      "@type": "DefinedTermSet",
+      name: "BAS Babel",
+      url: `${BASE_URL}/babel`,
+    },
     additionalProperty: additionalProperty.length ? additionalProperty : undefined,
   };
 }
