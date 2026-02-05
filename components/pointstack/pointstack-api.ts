@@ -6,6 +6,7 @@ import {
   PointStackResourceListing,
   PointStackCompany,
   PointStackNotification,
+  PointStackNotificationType,
   PointStackConversation,
   PointStackMessage,
   PointStackProfile,
@@ -24,6 +25,7 @@ import {
   WikiArticle,
   ForumThread,
 } from "@/lib/types";
+import { ROUTES } from "@/lib/routes";
 import { User } from "@supabase/supabase-js";
 
 // ============================================================
@@ -96,6 +98,54 @@ function sanitizeSearchInput(input: string): string {
   return input
     .replace(/[%_]/g, "\\$&") // Escape LIKE wildcards
     .slice(0, 100); // Limit length
+}
+
+interface CreateNotificationInput {
+  userId: string;
+  actorId: string;
+  type: PointStackNotificationType;
+  title: string;
+  body?: string | null;
+  link?: string | null;
+  metadata?: Record<string, unknown>;
+}
+
+async function createNotification({
+  userId,
+  actorId,
+  type,
+  title,
+  body = null,
+  link = null,
+  metadata = {},
+}: CreateNotificationInput): Promise<void> {
+  if (!userId || userId === actorId) return;
+
+  const supabase = getClient();
+  const { error } = await supabase
+    .from("pointstack_notifications")
+    .insert({
+      user_id: userId,
+      actor_id: actorId,
+      type,
+      title,
+      body,
+      link,
+      metadata,
+    });
+
+  if (error) throw error;
+}
+
+async function fetchProfileDisplayName(userId: string): Promise<string | null> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("display_name")
+    .eq("id", userId)
+    .single();
+  if (error) return null;
+  return data?.display_name ?? null;
 }
 
 // Helper to generate URL-friendly slugs with cryptographic randomness
@@ -255,6 +305,8 @@ export async function votePost(postId: string, voteType: 1 | -1): Promise<void> 
     .eq("post_id", postId)
     .single();
 
+  const shouldNotifyLike = voteType === 1 && (!existingVote || existingVote.vote_type !== 1);
+
   if (existingVote) {
     if (existingVote.vote_type === voteType) {
       // Remove vote
@@ -278,6 +330,30 @@ export async function votePost(postId: string, voteType: 1 | -1): Promise<void> 
       post_id: postId,
       vote_type: voteType,
     });
+  }
+
+  if (shouldNotifyLike) {
+    try {
+      const { data: post } = await supabase
+        .from("pointstack_posts")
+        .select("author_id, title, slug")
+        .eq("id", postId)
+        .single();
+
+      if (post?.author_id && post.author_id !== user.id) {
+        await createNotification({
+          userId: post.author_id,
+          actorId: user.id,
+          type: "like",
+          title: "New like on your post",
+          body: post.title || null,
+          link: post.slug ? ROUTES.POINTSTACK_POST(post.slug) : null,
+          metadata: { post_id: postId },
+        });
+      }
+    } catch (notifyError) {
+      console.error("Error creating like notification:", notifyError);
+    }
   }
 }
 
@@ -327,6 +403,54 @@ export async function createComment(input: CreatePointStackCommentInput): Promis
     .single();
 
   if (error) throw error;
+
+  try {
+    const { data: post } = await supabase
+      .from("pointstack_posts")
+      .select("author_id, title, slug")
+      .eq("id", input.post_id)
+      .single();
+
+    let parentAuthorId: string | null = null;
+    if (input.parent_id) {
+      const { data: parent } = await supabase
+        .from("pointstack_post_comments")
+        .select("author_id")
+        .eq("id", input.parent_id)
+        .single();
+      parentAuthorId = parent?.author_id ?? null;
+    }
+
+    const recipients = new Map<string, string>();
+    if (post?.author_id && post.author_id !== user.id) {
+      recipients.set(post.author_id, "New comment on your post");
+    }
+    if (parentAuthorId && parentAuthorId !== user.id) {
+      recipients.set(parentAuthorId, "New reply to your comment");
+    }
+
+    const link = post?.slug ? ROUTES.POINTSTACK_POST(post.slug) : null;
+    const body = data.content ? data.content.slice(0, 200) : null;
+
+    for (const [recipientId, title] of recipients) {
+      await createNotification({
+        userId: recipientId,
+        actorId: user.id,
+        type: "reply",
+        title,
+        body,
+        link,
+        metadata: {
+          post_id: input.post_id,
+          comment_id: data.id,
+          parent_id: input.parent_id || null,
+        },
+      });
+    }
+  } catch (notifyError) {
+    console.error("Error creating comment notification:", notifyError);
+  }
+
   return data;
 }
 
@@ -375,6 +499,31 @@ export async function acceptAnswer(commentId: string, postId: string): Promise<v
     .update({ is_accepted: true })
     .eq("id", commentId);
   if (error) throw error;
+
+  try {
+    const { data } = await supabase
+      .from("pointstack_post_comments")
+      .select("author_id, post:pointstack_posts!post_id(title, slug)")
+      .eq("id", commentId)
+      .single();
+
+    const recipientId = data?.author_id;
+    const post = (data?.post as { title?: string | null; slug?: string | null } | null) ?? null;
+
+    if (recipientId && recipientId !== user.id) {
+      await createNotification({
+        userId: recipientId,
+        actorId: user.id,
+        type: "answer_accepted",
+        title: "Your answer was accepted",
+        body: post?.title || null,
+        link: post?.slug ? ROUTES.POINTSTACK_POST(post.slug) : null,
+        metadata: { post_id: postId, comment_id: commentId },
+      });
+    }
+  } catch (notifyError) {
+    console.error("Error creating accepted answer notification:", notifyError);
+  }
 }
 
 export async function voteComment(commentId: string, voteType: 1 | -1): Promise<void> {
@@ -517,6 +666,23 @@ export async function followUser(userId: string): Promise<void> {
   });
 
   if (error && error.code !== "23505") throw error; // Ignore duplicate key error
+
+  if (!error) {
+    try {
+      const displayName = await fetchProfileDisplayName(user.id);
+      await createNotification({
+        userId,
+        actorId: user.id,
+        type: "follow",
+        title: "New follower",
+        body: "Someone started following you.",
+        link: displayName ? ROUTES.POINTSTACK_PROFILE(displayName) : null,
+        metadata: { follower_id: user.id },
+      });
+    } catch (notifyError) {
+      console.error("Error creating follow notification:", notifyError);
+    }
+  }
 }
 
 export async function unfollowUser(userId: string): Promise<void> {
