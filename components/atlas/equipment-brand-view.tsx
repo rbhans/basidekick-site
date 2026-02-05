@@ -9,6 +9,7 @@ import { useAtlasAll } from "./use-atlas-data";
 import { getBrandBySlug } from "./atlas-utils";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
+import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 
 interface EquipmentBrandViewProps {
   brandSlug: string;
@@ -100,6 +101,9 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
         <CircuitBackground opacity={0.12} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <SectionLabel variant="resources">equipment</SectionLabel>
+          <AtlasBreadcrumb
+            items={[{ label: brand.name }]}
+          />
           <div className="flex items-center gap-4 mt-4">
             {brand.logo_url ? (
               <img src={brand.logo_url} alt={brand.name} className="size-12 object-contain" />

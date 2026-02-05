@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAtlasAll } from "./use-atlas-data";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
+import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 import type { AtlasModel } from "@/lib/types";
 
 export function EquipmentBrowseView() {
@@ -125,8 +126,9 @@ export function EquipmentBrowseView() {
         <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <SectionLabel variant="resources">resources</SectionLabel>
+          <AtlasBreadcrumb items={[]} />
 
-          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">BAS Atlas</h1>
+          <h1 className="mt-4 text-3xl md:text-4xl font-semibold tracking-tight">BAS Atlas</h1>
           <p className="mt-3 text-muted-foreground max-w-2xl">
             A community-driven equipment database for BAS professionals. Browse by brand and type,
             track what you&apos;ve worked with, and share field notes.
