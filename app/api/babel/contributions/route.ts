@@ -119,6 +119,12 @@ export async function POST(request: Request) {
 
     if (insertError) {
       console.error("Insert error:", insertError);
+      if (insertError.code === "P0001" || insertError.message?.toLowerCase().includes("rate limit")) {
+        return NextResponse.json(
+          { error: "Rate limit exceeded" },
+          { status: 429 }
+        );
+      }
       return NextResponse.json(
         { error: "Failed to create contribution" },
         { status: 500 }

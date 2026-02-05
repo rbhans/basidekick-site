@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { ForumCategory, ForumThread, ForumPost } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
-import { validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset } from "@/lib/security";
+import { validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset, isRateLimitError } from "@/lib/security";
 import { PostActionsMenu } from "@/components/forum/post-actions-menu";
 import { DeletePostDialog } from "@/components/forum/delete-post-dialog";
 import { ForumImageUpload } from "@/components/forum/forum-image-upload";
@@ -73,14 +73,12 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
       const supabase = createClient();
       if (!supabase) return;
 
-      // Use server-rendered value for the increment to minimize race condition window
-      await supabase
-        .from("forum_threads")
-        .update({ view_count: (thread.view_count || 0) + 1 })
-        .eq("id", thread.id);
+      const { error } = await supabase.rpc("increment_forum_thread_view", {
+        thread_id: thread.id,
+      });
 
       // Mark as viewed for this session
-      if (typeof window !== "undefined") {
+      if (!error && typeof window !== "undefined") {
         sessionStorage.setItem(viewedKey, "1");
       }
     }
@@ -143,6 +141,10 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
       // Handle unique constraint violation gracefully
       if (insertError.code === "23505") {
         setHasSuggested(true);
+        return;
+      }
+      if (isRateLimitError(insertError)) {
+        setSuggestionError("You're suggesting too quickly. Please wait and try again.");
         return;
       }
       setSuggestionError("Failed to suggest. Please try again.");
@@ -209,16 +211,14 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
       .single();
 
     if (insertError || !data) {
-      setError("Failed to post reply. Please try again.");
+      if (isRateLimitError(insertError)) {
+        setError("You're posting too quickly. Please wait and try again.");
+      } else {
+        setError("Failed to post reply. Please try again.");
+      }
       setSubmitting(false);
       return;
     }
-
-    // Update last_post_at on the thread
-    await supabase
-      .from("forum_threads")
-      .update({ last_post_at: new Date().toISOString() })
-      .eq("id", thread.id);
 
     setPosts((prev) => [...prev, data as ForumPost]);
     setReplyContent("");

@@ -1,4 +1,5 @@
--- BASidekick Database Schema
+-- BASidekick Database Schema (legacy snapshot)
+-- NOTE: The source of truth is supabase/migrations. This file may be out of date.
 -- Run this in your Supabase SQL Editor (Dashboard > SQL Editor)
 -- ============================================================
 

@@ -11,7 +11,7 @@ import { createClient } from "@/lib/supabase/client";
 import { ForumCategory, ForumThread, ForumPost } from "@/lib/types";
 import { getIcon } from "@/lib/icons";
 import { ROUTES } from "@/lib/routes";
-import { validateTitle, validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset } from "@/lib/security";
+import { validateTitle, validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset, isRateLimitError } from "@/lib/security";
 import { PostActionsMenu } from "@/components/forum/post-actions-menu";
 import { DeletePostDialog } from "@/components/forum/delete-post-dialog";
 import { ForumImageUpload } from "@/components/forum/forum-image-upload";
@@ -56,7 +56,7 @@ export function ForumView() {
   const [replyContent, setReplyContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const hasIncrementedViewRef = useRef(false);
+  const hasIncrementedViewRef = useRef<string | null>(null);
 
   // Edit/delete state
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
@@ -175,14 +175,14 @@ export function ForumView() {
 
         // Increment view count with session deduplication (fire and forget)
         const viewedKey = `viewed_forum_${threadId}`;
-        if (!hasIncrementedViewRef.current && typeof window !== "undefined" && !sessionStorage.getItem(viewedKey)) {
-          hasIncrementedViewRef.current = true;
+        if (typeof window !== "undefined" && !sessionStorage.getItem(viewedKey) && hasIncrementedViewRef.current !== threadId) {
+          hasIncrementedViewRef.current = threadId;
           supabase
-            .from("forum_threads")
-            .update({ view_count: (threadResult.data.view_count || 0) + 1 })
-            .eq("id", threadId)
-            .then(() => {
-              sessionStorage.setItem(viewedKey, "1");
+            .rpc("increment_forum_thread_view", { thread_id: threadId })
+            .then(({ error }: { error: unknown }) => {
+              if (!error) {
+                sessionStorage.setItem(viewedKey, "1");
+              }
             });
         }
       }
@@ -286,7 +286,11 @@ export function ForumView() {
       .single();
 
     if (threadError || !threadData) {
-      setError("Failed to create thread. Please try again.");
+      if (isRateLimitError(threadError)) {
+        setError("You're creating threads too quickly. Please wait and try again.");
+      } else {
+        setError("Failed to create thread. Please try again.");
+      }
       setSubmitting(false);
       return;
     }
@@ -354,16 +358,14 @@ export function ForumView() {
       .single();
 
     if (insertError || !data) {
-      setError("Failed to post reply. Please try again.");
+      if (isRateLimitError(insertError)) {
+        setError("You're posting too quickly. Please wait and try again.");
+      } else {
+        setError("Failed to post reply. Please try again.");
+      }
       setSubmitting(false);
       return;
     }
-
-    // Update last_post_at on the thread
-    await supabase
-      .from("forum_threads")
-      .update({ last_post_at: new Date().toISOString() })
-      .eq("id", viewState.threadId);
 
     // Add the new post to the list
     setPosts((prev) => [...prev, data as ForumPost]);
