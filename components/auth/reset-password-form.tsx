@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 import { useRouter } from "next/navigation";
@@ -16,12 +16,18 @@ export function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isValidSession, setIsValidSession] = useState<boolean | null>(null);
-  const supabase = getClient();
   const router = useRouter();
+
+  // Lazy initialize Supabase client to avoid SSR issues
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     // Check if user has a valid recovery session
     const checkSession = async () => {
+      if (!supabase) {
+        setIsValidSession(false);
+        return;
+      }
       const { data: { session } } = await supabase.auth.getSession();
       setIsValidSession(!!session);
     };
@@ -31,6 +37,11 @@ export function ResetPasswordForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!supabase) {
+      setError("Unable to connect to authentication service");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match");

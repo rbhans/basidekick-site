@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { GoogleLogo } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
@@ -19,12 +19,20 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const supabase = getClient();
+
+  // Lazy initialize Supabase client to avoid SSR issues
+  const supabase = useMemo(() => createClient(), []);
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (!supabase) {
+      setError("Unable to connect to authentication service");
+      setLoading(false);
+      return;
+    }
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -43,6 +51,12 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     setError(null);
+
+    if (!supabase) {
+      setError("Unable to connect to authentication service");
+      setLoading(false);
+      return;
+    }
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
