@@ -65,8 +65,8 @@
   --accent: #f4f4f5;
   --accent-foreground: #18181b;
   --destructive: #ef4444;
-  --border: #e4e4e7;
-  --input: #e4e4e7;
+  --border: #d4d4d8;
+  --input: #d4d4d8;
   --ring: #d97706;
   --chart-1: #fbbf24;
   --chart-2: #f59e0b;
@@ -222,8 +222,8 @@
 }
 
 .card-hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px -8px hsl(var(--primary) / 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -8px hsl(var(--primary) / 0.15);
 }
 
 /* Reduce motion for accessibility */

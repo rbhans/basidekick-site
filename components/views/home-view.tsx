@@ -17,12 +17,13 @@ import {
   ChatCircle,
   Book,
   Translate,
-  Users,
   Article,
   ClockCounterClockwise,
   Wrench,
   UsersThree,
+  Gauge,
 } from "@phosphor-icons/react";
+import { getIcon } from "@/lib/icons";
 import { TOOLS_LIST, RESOURCES } from "@/lib/constants";
 import { ROUTES } from "@/lib/routes";
 
@@ -50,24 +51,25 @@ interface HomeViewProps {
   recentThreads?: RecentThread[];
   stats?: {
     articleCount: number;
-    threadCount: number;
     termCount: number;
+    modelCount: number;
   };
 }
 
 export function HomeView({
   recentArticles = [],
   recentThreads = [],
-  stats = { articleCount: 0, threadCount: 0, termCount: 0 },
+  stats = { articleCount: 0, termCount: 0, modelCount: 0 },
 }: HomeViewProps) {
 
-  // Map tools to product card format
+  // Map tools to product card format with icons
   const products = TOOLS_LIST.map((tool) => ({
     name: tool.name,
     shortName: tool.shortName,
     description: tool.description,
     href: ROUTES.TOOL(tool.id),
     ctaText: "Learn More",
+    icon: tool.iconName ? getIcon(tool.iconName, "size-5") : undefined,
   }));
 
   const formatDate = (dateString: string) => {
@@ -113,34 +115,34 @@ export function HomeView({
       </section>
 
       {/* Stats Bar */}
-      <section className="py-3 border-y border-border bg-card/50">
+      <section className="py-6 border-y border-border bg-card/50">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-3 gap-4 text-center">
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-bold text-primary">
                 <Article className="size-6 md:size-7" />
                 <AnimatedCounter end={stats.articleCount} suffix="+" />
               </div>
-              <p className="text-xs md:text-sm text-muted-foreground">
+              <p className="text-xs md:text-sm text-muted-foreground font-mono uppercase tracking-wide">
                 Wiki Articles
               </p>
             </div>
-            <div className="space-y-1">
-              <div className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-bold text-primary">
-                <Users className="size-6 md:size-7" />
-                <AnimatedCounter end={stats.threadCount} suffix="+" />
-              </div>
-              <p className="text-xs md:text-sm text-muted-foreground">
-                Forum Discussions
-              </p>
-            </div>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-bold text-primary">
                 <Translate className="size-6 md:size-7" />
                 <AnimatedCounter end={stats.termCount} suffix="+" />
               </div>
-              <p className="text-xs md:text-sm text-muted-foreground">
+              <p className="text-xs md:text-sm text-muted-foreground font-mono uppercase tracking-wide">
                 BAS Terms
+              </p>
+            </div>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-center gap-2 text-2xl md:text-3xl font-bold text-primary">
+                <Gauge className="size-6 md:size-7" />
+                <AnimatedCounter end={stats.modelCount} suffix="+" />
+              </div>
+              <p className="text-xs md:text-sm text-muted-foreground font-mono uppercase tracking-wide">
+                Equipment Models
               </p>
             </div>
           </div>
@@ -148,7 +150,7 @@ export function HomeView({
       </section>
 
       {/* Tools Section */}
-      <section className="py-12">
+      <section className="py-12 bg-card/30">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-3">
             <Wrench className="size-6 text-cyan-500 dark:text-cyan-400" />
@@ -203,6 +205,7 @@ export function HomeView({
                   href={resource.href}
                   ctaText="Open"
                   showBadge={false}
+                  icon={resource.iconName ? getIcon(resource.iconName, "size-5") : undefined}
                 />
               </div>
             ))}
@@ -211,7 +214,7 @@ export function HomeView({
       </section>
 
       {/* Wiki Section - Recent Articles */}
-      <section className="py-12">
+      <section className="py-12 bg-card/30">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -234,7 +237,7 @@ export function HomeView({
           {recentArticles.length === 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="p-4 border border-border bg-card">
+                <div key={i} className="p-4 border border-border bg-card shadow-sm">
                   <Skeleton className="h-3 w-16 mb-2" />
                   <Skeleton className="h-5 w-full mb-2" />
                   <Skeleton className="h-4 w-3/4 mb-3" />
@@ -248,7 +251,7 @@ export function HomeView({
                 <Link
                   key={article.id}
                   href={ROUTES.WIKI_ARTICLE(article.slug)}
-                  className="group p-4 border border-border bg-card hover:border-primary/50 transition-all block card-hover-lift animate-fade-in-up"
+                  className="group p-4 border border-border bg-card shadow-sm hover:border-primary/50 transition-all block card-hover-lift animate-fade-in-up"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   {article.category && (
@@ -300,7 +303,7 @@ export function HomeView({
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="p-4 border border-border bg-card flex items-center justify-between"
+                  className="p-4 border border-border bg-card shadow-sm flex items-center justify-between"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
@@ -322,7 +325,7 @@ export function HomeView({
                     thread.category?.slug || "general",
                     thread.slug
                   )}
-                  className="group flex items-center justify-between p-4 border border-border bg-card hover:border-primary/50 transition-all card-hover-lift animate-fade-in-up"
+                  className="group flex items-center justify-between p-4 border border-border bg-card shadow-sm hover:border-primary/50 transition-all card-hover-lift animate-fade-in-up"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div className="min-w-0 flex-1 flex items-center gap-3">
@@ -360,7 +363,7 @@ export function HomeView({
       </section>
 
       {/* Newsletter & Changelog Section */}
-      <section className="py-12 border-y border-border">
+      <section className="py-12 border-y border-border bg-card/30">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
             {/* Newsletter */}
