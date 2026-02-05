@@ -13,9 +13,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { NotificationBell } from "@/components/pointstack/notifications/notification-bell";
+
+// Dynamic import to avoid loading Supabase client during static generation
+const MessengerTrigger = dynamic(
+  () => import("@/components/pointstack/messenger").then((mod) => mod.MessengerTrigger),
+  { ssr: false }
+);
 
 interface WorkbenchToolbarProps {
   onMenuClick?: () => void;
@@ -162,8 +169,13 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
           </div>
         </div>
 
-        {/* Notification bell for logged-in users */}
-        {user && <NotificationBell />}
+        {/* Messages and notifications for logged-in users */}
+        {user && (
+          <>
+            <MessengerTrigger />
+            <NotificationBell />
+          </>
+        )}
 
         <Button
           variant="ghost"

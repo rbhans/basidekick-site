@@ -3,6 +3,7 @@
 import { useState, ReactNode, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { X } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { WorkbenchToolbar } from "@/components/workbench-toolbar";
@@ -15,6 +16,12 @@ import { NavNode } from "@/lib/types";
 import { getViewIdFromPath, ROUTES, getRouteForViewId } from "@/lib/routes";
 import { getIcon } from "@/lib/icons";
 import { NavTreeItem } from "@/components/nav-tree-item";
+
+// Dynamic import to avoid loading Supabase client during static generation
+const FloatingMessenger = dynamic(
+  () => import("@/components/pointstack/messenger").then((mod) => mod.FloatingMessenger),
+  { ssr: false }
+);
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -248,6 +255,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
       {/* Status bar */}
       <StatusBar />
+
+      {/* Floating messenger */}
+      <FloatingMessenger />
     </div>
   );
 }
