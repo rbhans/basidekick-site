@@ -68,23 +68,34 @@ function generateModelJsonLd(
   canonical: string
 ) {
   const description = model.description || `${brand.name} ${type.name} model.`;
-  const primaryModelNumber = model.model_numbers?.[0];
+  const additionalProperty = [
+    { "@type": "PropertyValue", name: "Brand", value: brand.name },
+    { "@type": "PropertyValue", name: "Type", value: type.name },
+    model.model_numbers?.length
+      ? { "@type": "PropertyValue", name: "Model Numbers", value: model.model_numbers.join(", ") }
+      : null,
+    model.protocols?.length
+      ? { "@type": "PropertyValue", name: "Protocols", value: model.protocols.join(", ") }
+      : null,
+    model.status
+      ? { "@type": "PropertyValue", name: "Status", value: model.status }
+      : null,
+  ].filter(Boolean);
 
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": "DefinedTerm",
     name: model.name,
     description,
-    brand: {
-      "@type": "Brand",
-      name: brand.name,
-    },
-    category: type.name,
-    sku: model.id,
-    model: primaryModelNumber || model.name,
-    mpn: primaryModelNumber,
-    image: model.image_url ? [model.image_url] : undefined,
+    identifier: model.id,
+    termCode: model.id,
     url: canonical,
+    inDefinedTermSet: {
+      "@type": "DefinedTermSet",
+      name: "BAS Atlas",
+      url: "https://basidekick.com/equipment",
+    },
+    additionalProperty: additionalProperty.length ? additionalProperty : undefined,
   };
 }
 
