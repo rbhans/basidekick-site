@@ -154,7 +154,7 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
         <div className="container mx-auto px-4">
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Contacts */}
-            <div className="border border-border bg-card">
+            <div className="border border-border bg-card shadow-sm">
               <div className="p-4 border-b border-border">
                 <h2 className="font-semibold">Contacts</h2>
               </div>
@@ -204,7 +204,7 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
             </div>
 
             {/* Brand Colors */}
-            <div className="border border-border bg-card">
+            <div className="border border-border bg-card shadow-sm">
               <div className="p-4 border-b border-border">
                 <h2 className="font-semibold">Brand Colors</h2>
               </div>
@@ -249,7 +249,7 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
           </div>
 
           {/* Projects */}
-          <div className="mt-6 border border-border bg-card">
+          <div className="mt-6 border border-border bg-card shadow-sm">
             <div className="p-4 border-b border-border">
               <h2 className="font-semibold">Projects ({projects.length})</h2>
             </div>

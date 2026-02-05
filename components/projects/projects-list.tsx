@@ -82,7 +82,7 @@ export function ProjectsList() {
   };
 
   return (
-    <div className="border border-border bg-card">
+    <div className="border border-border bg-card shadow-sm">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

@@ -575,7 +575,7 @@ export function ForumView() {
                   <button
                     key={category.id}
                     onClick={() => navigateToCategory(category)}
-                    className="w-full text-left border border-border bg-card p-5 hover:bg-accent/50 transition-colors group"
+                    className="w-full text-left border border-border bg-card shadow-sm p-5 hover:bg-accent/50 transition-colors group"
                   >
                     <div className="flex items-center gap-4">
                       <div className="size-10 bg-primary/10 flex items-center justify-center shrink-0">
@@ -645,7 +645,7 @@ export function ForumView() {
 
             {/* New Thread Form */}
             {showNewThreadForm && (
-              <div className="mt-6 border border-border bg-card p-6">
+              <div className="mt-6 border border-border bg-card shadow-sm p-6">
                 <h3 className="text-lg font-semibold mb-4">Start a New Thread</h3>
                 <div className="space-y-4">
                   <div>
@@ -732,7 +732,7 @@ export function ForumView() {
                   <button
                     key={thread.id}
                     onClick={() => navigateToThread(thread)}
-                    className="w-full text-left border border-border bg-card p-4 hover:bg-accent/50 transition-colors group"
+                    className="w-full text-left border border-border bg-card shadow-sm p-4 hover:bg-accent/50 transition-colors group"
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex flex-col items-center gap-1 pt-1 text-muted-foreground">
@@ -843,7 +843,7 @@ export function ForumView() {
               {posts.map((post, index) => (
                 <div
                   key={post.id}
-                  className="border border-border bg-card p-6"
+                  className="border border-border bg-card shadow-sm p-6"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">

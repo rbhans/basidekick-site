@@ -89,7 +89,7 @@ export function KanbanBoard() {
                   onDragStart={(event) => handleDragStart(event, project.id)}
                   onClick={() => router.push(ROUTES.PSK_PROJECT(project.id))}
                   className={cn(
-                    "cursor-move border border-border bg-card p-4 text-left transition",
+                    "cursor-move border border-border bg-card shadow-sm p-4 text-left transition",
                     "hover:bg-accent/50 hover:border-primary/50"
                   )}
                 >

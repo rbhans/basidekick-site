@@ -108,7 +108,7 @@ export function WikiArticleRow({ article, tags, onClick, href }: WikiArticleRowP
     return (
       <button
         onClick={onClick}
-        className="w-full text-left border border-border bg-card p-4 hover:bg-accent/50 transition-colors group"
+        className="w-full text-left border border-border bg-card shadow-sm p-4 hover:bg-accent/50 transition-colors group"
       >
         {content}
       </button>
@@ -118,7 +118,7 @@ export function WikiArticleRow({ article, tags, onClick, href }: WikiArticleRowP
   return (
     <Link
       href={linkHref}
-      className="block w-full text-left border border-border bg-card p-4 hover:bg-accent/50 transition-colors group"
+      className="block w-full text-left border border-border bg-card shadow-sm p-4 hover:bg-accent/50 transition-colors group"
     >
       {content}
     </Link>

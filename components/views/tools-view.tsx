@@ -36,7 +36,7 @@ export function ToolsView() {
             {TOOLS_LIST.map((tool) => (
               <div
                 key={tool.id}
-                className="flex flex-col p-6 border border-border bg-card hover:border-primary/50 transition-all"
+                className="flex flex-col p-6 border border-border bg-card shadow-sm hover:border-primary/50 transition-all"
               >
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -89,7 +89,7 @@ export function ToolsView() {
             {USE_CASES.map((useCase) => (
               <div
                 key={useCase.title}
-                className="p-4 border border-border bg-card/50"
+                className="p-4 border border-border bg-card/50 shadow-sm"
               >
                 <h4 className="font-medium">{useCase.title}</h4>
                 <p className="text-sm text-muted-foreground mt-1">

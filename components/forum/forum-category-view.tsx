@@ -170,7 +170,7 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
 
           {/* New Thread Form */}
           {showNewThreadForm && (
-            <div className="mt-6 border border-border bg-card p-6">
+            <div className="mt-6 border border-border bg-card shadow-sm p-6">
               <h3 className="text-lg font-semibold mb-4">Start a New Thread</h3>
               <div className="space-y-4">
                 <div>
@@ -263,7 +263,7 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
                 <Link
                   key={thread.id}
                   href={ROUTES.FORUM_THREAD(category.slug, thread.slug)}
-                  className="block w-full text-left border border-border bg-card p-4 hover:bg-accent/50 transition-colors group"
+                  className="block w-full text-left border border-border bg-card shadow-sm p-4 hover:bg-accent/50 transition-colors group"
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex flex-col items-center gap-1 pt-1 text-muted-foreground">

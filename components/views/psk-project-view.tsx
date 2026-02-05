@@ -482,7 +482,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
       <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-            <div className="border border-border bg-card p-4">
+            <div className="border border-border bg-card shadow-sm p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-muted-foreground">
                   Tasks
@@ -495,7 +495,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               <p className="text-xs text-muted-foreground">Completed</p>
             </div>
 
-            <div className="border border-border bg-card p-4">
+            <div className="border border-border bg-card shadow-sm p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-muted-foreground">
                   Time Logged
@@ -510,7 +510,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               </p>
             </div>
 
-            <div className="border border-border bg-card p-4">
+            <div className="border border-border bg-card shadow-sm p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-muted-foreground">
                   Budget
@@ -523,7 +523,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               <p className="text-xs text-muted-foreground">Total budget</p>
             </div>
 
-            <div className="border border-border bg-card p-4">
+            <div className="border border-border bg-card shadow-sm p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-muted-foreground">
                   Spent
@@ -550,7 +550,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
             {/* Left Column */}
             <div className="space-y-6">
               {/* Tasks */}
-              <div className="border border-border bg-card">
+              <div className="border border-border bg-card shadow-sm">
                 <div className="p-4 border-b border-border flex items-center justify-between">
                   <h2 className="font-semibold">Tasks</h2>
                 </div>
@@ -630,7 +630,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               </div>
 
               {/* Time Entries */}
-              <div className="border border-border bg-card">
+              <div className="border border-border bg-card shadow-sm">
                 <div className="p-4 border-b border-border">
                   <h2 className="font-semibold">Time Entries</h2>
                 </div>
@@ -813,7 +813,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
             {/* Right Column */}
             <div className="space-y-6">
               {/* Budget Items */}
-              <div className="border border-border bg-card">
+              <div className="border border-border bg-card shadow-sm">
                 <div className="p-4 border-b border-border">
                   <h2 className="font-semibold">Expenses</h2>
                   {project.hourly_rate ? (
@@ -927,7 +927,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               </div>
 
               {/* Files */}
-              <div className="border border-border bg-card">
+              <div className="border border-border bg-card shadow-sm">
                 <div className="p-4 border-b border-border">
                   <h2 className="font-semibold">Files & Links</h2>
                 </div>
@@ -1012,7 +1012,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               </div>
 
               {/* Work Notes / Site Log */}
-              <div className="border border-border bg-card">
+              <div className="border border-border bg-card shadow-sm">
                 <div className="p-4 border-b border-border">
                   <h2 className="font-semibold">Work Notes</h2>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -1113,7 +1113,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
 
               {/* Project Notes (from project form) */}
               {project.notes && (
-                <div className="border border-border bg-card">
+                <div className="border border-border bg-card shadow-sm">
                   <div className="p-4 border-b border-border">
                     <h2 className="font-semibold">Project Description</h2>
                   </div>

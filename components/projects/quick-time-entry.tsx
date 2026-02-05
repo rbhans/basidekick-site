@@ -75,7 +75,7 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
 
   if (!isExpanded) {
     return (
-      <div className={cn("border border-border bg-card", className)}>
+      <div className={cn("border border-border bg-card shadow-sm", className)}>
         <button
           onClick={() => setIsExpanded(true)}
           className="w-full p-4 flex items-center justify-between hover:bg-accent/50 transition"
@@ -98,7 +98,7 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
   }
 
   return (
-    <div className={cn("border border-border bg-card", className)}>
+    <div className={cn("border border-border bg-card shadow-sm", className)}>
       {/* Header */}
       <div className="p-4 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">

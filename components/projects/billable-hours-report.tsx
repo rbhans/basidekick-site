@@ -159,7 +159,7 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
   };
 
   return (
-    <div className={cn("border border-border bg-card", className)}>
+    <div className={cn("border border-border bg-card shadow-sm", className)}>
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

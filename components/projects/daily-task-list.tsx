@@ -121,7 +121,7 @@ export function DailyTaskList() {
   };
 
   return (
-    <div className="border border-border bg-card">
+    <div className="border border-border bg-card shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div>

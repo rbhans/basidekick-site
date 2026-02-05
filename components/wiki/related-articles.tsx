@@ -164,7 +164,7 @@ export function RelatedArticles({
               <Link
                 key={article.id}
                 href={ROUTES.WIKI_ARTICLE(article.slug)}
-                className="group block p-4 border border-border bg-card hover:bg-accent/50 transition-colors"
+                className="group block p-4 border border-border bg-card shadow-sm hover:bg-accent/50 transition-colors"
               >
                 {category?.name && (
                   <span className="text-xs text-muted-foreground mb-1 block">

@@ -50,7 +50,7 @@ function ClientCard({ client }: { client: PSKClient }) {
 
   return (
     <>
-      <div className="border border-border bg-card p-4 flex flex-col gap-3">
+      <div className="border border-border bg-card shadow-sm p-4 flex flex-col gap-3">
         <div className="flex items-start gap-3">
           {client.logo ? (
             <div className="size-10 border border-border bg-muted flex-shrink-0 overflow-hidden">

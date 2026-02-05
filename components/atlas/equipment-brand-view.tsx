@@ -129,7 +129,7 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
                 <Link
                   key={type.id}
                   href={ROUTES.EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id)}
-                  className="p-4 border border-border bg-card hover:border-primary/30 transition-colors"
+                  className="p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                 >
                   <p className="text-sm font-semibold">{type.name}</p>
                   <p className="text-xs text-muted-foreground mt-1">

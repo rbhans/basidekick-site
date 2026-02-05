@@ -75,7 +75,7 @@ export function ResourcesView() {
               <Link
                 key={resource.id}
                 href={resource.href}
-                className="group p-6 border border-border bg-card hover:border-primary/50 transition-all text-left block"
+                className="group p-6 border border-border bg-card shadow-sm hover:border-primary/50 transition-all text-left block"
               >
                 <resource.icon className="size-8 text-primary mb-4" />
                 <h3 className="text-lg font-semibold mb-2">{resource.title}</h3>
