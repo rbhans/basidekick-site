@@ -39,6 +39,11 @@ interface PointStackState {
   messagesLoading: boolean;
   messagesError: string | null;
 
+  // Floating messenger UI state
+  messengerOpen: boolean;
+  messengerView: "inbox" | "conversation";
+  selectedConversationId: string | null;
+
   // Current user profile
   currentUserProfile: PointStackProfile | null;
 
@@ -72,6 +77,12 @@ interface PointStackState {
   sendMessage: (conversationId: string, content: string) => Promise<void>;
   startConversation: (userId: string, message: string) => Promise<PointStackConversation>;
   markConversationRead: (conversationId: string) => Promise<void>;
+
+  // Floating messenger actions
+  toggleMessenger: () => void;
+  closeMessenger: () => void;
+  openMessengerConversation: (conversationId: string) => void;
+  backToMessengerInbox: () => void;
 
   // Profile actions
   fetchCurrentUserProfile: () => Promise<void>;
@@ -107,6 +118,11 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
   unreadMessageCount: 0,
   messagesLoading: false,
   messagesError: null,
+
+  // Floating messenger UI state
+  messengerOpen: false,
+  messengerView: "inbox",
+  selectedConversationId: null,
 
   currentUserProfile: null,
 
@@ -380,6 +396,38 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
     await api.markConversationRead(conversationId);
   },
 
+  // Floating messenger actions
+  toggleMessenger: () => {
+    set((state) => ({
+      messengerOpen: !state.messengerOpen,
+      // Reset to inbox when opening
+      messengerView: state.messengerOpen ? state.messengerView : "inbox",
+      selectedConversationId: state.messengerOpen ? state.selectedConversationId : null,
+    }));
+  },
+
+  closeMessenger: () => {
+    set({ messengerOpen: false });
+  },
+
+  openMessengerConversation: (conversationId) => {
+    set({
+      messengerView: "conversation",
+      selectedConversationId: conversationId,
+    });
+    get().fetchMessages(conversationId);
+    get().markConversationRead(conversationId);
+  },
+
+  backToMessengerInbox: () => {
+    set({
+      messengerView: "inbox",
+      selectedConversationId: null,
+      currentMessages: [],
+      currentConversation: null,
+    });
+  },
+
   // Profile actions
   fetchCurrentUserProfile: async () => {
     try {
@@ -424,6 +472,9 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
       unreadMessageCount: 0,
       messagesLoading: false,
       messagesError: null,
+      messengerOpen: false,
+      messengerView: "inbox",
+      selectedConversationId: null,
       currentUserProfile: null,
     });
   },

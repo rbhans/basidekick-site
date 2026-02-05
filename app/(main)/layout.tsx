@@ -15,6 +15,7 @@ import { NavNode } from "@/lib/types";
 import { getViewIdFromPath, ROUTES, getRouteForViewId } from "@/lib/routes";
 import { getIcon } from "@/lib/icons";
 import { NavTreeItem } from "@/components/nav-tree-item";
+import { FloatingMessenger } from "@/components/pointstack/messenger";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -248,6 +249,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
       {/* Status bar */}
       <StatusBar />
+
+      {/* Floating messenger */}
+      <FloatingMessenger />
     </div>
   );
 }

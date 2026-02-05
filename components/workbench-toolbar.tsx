@@ -16,6 +16,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { NotificationBell } from "@/components/pointstack/notifications/notification-bell";
+import { MessengerTrigger } from "@/components/pointstack/messenger";
 
 interface WorkbenchToolbarProps {
   onMenuClick?: () => void;
@@ -162,8 +163,13 @@ export function WorkbenchToolbar({ onMenuClick, onHomeClick, onNavigate, pageTit
           </div>
         </div>
 
-        {/* Notification bell for logged-in users */}
-        {user && <NotificationBell />}
+        {/* Messages and notifications for logged-in users */}
+        {user && (
+          <>
+            <MessengerTrigger />
+            <NotificationBell />
+          </>
+        )}
 
         <Button
           variant="ghost"
