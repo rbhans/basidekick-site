@@ -210,6 +210,13 @@ export function validateTitle(
 }
 
 /**
+ * Check if a Supabase/Postgres error is a server-side rate limit rejection
+ */
+export function isRateLimitError(error?: { code?: string; message?: string } | null): boolean {
+  return error?.code === "P0001" || !!error?.message?.toLowerCase().includes("rate limit");
+}
+
+/**
  * Simple client-side rate limiting using localStorage
  * Returns true if the action should be allowed
  */

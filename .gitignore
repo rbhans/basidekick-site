@@ -46,3 +46,6 @@ next-env.d.ts
 # Auto Claude worktrees
 .worktrees/
 .claude_settings.json
+
+# Supabase CLI local state
+supabase/.temp/

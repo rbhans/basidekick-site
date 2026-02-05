@@ -106,6 +106,10 @@ function generateDiscussionJsonLd(
     created_at: string;
   }>
 ) {
+  const replyCount = typeof thread.reply_count === "number"
+    ? thread.reply_count
+    : Math.max(posts.length - 1, 0);
+
   return {
     "@context": "https://schema.org",
     "@type": "DiscussionForumPosting",
@@ -124,7 +128,7 @@ function generateDiscussionJsonLd(
       {
         "@type": "InteractionCounter",
         interactionType: "https://schema.org/CommentAction",
-        userInteractionCount: thread.reply_count || posts.length,
+        userInteractionCount: replyCount,
       },
     ],
     mainEntityOfPage: {

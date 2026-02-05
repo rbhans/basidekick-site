@@ -107,15 +107,23 @@ export async function POST(request: Request) {
   // Create license record with cryptographically secure key
   const licenseKey = generateLicenseKey(toolId, attributes.order_number);
 
-  const { error } = await supabase.from("licenses").insert({
-    user_id: userId,
-    product_id: toolId,
-    license_key: licenseKey,
-    lemon_squeezy_order_id: order.id,
-    purchased_at: new Date().toISOString(),
-    expires_at: null, // Lifetime license
-    is_active: true,
-  });
+  const { error } = await supabase
+    .from("licenses")
+    .upsert(
+      {
+        user_id: userId,
+        product_id: toolId,
+        license_key: licenseKey,
+        lemon_squeezy_order_id: order.id,
+        purchased_at: new Date().toISOString(),
+        expires_at: null, // Lifetime license
+        is_active: true,
+      },
+      {
+        onConflict: "lemon_squeezy_order_id",
+        ignoreDuplicates: true,
+      }
+    );
 
   if (error) {
     console.error("Failed to create license:", error);
@@ -125,5 +133,5 @@ export async function POST(request: Request) {
   // Don't log the actual license key for security
   console.log(`License created for user ${userId}, product ${toolId}`);
 
-  return NextResponse.json({ success: true, license_key: licenseKey });
+  return NextResponse.json({ success: true });
 }

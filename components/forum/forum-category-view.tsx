@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { ForumCategory, ForumThread } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
-import { validateTitle, validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset } from "@/lib/security";
+import { validateTitle, validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset, isRateLimitError } from "@/lib/security";
 import {
   ChatCircle,
   Eye,
@@ -102,7 +102,11 @@ export function ForumCategoryView({ category, threads: initialThreads }: ForumCa
       .single();
 
     if (threadError || !threadData) {
-      setError("Failed to create thread. Please try again.");
+      if (isRateLimitError(threadError)) {
+        setError("You're creating threads too quickly. Please wait and try again.");
+      } else {
+        setError("Failed to create thread. Please try again.");
+      }
       setSubmitting(false);
       return;
     }
