@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 
 interface ProductCardProps {
@@ -8,6 +9,7 @@ interface ProductCardProps {
   href: string;
   ctaText?: string;
   showBadge?: boolean;
+  icon?: ReactNode;
 }
 
 export function ProductCard({
@@ -17,13 +19,21 @@ export function ProductCard({
   href,
   ctaText = "Learn More",
   showBadge = true,
+  icon,
 }: ProductCardProps) {
   return (
-    <div className="group relative flex flex-col p-6 border border-border bg-card hover:border-primary/50 transition-all duration-200 card-hover-lift">
+    <div className="group relative flex flex-col p-6 border border-border bg-card shadow-sm hover:border-primary/50 transition-all duration-200 card-hover-lift">
       <div className="flex items-start justify-between mb-4">
-        <span className="font-mono text-sm text-muted-foreground uppercase tracking-wide">
-          {shortName}
-        </span>
+        <div className="flex items-center gap-2.5">
+          {icon && (
+            <span className="text-primary opacity-80 group-hover:opacity-100 transition-opacity">
+              {icon}
+            </span>
+          )}
+          <span className="font-mono text-sm text-muted-foreground uppercase tracking-wide">
+            {shortName}
+          </span>
+        </div>
         {showBadge && <Badge variant="outline">Coming Soon</Badge>}
       </div>
 

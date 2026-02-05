@@ -16,15 +16,43 @@ function getSupabaseClient() {
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
+async function getBabelTermCount(): Promise<number> {
+  try {
+    const response = await fetch(
+      "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json",
+      { next: { revalidate: 300 } }
+    );
+    if (!response.ok) return 500;
+    const data = await response.json();
+    return (data.equipment?.length || 0) + (data.points?.length || 0);
+  } catch {
+    return 500;
+  }
+}
+
+async function getAtlasModelCount(): Promise<number> {
+  try {
+    const response = await fetch(
+      "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/index.json",
+      { next: { revalidate: 300 } }
+    );
+    if (!response.ok) return 0;
+    const data = await response.json();
+    return data.models?.length || 0;
+  } catch {
+    return 0;
+  }
+}
+
 async function getRecentContent() {
   const supabase = getSupabaseClient();
 
   if (!supabase) {
-    return { recentArticles: [], recentThreads: [], stats: { articleCount: 0, threadCount: 0, termCount: 500 } };
+    return { recentArticles: [], recentThreads: [], stats: { articleCount: 0, termCount: 500, modelCount: 0 } };
   }
 
   // Fetch all data in parallel using foreign key joins
-  const [articlesResult, threadsResult, articleCountResult, threadCountResult] = await Promise.all([
+  const [articlesResult, threadsResult, articleCountResult, termCount, modelCount] = await Promise.all([
     // Wiki articles with category in single query
     supabase
       .from("wiki_articles")
@@ -47,7 +75,9 @@ async function getRecentContent() {
       .limit(5),
     // Counts
     supabase.from("wiki_articles").select("id", { count: "exact", head: true }).eq("is_published", true),
-    supabase.from("forum_threads").select("id", { count: "exact", head: true }),
+    // Babel and Atlas counts
+    getBabelTermCount(),
+    getAtlasModelCount(),
   ]);
 
   if (articlesResult.error) {
@@ -83,8 +113,8 @@ async function getRecentContent() {
 
   const stats = {
     articleCount: articleCountResult.count || 0,
-    threadCount: threadCountResult.count || 0,
-    termCount: 500,
+    termCount,
+    modelCount,
   };
 
   return {
