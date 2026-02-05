@@ -1,81 +1,123 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useParams, notFound } from "next/navigation";
+import { Metadata } from "next";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
-import { BabelEntryDetail } from "@/components/babel";
-import { useBabelData } from "@/components/babel/use-babel-data";
-import { Skeleton } from "@/components/ui/skeleton";
-import { createClient } from "@/lib/supabase/client";
-import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
-import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
+import { BabelEntryPageClient } from "@/components/babel/babel-entry-page-client";
+import { escapeJsonLd } from "@/lib/security";
+import { getAllBabelIds, getBabelEntry, type BabelEntryLookup } from "@/lib/data/babel";
+import type { BabelEquipmentEntry, BabelPointEntry } from "@/lib/types";
 
-export default function BabelEntryPage() {
-  const params = useParams();
-  const id = params.id as string;
+const BASE_URL = "https://basidekick.com";
 
-  const { data, loading, error } = useBabelData();
-  const [entry, setEntry] = useState<{
-    data: BabelPointEntry | BabelEquipmentEntry;
-    type: "point" | "equipment";
-  } | null>(null);
-  const [notFoundState, setNotFoundState] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export const revalidate = 3600;
 
-  // Check authentication status
-  useEffect(() => {
-    const supabase = createClient();
-    if (!supabase) return;
+interface BabelEntryPageProps {
+  params: Promise<{ id: string }>;
+}
 
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setIsAuthenticated(!!user);
+export async function generateStaticParams() {
+  const ids = await getAllBabelIds();
+  return ids.map((id) => ({ id }));
+}
+
+export async function generateMetadata({ params }: BabelEntryPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const entry = await getBabelEntry(id);
+
+  if (!entry) {
+    return {
+      title: "Entry Not Found | BAS Babel",
     };
-
-    checkAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
-      setIsAuthenticated(!!session?.user);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (!data || !id) return;
-
-    // Search in points first
-    const pointEntry = data.points.find((p) => p.concept.id === id);
-    if (pointEntry) {
-      setEntry({ data: pointEntry, type: "point" });
-      return;
-    }
-
-    // Search in equipment
-    const equipEntry = data.equipment.find((e) => e.id === id);
-    if (equipEntry) {
-      setEntry({ data: equipEntry, type: "equipment" });
-      return;
-    }
-
-    // Not found
-    setNotFoundState(true);
-  }, [data, id]);
-
-  if (error) {
-    return (
-      <div className="min-h-full flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground">Failed to load babel data</p>
-          <p className="text-sm text-muted-foreground mt-1">{error.message}</p>
-        </div>
-      </div>
-    );
   }
 
-  if (notFoundState) {
+  const name = entry.type === "point"
+    ? (entry.data as BabelPointEntry).concept.name
+    : (entry.data as BabelEquipmentEntry).name;
+  const description = entry.type === "point"
+    ? (entry.data as BabelPointEntry).concept.description
+    : (entry.data as BabelEquipmentEntry).description;
+  const fallbackDescription = `BAS Babel ${entry.type} definition for ${name}.`;
+  const canonical = `${BASE_URL}/babel/${id}`;
+
+  return {
+    title: `${name} | BAS Babel`,
+    description: description || fallbackDescription,
+    openGraph: {
+      title: `${name} - BAS Babel`,
+      description: description || fallbackDescription,
+      type: "website",
+      siteName: "BASidekick",
+      url: canonical,
+    },
+    twitter: {
+      card: "summary",
+      title: `${name} - BAS Babel`,
+      description: description || fallbackDescription,
+    },
+    alternates: {
+      canonical,
+    },
+  };
+}
+
+function generateBabelJsonLd(entry: BabelEntryLookup, canonical: string) {
+  if (entry.type === "point") {
+    const pointEntry = entry.data as BabelPointEntry;
+    const additionalProperty = [
+      pointEntry.concept.haystack
+        ? { "@type": "PropertyValue", name: "Haystack", value: pointEntry.concept.haystack }
+        : null,
+      pointEntry.concept.brick
+        ? { "@type": "PropertyValue", name: "Brick", value: pointEntry.concept.brick }
+        : null,
+      pointEntry.concept.unit
+        ? { "@type": "PropertyValue", name: "Unit", value: pointEntry.concept.unit }
+        : null,
+    ].filter(Boolean);
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "DefinedTerm",
+      name: pointEntry.concept.name,
+      description: pointEntry.concept.description,
+      identifier: pointEntry.concept.id,
+      termCode: pointEntry.concept.id,
+      url: canonical,
+      inDefinedTermSet: {
+        "@type": "DefinedTermSet",
+        name: "BAS Babel",
+        url: `${BASE_URL}/babel`,
+      },
+      additionalProperty: additionalProperty.length ? additionalProperty : undefined,
+    };
+  }
+
+  const equipmentEntry = entry.data as BabelEquipmentEntry;
+  const additionalProperty = [
+    equipmentEntry.haystack
+      ? { "@type": "PropertyValue", name: "Haystack", value: equipmentEntry.haystack }
+      : null,
+    equipmentEntry.brick
+      ? { "@type": "PropertyValue", name: "Brick", value: equipmentEntry.brick }
+      : null,
+  ].filter(Boolean);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: equipmentEntry.name,
+    description: equipmentEntry.description,
+    sku: equipmentEntry.id,
+    category: equipmentEntry.category,
+    url: canonical,
+    additionalProperty: additionalProperty.length ? additionalProperty : undefined,
+  };
+}
+
+export default async function BabelEntryPage({ params }: BabelEntryPageProps) {
+  const { id } = await params;
+  const entry = await getBabelEntry(id);
+
+  if (!entry) {
     return (
       <div className="min-h-full flex items-center justify-center">
         <div className="text-center">
@@ -88,32 +130,31 @@ export default function BabelEntryPage() {
     );
   }
 
-  return (
-    <div className="min-h-full">
-      {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel>bas babel</SectionLabel>
-        </div>
-      </section>
+  const canonical = `${BASE_URL}/babel/${id}`;
+  const jsonLd = generateBabelJsonLd(entry, canonical);
 
-      {/* Content */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          {loading || !entry ? (
-            <div className="max-w-3xl mx-auto space-y-4">
-              <Skeleton className="h-8 w-32" />
-              <Skeleton className="h-12 w-64" />
-              <Skeleton className="h-6 w-full max-w-md" />
-              <Skeleton className="h-32 w-full" />
-              <Skeleton className="h-24 w-full" />
-            </div>
-          ) : (
-            <BabelEntryDetail entry={entry.data} type={entry.type} isAuthenticated={isAuthenticated} />
-          )}
-        </div>
-      </section>
-    </div>
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: escapeJsonLd(jsonLd) }}
+      />
+      <div className="min-h-full">
+        {/* Header */}
+        <section className="relative py-12 overflow-hidden">
+          <CircuitBackground opacity={0.15} colorGradient />
+          <div className="container mx-auto px-4 relative z-10">
+            <SectionLabel>bas babel</SectionLabel>
+          </div>
+        </section>
+
+        {/* Content */}
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <BabelEntryPageClient entry={entry.data} type={entry.type} />
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
