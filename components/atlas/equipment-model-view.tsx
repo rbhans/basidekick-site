@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "@phosphor-icons/react";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { useAtlasAll } from "./use-atlas-data";
 import { getBrandBySlug, getTypeBySlug, getModelBySlug } from "./atlas-utils";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
+import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 import { EquipmentImageUpload } from "./equipment-image-upload";
 import { EquipmentNotes } from "./equipment-notes";
 import { UserAvatar } from "@/components/user-avatar";
@@ -160,16 +160,15 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
         <CircuitBackground opacity={0.12} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <SectionLabel variant="resources">equipment</SectionLabel>
-          <Link
-            href={ROUTES.EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id)}
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mt-4"
-          >
-            <ArrowLeft className="size-4" />
-            Back to {type.name}
-          </Link>
+          <AtlasBreadcrumb
+            items={[
+              { label: brand.name, href: ROUTES.EQUIPMENT_BRAND(brand.slug || brand.id) },
+              { label: type.name, href: ROUTES.EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id) },
+              { label: model.name },
+            ]}
+          />
           <div className="mt-4">
             <h1 className="text-2xl md:text-3xl font-semibold">{model.name}</h1>
-            <p className="text-sm text-muted-foreground">{brand.name}</p>
           </div>
         </div>
       </section>

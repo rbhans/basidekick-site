@@ -9,6 +9,7 @@ import { useAtlasAll } from "./use-atlas-data";
 import { getBrandBySlug, getTypeBySlug } from "./atlas-utils";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
+import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 
 interface EquipmentTypeViewProps {
   brandSlug: string;
@@ -85,8 +86,13 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
         <CircuitBackground opacity={0.12} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
           <SectionLabel variant="resources">equipment</SectionLabel>
+          <AtlasBreadcrumb
+            items={[
+              { label: brand.name, href: ROUTES.EQUIPMENT_BRAND(brand.slug || brand.id) },
+              { label: type.name },
+            ]}
+          />
           <h1 className="mt-4 text-2xl md:text-3xl font-semibold">{type.name}</h1>
-          <p className="text-sm text-muted-foreground">{brand.name}</p>
         </div>
       </section>
 
