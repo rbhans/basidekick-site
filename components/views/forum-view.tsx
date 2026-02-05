@@ -179,7 +179,7 @@ export function ForumView() {
           hasIncrementedViewRef.current = threadId;
           supabase
             .rpc("increment_forum_thread_view", { thread_id: threadId })
-            .then(({ error }) => {
+            .then(({ error }: { error: unknown }) => {
               if (!error) {
                 sessionStorage.setItem(viewedKey, "1");
               }
