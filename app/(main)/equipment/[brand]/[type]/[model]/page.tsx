@@ -1,10 +1,118 @@
+import { Metadata } from "next";
 import { EquipmentModelView } from "@/components/atlas/equipment-model-view";
+import { escapeJsonLd } from "@/lib/security";
+import {
+  getAllModelSlugs,
+  getAtlasBrand,
+  getAtlasModel,
+  getAtlasType,
+} from "@/lib/data/atlas";
+import type { AtlasBrand, AtlasModel, AtlasType } from "@/lib/types";
+
+export const revalidate = 3600;
 
 interface ModelPageProps {
   params: Promise<{ brand: string; type: string; model: string }>;
 }
 
+export async function generateStaticParams() {
+  const entries = await getAllModelSlugs();
+  return entries.map((entry) => ({
+    brand: entry.brand,
+    type: entry.type,
+    model: entry.model,
+  }));
+}
+
+export async function generateMetadata({ params }: ModelPageProps): Promise<Metadata> {
+  const { brand, type, model } = await params;
+  const [brandEntry, typeEntry, modelEntry] = await Promise.all([
+    getAtlasBrand(brand),
+    getAtlasType(brand, type),
+    getAtlasModel(brand, type, model),
+  ]);
+
+  if (!brandEntry || !typeEntry || !modelEntry) {
+    return {
+      title: "Model Not Found | BAS Atlas",
+    };
+  }
+
+  const brandSlug = brandEntry.slug || brandEntry.id;
+  const typeSlug = typeEntry.slug || typeEntry.id;
+  const modelSlug = modelEntry.slug || modelEntry.id;
+  const description =
+    modelEntry.description || `${modelEntry.name} ${typeEntry.name} by ${brandEntry.name}.`;
+  const canonical = `https://basidekick.com/equipment/${brandSlug}/${typeSlug}/${modelSlug}`;
+
+  return {
+    title: `${modelEntry.name} | BASidekick Atlas`,
+    description,
+    openGraph: {
+      title: `${modelEntry.name} - BASidekick Atlas`,
+      description,
+      type: "website",
+      siteName: "BASidekick",
+      url: canonical,
+    },
+    alternates: {
+      canonical,
+    },
+  };
+}
+
+function generateModelJsonLd(
+  model: AtlasModel,
+  brand: AtlasBrand,
+  type: AtlasType,
+  canonical: string
+) {
+  const description = model.description || `${brand.name} ${type.name} model.`;
+  const primaryModelNumber = model.model_numbers?.[0];
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: model.name,
+    description,
+    brand: {
+      "@type": "Brand",
+      name: brand.name,
+    },
+    category: type.name,
+    sku: model.id,
+    model: primaryModelNumber || model.name,
+    mpn: primaryModelNumber,
+    image: model.image_url ? [model.image_url] : undefined,
+    url: canonical,
+  };
+}
+
 export default async function ModelPage({ params }: ModelPageProps) {
   const { brand, type, model } = await params;
-  return <EquipmentModelView brandSlug={brand} typeSlug={type} modelSlug={model} />;
+  const [brandEntry, typeEntry, modelEntry] = await Promise.all([
+    getAtlasBrand(brand),
+    getAtlasType(brand, type),
+    getAtlasModel(brand, type, model),
+  ]);
+
+  const canonical = brandEntry && typeEntry && modelEntry
+    ? `https://basidekick.com/equipment/${brandEntry.slug || brandEntry.id}/${typeEntry.slug || typeEntry.id}/${modelEntry.slug || modelEntry.id}`
+    : null;
+  const jsonLd =
+    brandEntry && typeEntry && modelEntry && canonical
+      ? generateModelJsonLd(modelEntry, brandEntry, typeEntry, canonical)
+      : null;
+
+  return (
+    <>
+      {jsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: escapeJsonLd(jsonLd) }}
+        />
+      ) : null}
+      <EquipmentModelView brandSlug={brand} typeSlug={type} modelSlug={model} />
+    </>
+  );
 }
