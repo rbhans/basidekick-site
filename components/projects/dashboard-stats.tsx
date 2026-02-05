@@ -15,7 +15,7 @@ export function DashboardStats() {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <div className="border border-border bg-card p-4">
+      <div className="border border-border bg-card shadow-sm p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-muted-foreground">
             Projects
@@ -26,7 +26,7 @@ export function DashboardStats() {
         <p className="text-xs text-muted-foreground">Active projects</p>
       </div>
 
-      <div className="border border-border bg-card p-4">
+      <div className="border border-border bg-card shadow-sm p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-muted-foreground">
             Clients
@@ -37,7 +37,7 @@ export function DashboardStats() {
         <p className="text-xs text-muted-foreground">Saved client accounts</p>
       </div>
 
-      <div className="border border-border bg-card p-4">
+      <div className="border border-border bg-card shadow-sm p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-muted-foreground">
             Time Logged

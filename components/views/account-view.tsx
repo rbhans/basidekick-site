@@ -244,7 +244,7 @@ export function AccountView() {
                 return (
                   <div
                     key={license.id}
-                    className="border border-border bg-card p-6"
+                    className="border border-border bg-card shadow-sm p-6"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -336,7 +336,7 @@ export function AccountView() {
 
           {/* Edit Form */}
           {isEditing && (
-            <div className="mb-8 p-6 border border-border bg-card max-w-md">
+            <div className="mb-8 p-6 border border-border bg-card shadow-sm max-w-md">
               <h3 className="font-semibold mb-4">Edit Display Name</h3>
               <div className="space-y-4">
                 <div>

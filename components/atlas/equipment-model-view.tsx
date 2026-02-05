@@ -178,7 +178,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
         <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-8">
           <div className="space-y-8">
             {/* Image */}
-            <div className="border border-border bg-card p-4">
+            <div className="border border-border bg-card shadow-sm p-4">
               {primaryImage ? (
                 <img src={primaryImage} alt={model.name} className="w-full max-h-[320px] object-contain" />
               ) : (
@@ -189,7 +189,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
             </div>
 
             {/* Info */}
-            <div className="border border-border bg-card p-6 space-y-3">
+            <div className="border border-border bg-card shadow-sm p-6 space-y-3">
               <div>
                 <p className="text-xs uppercase text-muted-foreground">Model numbers</p>
                 <p className="text-sm">{model.model_numbers?.join(", ") || "-"}</p>
@@ -244,7 +244,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <div className="border border-border bg-card p-4">
+            <div className="border border-border bg-card shadow-sm p-4">
               <Button
                 onClick={toggleExperience}
                 disabled={!user}
@@ -258,7 +258,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
               </p>
             </div>
 
-            <div className="border border-border bg-card p-4">
+            <div className="border border-border bg-card shadow-sm p-4">
               <h2 className="text-sm font-semibold mb-3">People</h2>
               {people.length === 0 ? (
                 <p className="text-xs text-muted-foreground">No one yet. Be the first.</p>

@@ -440,7 +440,7 @@ export function ForumThreadDetail({ thread, category, posts: initialPosts }: For
               {posts.map((post, index) => (
                 <article
                   key={post.id}
-                  className="border border-border bg-card p-6"
+                  className="border border-border bg-card shadow-sm p-6"
                   id={`post-${index + 1}`}
                 >
                   <div className="flex items-start justify-between mb-4">

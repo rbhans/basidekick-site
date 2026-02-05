@@ -222,7 +222,7 @@ export function EquipmentBrowseView() {
                 <Link
                   key={brand.id}
                   href={ROUTES.EQUIPMENT_BRAND(brand.slug || brand.id)}
-                  className="group p-4 border border-border bg-card hover:border-primary/30 transition-colors"
+                  className="group p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     {brand.logo_url ? (
@@ -268,7 +268,7 @@ export function EquipmentBrowseView() {
                   <Link
                     key={model.id}
                     href={ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id)}
-                    className="p-4 border border-border bg-card hover:border-primary/30 transition-colors"
+                    className="p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                   >
                     <p className="text-sm font-semibold">{model.name}</p>
                     <p className="text-xs text-muted-foreground mt-1">{brand.name} · {type.name}</p>
@@ -300,7 +300,7 @@ export function EquipmentBrowseView() {
                   <Link
                     key={model.id}
                     href={ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id)}
-                    className="p-4 border border-border bg-card hover:border-primary/30 transition-colors"
+                    className="p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                   >
                     <p className="text-sm font-semibold">{model.name}</p>
                     <p className="text-xs text-muted-foreground mt-1">{brand.name} · {type.name}</p>

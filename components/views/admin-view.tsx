@@ -478,49 +478,49 @@ export function AdminView({
             <div className="space-y-8">
               {/* Stats Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div className="p-6 border border-border bg-card">
+                <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Users className="size-4" />
                     <span className="text-sm">Users</span>
                   </div>
                   <p className="text-3xl font-bold">{stats.userCount}</p>
                 </div>
-                <div className="p-6 border border-border bg-card">
+                <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Article className="size-4" />
                     <span className="text-sm">Articles</span>
                   </div>
                   <p className="text-3xl font-bold">{stats.articleCount}</p>
                 </div>
-                <div className="p-6 border border-border bg-card">
+                <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Chats className="size-4" />
                     <span className="text-sm">Threads</span>
                   </div>
                   <p className="text-3xl font-bold">{stats.threadCount}</p>
                 </div>
-                <div className="p-6 border border-border bg-card">
+                <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Chats className="size-4" />
                     <span className="text-sm">Posts</span>
                   </div>
                   <p className="text-3xl font-bold">{stats.postCount}</p>
                 </div>
-                <div className="p-6 border border-border bg-card">
+                <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <BookBookmark className="size-4" />
                     <span className="text-sm">Wiki Pending</span>
                   </div>
                   <p className="text-3xl font-bold text-primary">{stats.pendingSuggestions}</p>
                 </div>
-                <div className="p-6 border border-border bg-card">
+                <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Translate className="size-4" />
                     <span className="text-sm">Babel Pending</span>
                   </div>
                   <p className="text-3xl font-bold text-primary">{stats.pendingBabelContributions}</p>
                 </div>
-                <div className="p-6 border border-border bg-card">
+                <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Gauge className="size-4" />
                     <span className="text-sm">Atlas Pending</span>
@@ -532,7 +532,7 @@ export function AdminView({
               {/* Recent Activity */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Users */}
-                <div className="border border-border bg-card p-6">
+                <div className="border border-border bg-card shadow-sm p-6">
                   <h3 className="font-semibold mb-4 flex items-center gap-2">
                     <Users className="size-4 text-primary" />
                     Recent Users
@@ -566,7 +566,7 @@ export function AdminView({
                 </div>
 
                 {/* Pending Suggestions */}
-                <div className="border border-border bg-card p-6">
+                <div className="border border-border bg-card shadow-sm p-6">
                   <h3 className="font-semibold mb-4 flex items-center gap-2">
                     <BookBookmark className="size-4 text-primary" />
                     Pending Wiki Suggestions
@@ -619,7 +619,7 @@ export function AdminView({
           {/* Users Tab */}
           {activeTab === "users" && (
             <div className="space-y-4">
-              <div className="border border-border bg-card overflow-hidden">
+              <div className="border border-border bg-card shadow-sm overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
@@ -687,7 +687,7 @@ export function AdminView({
           {/* Wiki Tab */}
           {activeTab === "wiki" && (
             <div className="space-y-4">
-              <div className="border border-border bg-card overflow-hidden">
+              <div className="border border-border bg-card shadow-sm overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
@@ -765,7 +765,7 @@ export function AdminView({
           {/* Forum Tab */}
           {activeTab === "forum" && (
             <div className="space-y-4">
-              <div className="border border-border bg-card overflow-hidden">
+              <div className="border border-border bg-card shadow-sm overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
@@ -859,7 +859,7 @@ export function AdminView({
           {/* Suggestions Tab */}
           {activeTab === "suggestions" && (
             <div className="space-y-4">
-              <div className="border border-border bg-card overflow-hidden">
+              <div className="border border-border bg-card shadow-sm overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
@@ -950,7 +950,7 @@ export function AdminView({
           {/* Equipment Submissions Tab */}
           {activeTab === "equipment" && (
             <div className="space-y-4">
-              <div className="border border-border bg-card overflow-hidden">
+              <div className="border border-border bg-card shadow-sm overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
@@ -1112,7 +1112,7 @@ export function AdminView({
           {/* Babel Contributions Tab */}
           {activeTab === "babel" && (
             <div className="space-y-4">
-              <div className="border border-border bg-card overflow-hidden">
+              <div className="border border-border bg-card shadow-sm overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>

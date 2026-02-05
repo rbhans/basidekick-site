@@ -56,7 +56,7 @@ export function WikiSidebar({
 
   return (
     <aside className="w-full lg:w-[240px] shrink-0">
-      <div className="border border-border bg-card">
+      <div className="border border-border bg-card shadow-sm">
         {/* Categories Section */}
         <div className="p-3 border-b border-border">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">

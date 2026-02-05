@@ -173,7 +173,7 @@ export function EquipmentAddForm() {
 
   if (!user) {
     return (
-      <div className="border border-border bg-card p-6">
+      <div className="border border-border bg-card shadow-sm p-6">
         <p className="text-sm text-muted-foreground">Sign in to submit new equipment.</p>
         <Button asChild className="mt-4">
           <a href="/signin">Sign In</a>

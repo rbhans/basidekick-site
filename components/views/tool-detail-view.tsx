@@ -102,7 +102,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
             {tool.detailedFeatures.map((feature) => (
               <div
                 key={feature.title}
-                className="p-5 border border-border bg-card"
+                className="p-5 border border-border bg-card shadow-sm"
               >
                 {getIcon(feature.iconName, "size-8 text-primary")}
                 <h3 className="text-base font-semibold mt-3 mb-1">{feature.title}</h3>

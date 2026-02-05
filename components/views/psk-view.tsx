@@ -145,7 +145,7 @@ export function PSKView() {
                 <ProjectsList />
 
                 {/* Right: Clients */}
-                <div className="border border-border bg-card p-4">
+                <div className="border border-border bg-card shadow-sm p-4">
                   <h2 className="text-lg font-semibold mb-4">Clients</h2>
                   <ClientsList />
                 </div>
