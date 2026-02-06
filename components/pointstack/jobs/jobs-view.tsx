@@ -72,12 +72,12 @@ export function PointStackJobsView() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <Select value={jobType || ""} onValueChange={(v) => setJobType(v || undefined)}>
+        <Select value={jobType || "all"} onValueChange={(v) => setJobType(v === "all" ? undefined : v)}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Job Type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Types</SelectItem>
+            <SelectItem value="all">All Types</SelectItem>
             <SelectItem value="full-time">Full-time</SelectItem>
             <SelectItem value="part-time">Part-time</SelectItem>
             <SelectItem value="contract">Contract</SelectItem>

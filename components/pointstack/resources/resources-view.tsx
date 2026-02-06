@@ -95,12 +95,12 @@ export function PointStackResourcesView() {
 
       {/* Filters */}
       <div className="flex items-center gap-3 mb-6">
-        <Select value={category || ""} onValueChange={(v) => setCategory(v || undefined)}>
+        <Select value={category || "all"} onValueChange={(v) => setCategory(v === "all" ? undefined : v)}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
+            <SelectItem value="all">All Categories</SelectItem>
             {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
               <SelectItem key={value} value={value}>
                 {label}
