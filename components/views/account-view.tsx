@@ -6,9 +6,10 @@ import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
-import { License, Profile } from "@/lib/types";
+import { License, Profile, PointStackCompany } from "@/lib/types";
 import { TOOLS } from "@/lib/constants";
 import { ROUTES } from "@/lib/routes";
 import { validateDisplayName, MAX_LENGTHS, MIN_LENGTHS } from "@/lib/security";
@@ -22,19 +23,21 @@ import {
   Buildings,
   SignIn,
   PencilSimple,
-  ChatCircle,
   X,
   Check,
   UserCircle,
+  ArrowSquareOut,
 } from "@phosphor-icons/react";
 import { AvatarUpload } from "@/components/avatar-upload";
 import { UserAvatar } from "@/components/user-avatar";
+import { fetchUserCompanies } from "@/components/pointstack/pointstack-api";
 
 export function AccountView() {
   const router = useRouter();
   const { user, loading: authLoading, signOut } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [licenses, setLicenses] = useState<License[]>([]);
+  const [companies, setCompanies] = useState<(PointStackCompany & { _memberRole?: string })[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Edit mode state
@@ -56,10 +59,11 @@ export function AccountView() {
         return;
       }
 
-      // Fetch profile and licenses in parallel
-      const [profileRes, licensesRes] = await Promise.all([
+      // Fetch profile, licenses, and companies in parallel
+      const [profileRes, licensesRes, userCompanies] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", user.id).single(),
         supabase.from("licenses").select("*").eq("user_id", user.id),
+        fetchUserCompanies(user.id).catch(() => []),
       ]);
 
       if (profileRes.data) {
@@ -70,6 +74,7 @@ export function AccountView() {
         setLicenses(licensesRes.data as License[]);
       }
 
+      setCompanies(userCompanies);
       setLoading(false);
     }
 
@@ -147,7 +152,7 @@ export function AccountView() {
               Sign In Required
             </h1>
             <p className="mt-3 text-muted-foreground max-w-xl">
-              Sign in or create an account to view your purchases, access the forum, and manage your profile.
+              Sign in or create an account to view your purchases and manage your profile.
             </p>
 
             <div className="mt-8 flex gap-4">
@@ -199,17 +204,15 @@ export function AccountView() {
                   {profile?.display_name || "Your Account"}
                 </h1>
                 <p className="mt-1 text-muted-foreground">{user?.email}</p>
-                {profile?.company && (
-                  <p className="mt-1 text-sm text-muted-foreground flex items-center gap-1">
+                {companies[0] && (
+                  <Link
+                    href={ROUTES.POINTSTACK_COMPANY(companies[0].slug)}
+                    className="mt-1 text-sm text-muted-foreground hover:text-foreground flex items-center gap-1"
+                  >
                     <Buildings className="size-3" />
-                    {profile.company}
-                  </p>
+                    {companies[0].name}
+                  </Link>
                 )}
-                {/* Post count badge */}
-                <p className="mt-2 text-sm text-muted-foreground flex items-center gap-1">
-                  <ChatCircle className="size-3" />
-                  {profile?.post_count || 0} forum {(profile?.post_count || 0) === 1 ? "post" : "posts"}
-                </p>
               </div>
             </div>
             <Button variant="outline" onClick={handleSignOut}>
@@ -217,6 +220,67 @@ export function AccountView() {
               Sign Out
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* PointStack */}
+      <section className="py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Buildings className="size-5 text-primary" />
+              <h2 className="text-xl font-semibold">PointStack</h2>
+            </div>
+            {profile?.display_name && (
+              <Button variant="outline" size="sm" asChild>
+                <Link href={ROUTES.POINTSTACK_PROFILE(profile.display_name)}>
+                  <ArrowSquareOut className="size-4 mr-2" />
+                  View Profile
+                </Link>
+              </Button>
+            )}
+          </div>
+
+          {companies[0] ? (
+            <Link
+              href={ROUTES.POINTSTACK_COMPANY(companies[0].slug)}
+              className="flex items-start gap-3 p-4 border border-border rounded-lg hover:border-primary/30 transition-colors max-w-sm"
+            >
+              {companies[0].logo_url ? (
+                <img
+                  src={companies[0].logo_url}
+                  alt={companies[0].name}
+                  className="w-10 h-10 rounded-lg object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <span className="text-lg font-bold text-primary">
+                    {companies[0].name.charAt(0)}
+                  </span>
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="font-medium truncate">{companies[0].name}</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <Badge variant="secondary" className="text-xs capitalize">
+                    {companies[0]._memberRole || "member"}
+                  </Badge>
+                  {companies[0].industry && (
+                    <span className="text-xs text-muted-foreground">{companies[0].industry}</span>
+                  )}
+                </div>
+              </div>
+            </Link>
+          ) : (
+            <div className="border border-dashed border-border p-8 text-center">
+              <p className="text-muted-foreground mb-4">
+                You&apos;re not a member of a company yet.
+              </p>
+              <Button asChild>
+                <Link href={`${ROUTES.POINTSTACK}/companies`}>Browse Companies</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -403,13 +467,16 @@ export function AccountView() {
               <label className="text-xs text-muted-foreground uppercase tracking-wider">
                 Company
               </label>
-              <p className="mt-1">{profile?.company || "Not set"}</p>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground uppercase tracking-wider">
-                Forum Posts
-              </label>
-              <p className="mt-1">{profile?.post_count || 0}</p>
+              {companies[0] ? (
+                <Link
+                  href={ROUTES.POINTSTACK_COMPANY(companies[0].slug)}
+                  className="mt-1 block hover:text-primary transition-colors"
+                >
+                  {companies[0].name}
+                </Link>
+              ) : (
+                <p className="mt-1">Not set</p>
+              )}
             </div>
             <div>
               <label className="text-xs text-muted-foreground uppercase tracking-wider">
