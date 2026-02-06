@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import { WorkbenchToolbar } from "@/components/workbench-toolbar";
 import { StatusBar } from "@/components/status-bar";
 import { SidebarStatus } from "@/components/sidebar-status";
-import { SidebarFooter } from "@/components/sidebar-footer";
 import { Button } from "@/components/ui/button";
 import { VIEW_TITLES, VIEW_LOADING_TEXT, NAV_ITEMS } from "@/lib/constants";
 import { NavNode } from "@/lib/types";
@@ -213,7 +212,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
             <NavTreeWithLinks pathname={pathname} />
           </div>
           <SidebarStatus />
-          <SidebarFooter />
         </aside>
 
         {/* Mobile sidebar overlay */}
@@ -244,7 +242,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
             />
           </div>
           <SidebarStatus />
-          <SidebarFooter />
         </aside>
 
         {/* Main content pane */}
