@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -27,6 +27,7 @@ import {
 import { ROUTES } from "@/lib/routes";
 import { PointStackResourceListing, PointStackResourceCategory } from "@/lib/types";
 import * as api from "../pointstack-api";
+import { CreateResourceDialog } from "./create-resource-dialog";
 
 const CATEGORY_ICONS: Record<PointStackResourceCategory, typeof File> = {
   template: FileText,
@@ -52,21 +53,21 @@ export function PointStackResourcesView() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState<string | undefined>();
 
-  useEffect(() => {
-    const fetchResources = async () => {
-      setLoading(true);
-      try {
-        const data = await api.fetchResources(category);
-        setResources(data);
-      } catch (error) {
-        console.error("Error fetching resources:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResources();
+  const loadResources = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.fetchResources(category);
+      setResources(data);
+    } catch (error) {
+      console.error("Error fetching resources:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [category]);
+
+  useEffect(() => {
+    void loadResources();
+  }, [loadResources]);
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6">
@@ -78,10 +79,17 @@ export function PointStackResourcesView() {
           </p>
         </div>
         {user && (
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Share Resource
-          </Button>
+          <CreateResourceDialog
+            onCreated={async () => {
+              await loadResources();
+            }}
+            trigger={
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Share Resource
+              </Button>
+            }
+          />
         )}
       </div>
 
@@ -174,10 +182,17 @@ export function PointStackResourcesView() {
             No resources found. {category ? "Try a different category." : "Be the first to share!"}
           </p>
           {user && (
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Share Resource
-            </Button>
+            <CreateResourceDialog
+              onCreated={async () => {
+                await loadResources();
+              }}
+              trigger={
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Share Resource
+                </Button>
+              }
+            />
           )}
         </div>
       )}
