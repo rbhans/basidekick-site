@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { MagnifyingGlass, MapPin, Users, Plus } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
 import { PointStackCompany } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
+import { CreateCompanyDialog } from "./create-company-dialog";
 import * as api from "../pointstack-api";
 
 export function PointStackCompaniesView() {
@@ -17,23 +18,26 @@ export function PointStackCompaniesView() {
   const [companies, setCompanies] = useState<PointStackCompany[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
+  const fetchCompanies = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.fetchCompanies(search || undefined);
+      setCompanies(data);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [search]);
 
   useEffect(() => {
-    const fetchCompanies = async () => {
-      setLoading(true);
-      try {
-        const data = await api.fetchCompanies(search || undefined);
-        setCompanies(data);
-      } catch (error) {
-        console.error("Error fetching companies:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const debounce = setTimeout(fetchCompanies, 300);
+    const debounce = setTimeout(() => {
+      void fetchCompanies();
+    }, 300);
     return () => clearTimeout(debounce);
-  }, [search]);
+  }, [fetchCompanies]);
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6">
@@ -45,7 +49,7 @@ export function PointStackCompaniesView() {
           </p>
         </div>
         {user && (
-          <Button>
+          <Button onClick={() => setCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Company
           </Button>
@@ -139,6 +143,14 @@ export function PointStackCompaniesView() {
           </p>
         </div>
       )}
+
+      <CreateCompanyDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onSuccess={async () => {
+          await fetchCompanies();
+        }}
+      />
     </div>
   );
 }

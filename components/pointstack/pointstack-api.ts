@@ -5,6 +5,7 @@ import {
   PointStackJob,
   PointStackResourceListing,
   PointStackCompany,
+  PointStackCompanyJoinRequest,
   PointStackNotification,
   PointStackNotificationType,
   PointStackConversation,
@@ -12,6 +13,7 @@ import {
   PointStackProfile,
   PointStackUserFollow,
   PointStackFeedFilter,
+  PointStackJoinRequestStatus,
   CreatePointStackPostInput,
   CreatePointStackCommentInput,
   CreatePointStackJobInput,
@@ -98,6 +100,10 @@ function sanitizeSearchInput(input: string): string {
   return input
     .replace(/[%_]/g, "\\$&") // Escape LIKE wildcards
     .slice(0, 100); // Limit length
+}
+
+function isNotFoundError(error: { code?: string } | null): boolean {
+  return error?.code === "PGRST116";
 }
 
 interface CreateNotificationInput {
@@ -805,13 +811,280 @@ export async function createCompany(name: string, description?: string): Promise
   if (error) throw error;
 
   // Add owner as member
-  await supabase.from("pointstack_company_members").insert({
+  const { error: memberError } = await supabase.from("pointstack_company_members").insert({
     company_id: data.id,
     user_id: user.id,
     role: "owner",
   });
 
+  if (memberError) {
+    const { error: rollbackError } = await supabase
+      .from("pointstack_companies")
+      .delete()
+      .eq("id", data.id);
+
+    if (rollbackError) {
+      throw new Error(
+        `Failed to add company owner member (${memberError.message}). Failed to rollback company (${rollbackError.message}).`
+      );
+    }
+
+    throw memberError;
+  }
+
   return data;
+}
+
+export async function requestToJoinCompany(
+  companyId: string,
+  message?: string
+): Promise<PointStackCompanyJoinRequest> {
+  const user = await requireAuth();
+  const supabase = getClient();
+
+  const { data: existingMember, error: existingMemberError } = await supabase
+    .from("pointstack_company_members")
+    .select("id")
+    .eq("company_id", companyId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (existingMemberError && !isNotFoundError(existingMemberError)) throw existingMemberError;
+  if (existingMember) throw new Error("You are already a member of this company");
+
+  const { data: existingRequest, error: existingRequestError } = await supabase
+    .from("pointstack_company_join_requests")
+    .select("id, status")
+    .eq("company_id", companyId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (existingRequestError && !isNotFoundError(existingRequestError)) throw existingRequestError;
+  if (existingRequest?.status === "pending") {
+    throw new Error("You already have a pending request to join this company");
+  }
+  if (existingRequest) {
+    throw new Error("You have already submitted a join request for this company");
+  }
+
+  const cleanMessage = message?.trim();
+  const { data, error } = await supabase
+    .from("pointstack_company_join_requests")
+    .insert({
+      company_id: companyId,
+      user_id: user.id,
+      message: cleanMessage || null,
+      status: "pending",
+    })
+    .select(`
+      *,
+      user:profiles!user_id(display_name, avatar_url),
+      reviewer:profiles!reviewed_by(display_name, avatar_url)
+    `)
+    .single();
+
+  if (error) throw error;
+  return data as PointStackCompanyJoinRequest;
+}
+
+export async function fetchJoinRequests(
+  companyId: string,
+  statusFilter?: PointStackJoinRequestStatus
+): Promise<PointStackCompanyJoinRequest[]> {
+  await requireAuth();
+  const supabase = getClient();
+
+  let query = supabase
+    .from("pointstack_company_join_requests")
+    .select(`
+      *,
+      user:profiles!user_id(display_name, avatar_url),
+      reviewer:profiles!reviewed_by(display_name, avatar_url)
+    `)
+    .eq("company_id", companyId)
+    .order("created_at", { ascending: true });
+
+  if (statusFilter) {
+    query = query.eq("status", statusFilter);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return (data || []) as PointStackCompanyJoinRequest[];
+}
+
+export async function approveJoinRequest(requestId: string): Promise<PointStackCompanyJoinRequest> {
+  const user = await requireAuth();
+  const supabase = getClient();
+
+  const { data: request, error: requestError } = await supabase
+    .from("pointstack_company_join_requests")
+    .select(`
+      id,
+      company_id,
+      user_id,
+      status,
+      company:pointstack_companies!company_id(name, slug)
+    `)
+    .eq("id", requestId)
+    .single();
+
+  if (requestError) throw requestError;
+  if (request.status !== "pending") {
+    throw new Error("Join request has already been reviewed");
+  }
+
+  const { data: updatedRequest, error: updateError } = await supabase
+    .from("pointstack_company_join_requests")
+    .update({
+      status: "approved",
+      reviewed_by: user.id,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq("id", requestId)
+    .select(`
+      *,
+      user:profiles!user_id(display_name, avatar_url),
+      reviewer:profiles!reviewed_by(display_name, avatar_url)
+    `)
+    .single();
+
+  if (updateError) throw updateError;
+
+  const { data: existingMembership, error: existingMembershipError } = await supabase
+    .from("pointstack_company_members")
+    .select("id")
+    .eq("company_id", request.company_id)
+    .eq("user_id", request.user_id)
+    .maybeSingle();
+
+  if (existingMembershipError && !isNotFoundError(existingMembershipError)) {
+    throw existingMembershipError;
+  }
+
+  if (!existingMembership) {
+    const { error: memberError } = await supabase
+      .from("pointstack_company_members")
+      .insert({
+        company_id: request.company_id,
+        user_id: request.user_id,
+        role: "member",
+      });
+
+    if (memberError) {
+      const { error: rollbackError } = await supabase
+        .from("pointstack_company_join_requests")
+        .update({
+          status: "pending",
+          reviewed_by: null,
+          reviewed_at: null,
+        })
+        .eq("id", requestId);
+
+      if (rollbackError) {
+        throw new Error(
+          `Failed to add company member (${memberError.message}). Failed to rollback join request (${rollbackError.message}).`
+        );
+      }
+
+      throw memberError;
+    }
+  }
+
+  const company = (request.company as { name?: string | null; slug?: string | null } | null) ?? null;
+  try {
+    await createNotification({
+      userId: request.user_id,
+      actorId: user.id,
+      type: "system",
+      title: "Your join request was approved",
+      body: company?.name ? `You are now a member of ${company.name}.` : null,
+      link: company?.slug ? ROUTES.POINTSTACK_COMPANY(company.slug) : null,
+      metadata: {
+        company_id: request.company_id,
+        join_request_id: requestId,
+        status: "approved",
+      },
+    });
+  } catch (notifyError) {
+    console.error("Error creating join request approval notification:", notifyError);
+  }
+
+  return updatedRequest as PointStackCompanyJoinRequest;
+}
+
+export async function rejectJoinRequest(requestId: string): Promise<PointStackCompanyJoinRequest> {
+  const user = await requireAuth();
+  const supabase = getClient();
+
+  const { data: request, error: requestError } = await supabase
+    .from("pointstack_company_join_requests")
+    .select("id, status")
+    .eq("id", requestId)
+    .single();
+
+  if (requestError) throw requestError;
+  if (request.status !== "pending") {
+    throw new Error("Join request has already been reviewed");
+  }
+
+  const { data, error } = await supabase
+    .from("pointstack_company_join_requests")
+    .update({
+      status: "rejected",
+      reviewed_by: user.id,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq("id", requestId)
+    .select(`
+      *,
+      user:profiles!user_id(display_name, avatar_url),
+      reviewer:profiles!reviewed_by(display_name, avatar_url)
+    `)
+    .single();
+
+  if (error) throw error;
+  return data as PointStackCompanyJoinRequest;
+}
+
+export async function getUserJoinRequestStatus(
+  companyId: string
+): Promise<PointStackCompanyJoinRequest | null> {
+  const supabase = getClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from("pointstack_company_join_requests")
+    .select(`
+      *,
+      reviewer:profiles!reviewed_by(display_name, avatar_url),
+      company:pointstack_companies!company_id(name, slug)
+    `)
+    .eq("company_id", companyId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error) {
+    if (isNotFoundError(error)) return null;
+    throw error;
+  }
+
+  return (data as PointStackCompanyJoinRequest | null) ?? null;
+}
+
+export async function cancelJoinRequest(requestId: string): Promise<void> {
+  const user = await requireAuth();
+  const supabase = getClient();
+
+  const { error } = await supabase
+    .from("pointstack_company_join_requests")
+    .delete()
+    .eq("id", requestId)
+    .eq("user_id", user.id)
+    .eq("status", "pending");
+
+  if (error) throw error;
 }
 
 // ============================================================

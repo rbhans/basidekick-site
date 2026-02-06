@@ -264,8 +264,17 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
       setImageUploads([]);
       setDocumentUploads([]);
 
-      // Navigate to the new post
-      router.push(ROUTES.POINTSTACK_POST(post.slug));
+      // Navigate to the type-specific detail page
+      const destination =
+        post.post_type === "project"
+          ? ROUTES.POINTSTACK_PROJECT(post.slug)
+          : post.post_type === "question"
+          ? ROUTES.POINTSTACK_QUESTION(post.slug)
+          : post.post_type === "job"
+          ? ROUTES.POINTSTACK_JOB(post.slug)
+          : ROUTES.POINTSTACK_POST(post.slug);
+
+      router.push(destination);
     } catch (err) {
       console.error("Error creating post:", err);
       setError("Failed to create post. Please try again.");
