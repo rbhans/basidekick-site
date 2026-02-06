@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MagnifyingGlass, MapPin, Users, Plus } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ import { CreateCompanyDialog } from "./create-company-dialog";
 import * as api from "../pointstack-api";
 
 export function PointStackCompaniesView() {
+  const router = useRouter();
   const { user } = useAuth();
   const [companies, setCompanies] = useState<PointStackCompany[]>([]);
   const [loading, setLoading] = useState(true);
@@ -147,8 +149,8 @@ export function PointStackCompaniesView() {
       <CreateCompanyDialog
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
-        onSuccess={async () => {
-          await fetchCompanies();
+        onSuccess={async (company) => {
+          router.push(ROUTES.POINTSTACK_COMPANY(company.slug));
         }}
       />
     </div>

@@ -580,7 +580,7 @@ export async function fetchProfiles(
   const supabase = getClient();
   let query = supabase
     .from("profiles")
-    .select("id, display_name, avatar_url, skills, headline, location, availability_status, reputation_score, is_verified")
+    .select("id, display_name, avatar_url, skills, headline, location, availability_status, reputation_score, is_verified, post_count")
     .order("reputation_score", { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -833,6 +833,29 @@ export async function createCompany(name: string, description?: string): Promise
   }
 
   return data;
+}
+
+export async function fetchUserCompanies(userId: string): Promise<PointStackCompany[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("pointstack_company_members")
+    .select(`
+      role,
+      company:pointstack_companies(
+        id, name, slug, logo_url, description, industry, location, size_range, owner_id, is_verified, created_at
+      )
+    `)
+    .eq("user_id", userId);
+
+  if (error) throw error;
+  if (!data) return [];
+
+  return data
+    .filter((row: { role: string; company: PointStackCompany | null }) => row.company)
+    .map((row: { role: string; company: PointStackCompany }) => ({
+      ...row.company,
+      _memberRole: row.role,
+    }) as PointStackCompany & { _memberRole: string });
 }
 
 export async function requestToJoinCompany(
