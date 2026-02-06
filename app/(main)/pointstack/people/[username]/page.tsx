@@ -6,7 +6,7 @@ interface ProfilePageProps {
 
 export async function generateMetadata({ params }: ProfilePageProps) {
   const { username } = await params;
-  const displayName = decodeURIComponent(username);
+  const displayName = decodeURIComponent(username).replace(/^@/, "");
   return {
     title: `${displayName} - PointStack`,
     description: `View ${displayName}'s profile on PointStack`,
@@ -15,5 +15,6 @@ export async function generateMetadata({ params }: ProfilePageProps) {
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const { username } = await params;
-  return <PointStackProfileView username={decodeURIComponent(username)} />;
+  const cleanUsername = decodeURIComponent(username).replace(/^@/, "");
+  return <PointStackProfileView username={cleanUsername} />;
 }

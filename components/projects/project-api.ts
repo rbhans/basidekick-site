@@ -10,6 +10,185 @@ import type {
   PSKWorkspaceContext,
 } from "@/lib/types";
 
+interface LegacyCompanyRow {
+  id: string;
+  pointstack_company_id: string | null;
+}
+
+interface CompanyRefs {
+  legacyCompanyId: string | null;
+  pointstackCompanyId: string | null;
+}
+
+type PSKClientRow = PSKClient & {
+  pointstack_company_id?: string | null;
+};
+
+type PSKProjectRow = Omit<PSKProject, "client"> & {
+  pointstack_company_id?: string | null;
+  client?: PSKClientRow | null;
+};
+
+function buildLegacyToPointstackMap(rows: LegacyCompanyRow[]): Map<string, string> {
+  return new Map<string, string>(
+    rows
+      .filter((row) => Boolean(row.pointstack_company_id))
+      .map((row) => [row.id, row.pointstack_company_id as string])
+  );
+}
+
+async function getLegacyCompanyRowsByPointstackIds(
+  pointstackCompanyIds?: string[]
+): Promise<LegacyCompanyRow[]> {
+  if (!pointstackCompanyIds || pointstackCompanyIds.length === 0) {
+    return [];
+  }
+
+  const supabase = createSupabaseClient();
+  if (!supabase) return [];
+
+  const uniquePointstackIds = Array.from(new Set(pointstackCompanyIds.filter(Boolean)));
+  if (uniquePointstackIds.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("psk_companies")
+    .select("id, pointstack_company_id")
+    .in("pointstack_company_id", uniquePointstackIds);
+  if (error) {
+    console.error("Failed loading legacy company mappings:", error);
+    return [];
+  }
+
+  return (data || []) as LegacyCompanyRow[];
+}
+
+async function getLegacyCompanyRowsByLegacyIds(
+  legacyCompanyIds?: Array<string | null | undefined>
+): Promise<LegacyCompanyRow[]> {
+  const normalizedIds = Array.from(new Set((legacyCompanyIds || []).filter(Boolean))) as string[];
+  if (normalizedIds.length === 0) {
+    return [];
+  }
+
+  const supabase = createSupabaseClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("psk_companies")
+    .select("id, pointstack_company_id")
+    .in("id", normalizedIds);
+
+  if (error) {
+    console.error("Failed loading legacy company mappings by ID:", error);
+    return [];
+  }
+
+  return (data || []) as LegacyCompanyRow[];
+}
+
+function normalizeCompanyId(
+  row: { company_id?: string | null; pointstack_company_id?: string | null },
+  legacyToPointstack: Map<string, string>
+): string | null {
+  if (row.pointstack_company_id) return row.pointstack_company_id;
+  if (row.company_id && legacyToPointstack.has(row.company_id)) {
+    return legacyToPointstack.get(row.company_id) || null;
+  }
+  return row.company_id || null;
+}
+
+function normalizeClient(row: PSKClientRow, legacyToPointstack: Map<string, string>): PSKClient {
+  return {
+    ...row,
+    company_id: normalizeCompanyId(row, legacyToPointstack),
+  };
+}
+
+function normalizeProject(row: PSKProjectRow, legacyToPointstack: Map<string, string>): PSKProject {
+  return {
+    ...row,
+    company_id: normalizeCompanyId(row, legacyToPointstack),
+    client: row.client ? normalizeClient(row.client, legacyToPointstack) : undefined,
+  };
+}
+
+async function resolveCompanyRefs(companyId: string | null | undefined): Promise<CompanyRefs> {
+  if (!companyId) {
+    return { legacyCompanyId: null, pointstackCompanyId: null };
+  }
+
+  const supabase = createSupabaseClient();
+  if (!supabase) {
+    return { legacyCompanyId: null, pointstackCompanyId: companyId };
+  }
+
+  const { data: byLegacyId, error: byLegacyError } = await supabase
+    .from("psk_companies")
+    .select("id, pointstack_company_id")
+    .eq("id", companyId)
+    .maybeSingle();
+
+  if (byLegacyError && byLegacyError.code !== "PGRST116") {
+    throw byLegacyError;
+  }
+
+  if (byLegacyId) {
+    return {
+      legacyCompanyId: byLegacyId.id,
+      pointstackCompanyId: byLegacyId.pointstack_company_id || companyId,
+    };
+  }
+
+  const { data: byPointstackId, error: byPointstackError } = await supabase
+    .from("psk_companies")
+    .select("id, pointstack_company_id")
+    .eq("pointstack_company_id", companyId)
+    .maybeSingle();
+
+  if (byPointstackError && byPointstackError.code !== "PGRST116") {
+    throw byPointstackError;
+  }
+
+  if (byPointstackId) {
+    return {
+      legacyCompanyId: byPointstackId.id,
+      pointstackCompanyId: byPointstackId.pointstack_company_id || companyId,
+    };
+  }
+
+  return {
+    legacyCompanyId: null,
+    pointstackCompanyId: companyId,
+  };
+}
+
+async function getProjectPointstackCompanyId(projectId: string | null | undefined): Promise<string | null> {
+  if (!projectId) return null;
+  const supabase = createSupabaseClient();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from("psk_projects")
+    .select("company_id, pointstack_company_id")
+    .eq("id", projectId)
+    .maybeSingle();
+
+  if (error && error.code !== "PGRST116") {
+    console.error("Failed to lookup project company mapping:", error);
+    return null;
+  }
+  if (!data) return null;
+
+  if (data.pointstack_company_id) return data.pointstack_company_id;
+  if (!data.company_id) return null;
+
+  const legacyRows = await getLegacyCompanyRowsByLegacyIds([data.company_id]);
+  const legacyToPointstack = buildLegacyToPointstackMap(legacyRows);
+  return legacyToPointstack.get(data.company_id) || null;
+}
+
 // ============================================================================
 // Projects
 // ============================================================================
@@ -28,6 +207,10 @@ export async function getProjects(
   const supabase = createSupabaseClient();
   if (!supabase) return [];
 
+  const legacyRows = await getLegacyCompanyRowsByPointstackIds(companyIds);
+  const legacyToPointstack = buildLegacyToPointstackMap(legacyRows);
+  const legacyCompanyIds = legacyRows.map((row) => row.id);
+
   // Fetch personal projects (no company)
   const personalQuery = supabase
     .from("psk_projects")
@@ -35,6 +218,7 @@ export async function getProjects(
       *,
       client:psk_clients(*)
     `)
+    .is("pointstack_company_id", null)
     .is("company_id", null)
     .order("updated_at", { ascending: false });
 
@@ -42,24 +226,51 @@ export async function getProjects(
   if (personalError) throw personalError;
 
   // If user has companies, also fetch shared projects
-  let sharedProjects: PSKProject[] = [];
+  const sharedProjectsById = new Map<string, PSKProject>();
   if (companyIds && companyIds.length > 0) {
-    const sharedQuery = supabase
+    const sharedPointstackQuery = supabase
       .from("psk_projects")
       .select(`
         *,
         client:psk_clients(*)
       `)
-      .in("company_id", companyIds)
+      .in("pointstack_company_id", companyIds)
       .order("updated_at", { ascending: false });
 
-    const { data, error } = await sharedQuery;
-    if (error) throw error;
-    sharedProjects = data as PSKProject[];
+    const { data: pointstackShared, error: pointstackError } = await sharedPointstackQuery;
+    if (pointstackError) throw pointstackError;
+
+    for (const project of (pointstackShared || []) as PSKProject[]) {
+      sharedProjectsById.set(project.id, project);
+    }
+
+    if (legacyCompanyIds.length > 0) {
+      const sharedLegacyQuery = supabase
+        .from("psk_projects")
+        .select(`
+          *,
+          client:psk_clients(*)
+        `)
+        .in("company_id", legacyCompanyIds)
+        .order("updated_at", { ascending: false });
+
+      const { data: legacyShared, error: legacyError } = await sharedLegacyQuery;
+      if (legacyError) throw legacyError;
+
+      for (const project of (legacyShared || []) as PSKProject[]) {
+        sharedProjectsById.set(project.id, project);
+      }
+    }
   }
 
   // Combine and sort by updated_at
-  const allProjects = [...(personalProjects as PSKProject[]), ...sharedProjects];
+  const normalizedPersonal = (personalProjects as PSKProject[]).map((project) =>
+    normalizeProject(project as PSKProjectRow, legacyToPointstack)
+  );
+  const normalizedShared = Array.from(sharedProjectsById.values()).map((project) =>
+    normalizeProject(project as PSKProjectRow, legacyToPointstack)
+  );
+  const allProjects = [...normalizedPersonal, ...normalizedShared];
   allProjects.sort((a, b) =>
     new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
   );
@@ -73,9 +284,15 @@ export async function createProject(
   const supabase = createSupabaseClient();
   if (!supabase) throw new Error("Supabase client not available");
 
+  const companyRefs = await resolveCompanyRefs(project.company_id);
+
   const { data, error } = await supabase
     .from("psk_projects")
-    .insert(project)
+    .insert({
+      ...project,
+      company_id: companyRefs.legacyCompanyId,
+      pointstack_company_id: companyRefs.pointstackCompanyId,
+    })
     .select(`
       *,
       client:psk_clients(*)
@@ -83,7 +300,16 @@ export async function createProject(
     .single();
 
   if (error) throw error;
-  return data as PSKProject;
+  const projectRow = data as PSKProjectRow;
+  const legacyRows = await getLegacyCompanyRowsByLegacyIds([
+    projectRow.company_id,
+    projectRow.client?.company_id,
+  ]);
+  const legacyToPointstack = buildLegacyToPointstackMap(legacyRows);
+  return normalizeProject(
+    projectRow,
+    legacyToPointstack
+  );
 }
 
 export async function updateProject(
@@ -97,9 +323,22 @@ export async function updateProject(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { client, creator, ...updateData } = updates;
 
+  let companyUpdateData: Partial<{ company_id: string | null; pointstack_company_id: string | null }> = {};
+  if ("company_id" in updateData) {
+    const refs = await resolveCompanyRefs(updateData.company_id ?? null);
+    companyUpdateData = {
+      company_id: refs.legacyCompanyId,
+      pointstack_company_id: refs.pointstackCompanyId,
+    };
+  }
+
   const { data, error } = await supabase
     .from("psk_projects")
-    .update({ ...updateData, updated_at: new Date().toISOString() })
+    .update({
+      ...updateData,
+      ...companyUpdateData,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", id)
     .select(`
       *,
@@ -108,7 +347,16 @@ export async function updateProject(
     .single();
 
   if (error) throw error;
-  return data as PSKProject;
+  const projectRow = data as PSKProjectRow;
+  const legacyRows = await getLegacyCompanyRowsByLegacyIds([
+    projectRow.company_id,
+    projectRow.client?.company_id,
+  ]);
+  const legacyToPointstack = buildLegacyToPointstackMap(legacyRows);
+  return normalizeProject(
+    projectRow,
+    legacyToPointstack
+  );
 }
 
 export async function deleteProject(id: string): Promise<void> {
@@ -161,9 +409,14 @@ export async function createTask(
   const supabase = createSupabaseClient();
   if (!supabase) throw new Error("Supabase client not available");
 
+  const pointstackCompanyId = await getProjectPointstackCompanyId(task.project_id);
+
   const { data, error } = await supabase
     .from("psk_tasks")
-    .insert(task)
+    .insert({
+      ...task,
+      pointstack_company_id: pointstackCompanyId,
+    })
     .select("*")
     .single();
 
@@ -216,10 +469,15 @@ export async function getClients(
   const supabase = createSupabaseClient();
   if (!supabase) return [];
 
+  const legacyRows = await getLegacyCompanyRowsByPointstackIds(companyIds);
+  const legacyToPointstack = buildLegacyToPointstackMap(legacyRows);
+  const legacyCompanyIds = legacyRows.map((row) => row.id);
+
   // Fetch personal clients
   const personalQuery = supabase
     .from("psk_clients")
     .select("*")
+    .is("pointstack_company_id", null)
     .is("company_id", null)
     .order("name", { ascending: true });
 
@@ -227,21 +485,45 @@ export async function getClients(
   if (personalError) throw personalError;
 
   // If user has companies, also fetch shared clients
-  let sharedClients: PSKClient[] = [];
+  const sharedClientsById = new Map<string, PSKClient>();
   if (companyIds && companyIds.length > 0) {
-    const sharedQuery = supabase
+    const sharedPointstackQuery = supabase
       .from("psk_clients")
       .select("*")
-      .in("company_id", companyIds)
+      .in("pointstack_company_id", companyIds)
       .order("name", { ascending: true });
 
-    const { data, error } = await sharedQuery;
-    if (error) throw error;
-    sharedClients = data as PSKClient[];
+    const { data: pointstackShared, error: pointstackError } = await sharedPointstackQuery;
+    if (pointstackError) throw pointstackError;
+
+    for (const client of (pointstackShared || []) as PSKClient[]) {
+      sharedClientsById.set(client.id, client);
+    }
+
+    if (legacyCompanyIds.length > 0) {
+      const sharedLegacyQuery = supabase
+        .from("psk_clients")
+        .select("*")
+        .in("company_id", legacyCompanyIds)
+        .order("name", { ascending: true });
+
+      const { data: legacyShared, error: legacyError } = await sharedLegacyQuery;
+      if (legacyError) throw legacyError;
+
+      for (const client of (legacyShared || []) as PSKClient[]) {
+        sharedClientsById.set(client.id, client);
+      }
+    }
   }
 
   // Combine and sort by name
-  const allClients = [...(personalClients as PSKClient[]), ...sharedClients];
+  const normalizedPersonal = (personalClients as PSKClient[]).map((client) =>
+    normalizeClient(client as PSKClientRow, legacyToPointstack)
+  );
+  const normalizedShared = Array.from(sharedClientsById.values()).map((client) =>
+    normalizeClient(client as PSKClientRow, legacyToPointstack)
+  );
+  const allClients = [...normalizedPersonal, ...normalizedShared];
   allClients.sort((a, b) => a.name.localeCompare(b.name));
 
   return allClients;
@@ -253,14 +535,26 @@ export async function createClient(
   const supabase = createSupabaseClient();
   if (!supabase) throw new Error("Supabase client not available");
 
+  const companyRefs = await resolveCompanyRefs(client.company_id);
+
   const { data, error } = await supabase
     .from("psk_clients")
-    .insert(client)
+    .insert({
+      ...client,
+      company_id: companyRefs.legacyCompanyId,
+      pointstack_company_id: companyRefs.pointstackCompanyId,
+    })
     .select()
     .single();
 
   if (error) throw error;
-  return data as PSKClient;
+  const clientRow = data as PSKClientRow;
+  const legacyRows = await getLegacyCompanyRowsByLegacyIds([clientRow.company_id]);
+  const legacyToPointstack = buildLegacyToPointstackMap(legacyRows);
+  return normalizeClient(
+    clientRow,
+    legacyToPointstack
+  );
 }
 
 export async function updateClient(
@@ -270,15 +564,34 @@ export async function updateClient(
   const supabase = createSupabaseClient();
   if (!supabase) throw new Error("Supabase client not available");
 
+  let companyUpdateData: Partial<{ company_id: string | null; pointstack_company_id: string | null }> = {};
+  if ("company_id" in updates) {
+    const refs = await resolveCompanyRefs(updates.company_id ?? null);
+    companyUpdateData = {
+      company_id: refs.legacyCompanyId,
+      pointstack_company_id: refs.pointstackCompanyId,
+    };
+  }
+
   const { data, error } = await supabase
     .from("psk_clients")
-    .update({ ...updates, updated_at: new Date().toISOString() })
+    .update({
+      ...updates,
+      ...companyUpdateData,
+      updated_at: new Date().toISOString(),
+    })
     .eq("id", id)
     .select()
     .single();
 
   if (error) throw error;
-  return data as PSKClient;
+  const clientRow = data as PSKClientRow;
+  const legacyRows = await getLegacyCompanyRowsByLegacyIds([clientRow.company_id]);
+  const legacyToPointstack = buildLegacyToPointstackMap(legacyRows);
+  return normalizeClient(
+    clientRow,
+    legacyToPointstack
+  );
 }
 
 export async function deleteClient(id: string): Promise<void> {
@@ -312,9 +625,14 @@ export async function createTimeEntry(
   const supabase = createSupabaseClient();
   if (!supabase) throw new Error("Supabase client not available");
 
+  const pointstackCompanyId = await getProjectPointstackCompanyId(entry.project_id);
+
   const { data, error } = await supabase
     .from("psk_time_entries")
-    .insert(entry)
+    .insert({
+      ...entry,
+      pointstack_company_id: pointstackCompanyId,
+    })
     .select()
     .single();
 
@@ -378,9 +696,14 @@ export async function createFile(
   const supabase = createSupabaseClient();
   if (!supabase) throw new Error("Supabase client not available");
 
+  const pointstackCompanyId = await getProjectPointstackCompanyId(file.project_id);
+
   const { data, error } = await supabase
     .from("psk_files")
-    .insert(file)
+    .insert({
+      ...file,
+      pointstack_company_id: pointstackCompanyId,
+    })
     .select()
     .single();
 
@@ -419,9 +742,14 @@ export async function createBudgetLineItem(
   const supabase = createSupabaseClient();
   if (!supabase) throw new Error("Supabase client not available");
 
+  const pointstackCompanyId = await getProjectPointstackCompanyId(item.project_id);
+
   const { data, error } = await supabase
     .from("psk_budget_line_items")
-    .insert(item)
+    .insert({
+      ...item,
+      pointstack_company_id: pointstackCompanyId,
+    })
     .select()
     .single();
 
@@ -463,9 +791,14 @@ export async function createNote(
   const supabase = createSupabaseClient();
   if (!supabase) throw new Error("Supabase client not available");
 
+  const pointstackCompanyId = await getProjectPointstackCompanyId(note.project_id);
+
   const { data, error } = await supabase
     .from("psk_notes")
-    .insert(note)
+    .insert({
+      ...note,
+      pointstack_company_id: pointstackCompanyId,
+    })
     .select()
     .single();
 
