@@ -140,26 +140,23 @@ export function SidebarStatus() {
 
   return (
     <div className="px-3 py-3 border-t border-border">
+      <div className="text-[10px] font-mono text-cyan-500 dark:text-cyan-400 uppercase tracking-wider mb-1.5">
+        Babel
+      </div>
       <Link
         href={ROUTES.BABEL_ENTRY(entry.id)}
-        className={`block rounded-md border border-border/60 bg-muted/20 p-3 transition-all duration-300 hover:border-cyan-500/40 hover:bg-muted/40 ${
+        className={`block rounded-md border border-border/60 bg-muted/20 p-2.5 overflow-hidden transition-all duration-300 hover:border-cyan-500/40 hover:bg-muted/40 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
       >
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <div className="text-sm font-medium leading-tight">{entry.name}</div>
+        <div className="flex items-start justify-between gap-2 mb-1.5">
+          <div className="text-sm font-medium leading-tight line-clamp-2">{entry.name}</div>
           <span className="text-[9px] font-mono uppercase tracking-wide rounded border border-cyan-500/40 px-1.5 py-0.5 text-cyan-500 dark:text-cyan-400 shrink-0">
             {entry.type}
           </span>
         </div>
-        <div className="text-[9px] font-mono uppercase tracking-wider text-cyan-500/90 dark:text-cyan-400/90 mb-1">
-          Description
-        </div>
-        <p className="text-[11px] text-muted-foreground leading-relaxed mb-2">{entry.description}</p>
-        <div className="text-[9px] font-mono uppercase tracking-wider text-cyan-500/90 dark:text-cyan-400/90 mb-1">
-          Attributes
-        </div>
-        <div className="flex flex-wrap items-center gap-1.5 mb-2">
+        <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2 mb-1.5">{entry.description}</p>
+        <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
           {entry.category && (
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-background/60 border border-border font-mono">
               {entry.category}
@@ -175,22 +172,9 @@ export function SidebarStatus() {
               {entry.unit}
             </span>
           )}
-          {entry.tags.slice(0, 2).map((tag) => (
-            <span
-              key={tag}
-              className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-500 dark:text-cyan-400 font-mono"
-            >
-              {tag}
-            </span>
-          ))}
         </div>
         {topAliases.length > 0 && (
-          <>
-            <div className="text-[9px] font-mono uppercase tracking-wider text-cyan-500/90 dark:text-cyan-400/90 mb-1">
-              Aliases
-            </div>
-            <p className="text-[10px] text-muted-foreground/90 leading-relaxed">{topAliases.join(" • ")}</p>
-          </>
+          <p className="text-[10px] text-muted-foreground/90 truncate">{topAliases.join(" • ")}</p>
         )}
       </Link>
     </div>
