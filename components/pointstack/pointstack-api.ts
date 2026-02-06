@@ -1474,12 +1474,17 @@ export async function createResource(input: CreatePointStackResourceInput): Prom
 
 export async function incrementResourceDownloadCount(resourceId: string): Promise<void> {
   const supabase = getClient();
-  const { error } = await supabase.rpc("increment_resource_download", { resource_id: resourceId });
-  if (error) {
-    // Fallback: direct increment
+  // Fetch current count and increment
+  const { data } = await supabase
+    .from("pointstack_resource_listings")
+    .select("download_count")
+    .eq("id", resourceId)
+    .single();
+
+  if (data) {
     await supabase
       .from("pointstack_resource_listings")
-      .update({ download_count: supabase.rpc("increment", { x: 1 }) as unknown as number })
+      .update({ download_count: (data.download_count || 0) + 1 })
       .eq("id", resourceId);
   }
 }
