@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { MapPin, Briefcase, CurrencyDollar, Plus, House } from "@phosphor-icons/react";
@@ -18,6 +18,7 @@ import {
 import { ROUTES } from "@/lib/routes";
 import { PointStackJob } from "@/lib/types";
 import * as api from "../pointstack-api";
+import { CreateJobDialog } from "./create-job-dialog";
 
 export function PointStackJobsView() {
   const { user } = useAuth();
@@ -26,24 +27,24 @@ export function PointStackJobsView() {
   const [jobType, setJobType] = useState<string | undefined>();
   const [remoteOnly, setRemoteOnly] = useState(false);
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      setLoading(true);
-      try {
-        const data = await api.fetchJobs({
-          jobType,
-          isRemote: remoteOnly ? true : undefined,
-        });
-        setJobs(data);
-      } catch (error) {
-        console.error("Error fetching jobs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchJobs();
+  const loadJobs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.fetchJobs({
+        jobType,
+        isRemote: remoteOnly ? true : undefined,
+      });
+      setJobs(data);
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+    } finally {
+      setLoading(false);
+    }
   }, [jobType, remoteOnly]);
+
+  useEffect(() => {
+    void loadJobs();
+  }, [loadJobs]);
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
@@ -55,10 +56,17 @@ export function PointStackJobsView() {
           </p>
         </div>
         {user && (
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Post Job
-          </Button>
+          <CreateJobDialog
+            onCreated={async () => {
+              await loadJobs();
+            }}
+            trigger={
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Post Job
+              </Button>
+            }
+          />
         )}
       </div>
 

@@ -30,6 +30,16 @@ import {
 import { ROUTES } from "@/lib/routes";
 import { User } from "@supabase/supabase-js";
 
+interface UpdatePointStackCompanyInput {
+  name?: string;
+  description?: string | null;
+  website_url?: string | null;
+  location?: string | null;
+  size_range?: "1-10" | "11-50" | "51-200" | "201-500" | "500+" | null;
+  industry?: string | null;
+  logo_url?: string | null;
+}
+
 // ============================================================
 // AUTH HELPERS
 // ============================================================
@@ -93,6 +103,32 @@ async function verifyConversationParticipant(conversationId: string, userId: str
   if (!data) {
     throw new Error("Not authorized to access this conversation");
   }
+}
+
+/** Verify user can manage company details (owner/admin) */
+async function verifyCompanyManager(companyId: string, userId: string): Promise<void> {
+  const supabase = getClient();
+
+  const { data: company, error: companyError } = await supabase
+    .from("pointstack_companies")
+    .select("owner_id")
+    .eq("id", companyId)
+    .single();
+
+  if (companyError) throw companyError;
+  if (company?.owner_id === userId) return;
+
+  const { data: membership, error: membershipError } = await supabase
+    .from("pointstack_company_members")
+    .select("role")
+    .eq("company_id", companyId)
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (membershipError && !isNotFoundError(membershipError)) throw membershipError;
+  if (membership?.role === "admin") return;
+
+  throw new Error("Not authorized to modify this company");
 }
 
 /** Sanitize search input to escape SQL LIKE wildcards */
@@ -842,7 +878,7 @@ export async function fetchUserCompanies(userId: string): Promise<PointStackComp
     .select(`
       role,
       company:pointstack_companies(
-        id, name, slug, logo_url, description, industry, location, size_range, owner_id, is_verified, created_at
+        id, name, slug, logo_url, description, website_url, industry, location, size_range, owner_id, is_verified, invite_code, created_at, updated_at
       )
     `)
     .eq("user_id", userId);
@@ -856,6 +892,105 @@ export async function fetchUserCompanies(userId: string): Promise<PointStackComp
       ...row.company,
       _memberRole: row.role,
     }) as PointStackCompany & { _memberRole: string });
+}
+
+export async function updateCompany(
+  companyId: string,
+  updates: UpdatePointStackCompanyInput
+): Promise<PointStackCompany> {
+  const user = await requireAuth();
+  await verifyCompanyManager(companyId, user.id);
+
+  const payload: Record<string, unknown> = {};
+  if ("name" in updates && updates.name !== undefined) payload.name = updates.name.trim();
+  if ("description" in updates) payload.description = updates.description?.trim() || null;
+  if ("website_url" in updates) payload.website_url = updates.website_url?.trim() || null;
+  if ("location" in updates) payload.location = updates.location?.trim() || null;
+  if ("size_range" in updates) payload.size_range = updates.size_range ?? null;
+  if ("industry" in updates) payload.industry = updates.industry?.trim() || null;
+  if ("logo_url" in updates) payload.logo_url = updates.logo_url?.trim() || null;
+
+  if (Object.keys(payload).length === 0) {
+    const supabase = getClient();
+    const { data, error } = await supabase
+      .from("pointstack_companies")
+      .select(`
+        *,
+        owner:profiles!owner_id(display_name),
+        members:pointstack_company_members(
+          *,
+          profile:profiles!user_id(display_name, avatar_url)
+        )
+      `)
+      .eq("id", companyId)
+      .single();
+
+    if (error) throw error;
+    return data as PointStackCompany;
+  }
+
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("pointstack_companies")
+    .update(payload)
+    .eq("id", companyId)
+    .select(`
+      *,
+      owner:profiles!owner_id(display_name),
+      members:pointstack_company_members(
+        *,
+        profile:profiles!user_id(display_name, avatar_url)
+      )
+    `)
+    .single();
+
+  if (error) throw error;
+  return data as PointStackCompany;
+}
+
+export async function fetchCompanyProjects(
+  companyId: string,
+  limit = 20,
+  offset = 0
+): Promise<PointStackPost[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("pointstack_posts")
+    .select(`
+      *,
+      author:profiles!author_id(display_name, avatar_url),
+      company:pointstack_companies!company_id(name, slug)
+    `)
+    .eq("company_id", companyId)
+    .eq("post_type", "project")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function fetchCompanyJobs(
+  companyId: string,
+  limit = 20,
+  offset = 0
+): Promise<PointStackJob[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("pointstack_jobs")
+    .select(`
+      *,
+      company:pointstack_companies!company_id(name, slug, logo_url),
+      poster:profiles!posted_by(display_name)
+    `)
+    .eq("company_id", companyId)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) throw error;
+  return data || [];
 }
 
 export async function requestToJoinCompany(

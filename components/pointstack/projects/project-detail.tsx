@@ -2,16 +2,34 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { ArrowLeft, Heart, MapPin, Calendar, Ruler } from "@phosphor-icons/react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Heart, MapPin, Calendar, Ruler, DotsThree, PencilSimple, Trash } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { UserAvatar } from "../shared/user-avatar";
 import { ROUTES } from "@/lib/routes";
 import { PointStackPost } from "@/lib/types";
+import { EditPostDialog } from "../feed/edit-post-dialog";
 import * as api from "../pointstack-api";
 
 interface ProjectDetailProps {
@@ -19,11 +37,16 @@ interface ProjectDetailProps {
 }
 
 export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
+  const router = useRouter();
   const { user } = useAuth();
   const [project, setProject] = useState<PointStackPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const { data: atlasData } = useAtlasData();
 
@@ -108,6 +131,22 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!project) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await api.deletePost(project.id);
+      setDeleteOpen(false);
+      router.push(`${ROUTES.POINTSTACK}/projects`);
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      setDeleteError("Failed to delete project. Please try again.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto p-6">
@@ -132,6 +171,8 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
       </div>
     );
   }
+
+  const isAuthor = user?.id === project.author_id;
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
@@ -181,14 +222,42 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
             </div>
           </div>
 
-          <Button
-            variant={liked ? "default" : "outline"}
-            onClick={handleLike}
-            disabled={!user}
-          >
-            <Heart className="w-4 h-4 mr-2" weight={liked ? "fill" : "regular"} />
-            {likeCount}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={liked ? "default" : "outline"}
+              onClick={handleLike}
+              disabled={!user}
+            >
+              <Heart className="w-4 h-4 mr-2" weight={liked ? "fill" : "regular"} />
+              {likeCount}
+            </Button>
+
+            {isAuthor && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-9 w-9">
+                    <DotsThree className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                    <PencilSimple className="w-4 h-4 mr-2" />
+                    Edit Project
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={() => {
+                      setDeleteError(null);
+                      setDeleteOpen(true);
+                    }}
+                  >
+                    <Trash className="w-4 h-4 mr-2" />
+                    Delete Project
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
 
         {/* Author */}
@@ -304,6 +373,46 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
           </div>
         </div>
       )}
+
+      <EditPostDialog
+        post={project}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        onSaved={(updatedProject) => {
+          setProject(updatedProject);
+          setLikeCount(updatedProject.upvote_count);
+        }}
+      />
+
+      <AlertDialog
+        open={deleteOpen}
+        onOpenChange={(open) => {
+          setDeleteOpen(open);
+          if (!open) setDeleteError(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Project</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete this project post and cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {deleteError && (
+            <p className="text-sm text-destructive">{deleteError}</p>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

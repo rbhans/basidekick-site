@@ -270,6 +270,7 @@ export type PSKMemberRole = "owner" | "member";
 // Company/Team collaboration
 export interface PSKCompany {
   id: string;
+  pointstack_company_id?: string | null;
   name: string;
   slug: string;
   owner_id: string;
@@ -307,6 +308,7 @@ export interface PSKClient {
   id: string;
   user_id: string;
   company_id: string | null;
+  pointstack_company_id?: string | null;
   name: string;
   contacts: PSKClientContact[];
   logo: string | null;
@@ -320,6 +322,7 @@ export interface PSKProject {
   id: string;
   user_id: string;
   company_id: string | null;
+  pointstack_company_id?: string | null;
   created_by: string | null;
   client_id: string | null;
   name: string;
@@ -345,6 +348,7 @@ export interface PSKTask {
   user_id: string;
   created_by: string | null;
   project_id: string | null;
+  pointstack_company_id?: string | null;
   title: string;
   description: string | null;
   status: PSKTaskStatus;
@@ -364,6 +368,7 @@ export interface PSKTimeEntry {
   user_id: string;
   created_by: string | null;
   project_id: string;
+  pointstack_company_id?: string | null;
   description: string | null;
   duration: number; // minutes
   date: string;
@@ -378,6 +383,7 @@ export interface PSKBudgetLineItem {
   user_id: string;
   created_by: string | null;
   project_id: string;
+  pointstack_company_id?: string | null;
   description: string;
   cost: number;
   category: string | null;
@@ -392,6 +398,7 @@ export interface PSKFile {
   user_id: string;
   created_by: string | null;
   project_id: string;
+  pointstack_company_id?: string | null;
   name: string;
   type: string | null;
   size: number | null;
@@ -406,6 +413,7 @@ export interface PSKNote {
   user_id: string;
   created_by: string | null;
   project_id: string;
+  pointstack_company_id?: string | null;
   content: string;
   created_at: string;
   // Joined data
@@ -984,7 +992,7 @@ export interface CreatePointStackPostInput {
   location?: string;
   completion_date?: string;
   square_footage?: number;
-  company_id?: string;
+  company_id?: string | null;
   is_featured?: boolean;
   metadata?: Record<string, unknown>;
 }
@@ -1008,7 +1016,7 @@ export interface CreatePointStackJobInput {
   salary_currency?: string;
   application_url?: string;
   application_email?: string;
-  company_id?: string;
+  company_id?: string | null;
 }
 
 export interface CreatePointStackResourceInput {

@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { MapPin, Users, Globe, ArrowLeft } from "@phosphor-icons/react";
+import { MapPin, Users, Globe, ArrowLeft, Briefcase, CurrencyDollar, House, PencilSimple } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,8 +19,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { UserAvatar } from "../shared/user-avatar";
 import { ROUTES } from "@/lib/routes";
-import { PointStackCompany, PointStackCompanyJoinRequest } from "@/lib/types";
+import { PointStackCompany, PointStackCompanyJoinRequest, PointStackJob, PointStackPost } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
+import { EditCompanyDialog } from "./edit-company-dialog";
 import * as api from "../pointstack-api";
 
 interface CompanyViewProps {
@@ -41,6 +42,11 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
   const [requestsLoading, setRequestsLoading] = useState(false);
   const [requestsError, setRequestsError] = useState<string | null>(null);
   const [reviewingRequestId, setReviewingRequestId] = useState<string | null>(null);
+  const [companyProjects, setCompanyProjects] = useState<PointStackPost[]>([]);
+  const [companyJobs, setCompanyJobs] = useState<PointStackJob[]>([]);
+  const [companyContentLoading, setCompanyContentLoading] = useState(false);
+  const [companyContentError, setCompanyContentError] = useState<string | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const currentUserMember = useMemo(() => {
     if (!company || !user) return null;
@@ -48,7 +54,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
   }, [company, user]);
 
   const isMember = Boolean(currentUserMember);
-  const canManageRequests = Boolean(
+  const canEditCompany = Boolean(
     user &&
       company &&
       (
@@ -57,6 +63,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
         currentUserMember?.role === "admin"
       )
   );
+  const canManageRequests = canEditCompany;
   const showJoinActions = Boolean(user && company && !isMember && !canManageRequests);
 
   const fetchCompany = useCallback(async (showLoading = true) => {
@@ -105,6 +112,25 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
     }
   }, []);
 
+  const fetchCompanyContent = useCallback(async (companyId: string) => {
+    setCompanyContentLoading(true);
+    setCompanyContentError(null);
+
+    try {
+      const [projects, jobs] = await Promise.all([
+        api.fetchCompanyProjects(companyId),
+        api.fetchCompanyJobs(companyId),
+      ]);
+      setCompanyProjects(projects);
+      setCompanyJobs(jobs);
+    } catch (error) {
+      console.error("Error fetching company projects/jobs:", error);
+      setCompanyContentError("Failed to load company projects and jobs.");
+    } finally {
+      setCompanyContentLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     void fetchCompany();
   }, [fetchCompany]);
@@ -125,6 +151,17 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
     }
     void fetchPendingRequests(company.id);
   }, [company?.id, canManageRequests, fetchPendingRequests]);
+
+  useEffect(() => {
+    if (!company?.id) {
+      setCompanyProjects([]);
+      setCompanyJobs([]);
+      setCompanyContentError(null);
+      return;
+    }
+
+    void fetchCompanyContent(company.id);
+  }, [company?.id, fetchCompanyContent]);
 
   const handleOpenJoinDialog = () => {
     setJoinDialogError(null);
@@ -260,10 +297,23 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
           )}
 
           <div className="flex-1 text-center md:text-left">
-            <div className="flex items-center gap-2 justify-center md:justify-start mb-2">
-              <h1 className="text-2xl font-bold">{company.name}</h1>
-              {company.is_verified && (
-                <Badge variant="secondary">Verified</Badge>
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <div className="flex items-center gap-2 justify-center md:justify-start">
+                <h1 className="text-2xl font-bold">{company.name}</h1>
+                {company.is_verified && (
+                  <Badge variant="secondary">Verified</Badge>
+                )}
+              </div>
+              {canEditCompany && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0"
+                  onClick={() => setEditDialogOpen(true)}
+                >
+                  <PencilSimple className="w-4 h-4 mr-1.5" />
+                  Edit
+                </Button>
               )}
             </div>
 
@@ -348,8 +398,8 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
       <Tabs defaultValue="team">
         <TabsList>
           <TabsTrigger value="team">Team ({company.members?.length || 0})</TabsTrigger>
-          <TabsTrigger value="projects">Projects</TabsTrigger>
-          <TabsTrigger value="jobs">Jobs</TabsTrigger>
+          <TabsTrigger value="projects">Projects ({companyProjects.length})</TabsTrigger>
+          <TabsTrigger value="jobs">Jobs ({companyJobs.length})</TabsTrigger>
           {canManageRequests && (
             <TabsTrigger value="requests">Requests ({pendingRequests.length})</TabsTrigger>
           )}
@@ -384,15 +434,144 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
         </TabsContent>
 
         <TabsContent value="projects" className="mt-6">
-          <div className="text-center py-12 text-muted-foreground">
-            No projects yet.
-          </div>
+          {companyContentLoading && (
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <Skeleton key={index} className="h-32 rounded-lg" />
+              ))}
+            </div>
+          )}
+
+          {!companyContentLoading && companyContentError && (
+            <p className="text-sm text-destructive">{companyContentError}</p>
+          )}
+
+          {!companyContentLoading && !companyContentError && companyProjects.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground">
+              No projects yet.
+            </div>
+          )}
+
+          {!companyContentLoading && !companyContentError && companyProjects.length > 0 && (
+            <div className="space-y-3">
+              {companyProjects.map((project) => (
+                <Link
+                  key={project.id}
+                  href={ROUTES.POINTSTACK_PROJECT(project.slug)}
+                  className="block rounded-lg border border-border hover:border-primary/30 transition-colors p-4"
+                >
+                  <div className="flex gap-4">
+                    {(project.cover_image_url || project.images?.[0]) ? (
+                      <img
+                        src={project.cover_image_url || project.images?.[0] || ""}
+                        alt={project.title}
+                        className="h-20 w-28 rounded object-cover shrink-0"
+                      />
+                    ) : (
+                      <div className="h-20 w-28 rounded bg-muted shrink-0" />
+                    )}
+
+                    <div className="min-w-0">
+                      <h3 className="font-semibold truncate">{project.title}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                        {project.content}
+                      </p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
+                        <span>{project.upvote_count} likes</span>
+                        <span>{project.comment_count} comments</span>
+                        <span>{project.view_count} views</span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="jobs" className="mt-6">
-          <div className="text-center py-12 text-muted-foreground">
-            No open positions.
-          </div>
+          {companyContentLoading && (
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <Skeleton key={index} className="h-32 rounded-lg" />
+              ))}
+            </div>
+          )}
+
+          {!companyContentLoading && companyContentError && (
+            <p className="text-sm text-destructive">{companyContentError}</p>
+          )}
+
+          {!companyContentLoading && !companyContentError && companyJobs.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground">
+              No open positions.
+            </div>
+          )}
+
+          {!companyContentLoading && !companyContentError && companyJobs.length > 0 && (
+            <div className="space-y-3">
+              {companyJobs.map((job) => (
+                <Link
+                  key={job.id}
+                  href={ROUTES.POINTSTACK_JOB(job.slug)}
+                  className="block rounded-lg border border-border hover:border-primary/30 transition-colors p-4"
+                >
+                  <div className="flex items-start gap-3">
+                    {job.company?.logo_url ? (
+                      <img
+                        src={job.company.logo_url}
+                        alt={job.company.name}
+                        className="w-10 h-10 rounded object-cover shrink-0"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center shrink-0">
+                        <Briefcase className="w-5 h-5 text-primary" />
+                      </div>
+                    )}
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-3">
+                        <h3 className="font-semibold truncate">{job.title}</h3>
+                        <Badge variant="outline" className="shrink-0">
+                          {job.job_type.replace("-", " ")}
+                        </Badge>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-1">
+                        {job.location && (
+                          <span className="inline-flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            {job.location}
+                          </span>
+                        )}
+                        {job.is_remote && (
+                          <span className="inline-flex items-center gap-1">
+                            <House className="w-3 h-3" />
+                            Remote
+                          </span>
+                        )}
+                        {(job.salary_min || job.salary_max) && (
+                          <span className="inline-flex items-center gap-1">
+                            <CurrencyDollar className="w-3 h-3" />
+                            {job.salary_min && job.salary_max
+                              ? `$${job.salary_min.toLocaleString()} - $${job.salary_max.toLocaleString()}`
+                              : job.salary_min
+                              ? `From $${job.salary_min.toLocaleString()}`
+                              : `Up to $${job.salary_max?.toLocaleString()}`}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
+                        {job.description}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Posted {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         {canManageRequests && (
@@ -530,6 +709,17 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {canEditCompany && (
+        <EditCompanyDialog
+          company={company}
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          onSaved={(updatedCompany) => {
+            setCompany(updatedCompany);
+          }}
+        />
+      )}
     </div>
   );
 }
