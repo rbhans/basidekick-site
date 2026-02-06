@@ -1,15 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
 import { MapPin, Users, Globe, ArrowLeft } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { UserAvatar } from "../shared/user-avatar";
 import { ROUTES } from "@/lib/routes";
-import { PointStackCompany } from "@/lib/types";
+import { PointStackCompany, PointStackCompanyJoinRequest } from "@/lib/types";
+import { useAuth } from "@/hooks/use-auth";
 import * as api from "../pointstack-api";
 
 interface CompanyViewProps {
@@ -17,24 +28,186 @@ interface CompanyViewProps {
 }
 
 export function PointStackCompanyView({ slug }: CompanyViewProps) {
+  const { user } = useAuth();
   const [company, setCompany] = useState<PointStackCompany | null>(null);
   const [loading, setLoading] = useState(true);
+  const [joinRequest, setJoinRequest] = useState<PointStackCompanyJoinRequest | null>(null);
+  const [joinDialogOpen, setJoinDialogOpen] = useState(false);
+  const [joinMessage, setJoinMessage] = useState("");
+  const [joinSubmitting, setJoinSubmitting] = useState(false);
+  const [joinDialogError, setJoinDialogError] = useState<string | null>(null);
+  const [joinActionError, setJoinActionError] = useState<string | null>(null);
+  const [pendingRequests, setPendingRequests] = useState<PointStackCompanyJoinRequest[]>([]);
+  const [requestsLoading, setRequestsLoading] = useState(false);
+  const [requestsError, setRequestsError] = useState<string | null>(null);
+  const [reviewingRequestId, setReviewingRequestId] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCompany = async () => {
+  const currentUserMember = useMemo(() => {
+    if (!company || !user) return null;
+    return company.members?.find((member) => member.user_id === user.id) || null;
+  }, [company, user]);
+
+  const isMember = Boolean(currentUserMember);
+  const canManageRequests = Boolean(
+    user &&
+      company &&
+      (
+        company.owner_id === user.id ||
+        currentUserMember?.role === "owner" ||
+        currentUserMember?.role === "admin"
+      )
+  );
+  const showJoinActions = Boolean(user && company && !isMember && !canManageRequests);
+
+  const fetchCompany = useCallback(async (showLoading = true) => {
+    if (showLoading) {
       setLoading(true);
-      try {
-        const data = await api.fetchCompanyBySlug(slug);
-        setCompany(data);
-      } catch (error) {
-        console.error("Error fetching company:", error);
-      } finally {
+    }
+
+    try {
+      const data = await api.fetchCompanyBySlug(slug);
+      setCompany(data);
+    } catch (error) {
+      console.error("Error fetching company:", error);
+    } finally {
+      if (showLoading) {
         setLoading(false);
       }
-    };
-
-    fetchCompany();
+    }
   }, [slug]);
+
+  const fetchJoinStatus = useCallback(async (companyId: string) => {
+    if (!user) {
+      setJoinRequest(null);
+      return;
+    }
+
+    try {
+      const status = await api.getUserJoinRequestStatus(companyId);
+      setJoinRequest(status);
+    } catch (error) {
+      console.error("Error fetching join request status:", error);
+    }
+  }, [user]);
+
+  const fetchPendingRequests = useCallback(async (companyId: string) => {
+    setRequestsLoading(true);
+    setRequestsError(null);
+
+    try {
+      const requests = await api.fetchJoinRequests(companyId, "pending");
+      setPendingRequests(requests);
+    } catch (error) {
+      console.error("Error fetching join requests:", error);
+      setRequestsError("Failed to load join requests.");
+    } finally {
+      setRequestsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void fetchCompany();
+  }, [fetchCompany]);
+
+  useEffect(() => {
+    if (!company?.id || !showJoinActions) {
+      setJoinRequest(null);
+      return;
+    }
+    void fetchJoinStatus(company.id);
+  }, [company?.id, showJoinActions, fetchJoinStatus]);
+
+  useEffect(() => {
+    if (!company?.id || !canManageRequests) {
+      setPendingRequests([]);
+      setRequestsError(null);
+      return;
+    }
+    void fetchPendingRequests(company.id);
+  }, [company?.id, canManageRequests, fetchPendingRequests]);
+
+  const handleOpenJoinDialog = () => {
+    setJoinDialogError(null);
+    setJoinActionError(null);
+    setJoinDialogOpen(true);
+  };
+
+  const handleSubmitJoinRequest = async () => {
+    if (!company) return;
+
+    setJoinSubmitting(true);
+    setJoinDialogError(null);
+    setJoinActionError(null);
+
+    try {
+      const request = await api.requestToJoinCompany(
+        company.id,
+        joinMessage.trim() || undefined
+      );
+      setJoinRequest(request);
+      setJoinDialogOpen(false);
+      setJoinMessage("");
+    } catch (error) {
+      console.error("Error submitting join request:", error);
+      setJoinDialogError(
+        error instanceof Error ? error.message : "Failed to submit join request."
+      );
+    } finally {
+      setJoinSubmitting(false);
+    }
+  };
+
+  const handleCancelJoinRequest = async () => {
+    if (!joinRequest) return;
+
+    setJoinSubmitting(true);
+    setJoinActionError(null);
+
+    try {
+      await api.cancelJoinRequest(joinRequest.id);
+      setJoinRequest(null);
+    } catch (error) {
+      console.error("Error canceling join request:", error);
+      setJoinActionError("Failed to cancel join request.");
+    } finally {
+      setJoinSubmitting(false);
+    }
+  };
+
+  const handleApproveRequest = async (requestId: string) => {
+    if (!company) return;
+
+    setReviewingRequestId(requestId);
+    setRequestsError(null);
+
+    try {
+      await api.approveJoinRequest(requestId);
+      await fetchCompany(false);
+      await fetchPendingRequests(company.id);
+    } catch (error) {
+      console.error("Error approving join request:", error);
+      setRequestsError("Failed to approve join request.");
+    } finally {
+      setReviewingRequestId(null);
+    }
+  };
+
+  const handleRejectRequest = async (requestId: string) => {
+    if (!company) return;
+
+    setReviewingRequestId(requestId);
+    setRequestsError(null);
+
+    try {
+      await api.rejectJoinRequest(requestId);
+      await fetchPendingRequests(company.id);
+    } catch (error) {
+      console.error("Error rejecting join request:", error);
+      setRequestsError("Failed to reject join request.");
+    } finally {
+      setReviewingRequestId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -131,6 +304,44 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
             <p className="text-muted-foreground">{company.description}</p>
           </div>
         )}
+
+        {showJoinActions && (
+          <div className="mt-6 pt-6 border-t border-border">
+            <div className="flex flex-wrap items-center gap-2">
+              {joinRequest?.status === "pending" && (
+                <>
+                  <Badge variant="secondary">Request Pending</Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCancelJoinRequest}
+                    disabled={joinSubmitting}
+                  >
+                    {joinSubmitting ? "Canceling..." : "Cancel Request"}
+                  </Button>
+                </>
+              )}
+
+              {joinRequest?.status === "approved" && (
+                <Badge variant="secondary">Request Approved</Badge>
+              )}
+
+              {joinRequest?.status === "rejected" && (
+                <Badge variant="destructive">Request Declined</Badge>
+              )}
+
+              {!joinRequest && (
+                <Button onClick={handleOpenJoinDialog}>
+                  Request to Join
+                </Button>
+              )}
+            </div>
+
+            {joinActionError && (
+              <p className="mt-2 text-sm text-destructive">{joinActionError}</p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Tabs */}
@@ -139,6 +350,9 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
           <TabsTrigger value="team">Team ({company.members?.length || 0})</TabsTrigger>
           <TabsTrigger value="projects">Projects</TabsTrigger>
           <TabsTrigger value="jobs">Jobs</TabsTrigger>
+          {canManageRequests && (
+            <TabsTrigger value="requests">Requests ({pendingRequests.length})</TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="team" className="mt-6">
@@ -180,7 +394,142 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
             No open positions.
           </div>
         </TabsContent>
+
+        {canManageRequests && (
+          <TabsContent value="requests" className="mt-6">
+            {requestsLoading && (
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Skeleton key={index} className="h-28 rounded-lg" />
+                ))}
+              </div>
+            )}
+
+            {!requestsLoading && requestsError && (
+              <p className="text-sm text-destructive">{requestsError}</p>
+            )}
+
+            {!requestsLoading && !requestsError && pendingRequests.length === 0 && (
+              <div className="text-center py-12 text-muted-foreground">
+                No pending join requests.
+              </div>
+            )}
+
+            {!requestsLoading && !requestsError && pendingRequests.length > 0 && (
+              <div className="space-y-3">
+                {pendingRequests.map((request) => {
+                  const isReviewing = reviewingRequestId === request.id;
+                  const profileHref = request.user?.display_name
+                    ? ROUTES.POINTSTACK_PROFILE(request.user.display_name)
+                    : ROUTES.POINTSTACK;
+                  return (
+                    <div
+                      key={request.id}
+                      className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 p-4 border border-border rounded-lg"
+                    >
+                      <div className="flex items-start gap-3 min-w-0">
+                        <Link href={profileHref}>
+                          <UserAvatar
+                            displayName={request.user?.display_name || null}
+                            avatarUrl={request.user?.avatar_url}
+                            size="md"
+                          />
+                        </Link>
+                        <div className="min-w-0">
+                          <p className="font-medium truncate">
+                            {request.user?.display_name || "Anonymous"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Requested{" "}
+                            {formatDistanceToNow(new Date(request.created_at), {
+                              addSuffix: true,
+                            })}
+                          </p>
+                          {request.message && (
+                            <p className="mt-2 text-sm text-muted-foreground whitespace-pre-wrap">
+                              {request.message}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                          size="sm"
+                          onClick={() => handleApproveRequest(request.id)}
+                          disabled={isReviewing}
+                        >
+                          {isReviewing ? "Saving..." : "Approve"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRejectRequest(request.id)}
+                          disabled={isReviewing}
+                        >
+                          Decline
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </TabsContent>
+        )}
       </Tabs>
+
+      <Dialog
+        open={joinDialogOpen}
+        onOpenChange={(open) => {
+          setJoinDialogOpen(open);
+          if (!open) {
+            setJoinMessage("");
+            setJoinDialogError(null);
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Request to Join {company.name}</DialogTitle>
+            <DialogDescription>
+              Share a short note with the company team. This message is optional.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2 py-2">
+            <Textarea
+              placeholder="Introduce yourself and why you'd like to join..."
+              value={joinMessage}
+              onChange={(event) => setJoinMessage(event.target.value)}
+              rows={5}
+              maxLength={500}
+            />
+            <p className="text-xs text-muted-foreground text-right">
+              {joinMessage.length} / 500
+            </p>
+            {joinDialogError && (
+              <p className="text-sm text-destructive">{joinDialogError}</p>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setJoinDialogOpen(false);
+                setJoinDialogError(null);
+              }}
+              disabled={joinSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleSubmitJoinRequest} disabled={joinSubmitting}>
+              {joinSubmitting ? "Submitting..." : "Submit Request"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

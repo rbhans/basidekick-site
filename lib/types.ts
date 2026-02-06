@@ -679,6 +679,24 @@ export interface PointStackCompanyMember {
 
 export type PointStackCompanyMemberRole = "owner" | "admin" | "member";
 
+export type PointStackJoinRequestStatus = "pending" | "approved" | "rejected";
+
+export interface PointStackCompanyJoinRequest {
+  id: string;
+  company_id: string;
+  user_id: string;
+  message: string | null;
+  status: PointStackJoinRequestStatus;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  user?: { display_name: string | null; avatar_url: string | null };
+  reviewer?: { display_name: string | null; avatar_url: string | null };
+  company?: { name: string | null; slug: string | null } | null;
+}
+
 // User Follow relationship
 export interface PointStackUserFollow {
   follower_id: string;
