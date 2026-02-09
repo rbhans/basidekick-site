@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useWatch } from "react-hook-form";
 import { X } from "@phosphor-icons/react";
 import {
   Dialog,
@@ -19,12 +21,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { TagInput } from "../shared/tag-input";
 import { useAtlasAll } from "@/components/atlas/use-atlas-data";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { PointStackCompany, PointStackPost } from "@/lib/types";
-import { validateContent, validateTitle } from "@/lib/security";
+import {
+  editPostFormSchema,
+  EditPostFormValues,
+  NONE_COMPANY,
+} from "@/lib/schemas/pointstack-content";
 import * as api from "../pointstack-api";
 
 interface EditPostDialogProps {
@@ -46,7 +60,22 @@ const DOC_TYPES = [
 ];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const MAX_DOC_SIZE = 20 * 1024 * 1024;
-const NONE = "__none__";
+
+function getInitialValues(post: PointStackPost): EditPostFormValues {
+  return {
+    title: post.title,
+    content: post.content,
+    tags: post.tags || [],
+    equipmentIds: post.equipment_ids || [],
+    isShowcase: Boolean(post.is_showcase),
+    location: post.location || "",
+    completionDate: post.completion_date ? String(post.completion_date).slice(0, 10) : "",
+    squareFootage: post.square_footage ? String(post.square_footage) : "",
+    images: post.images || [],
+    documents: post.documents || [],
+    companyId: post.company_id || NONE_COMPANY,
+  };
+}
 
 export function EditPostDialog({
   post,
@@ -57,28 +86,32 @@ export function EditPostDialog({
   const { user } = useAuth();
   const { data: atlasData } = useAtlasAll();
 
-  const [title, setTitle] = useState(post.title);
-  const [content, setContent] = useState(post.content);
-  const [tags, setTags] = useState<string[]>(post.tags || []);
-  const [equipmentIds, setEquipmentIds] = useState<string[]>(post.equipment_ids || []);
   const [equipmentQuery, setEquipmentQuery] = useState("");
-  const [isShowcase, setIsShowcase] = useState(Boolean(post.is_showcase));
-  const [location, setLocation] = useState(post.location || "");
-  const [completionDate, setCompletionDate] = useState(
-    post.completion_date ? String(post.completion_date).slice(0, 10) : ""
-  );
-  const [squareFootage, setSquareFootage] = useState(
-    post.square_footage ? String(post.square_footage) : ""
-  );
-  const [images, setImages] = useState<string[]>(post.images || []);
-  const [documents, setDocuments] = useState<string[]>(post.documents || []);
   const [companies, setCompanies] = useState<PointStackCompany[]>([]);
-  const [companyId, setCompanyId] = useState(post.company_id || NONE);
-
-  const [submitting, setSubmitting] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [uploadingDocuments, setUploadingDocuments] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const form = useForm<EditPostFormValues>({
+    resolver: zodResolver(editPostFormSchema),
+    defaultValues: getInitialValues(post),
+  });
+
+  const equipmentIds = useWatch({
+    control: form.control,
+    name: "equipmentIds",
+    defaultValue: [],
+  });
+  const images = useWatch({
+    control: form.control,
+    name: "images",
+    defaultValue: [],
+  });
+  const documents = useWatch({
+    control: form.control,
+    name: "documents",
+    defaultValue: [],
+  });
 
   const brandById = useMemo(() => {
     return new Map(atlasData?.brands.map((b) => [b.id, b]) || []);
@@ -119,20 +152,8 @@ export function EditPostDialog({
   }, [atlasData, equipmentQuery, equipmentIds, brandById]);
 
   useEffect(() => {
-    setTitle(post.title);
-    setContent(post.content);
-    setTags(post.tags || []);
-    setEquipmentIds(post.equipment_ids || []);
-    setEquipmentQuery("");
-    setIsShowcase(Boolean(post.is_showcase));
-    setLocation(post.location || "");
-    setCompletionDate(post.completion_date ? String(post.completion_date).slice(0, 10) : "");
-    setSquareFootage(post.square_footage ? String(post.square_footage) : "");
-    setImages(post.images || []);
-    setDocuments(post.documents || []);
-    setCompanyId(post.company_id || NONE);
-    setError(null);
-  }, [post, open]);
+    form.reset(getInitialValues(post));
+  }, [post, open, form]);
 
   useEffect(() => {
     const loadCompanies = async () => {
@@ -149,13 +170,25 @@ export function EditPostDialog({
 
   const addEquipment = (id: string) => {
     if (!equipmentIds.includes(id)) {
-      setEquipmentIds((prev) => [...prev, id]);
+      form.setValue("equipmentIds", [...equipmentIds, id], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
       setEquipmentQuery("");
     }
   };
 
   const removeEquipment = (id: string) => {
-    setEquipmentIds((prev) => prev.filter((item) => item !== id));
+    form.setValue(
+      "equipmentIds",
+      equipmentIds.filter((item) => item !== id),
+      {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      }
+    );
   };
 
   const uploadFiles = async (
@@ -165,24 +198,24 @@ export function EditPostDialog({
     maxSize: number
   ) => {
     if (!user) {
-      setError("You must be signed in to upload files.");
+      setSubmitError("You must be signed in to upload files.");
       return [] as string[];
     }
 
     const supabase = createClient();
     if (!supabase) {
-      setError("Upload service is unavailable.");
+      setSubmitError("Upload service is unavailable.");
       return [] as string[];
     }
 
     const uploadedUrls: string[] = [];
     for (const file of Array.from(fileList)) {
       if (allowedTypes.length > 0 && file.type && !allowedTypes.includes(file.type)) {
-        setError(`Unsupported file type: ${file.name}`);
+        setSubmitError(`Unsupported file type: ${file.name}`);
         continue;
       }
       if (file.size > maxSize) {
-        setError(`File too large: ${file.name}`);
+        setSubmitError(`File too large: ${file.name}`);
         continue;
       }
 
@@ -195,7 +228,7 @@ export function EditPostDialog({
 
       if (uploadError) {
         console.error(uploadError);
-        setError(`Failed to upload ${file.name}`);
+        setSubmitError(`Failed to upload ${file.name}`);
         continue;
       }
 
@@ -210,11 +243,15 @@ export function EditPostDialog({
     const fileList = event.target.files;
     if (!fileList || fileList.length === 0) return;
 
-    setError(null);
+    setSubmitError(null);
     setUploadingImages(true);
     const urls = await uploadFiles(fileList, "images", IMAGE_TYPES, MAX_IMAGE_SIZE);
     if (urls.length > 0) {
-      setImages((prev) => [...prev, ...urls]);
+      form.setValue("images", [...images, ...urls], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
     }
     setUploadingImages(false);
     event.target.value = "";
@@ -224,64 +261,55 @@ export function EditPostDialog({
     const fileList = event.target.files;
     if (!fileList || fileList.length === 0) return;
 
-    setError(null);
+    setSubmitError(null);
     setUploadingDocuments(true);
     const urls = await uploadFiles(fileList, "documents", DOC_TYPES, MAX_DOC_SIZE);
     if (urls.length > 0) {
-      setDocuments((prev) => [...prev, ...urls]);
+      form.setValue("documents", [...documents, ...urls], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
     }
     setUploadingDocuments(false);
     event.target.value = "";
   };
 
-  const handleSave = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setError(null);
+  const onSubmit = async (values: EditPostFormValues) => {
+    setSubmitError(null);
 
-    const titleValidation = validateTitle(title);
-    if (!titleValidation.valid) {
-      setError(titleValidation.error || "Invalid title");
-      return;
-    }
+    const parsedSquareFootage = values.squareFootage.trim()
+      ? Number(values.squareFootage.trim())
+      : undefined;
 
-    const contentValidation = validateContent(content);
-    if (!contentValidation.valid) {
-      setError(contentValidation.error || "Invalid content");
-      return;
-    }
-
-    const parsedSquareFootage = squareFootage.trim() ? Number(squareFootage) : undefined;
-    if (parsedSquareFootage !== undefined && (!Number.isFinite(parsedSquareFootage) || parsedSquareFootage < 0)) {
-      setError("Square footage must be a positive number.");
-      return;
-    }
-
-    setSubmitting(true);
     try {
       const updatedPost = await api.updatePost(post.id, {
-        title: title.trim(),
-        content: content.trim(),
-        tags,
-        equipment_ids: equipmentIds,
-        is_showcase: post.post_type === "project" ? isShowcase : undefined,
-        cover_image_url: post.post_type === "project" ? images[0] || null : undefined,
-        images: post.post_type === "project" ? images : undefined,
-        documents: post.post_type === "project" ? documents : undefined,
-        location: post.post_type === "project" ? location.trim() || undefined : undefined,
-        completion_date: post.post_type === "project" ? completionDate || undefined : undefined,
+        title: values.title.trim(),
+        content: values.content.trim(),
+        tags: values.tags,
+        equipment_ids: values.equipmentIds,
+        is_showcase: post.post_type === "project" ? values.isShowcase : undefined,
+        cover_image_url: post.post_type === "project" ? values.images[0] || null : undefined,
+        images: post.post_type === "project" ? values.images : undefined,
+        documents: post.post_type === "project" ? values.documents : undefined,
+        location: post.post_type === "project" ? values.location.trim() || undefined : undefined,
+        completion_date: post.post_type === "project" ? values.completionDate || undefined : undefined,
         square_footage: post.post_type === "project" ? parsedSquareFootage : undefined,
-        company_id: post.post_type === "project" ? (companyId === NONE ? null : companyId) : undefined,
+        company_id:
+          post.post_type === "project"
+            ? values.companyId === NONE_COMPANY
+              ? null
+              : values.companyId
+            : undefined,
       });
 
       if (onSaved) {
         await onSaved(updatedPost);
       }
       onOpenChange(false);
-    } catch (saveError) {
-      console.error("Error updating post:", saveError);
-      setError("Failed to update post. Please try again.");
-    } finally {
-      setSubmitting(false);
+    } catch (error) {
+      console.error("Error updating post:", error);
+      setSubmitError("Failed to update post. Please try again.");
     }
   };
 
@@ -292,223 +320,286 @@ export function EditPostDialog({
           <DialogTitle>Edit {post.post_type === "project" ? "Project" : "Post"}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSave} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="edit-title">Title</Label>
-            <Input
-              id="edit-title"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              maxLength={200}
-              required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input {...field} id="edit-title" maxLength={200} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="edit-content">Content</Label>
-            <Textarea
-              id="edit-content"
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-              rows={8}
-              maxLength={50000}
-              required
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Content</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} id="edit-content" rows={8} maxLength={50000} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label>Tags</Label>
-            <TagInput value={tags} onChange={setTags} suggestions={[]} />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="equipment-search">Equipment</Label>
-            <Input
-              id="equipment-search"
-              value={equipmentQuery}
-              onChange={(event) => setEquipmentQuery(event.target.value)}
-              placeholder="Search models, brands, or IDs..."
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Tags</FormLabel>
+                  <TagInput value={field.value} onChange={field.onChange} suggestions={[]} />
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {equipmentMatches.length > 0 && (
-              <div className="border border-border rounded-md max-h-48 overflow-auto">
-                {equipmentMatches.map((model) => {
-                  const brandName = brandById.get(model.brand)?.name;
-                  return (
-                    <button
-                      key={model.id}
-                      type="button"
-                      className="w-full px-3 py-2 text-left hover:bg-muted text-sm"
-                      onClick={() => addEquipment(model.id)}
-                    >
-                      <span className="font-medium">{model.name}</span>
-                      {brandName && (
-                        <span className="text-muted-foreground ml-2">{brandName}</span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-            {selectedEquipmentNames.length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-1">
-                {selectedEquipmentNames.map((item) => (
-                  <span
-                    key={item.id}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded bg-muted text-sm"
-                  >
-                    {item.name}
-                    <button
-                      type="button"
-                      onClick={() => removeEquipment(item.id)}
-                      className="text-muted-foreground hover:text-foreground"
-                      aria-label={`Remove ${item.name}`}
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
 
-          {post.post_type === "project" && (
-            <>
-              <div className="flex items-center gap-2">
-                <input
-                  id="edit-showcase"
-                  type="checkbox"
-                  checked={isShowcase}
-                  onChange={(event) => setIsShowcase(event.target.checked)}
-                  className="size-4"
-                />
-                <Label htmlFor="edit-showcase">Show in showcase</Label>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-location">Location</Label>
-                  <Input
-                    id="edit-location"
-                    value={location}
-                    onChange={(event) => setLocation(event.target.value)}
-                    placeholder="Optional project location"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-completion-date">Completion Date</Label>
-                  <Input
-                    id="edit-completion-date"
-                    type="date"
-                    value={completionDate}
-                    onChange={(event) => setCompletionDate(event.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-square-footage">Square Footage</Label>
-                  <Input
-                    id="edit-square-footage"
-                    type="number"
-                    min={0}
-                    value={squareFootage}
-                    onChange={(event) => setSquareFootage(event.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Company</Label>
-                  <Select value={companyId} onValueChange={setCompanyId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="No company" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={NONE}>No company</SelectItem>
-                      {companies.map((company) => (
-                        <SelectItem key={company.id} value={company.id}>
-                          {company.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Images</Label>
-                <Input
-                  type="file"
-                  accept={IMAGE_TYPES.join(",")}
-                  multiple
-                  onChange={handleImageUpload}
-                  disabled={uploadingImages}
-                />
-                {images.length > 0 && (
-                  <div className="grid gap-2 md:grid-cols-2">
-                    {images.map((url) => (
-                      <div key={url} className="relative border border-border rounded-md overflow-hidden">
-                        <img src={url} alt="Project upload" className="w-full h-32 object-cover" />
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="destructive"
-                          className="absolute top-2 right-2"
-                          onClick={() => setImages((prev) => prev.filter((item) => item !== url))}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label>Documents</Label>
-                <Input
-                  type="file"
-                  accept={DOC_TYPES.join(",")}
-                  multiple
-                  onChange={handleDocumentUpload}
-                  disabled={uploadingDocuments}
-                />
-                {documents.length > 0 && (
-                  <div className="space-y-2">
-                    {documents.map((url) => (
-                      <div
-                        key={url}
-                        className="flex items-center justify-between rounded-md border border-border p-2 text-sm"
+            <div className="space-y-2">
+              <Label htmlFor="equipment-search">Equipment</Label>
+              <Input
+                id="equipment-search"
+                value={equipmentQuery}
+                onChange={(event) => setEquipmentQuery(event.target.value)}
+                placeholder="Search models, brands, or IDs..."
+              />
+              {equipmentMatches.length > 0 && (
+                <div className="border border-border rounded-md max-h-48 overflow-auto">
+                  {equipmentMatches.map((model) => {
+                    const brandName = brandById.get(model.brand)?.name;
+                    return (
+                      <button
+                        key={model.id}
+                        type="button"
+                        className="w-full px-3 py-2 text-left hover:bg-muted text-sm"
+                        onClick={() => addEquipment(model.id)}
                       >
-                        <a href={url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate">
-                          {url}
-                        </a>
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => setDocuments((prev) => prev.filter((item) => item !== url))}
+                        <span className="font-medium">{model.name}</span>
+                        {brandName && (
+                          <span className="text-muted-foreground ml-2">{brandName}</span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              {selectedEquipmentNames.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {selectedEquipmentNames.map((item) => (
+                    <span
+                      key={item.id}
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded bg-muted text-sm"
+                    >
+                      {item.name}
+                      <button
+                        type="button"
+                        onClick={() => removeEquipment(item.id)}
+                        className="text-muted-foreground hover:text-foreground"
+                        aria-label={`Remove ${item.name}`}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {post.post_type === "project" && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="isShowcase"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-2">
+                      <FormControl>
+                        <input
+                          id="edit-showcase"
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(event) => field.onChange(event.target.checked)}
+                          className="size-4"
+                        />
+                      </FormControl>
+                      <FormLabel htmlFor="edit-showcase">Show in showcase</FormLabel>
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <FormLabel>Location</FormLabel>
+                        <FormControl>
+                          <Input {...field} id="edit-location" placeholder="Optional project location" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="completionDate"
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <FormLabel>Completion Date</FormLabel>
+                        <FormControl>
+                          <Input {...field} id="edit-completion-date" type="date" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="squareFootage"
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <FormLabel>Square Footage</FormLabel>
+                        <FormControl>
+                          <Input {...field} id="edit-square-footage" type="number" min={0} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="companyId"
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <FormLabel>Company</FormLabel>
+                        <FormControl>
+                          <Select value={field.value} onValueChange={field.onChange}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="No company" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value={NONE_COMPANY}>No company</SelectItem>
+                              {companies.map((company) => (
+                                <SelectItem key={company.id} value={company.id}>
+                                  {company.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Images</Label>
+                  <Input
+                    type="file"
+                    accept={IMAGE_TYPES.join(",")}
+                    multiple
+                    onChange={handleImageUpload}
+                    disabled={uploadingImages}
+                  />
+                  {images.length > 0 && (
+                    <div className="grid gap-2 md:grid-cols-2">
+                      {images.map((url) => (
+                        <div key={url} className="relative border border-border rounded-md overflow-hidden">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={url} alt="Project upload" className="w-full h-32 object-cover" />
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="destructive"
+                            className="absolute top-2 right-2"
+                            onClick={() =>
+                              form.setValue(
+                                "images",
+                                images.filter((item) => item !== url),
+                                { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+                              )
+                            }
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Documents</Label>
+                  <Input
+                    type="file"
+                    accept={DOC_TYPES.join(",")}
+                    multiple
+                    onChange={handleDocumentUpload}
+                    disabled={uploadingDocuments}
+                  />
+                  {documents.length > 0 && (
+                    <div className="space-y-2">
+                      {documents.map((url) => (
+                        <div
+                          key={url}
+                          className="flex items-center justify-between rounded-md border border-border p-2 text-sm"
                         >
-                          Remove
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </>
-          )}
+                          <a href={url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline truncate">
+                            {url}
+                          </a>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() =>
+                              form.setValue(
+                                "documents",
+                                documents.filter((item) => item !== url),
+                                { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+                              )
+                            }
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
+            {submitError && <p className="text-sm text-destructive">{submitError}</p>}
 
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} disabled={submitting}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={submitting || uploadingImages || uploadingDocuments}>
-              {submitting ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => onOpenChange(false)}
+                disabled={form.formState.isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting || uploadingImages || uploadingDocuments}
+              >
+                {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

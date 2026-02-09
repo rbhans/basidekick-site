@@ -6,7 +6,19 @@ import { CircuitBackground } from "@/components/circuit-background";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  CaretDown,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   ChartLine,
   Wind,
   Plugs,
@@ -22,37 +34,32 @@ import {
 
 // Collapsible Section Component
 function Section({
+  sectionKey,
   title,
   icon,
   children,
-  defaultOpen = false,
 }: {
+  sectionKey: string;
   title: string;
   icon: React.ReactNode;
   children: React.ReactNode;
-  defaultOpen?: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="mb-3">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-card hover:bg-card/80 border border-border transition-all group"
+    <AccordionItem value={sectionKey} className="mb-3 border-0">
+      <AccordionTrigger
+        className="w-full p-4 bg-card hover:bg-card/80 border border-border transition-all group hover:no-underline"
       >
         <div className="flex items-center gap-3">
           <span className="text-primary">{icon}</span>
           <span className="font-semibold">{title}</span>
         </div>
-        <CaretDown
-          className={`size-5 text-primary transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-        />
-      </button>
-      {isOpen && (
+      </AccordionTrigger>
+      <AccordionContent className="pb-0">
         <div className="mt-1 grid grid-cols-1 lg:grid-cols-2 gap-3 p-4 bg-card/50 border border-border border-t-0">
           {children}
         </div>
-      )}
-    </div>
+      </AccordionContent>
+    </AccordionItem>
   );
 }
 
@@ -135,17 +142,18 @@ function CalcSelect({
   return (
     <div className="flex flex-col gap-1">
       <Label className="text-xs text-muted-foreground">{label}</Label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="bg-background border border-input px-2 py-1 text-sm focus:outline-none focus:border-primary h-8"
-      >
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className="w-full h-8 px-2 py-1 text-sm">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }
@@ -828,8 +836,9 @@ export function CalculatorsView() {
       {/* Calculators */}
       <section className="py-8">
         <div className="container mx-auto px-4 max-w-5xl">
+          <Accordion type="multiple" defaultValue={["sensor-scaling"]} className="w-full">
           {/* Sensor & Signal Scaling */}
-          <Section title="Sensor & Signal Scaling" icon={<ChartLine className="size-5" />} defaultOpen>
+          <Section sectionKey="sensor-scaling" title="Sensor & Signal Scaling" icon={<ChartLine className="size-5" />}>
             <Calculator title="Analog Input Scaling">
               <div className="grid grid-cols-2 gap-2">
                 <CalcInput label="Raw Min" value={analogRawMin} onChange={setAnalogRawMin} unit="mA/V" />
@@ -864,7 +873,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Airside Calculations */}
-          <Section title="Airside Calculations" icon={<Wind className="size-5" />}>
+          <Section sectionKey="airside" title="Airside Calculations" icon={<Wind className="size-5" />}>
             <Calculator title="Air Changes per Hour">
               <CalcInput label="Airflow" value={achCfm} onChange={setAchCfm} unit="CFM" />
               <div className="grid grid-cols-3 gap-2">
@@ -905,7 +914,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Network & Integration */}
-          <Section title="Network & Integration" icon={<Plugs className="size-5" />}>
+          <Section sectionKey="network" title="Network & Integration" icon={<Plugs className="size-5" />}>
             <Calculator title="BACnet Device Instance">
               <CalcInput label="Building Number" value={bacnetBuilding} onChange={setBacnetBuilding} />
               <CalcInput label="Floor Number" value={bacnetFloor} onChange={setBacnetFloor} />
@@ -945,7 +954,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Hydronic Systems */}
-          <Section title="Hydronic Systems" icon={<Drop className="size-5" />}>
+          <Section sectionKey="hydronic" title="Hydronic Systems" icon={<Drop className="size-5" />}>
             <Calculator title="Pump Head Pressure">
               <CalcInput label="Flow Rate" value={pumpGpm} onChange={setPumpGpm} unit="GPM" />
               <CalcInput label="Pipe Run Length" value={pumpLength} onChange={setPumpLength} unit="ft" />
@@ -981,7 +990,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Electrical & Power */}
-          <Section title="Electrical & Power" icon={<Lightning className="size-5" />}>
+          <Section sectionKey="electrical" title="Electrical & Power" icon={<Lightning className="size-5" />}>
             <Calculator title="3-Phase Power">
               <CalcInput label="Voltage" value={powerVolts} onChange={setPowerVolts} unit="V" />
               <CalcInput label="Current" value={powerAmps} onChange={setPowerAmps} unit="A" />
@@ -1009,7 +1018,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Psychrometrics */}
-          <Section title="Psychrometrics" icon={<Thermometer className="size-5" />}>
+          <Section sectionKey="psychrometrics" title="Psychrometrics" icon={<Thermometer className="size-5" />}>
             <Calculator title="Dew Point">
               <CalcInput label="Dry Bulb Temp" value={dpTemp} onChange={setDpTemp} unit="°F" />
               <CalcInput label="Relative Humidity" value={dpRh} onChange={setDpRh} unit="%" />
@@ -1037,7 +1046,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Scheduling & Time */}
-          <Section title="Scheduling & Time" icon={<Calendar className="size-5" />}>
+          <Section sectionKey="scheduling" title="Scheduling & Time" icon={<Calendar className="size-5" />}>
             <Calculator title="Optimal Stop Time">
               <CalcInput label="Coast Time" value={osCoastTime} onChange={setOsCoastTime} unit="min" />
               <CalcInput label="Occupancy End" value={osOccEnd} onChange={setOsOccEnd} type="time" />
@@ -1113,7 +1122,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Commissioning & Troubleshooting */}
-          <Section title="Commissioning & Troubleshooting" icon={<Wrench className="size-5" />}>
+          <Section sectionKey="commissioning" title="Commissioning & Troubleshooting" icon={<Wrench className="size-5" />}>
             <Calculator title="Sensor Drift Check">
               <CalcInput label="Expected Value" value={driftExpected} onChange={setDriftExpected} />
               <CalcInput label="Actual Reading" value={driftActual} onChange={setDriftActual} />
@@ -1137,7 +1146,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Energy & Equipment */}
-          <Section title="Energy & Equipment" icon={<Factory className="size-5" />}>
+          <Section sectionKey="energy" title="Energy & Equipment" icon={<Factory className="size-5" />}>
             <Calculator title="Chiller Efficiency">
               <CalcInput label="Power Input" value={chillerKw} onChange={setChillerKw} unit="kW" />
               <CalcInput label="Cooling Output" value={chillerTons} onChange={setChillerTons} unit="tons" />
@@ -1163,7 +1172,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Controls Math */}
-          <Section title="Controls Math" icon={<Function className="size-5" />}>
+          <Section sectionKey="controls-math" title="Controls Math" icon={<Function className="size-5" />}>
             <Calculator title="PID Tuning (Ziegler-Nichols)">
               <CalcInput label="Ultimate Gain (Ku)" value={pidKu} onChange={setPidKu} />
               <CalcInput label="Ultimate Period (Tu)" value={pidTu} onChange={setPidTu} unit="sec" />
@@ -1185,7 +1194,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Unit Conversions */}
-          <Section title="Unit Conversions" icon={<ArrowsClockwise className="size-5" />}>
+          <Section sectionKey="unit-conversions" title="Unit Conversions" icon={<ArrowsClockwise className="size-5" />}>
             <Calculator title="Pressure">
               <div className="flex gap-2">
                 <div className="flex-1">
@@ -1263,6 +1272,7 @@ export function CalculatorsView() {
               </div>
             </Calculator>
           </Section>
+          </Accordion>
         </div>
       </section>
     </div>

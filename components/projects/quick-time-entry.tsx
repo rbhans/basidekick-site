@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, Plus, Timer, CheckCircle, XCircle } from "@phosphor-icons/react";
+import { Clock, Plus, Timer } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useProjects, useTimeEntries } from "./project-hooks";
 import { useAuth } from "@/components/providers/auth-provider";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface QuickTimeEntryProps {
   className?: string;
@@ -19,7 +20,6 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [formState, setFormState] = useState({
     project_id: "",
     description: "",
@@ -41,7 +41,6 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
     if (duration <= 0) return;
 
     setIsSubmitting(true);
-    setFeedback(null);
     try {
       await addTimeEntry({
         user_id: user.id,
@@ -52,9 +51,7 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
         date: formState.date,
       });
 
-      // Show success feedback
-      setFeedback({ type: "success", message: "Time logged successfully" });
-      setTimeout(() => setFeedback(null), 3000);
+      toast.success("Time logged successfully");
 
       // Reset form but keep date and project for quick subsequent entries
       setFormState((prev) => ({
@@ -65,7 +62,7 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
       }));
     } catch (error) {
       console.error("Failed to log time:", error);
-      setFeedback({ type: "error", message: "Failed to log time. Please try again." });
+      toast.error("Failed to log time. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -214,25 +211,6 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
           <Clock className="mr-2 size-4" />
           {isSubmitting ? "Logging..." : "Log Time"}
         </Button>
-
-        {/* Feedback Message */}
-        {feedback && (
-          <div
-            className={cn(
-              "flex items-center gap-2 text-sm p-2 rounded",
-              feedback.type === "success"
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                : "bg-destructive/10 text-destructive"
-            )}
-          >
-            {feedback.type === "success" ? (
-              <CheckCircle className="size-4" />
-            ) : (
-              <XCircle className="size-4" />
-            )}
-            {feedback.message}
-          </div>
-        )}
       </div>
     </div>
   );

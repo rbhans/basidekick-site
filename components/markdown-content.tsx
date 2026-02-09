@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
 import type { Components } from "react-markdown";
 
 // Mermaid initialized flag
@@ -165,7 +166,7 @@ const markdownComponents: Components = {
     const isInline = !className;
 
     // Check if this is a mermaid code block
-    if (className === "language-mermaid") {
+    if (className?.includes("language-mermaid")) {
       const code = String(children).replace(/\n$/, "");
       return <MermaidDiagram code={code} />;
     }
@@ -211,6 +212,7 @@ export function MarkdownContent({ content, className = "" }: MarkdownContentProp
     <div className={`prose prose-sm max-w-none dark:prose-invert ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[[rehypeHighlight, { ignoreMissing: true }]]}
         components={markdownComponents}
       >
         {content}

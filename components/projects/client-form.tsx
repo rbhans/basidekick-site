@@ -1,14 +1,29 @@
 "use client";
 
-import { useMemo, useState, useRef } from "react";
-import { X, Plus, Check, Copy, Upload, Spinner, Image as ImageIcon } from "@phosphor-icons/react";
+import { useRef, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
+import { X, Plus, Copy, Spinner, Image as ImageIcon } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useClients } from "./project-hooks";
 import { useAuth } from "@/components/providers/auth-provider";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 import type { PSKClient, PSKClientContact } from "@/lib/types";
+import {
+  clientFormSchema,
+  type ClientFormValues,
+} from "@/lib/schemas/projects";
 
 interface ClientFormProps {
   client?: PSKClient;
@@ -16,92 +31,105 @@ interface ClientFormProps {
   onCancel: () => void;
 }
 
+const hexColorRegex = /^#[0-9A-Fa-f]{6}$/;
+
+function getDefaultValues(client?: PSKClient): ClientFormValues {
+  return {
+    name: client?.name ?? "",
+    notes: client?.notes ?? "",
+    logo: client?.logo ?? "",
+    contacts:
+      client?.contacts?.length
+        ? client.contacts.map((contact) => ({
+            name: contact.name ?? "",
+            email: contact.email ?? "",
+            phone: contact.phone ?? "",
+          }))
+        : [{ name: "", email: "", phone: "" }],
+    colorPalette: client?.color_palette ?? [],
+  };
+}
+
 export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
   const { addClient, updateClient } = useClients();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [formState, setFormState] = useState(() => ({
-    name: client?.name ?? "",
-    notes: client?.notes ?? "",
-    logo: client?.logo ?? "",
-    contacts:
-      client?.contacts ??
-      ([{ name: "", email: "", phone: "" }] as PSKClientContact[]),
-    colorPalette: client?.color_palette ?? [],
-  }));
-
   const [newColor, setNewColor] = useState("#1E1E1E");
-  const [copiedColor, setCopiedColor] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
 
-  const contactsValid = useMemo(
-    () => formState.contacts.some((contact) => contact.name.trim().length > 0),
-    [formState.contacts]
-  );
+  const form = useForm<ClientFormValues>({
+    resolver: zodResolver(clientFormSchema),
+    defaultValues: getDefaultValues(client),
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "contacts",
+  });
+
+  const colorPalette = useWatch({
+    control: form.control,
+    name: "colorPalette",
+    defaultValue: [],
+  });
+  const logo = useWatch({
+    control: form.control,
+    name: "logo",
+    defaultValue: "",
+  });
 
   const handleAddContact = () => {
-    setFormState((prev) => ({
-      ...prev,
-      contacts: [...prev.contacts, { name: "", email: "", phone: "" }],
-    }));
+    append({ name: "", email: "", phone: "" });
   };
 
   const handleRemoveContact = (index: number) => {
-    if (formState.contacts.length === 1) {
-      alert("At least one contact is required");
+    if (fields.length === 1) {
+      toast.error("At least one contact is required");
       return;
     }
 
-    setFormState((prev) => ({
-      ...prev,
-      contacts: prev.contacts.filter((_, idx) => idx !== index),
-    }));
-  };
-
-  const handleUpdateContact = (
-    index: number,
-    field: keyof PSKClientContact,
-    value: string
-  ) => {
-    setFormState((prev) => ({
-      ...prev,
-      contacts: prev.contacts.map((contact, idx) =>
-        idx === index ? { ...contact, [field]: value } : contact
-      ),
-    }));
+    remove(index);
+    form.trigger("contacts");
   };
 
   const handleAddColor = () => {
-    if (!/^#[0-9A-Fa-f]{6}$/.test(newColor)) {
-      alert("Please use a 6-digit hex value (e.g. #1A1A1A)");
+    if (!hexColorRegex.test(newColor)) {
+      toast.error("Please use a 6-digit hex value (e.g. #1A1A1A)");
       return;
     }
 
-    setFormState((prev) => ({
-      ...prev,
-      colorPalette: prev.colorPalette.includes(newColor)
-        ? prev.colorPalette
-        : [...prev.colorPalette, newColor],
-    }));
+    if (!colorPalette.includes(newColor)) {
+      form.setValue("colorPalette", [...colorPalette, newColor], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+    }
+
     setNewColor("#1E1E1E");
   };
 
   const handleRemoveColor = (index: number) => {
-    setFormState((prev) => ({
-      ...prev,
-      colorPalette: prev.colorPalette.filter((_, idx) => idx !== index),
-    }));
+    form.setValue(
+      "colorPalette",
+      colorPalette.filter((_, idx) => idx !== index),
+      {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      }
+    );
   };
 
   const handleCopyColor = async (color: string) => {
     try {
       await navigator.clipboard.writeText(color);
-      setCopiedColor(color);
-      setTimeout(() => setCopiedColor(null), 1500);
+      toast.success("Color copied");
     } catch (error) {
       console.error("Failed to copy color", error);
+      toast.error("Failed to copy color");
     }
   };
 
@@ -109,14 +137,18 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
     const file = event.target.files?.[0];
     if (!file || !user) return;
 
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "image/svg+xml",
+    ];
     if (!allowedTypes.includes(file.type)) {
       setUploadError("Please upload a valid image file (JPG, PNG, GIF, WebP, or SVG)");
       return;
     }
 
-    // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
       setUploadError("Image must be less than 5MB");
       return;
@@ -129,22 +161,24 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
       const supabase = createClient();
       if (!supabase) throw new Error("Supabase client not available");
 
-      // Generate unique filename
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('psk-assets')
+      const { error: uploadErrorResult } = await supabase.storage
+        .from("psk-assets")
         .upload(fileName, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadErrorResult) throw uploadErrorResult;
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('psk-assets')
-        .getPublicUrl(fileName);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("psk-assets").getPublicUrl(fileName);
 
-      setFormState((prev) => ({ ...prev, logo: publicUrl }));
+      form.setValue("logo", publicUrl, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
     } catch (error) {
       console.error("Failed to upload logo:", error);
       setUploadError("Failed to upload image. Please try again.");
@@ -154,51 +188,45 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
   };
 
   const handleRemoveLogo = () => {
-    setFormState((prev) => ({ ...prev, logo: "" }));
+    form.setValue("logo", "", {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  const handleSubmit = async () => {
-    if (!formState.name.trim()) {
-      alert("Client name is required");
-      return;
-    }
-
-    if (!contactsValid) {
-      alert("Please provide at least one contact with a name");
-      return;
-    }
-
+  const onSubmit = async (values: ClientFormValues) => {
     if (!user?.id) {
-      alert("Unable to save - please sign in");
+      toast.error("Unable to save - please sign in");
       return;
     }
 
-    const filteredContacts = formState.contacts.filter((contact) =>
-      contact.name.trim()
-    );
+    const filteredContacts = values.contacts
+      .map((contact) => ({
+        name: contact.name.trim(),
+        email: contact.email.trim(),
+        phone: contact.phone.trim(),
+      }))
+      .filter((contact) => contact.name);
+
+    const payload = {
+      name: values.name.trim(),
+      contacts: filteredContacts as PSKClientContact[],
+      logo: values.logo.trim() || null,
+      color_palette: values.colorPalette.length > 0 ? values.colorPalette : null,
+      notes: values.notes.trim() || null,
+    };
 
     if (client) {
-      await updateClient(client.id, {
-        name: formState.name,
-        contacts: filteredContacts,
-        logo: formState.logo.trim() || null,
-        color_palette:
-          formState.colorPalette.length > 0 ? formState.colorPalette : null,
-        notes: formState.notes || null,
-      });
+      await updateClient(client.id, payload);
     } else {
       await addClient({
         user_id: user.id,
         company_id: null,
-        name: formState.name,
-        contacts: filteredContacts,
-        logo: formState.logo.trim() || null,
-        color_palette:
-          formState.colorPalette.length > 0 ? formState.colorPalette : null,
-        notes: formState.notes || null,
+        ...payload,
       });
     }
 
@@ -206,230 +234,261 @@ export function ClientForm({ client, onSave, onCancel }: ClientFormProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <div>
-          <label className="mb-1 block text-sm font-medium">
-            Client Name *
-          </label>
-          <Input
-            placeholder="Enter client name"
-            value={formState.name}
-            onChange={(event) =>
-              setFormState((prev) => ({ ...prev, name: event.target.value }))
-            }
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-4">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Client Name *</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter client name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">Logo</label>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
-            onChange={handleLogoUpload}
-            className="hidden"
-            id="logo-upload"
-          />
-          {formState.logo ? (
-            <div className="flex items-center gap-3 p-3 border border-border bg-muted/50">
-              <div className="size-16 border border-border bg-background flex items-center justify-center overflow-hidden flex-shrink-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={formState.logo}
-                  alt="Client logo preview"
-                  className="max-h-full max-w-full object-contain"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Logo uploaded</p>
-                <p className="text-xs text-muted-foreground">Click remove to change</p>
-              </div>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={handleRemoveLogo}
-                className="text-destructive hover:text-destructive"
-              >
-                <X className="size-4" />
-              </Button>
-            </div>
-          ) : (
-            <label
-              htmlFor="logo-upload"
-              className="flex flex-col items-center justify-center gap-2 p-6 border border-dashed border-border cursor-pointer hover:bg-muted/50 transition-colors"
-            >
-              {isUploading ? (
-                <>
-                  <Spinner className="size-8 text-muted-foreground animate-spin" />
-                  <span className="text-sm text-muted-foreground">Uploading...</span>
-                </>
-              ) : (
-                <>
-                  <ImageIcon className="size-8 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Click to upload logo
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    JPG, PNG, GIF, WebP, SVG (max 5MB)
-                  </span>
-                </>
-              )}
-            </label>
-          )}
-          {uploadError && (
-            <p className="mt-2 text-sm text-destructive">{uploadError}</p>
-          )}
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">Notes</label>
-          <Textarea
-            placeholder="Additional context, reference links, or quick notes"
-            value={formState.notes}
-            onChange={(event) =>
-              setFormState((prev) => ({ ...prev, notes: event.target.value }))
-            }
-            rows={3}
-          />
-        </div>
-      </div>
 
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Contacts *</h3>
-          <Button variant="outline" size="sm" onClick={handleAddContact}>
-            <Plus className="mr-1 size-4" />
-            Add Contact
-          </Button>
-        </div>
-        <div className="space-y-3">
-          {formState.contacts.map((contact, index) => (
-            <div key={index} className="space-y-3 border border-border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">
-                  Contact {index + 1}
-                </span>
-                {formState.contacts.length > 1 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveContact(index)}
-                    className="h-7 gap-1 px-2 text-muted-foreground"
+          <FormField
+            control={form.control}
+            name="logo"
+            render={() => (
+              <FormItem>
+                <FormLabel>Logo</FormLabel>
+                <FormControl>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                    id="logo-upload"
+                  />
+                </FormControl>
+
+                {logo ? (
+                  <div className="flex items-center gap-3 border border-border bg-muted/50 p-3">
+                    <div className="flex size-16 flex-shrink-0 items-center justify-center overflow-hidden border border-border bg-background">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={logo}
+                        alt="Client logo preview"
+                        className="max-h-full max-w-full object-contain"
+                        onError={(event) => {
+                          (event.target as HTMLImageElement).style.display = "none";
+                        }}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">Logo uploaded</p>
+                      <p className="text-xs text-muted-foreground">Click remove to change</p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleRemoveLogo}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <label
+                    htmlFor="logo-upload"
+                    className="flex cursor-pointer flex-col items-center justify-center gap-2 border border-dashed border-border p-6 transition-colors hover:bg-muted/50"
                   >
-                    <X className="size-3" />
-                    Remove
-                  </Button>
+                    {isUploading ? (
+                      <>
+                        <Spinner className="size-8 animate-spin text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <ImageIcon className="size-8 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Click to upload logo</span>
+                        <span className="text-xs text-muted-foreground">
+                          JPG, PNG, GIF, WebP, SVG (max 5MB)
+                        </span>
+                      </>
+                    )}
+                  </label>
                 )}
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-medium">Name *</label>
-                <Input
-                  value={contact.name}
-                  onChange={(event) =>
-                    handleUpdateContact(index, "name", event.target.value)
-                  }
-                  placeholder="Jane Doe"
-                />
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <label className="mb-1 block text-xs font-medium">
-                    Email
-                  </label>
-                  <Input
-                    type="email"
-                    value={contact.email ?? ""}
-                    onChange={(event) =>
-                      handleUpdateContact(index, "email", event.target.value)
-                    }
-                    placeholder="jane@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-medium">
-                    Phone
-                  </label>
-                  <Input
-                    value={contact.phone ?? ""}
-                    onChange={(event) =>
-                      handleUpdateContact(index, "phone", event.target.value)
-                    }
-                    placeholder="(555) 123-4567"
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
 
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Brand Colors</h3>
+                {uploadError && <p className="text-sm text-destructive">{uploadError}</p>}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Notes</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Additional context, reference links, or quick notes"
+                    rows={3}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-        <div className="flex gap-2">
-          <input
-            type="color"
-            value={newColor}
-            onChange={(event) => setNewColor(event.target.value)}
-            className="h-10 w-16 cursor-pointer border border-border"
-          />
-          <Input
-            value={newColor}
-            onChange={(event) => setNewColor(event.target.value)}
-            className="font-mono"
-            placeholder="#1A1A1A"
-          />
-          <Button type="button" onClick={handleAddColor}>
-            <Plus className="mr-1 size-4" />
-            Add
+
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium">Contacts *</h3>
+            <Button type="button" variant="outline" size="sm" onClick={handleAddContact}>
+              <Plus className="mr-1 size-4" />
+              Add Contact
+            </Button>
+          </div>
+
+          <div className="space-y-3">
+            {fields.map((fieldItem, index) => (
+              <div key={fieldItem.id} className="space-y-3 border border-border p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Contact {index + 1}
+                  </span>
+                  {fields.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveContact(index)}
+                      className="h-7 gap-1 px-2 text-muted-foreground"
+                    >
+                      <X className="size-3" />
+                      Remove
+                    </Button>
+                  )}
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name={`contacts.${index}.name`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Name *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Jane Doe" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name={`contacts.${index}.email`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Email</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="jane@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`contacts.${index}.phone`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Phone</FormLabel>
+                        <FormControl>
+                          <Input placeholder="(555) 123-4567" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {typeof form.formState.errors.contacts?.message === "string" && (
+            <p className="text-sm text-destructive">{form.formState.errors.contacts.message}</p>
+          )}
+        </section>
+
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium">Brand Colors</h3>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="color"
+              value={newColor}
+              onChange={(event) => setNewColor(event.target.value)}
+              className="h-10 w-16 cursor-pointer border border-border"
+            />
+            <Input
+              value={newColor}
+              onChange={(event) => setNewColor(event.target.value)}
+              className="font-mono"
+              placeholder="#1A1A1A"
+            />
+            <Button type="button" onClick={handleAddColor}>
+              <Plus className="mr-1 size-4" />
+              Add
+            </Button>
+          </div>
+
+          {colorPalette.length > 0 && (
+            <ul className="space-y-2">
+              {colorPalette.map((colorItem, index) => (
+                <li key={`${colorItem}-${index}`} className="flex items-center gap-2">
+                  <span
+                    className="h-10 w-10 border border-border"
+                    style={{ backgroundColor: colorItem }}
+                  />
+                  <code className="flex-1 text-sm">{colorItem}</code>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleCopyColor(colorItem)}
+                    aria-label="Copy color"
+                  >
+                    <Copy className="size-4 text-muted-foreground" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRemoveColor(index)}
+                    aria-label="Remove color"
+                  >
+                    <X className="size-4 text-muted-foreground" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="ghost" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            Save Client
           </Button>
         </div>
-
-        {formState.colorPalette.length > 0 && (
-          <ul className="space-y-2">
-            {formState.colorPalette.map((color, index) => (
-              <li key={color} className="flex items-center gap-2">
-                <span
-                  className="h-10 w-10 border border-border"
-                  style={{ backgroundColor: color }}
-                />
-                <code className="flex-1 text-sm">{color}</code>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleCopyColor(color)}
-                  aria-label="Copy color"
-                >
-                  {copiedColor === color ? (
-                    <Check className="size-4 text-green-500" />
-                  ) : (
-                    <Copy className="size-4 text-muted-foreground" />
-                  )}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleRemoveColor(index)}
-                  aria-label="Remove color"
-                >
-                  <X className="size-4 text-muted-foreground" />
-                </Button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <div className="flex justify-end gap-2">
-        <Button variant="ghost" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit}>Save Client</Button>
-      </div>
-    </div>
+      </form>
+    </Form>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 
 import { ReactNode, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
@@ -11,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -19,13 +20,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAuth } from "@/hooks/use-auth";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   CreatePointStackResourceInput,
-  PointStackResourceCategory,
   PointStackResourceListing,
 } from "@/lib/types";
-import { validateContent, validateTitle } from "@/lib/security";
+import {
+  createResourceFormSchema,
+  CreateResourceFormValues,
+  RESOURCE_CATEGORIES,
+} from "@/lib/schemas/pointstack-content";
 import * as api from "../pointstack-api";
 
 interface CreateResourceDialogProps {
@@ -33,91 +44,50 @@ interface CreateResourceDialogProps {
   onCreated?: (resource: PointStackResourceListing) => void | Promise<void>;
 }
 
-const CATEGORIES: { value: PointStackResourceCategory; label: string }[] = [
-  { value: "template", label: "Template" },
-  { value: "script", label: "Script" },
-  { value: "document", label: "Document" },
-  { value: "guide", label: "Guide" },
-  { value: "tool", label: "Tool" },
-  { value: "other", label: "Other" },
-];
+const CATEGORY_LABELS: Record<(typeof RESOURCE_CATEGORIES)[number], string> = {
+  template: "Template",
+  script: "Script",
+  document: "Document",
+  guide: "Guide",
+  tool: "Tool",
+  other: "Other",
+};
+
+const defaultValues: CreateResourceFormValues = {
+  title: "",
+  description: "",
+  category: "template",
+  fileUrl: "",
+  externalLink: "",
+  isFree: true,
+};
 
 export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialogProps) {
-  const { user } = useAuth();
   const [open, setOpen] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState<PointStackResourceCategory>("template");
-  const [fileUrl, setFileUrl] = useState("");
-  const [externalLink, setExternalLink] = useState("");
-  const [isFree, setIsFree] = useState(true);
+  const form = useForm<CreateResourceFormValues>({
+    resolver: zodResolver(createResourceFormSchema),
+    defaultValues,
+  });
 
   const resetForm = () => {
-    setTitle("");
-    setDescription("");
-    setCategory("template");
-    setFileUrl("");
-    setExternalLink("");
-    setIsFree(true);
-    setError(null);
+    form.reset(defaultValues);
+    setSubmitError(null);
   };
 
-  const validateOptionalUrl = (value: string): boolean => {
-    if (!value.trim()) return true;
-    try {
-      const parsed = new URL(value.trim());
-      return parsed.protocol === "http:" || parsed.protocol === "https:";
-    } catch {
-      return false;
-    }
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setError(null);
-
-    if (!title.trim()) {
-      setError("Title is required.");
-      return;
-    }
-    const titleValidation = validateTitle(title);
-    if (!titleValidation.valid) {
-      setError(titleValidation.error || "Invalid title.");
-      return;
-    }
-    if (description.trim()) {
-      const descriptionValidation = validateContent(description);
-      if (!descriptionValidation.valid) {
-        setError(descriptionValidation.error || "Invalid description.");
-        return;
-      }
-    }
-    if (!fileUrl.trim() && !externalLink.trim()) {
-      setError("Provide either a file URL or an external link.");
-      return;
-    }
-    if (!validateOptionalUrl(fileUrl)) {
-      setError("File URL must be a valid http/https URL.");
-      return;
-    }
-    if (!validateOptionalUrl(externalLink)) {
-      setError("External link must be a valid http/https URL.");
-      return;
-    }
+  const onSubmit = async (values: CreateResourceFormValues) => {
+    setSubmitError(null);
 
     const input: CreatePointStackResourceInput = {
-      title: title.trim(),
-      description: description.trim() || undefined,
-      category,
-      file_url: fileUrl.trim() || undefined,
-      external_link: externalLink.trim() || undefined,
-      is_free: isFree,
+      title: values.title.trim(),
+      description: values.description.trim() || undefined,
+      category: values.category,
+      file_url: values.fileUrl.trim() || undefined,
+      external_link: values.externalLink.trim() || undefined,
+      is_free: values.isFree,
     };
 
-    setSubmitting(true);
     try {
       const resource = await api.createResource(input);
       if (onCreated) {
@@ -125,11 +95,9 @@ export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialo
       }
       setOpen(false);
       resetForm();
-    } catch (submitError) {
-      console.error("Error creating resource:", submitError);
-      setError("Failed to share resource. Please try again.");
-    } finally {
-      setSubmitting(false);
+    } catch (error) {
+      console.error("Error creating resource:", error);
+      setSubmitError("Failed to share resource. Please try again.");
     }
   };
 
@@ -147,96 +115,151 @@ export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialo
           <DialogTitle>Share a Resource</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="resource-title">Title</Label>
-            <Input
-              id="resource-title"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              placeholder="BACnet Startup Script Template"
-              maxLength={200}
-              required
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="resource-title"
+                      placeholder="BACnet Startup Script Template"
+                      maxLength={200}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="resource-description">Description (Optional)</Label>
-            <Textarea
-              id="resource-description"
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              placeholder="Describe what this resource is and how to use it..."
-              rows={4}
-              maxLength={10000}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      id="resource-description"
+                      placeholder="Describe what this resource is and how to use it..."
+                      rows={4}
+                      maxLength={10000}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Category</Label>
-              <Select value={category} onValueChange={(value) => setCategory(value as PointStackResourceCategory)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIES.map((cat) => (
-                    <SelectItem key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2 pt-8">
-              <input
-                id="resource-free"
-                type="checkbox"
-                checked={isFree}
-                onChange={(event) => setIsFree(event.target.checked)}
-                className="size-4"
+            <div className="grid gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {RESOURCE_CATEGORIES.map((cat) => (
+                            <SelectItem key={cat} value={cat}>
+                              {CATEGORY_LABELS[cat]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <Label htmlFor="resource-free">Free resource</Label>
+
+              <FormField
+                control={form.control}
+                name="isFree"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-2 pt-8">
+                    <FormControl>
+                      <input
+                        id="resource-free"
+                        type="checkbox"
+                        checked={field.value}
+                        onChange={(event) => field.onChange(event.target.checked)}
+                        className="size-4"
+                      />
+                    </FormControl>
+                    <FormLabel htmlFor="resource-free">Free resource</FormLabel>
+                  </FormItem>
+                )}
+              />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="resource-file-url">File URL</Label>
-            <Input
-              id="resource-file-url"
-              type="url"
-              value={fileUrl}
-              onChange={(event) => setFileUrl(event.target.value)}
-              placeholder="https://example.com/files/template.zip"
+            <FormField
+              control={form.control}
+              name="fileUrl"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>File URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="resource-file-url"
+                      type="url"
+                      placeholder="https://example.com/files/template.zip"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="resource-external-link">External Link</Label>
-            <Input
-              id="resource-external-link"
-              type="url"
-              value={externalLink}
-              onChange={(event) => setExternalLink(event.target.value)}
-              placeholder="https://github.com/user/bas-tools"
+            <FormField
+              control={form.control}
+              name="externalLink"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>External Link</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="resource-external-link"
+                      type="url"
+                      placeholder="https://github.com/user/bas-tools"
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground">
+                    Provide a file URL, an external link, or both.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <p className="text-xs text-muted-foreground">
-              Provide a file URL, an external link, or both.
-            </p>
-          </div>
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
+            {submitError && <p className="text-sm text-destructive">{submitError}</p>}
 
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" onClick={() => setOpen(false)} disabled={submitting}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={submitting || !title.trim()}>
-              {submitting ? "Sharing..." : "Share Resource"}
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setOpen(false)}
+                disabled={form.formState.isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Sharing..." : "Share Resource"}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

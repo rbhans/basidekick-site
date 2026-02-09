@@ -1,40 +1,73 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
+import {
+  equipmentFormSchema,
+  PROTOCOLS,
+  type EquipmentFormValues,
+} from "@/lib/schemas/equipment";
 import { useAtlasAll } from "./use-atlas-data";
 
-const PROTOCOLS = ["BACnet", "Modbus", "LON", "N2", "Other"];
+const SELECT_BRAND_PLACEHOLDER = "__select_brand__";
+const SELECT_TYPE_PLACEHOLDER = "__select_type__";
+
+const defaultValues: EquipmentFormValues = {
+  brandId: "",
+  brandName: "",
+  brandLogoUrl: "",
+  typeId: "",
+  typeName: "",
+  modelName: "",
+  modelNumbers: "",
+  protocols: [],
+  status: "current",
+  description: "",
+  manufacturerUrl: "",
+  imageUrl: "",
+};
 
 export function EquipmentAddForm() {
   const { user } = useAuth();
   const { data } = useAtlasAll();
 
-  const [brandId, setBrandId] = useState("");
-  const [brandName, setBrandName] = useState("");
-  const [brandLogoUrl, setBrandLogoUrl] = useState("");
-
-  const [typeId, setTypeId] = useState("");
-  const [typeName, setTypeName] = useState("");
-
-  const [modelName, setModelName] = useState("");
-  const [modelNumbers, setModelNumbers] = useState("");
-  const [protocols, setProtocols] = useState<string[]>([]);
-  const [status, setStatus] = useState<"current" | "discontinued">("current");
-  const [description, setDescription] = useState("");
-  const [manufacturerUrl, setManufacturerUrl] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const brandOptions = useMemo(() => data?.brands || [], [data]);
   const typeOptions = useMemo(() => data?.types || [], [data]);
+
+  const form = useForm<EquipmentFormValues>({
+    resolver: zodResolver(equipmentFormSchema),
+    defaultValues,
+  });
+
+  const brandId = form.watch("brandId");
+  const typeId = form.watch("typeId");
+  const protocols = form.watch("protocols");
+
   const isNewBrand = brandId === "new";
   const isNewType = typeId === "new";
 
@@ -51,97 +84,86 @@ export function EquipmentAddForm() {
 
     if (uploadError) throw uploadError;
 
-    const { data: { publicUrl } } = supabase.storage
-      .from("equipment-images")
-      .getPublicUrl(fileName);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("equipment-images").getPublicUrl(fileName);
 
     return publicUrl;
   };
 
-  const handleBrandLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleBrandLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file || !user) return;
     try {
       const url = await uploadFile(file, "brand-logos");
-      setBrandLogoUrl(url);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to upload logo.");
+      form.setValue("brandLogoUrl", url, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+      setSubmitError(null);
+    } catch (error) {
+      console.error(error);
+      setSubmitError("Failed to upload logo.");
     }
   };
 
-  const handleModelImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleModelImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (!file || !user) return;
     try {
       const url = await uploadFile(file, "model-images");
-      setImageUrl(url);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to upload image.");
+      form.setValue("imageUrl", url, {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
+      setSubmitError(null);
+    } catch (error) {
+      console.error(error);
+      setSubmitError("Failed to upload image.");
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const onSubmit = async (values: EquipmentFormValues) => {
+    setSubmitError(null);
+    setSuccess(false);
 
     if (!user) {
-      setError("You must be signed in to submit equipment.");
+      setSubmitError("You must be signed in to submit equipment.");
       return;
     }
-
-    if (!modelName.trim()) {
-      setError("Model name is required.");
-      return;
-    }
-
-    if (!brandId) {
-      setError("Brand is required.");
-      return;
-    }
-
-    if (isNewBrand && !brandName.trim()) {
-      setError("Brand name is required.");
-      return;
-    }
-
-    if (!typeId) {
-      setError("Type is required.");
-      return;
-    }
-
-    if (isNewType && !typeName.trim()) {
-      setError("Type name is required.");
-      return;
-    }
-
-    setSubmitting(true);
 
     try {
       const supabase = createClient();
       if (!supabase) throw new Error("Supabase not available");
 
-      const selectedBrand = brandOptions.find((b) => b.id === brandId);
-      const selectedType = typeOptions.find((t) => t.id === typeId);
+      const selectedBrand = brandOptions.find((brand) => brand.id === values.brandId);
+      const selectedType = typeOptions.find((type) => type.id === values.typeId);
 
       const payload = {
         user_id: user.id,
         type: "new_entry",
-        brand_id: isNewBrand ? null : brandId || null,
-        brand_name: isNewBrand ? brandName.trim() : selectedBrand?.name || brandId,
-        brand_logo_url: isNewBrand ? (brandLogoUrl || null) : null,
-        type_id: isNewType ? null : typeId || null,
-        type_name: isNewType ? typeName.trim() : selectedType?.name || typeId,
-        model_name: modelName.trim(),
-        model_numbers: modelNumbers
-          ? modelNumbers.split(",").map((n) => n.trim()).filter(Boolean)
+        brand_id: values.brandId === "new" ? null : values.brandId || null,
+        brand_name:
+          values.brandId === "new"
+            ? values.brandName.trim()
+            : selectedBrand?.name || values.brandId,
+        brand_logo_url: values.brandId === "new" ? values.brandLogoUrl.trim() || null : null,
+        type_id: values.typeId === "new" ? null : values.typeId || null,
+        type_name:
+          values.typeId === "new"
+            ? values.typeName.trim()
+            : selectedType?.name || values.typeId,
+        model_name: values.modelName.trim(),
+        model_numbers: values.modelNumbers
+          ? values.modelNumbers.split(",").map((n) => n.trim()).filter(Boolean)
           : [],
-        protocols,
-        model_status: status,
-        description: description.trim() || null,
-        manufacturer_url: manufacturerUrl.trim() || null,
-        image_url: imageUrl || null,
+        protocols: values.protocols,
+        model_status: values.status,
+        description: values.description.trim() || null,
+        manufacturer_url: values.manufacturerUrl.trim() || null,
+        image_url: values.imageUrl.trim() || null,
         review_status: "pending",
       };
 
@@ -151,23 +173,15 @@ export function EquipmentAddForm() {
 
       if (insertError) {
         console.error(insertError);
-        setError("Failed to submit. Please try again.");
-        setSubmitting(false);
+        setSubmitError("Failed to submit. Please try again.");
         return;
       }
 
       setSuccess(true);
-      setModelName("");
-      setModelNumbers("");
-      setProtocols([]);
-      setDescription("");
-      setManufacturerUrl("");
-      setImageUrl("");
-      setSubmitting(false);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to submit. Please try again.");
-      setSubmitting(false);
+      form.reset(defaultValues);
+    } catch (error) {
+      console.error(error);
+      setSubmitError("Failed to submit. Please try again.");
     }
   };
 
@@ -183,160 +197,269 @@ export function EquipmentAddForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {success && (
-        <div className="border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 p-3 text-sm">
-          Thanks! Your submission is under review.
-        </div>
-      )}
-
-      {error && (
-        <div className="border border-destructive/30 bg-destructive/10 text-destructive p-3 text-sm">
-          {error}
-        </div>
-      )}
-
-      <div className="space-y-2">
-        <Label>Brand *</Label>
-        <select
-          className="w-full border border-border bg-background px-3 py-2 text-sm"
-          value={brandId}
-          onChange={(e) => {
-            const value = e.target.value;
-            setBrandId(value);
-            if (value !== "new") {
-              setBrandName("");
-              setBrandLogoUrl("");
-            }
-          }}
-        >
-          <option value="">Select brand</option>
-          {brandOptions.map((brand) => (
-            <option key={brand.id} value={brand.id}>{brand.name}</option>
-          ))}
-          <option value="new">Add new brand</option>
-        </select>
-      </div>
-
-      {isNewBrand && (
-        <div className="space-y-3">
-          <div className="space-y-2">
-            <Label>Brand Name *</Label>
-            <Input value={brandName} onChange={(e) => setBrandName(e.target.value)} />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {success && (
+          <div className="border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 p-3 text-sm">
+            Thanks! Your submission is under review.
           </div>
-          <div className="space-y-2">
-            <Label>Brand Logo (optional)</Label>
-            <input type="file" accept="image/*" onChange={handleBrandLogoUpload} />
-            {brandLogoUrl && <p className="text-xs text-muted-foreground">Logo uploaded</p>}
+        )}
+
+        {submitError && (
+          <div className="border border-destructive/30 bg-destructive/10 text-destructive p-3 text-sm">
+            {submitError}
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="space-y-2">
-        <Label>Type *</Label>
-        <select
-          className="w-full border border-border bg-background px-3 py-2 text-sm"
-          value={typeId}
-          onChange={(e) => {
-            const value = e.target.value;
-            setTypeId(value);
-            if (value !== "new") {
-              setTypeName("");
-            }
-          }}
-        >
-          <option value="">Select type</option>
-          {typeOptions.map((type) => (
-            <option key={type.id} value={type.id}>{type.name}</option>
-          ))}
-          <option value="new">Add new type</option>
-        </select>
-      </div>
+        <FormField
+          control={form.control}
+          name="brandId"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Brand *</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value || undefined}
+                  onValueChange={(value) => {
+                    const nextBrandId = value === SELECT_BRAND_PLACEHOLDER ? "" : value;
+                    field.onChange(nextBrandId);
+                    if (nextBrandId !== "new") {
+                      form.setValue("brandName", "");
+                      form.setValue("brandLogoUrl", "");
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-full h-10 px-3 text-sm">
+                    <SelectValue placeholder="Select brand" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={SELECT_BRAND_PLACEHOLDER}>Select brand</SelectItem>
+                    {brandOptions.map((brand) => (
+                      <SelectItem key={brand.id} value={brand.id}>
+                        {brand.name}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="new">Add new brand</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      {isNewType && (
+        {isNewBrand && (
+          <div className="space-y-3">
+            <FormField
+              control={form.control}
+              name="brandName"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Brand Name *</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="space-y-2">
+              <Label>Brand Logo (optional)</Label>
+              <input type="file" accept="image/*" onChange={handleBrandLogoUpload} />
+              {form.watch("brandLogoUrl") && (
+                <p className="text-xs text-muted-foreground">Logo uploaded</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        <FormField
+          control={form.control}
+          name="typeId"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Type *</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value || undefined}
+                  onValueChange={(value) => {
+                    const nextTypeId = value === SELECT_TYPE_PLACEHOLDER ? "" : value;
+                    field.onChange(nextTypeId);
+                    if (nextTypeId !== "new") {
+                      form.setValue("typeName", "");
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-full h-10 px-3 text-sm">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={SELECT_TYPE_PLACEHOLDER}>Select type</SelectItem>
+                    {typeOptions.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.name}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="new">Add new type</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {isNewType && (
+          <FormField
+            control={form.control}
+            name="typeName"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>Type Name *</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        <FormField
+          control={form.control}
+          name="modelName"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Model Name *</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="modelNumbers"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Model Number(s)</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="Comma-separated" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="protocols"
+          render={() => (
+            <FormItem className="space-y-2">
+              <FormLabel>Protocols</FormLabel>
+              <FormControl>
+                <div className="flex flex-wrap gap-3">
+                  {PROTOCOLS.map((protocol) => (
+                    <label key={protocol} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={protocols.includes(protocol)}
+                        onChange={(event) => {
+                          const nextValue = event.target.checked
+                            ? [...protocols, protocol]
+                            : protocols.filter((item) => item !== protocol);
+                          form.setValue("protocols", nextValue, {
+                            shouldDirty: true,
+                            shouldTouch: true,
+                            shouldValidate: true,
+                          });
+                        }}
+                      />
+                      {protocol}
+                    </label>
+                  ))}
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Status</FormLabel>
+              <FormControl>
+                <div className="flex gap-4 text-sm">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="equipment-status"
+                      value="current"
+                      checked={field.value === "current"}
+                      onChange={() => field.onChange("current")}
+                    />
+                    Current
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="equipment-status"
+                      value="discontinued"
+                      checked={field.value === "discontinued"}
+                      onChange={() => field.onChange("discontinued")}
+                    />
+                    Discontinued
+                  </label>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea {...field} rows={4} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="manufacturerUrl"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Manufacturer URL</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="space-y-2">
-          <Label>Type Name *</Label>
-          <Input value={typeName} onChange={(e) => setTypeName(e.target.value)} />
+          <Label>Image (optional)</Label>
+          <input type="file" accept="image/*" onChange={handleModelImageUpload} />
+          {form.watch("imageUrl") && <p className="text-xs text-muted-foreground">Image uploaded</p>}
         </div>
-      )}
 
-      <div className="space-y-2">
-        <Label>Model Name *</Label>
-        <Input value={modelName} onChange={(e) => setModelName(e.target.value)} />
-      </div>
-
-      <div className="space-y-2">
-        <Label>Model Number(s)</Label>
-        <Input value={modelNumbers} onChange={(e) => setModelNumbers(e.target.value)} placeholder="Comma-separated" />
-      </div>
-
-      <div className="space-y-2">
-        <Label>Protocols</Label>
-        <div className="flex flex-wrap gap-3">
-          {PROTOCOLS.map((protocol) => (
-            <label key={protocol} className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={protocols.includes(protocol)}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setProtocols((prev) => [...prev, protocol]);
-                  } else {
-                    setProtocols((prev) => prev.filter((p) => p !== protocol));
-                  }
-                }}
-              />
-              {protocol}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label>Status</Label>
-        <div className="flex gap-4 text-sm">
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="status"
-              value="current"
-              checked={status === "current"}
-              onChange={() => setStatus("current")}
-            />
-            Current
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="status"
-              value="discontinued"
-              checked={status === "discontinued"}
-              onChange={() => setStatus("discontinued")}
-            />
-            Discontinued
-          </label>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label>Description</Label>
-        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} />
-      </div>
-
-      <div className="space-y-2">
-        <Label>Manufacturer URL</Label>
-        <Input value={manufacturerUrl} onChange={(e) => setManufacturerUrl(e.target.value)} />
-      </div>
-
-      <div className="space-y-2">
-        <Label>Image (optional)</Label>
-        <input type="file" accept="image/*" onChange={handleModelImageUpload} />
-        {imageUrl && <p className="text-xs text-muted-foreground">Image uploaded</p>}
-      </div>
-
-      <Button type="submit" disabled={submitting}>
-        {submitting ? "Submitting..." : "Submit for Review"}
-      </Button>
-    </form>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? "Submitting..." : "Submit for Review"}
+        </Button>
+      </form>
+    </Form>
   );
 }

@@ -1,131 +1,167 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { GoogleLogo } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { signInSchema, type SignInValues } from "@/lib/schemas/auth";
 
 interface SignInFormProps {
   onSuccess?: () => void;
 }
 
+const defaultValues: SignInValues = {
+  email: "",
+  password: "",
+};
+
 export function SignInForm({ onSuccess }: SignInFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
-  // Lazy initialize Supabase client to avoid SSR issues
   const supabase = useMemo(() => createClient(), []);
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const form = useForm<SignInValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues,
+  });
+
+  const onSubmit = async (values: SignInValues) => {
     setError(null);
+    setMessage(null);
 
     if (!supabase) {
       setError("Unable to connect to authentication service");
-      setLoading(false);
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
     });
 
-    if (error) {
-      setError(error.message);
-    } else {
-      setMessage("Signed in successfully!");
-      onSuccess?.();
+    if (signInError) {
+      setError(signInError.message);
+      return;
     }
-    setLoading(false);
+
+    setMessage("Signed in successfully!");
+    onSuccess?.();
   };
 
   const handleGoogleSignIn = async () => {
-    setLoading(true);
+    setOauthLoading(true);
     setError(null);
+    setMessage(null);
 
     if (!supabase) {
       setError("Unable to connect to authentication service");
-      setLoading(false);
+      setOauthLoading(false);
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
+    if (oauthError) {
+      setError(oauthError.message);
+      setOauthLoading(false);
     }
   };
 
+  const isBusy = form.formState.isSubmitting || oauthLoading;
+
   return (
-    <div className="p-8 max-w-sm mx-auto">
-      <h1 className="text-2xl font-semibold mb-4">Sign In</h1>
+    <div className="mx-auto max-w-sm p-8">
+      <h1 className="mb-4 text-2xl font-semibold">Sign In</h1>
 
       {error && (
-        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+        <div className="mb-4 border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </div>
       )}
 
       {message && (
-        <div className="mb-4 p-3 bg-primary/10 border border-primary/20 text-primary text-sm">
+        <div className="mb-4 border border-primary/20 bg-primary/10 p-3 text-sm text-primary">
           {message}
         </div>
       )}
 
-      <form onSubmit={handleEmailSignIn} className="space-y-4">
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            className="mt-2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={loading}
-            required
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    className="mt-2"
+                    disabled={isBusy}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <Link
-              href={ROUTES.FORGOT_PASSWORD}
-              className="text-xs text-muted-foreground hover:text-primary"
-            >
-              Forgot password?
-            </Link>
-          </div>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            className="mt-2"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-            required
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Password</FormLabel>
+                  <Link
+                    href={ROUTES.FORGOT_PASSWORD}
+                    className="text-xs text-muted-foreground hover:text-primary"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <FormControl>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    className="mt-2"
+                    disabled={isBusy}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Signing in..." : "Sign In"}
-        </Button>
-      </form>
+
+          <Button type="submit" className="w-full" disabled={isBusy}>
+            {form.formState.isSubmitting ? "Signing in..." : "Sign In"}
+          </Button>
+        </form>
+      </Form>
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
@@ -141,15 +177,15 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
         variant="outline"
         className="w-full"
         onClick={handleGoogleSignIn}
-        disabled={loading}
+        disabled={isBusy}
       >
-        <GoogleLogo className="size-4 mr-2" weight="bold" />
+        <GoogleLogo className="mr-2 size-4" weight="bold" />
         Google
       </Button>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
-        <Link href={ROUTES.SIGNUP} className="text-primary hover:underline underline-offset-4">
+        <Link href={ROUTES.SIGNUP} className="text-primary underline-offset-4 hover:underline">
           Sign up
         </Link>
       </p>

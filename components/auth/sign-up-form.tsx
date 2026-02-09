@@ -1,155 +1,190 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { GoogleLogo } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { signUpSchema, type SignUpValues } from "@/lib/schemas/auth";
 
 interface SignUpFormProps {
   onSuccess?: () => void;
 }
 
+const defaultValues: SignUpValues = {
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
+
 export function SignUpForm({ onSuccess }: SignUpFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
-  // Lazy initialize Supabase client to avoid SSR issues
   const supabase = useMemo(() => createClient(), []);
 
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<SignUpValues>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues,
+  });
+
+  const onSubmit = async (values: SignUpValues) => {
     setError(null);
+    setMessage(null);
 
     if (!supabase) {
       setError("Unable to connect to authentication service");
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    setLoading(true);
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
+    const { error: signUpError } = await supabase.auth.signUp({
+      email: values.email,
+      password: values.password,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
-    if (error) {
-      setError(error.message);
-    } else {
-      setMessage("Check your email for the confirmation link!");
-      onSuccess?.();
-    }
-    setLoading(false);
-  };
-
-  const handleGoogleSignUp = async () => {
-    setLoading(true);
-    setError(null);
-
-    if (!supabase) {
-      setError("Unable to connect to authentication service");
-      setLoading(false);
+    if (signUpError) {
+      setError(signUpError.message);
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    setMessage("Check your email for the confirmation link!");
+    onSuccess?.();
+  };
+
+  const handleGoogleSignUp = async () => {
+    setOauthLoading(true);
+    setError(null);
+    setMessage(null);
+
+    if (!supabase) {
+      setError("Unable to connect to authentication service");
+      setOauthLoading(false);
+      return;
+    }
+
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
+    if (oauthError) {
+      setError(oauthError.message);
+      setOauthLoading(false);
     }
   };
 
+  const isBusy = form.formState.isSubmitting || oauthLoading;
+
   return (
-    <div className="p-8 max-w-sm mx-auto">
-      <h1 className="text-2xl font-semibold mb-4">Sign Up</h1>
-      <p className="text-muted-foreground mb-6">
+    <div className="mx-auto max-w-sm p-8">
+      <h1 className="mb-4 text-2xl font-semibold">Sign Up</h1>
+      <p className="mb-6 text-muted-foreground">
         Create an account for wiki editing, PointStack access, and project management.
       </p>
 
       {error && (
-        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+        <div className="mb-4 border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
         </div>
       )}
 
       {message && (
-        <div className="mb-4 p-3 bg-primary/10 border border-primary/20 text-primary text-sm">
+        <div className="mb-4 border border-primary/20 bg-primary/10 p-3 text-sm text-primary">
           {message}
         </div>
       )}
 
-      <form onSubmit={handleSignUp} className="space-y-4">
-        <div>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            className="mt-2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={loading}
-            required
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    className="mt-2"
+                    disabled={isBusy}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <div>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            className="mt-2"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-            minLength={8}
-            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$"
-            title="Password must be at least 8 characters with lowercase, uppercase, number, and symbol"
-            required
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    className="mt-2"
+                    disabled={isBusy}
+                    {...field}
+                  />
+                </FormControl>
+                <p className="mt-1.5 text-xs text-muted-foreground">
+                  Min 8 characters with uppercase, lowercase, number, and symbol
+                </p>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <p className="mt-1.5 text-xs text-muted-foreground">
-            Min 8 characters with uppercase, lowercase, number, and symbol
-          </p>
-        </div>
-        <div>
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            placeholder="••••••••"
-            className="mt-2"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            disabled={loading}
-            minLength={8}
-            required
+
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="••••••••"
+                    className="mt-2"
+                    disabled={isBusy}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Creating account..." : "Create Account"}
-        </Button>
-      </form>
+
+          <Button type="submit" className="w-full" disabled={isBusy}>
+            {form.formState.isSubmitting ? "Creating account..." : "Create Account"}
+          </Button>
+        </form>
+      </Form>
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
@@ -165,15 +200,15 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
         variant="outline"
         className="w-full"
         onClick={handleGoogleSignUp}
-        disabled={loading}
+        disabled={isBusy}
       >
-        <GoogleLogo className="size-4 mr-2" weight="bold" />
+        <GoogleLogo className="mr-2 size-4" weight="bold" />
         Google
       </Button>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href={ROUTES.SIGNIN} className="text-primary hover:underline underline-offset-4">
+        <Link href={ROUTES.SIGNIN} className="text-primary underline-offset-4 hover:underline">
           Sign in
         </Link>
       </p>

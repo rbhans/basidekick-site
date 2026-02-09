@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { EnvelopeSimple, PaperPlaneTilt, Check, SpinnerGap } from "@phosphor-icons/react";
+import { EnvelopeSimple, PaperPlaneTilt, SpinnerGap } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface NewsletterSignupProps {
   variant?: "default" | "compact";
@@ -12,8 +13,7 @@ interface NewsletterSignupProps {
 
 export function NewsletterSignup({ variant = "default", className }: NewsletterSignupProps) {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading">("idle");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,19 +21,19 @@ export function NewsletterSignup({ variant = "default", className }: NewsletterS
 
     setStatus("loading");
 
-    // Simulate API call - replace with actual newsletter signup
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Simulate API call - replace with actual newsletter signup
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // For now, just show success (implement actual signup later)
-    setStatus("success");
-    setMessage("Thanks for subscribing!");
-    setEmail("");
-
-    // Reset after 3 seconds
-    setTimeout(() => {
+      // For now, just show success (implement actual signup later)
+      setEmail("");
+      toast.success("Thanks for subscribing!");
+    } catch (error) {
+      console.error("Newsletter signup failed:", error);
+      toast.error("Unable to subscribe right now. Please try again.");
+    } finally {
       setStatus("idle");
-      setMessage("");
-    }, 3000);
+    }
   };
 
   if (variant === "compact") {
@@ -48,25 +48,18 @@ export function NewsletterSignup({ variant = "default", className }: NewsletterS
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="pl-9"
-              disabled={status === "loading" || status === "success"}
+              disabled={status === "loading"}
               required
             />
           </div>
-          <Button type="submit" disabled={status === "loading" || status === "success"}>
+          <Button type="submit" disabled={status === "loading"}>
             {status === "loading" ? (
               <SpinnerGap className="size-4 animate-spin" />
-            ) : status === "success" ? (
-              <Check className="size-4" />
             ) : (
               <PaperPlaneTilt className="size-4" />
             )}
           </Button>
         </div>
-        {message && (
-          <p className={`text-xs mt-2 ${status === "success" ? "text-emerald-500" : "text-destructive"}`}>
-            {message}
-          </p>
-        )}
       </form>
     );
   }
@@ -88,19 +81,14 @@ export function NewsletterSignup({ variant = "default", className }: NewsletterS
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="flex-1"
-            disabled={status === "loading" || status === "success"}
+            disabled={status === "loading"}
             required
           />
-          <Button type="submit" disabled={status === "loading" || status === "success"}>
+          <Button type="submit" disabled={status === "loading"}>
             {status === "loading" ? (
               <>
                 <SpinnerGap className="size-4 animate-spin mr-2" />
                 Subscribing...
-              </>
-            ) : status === "success" ? (
-              <>
-                <Check className="size-4 mr-2" />
-                Subscribed!
               </>
             ) : (
               <>
@@ -110,11 +98,6 @@ export function NewsletterSignup({ variant = "default", className }: NewsletterS
             )}
           </Button>
         </div>
-        {message && (
-          <p className={`text-sm mt-2 ${status === "success" ? "text-emerald-500" : "text-destructive"}`}>
-            {message}
-          </p>
-        )}
       </form>
       <p className="text-xs text-muted-foreground mt-3">
         No spam, unsubscribe anytime.

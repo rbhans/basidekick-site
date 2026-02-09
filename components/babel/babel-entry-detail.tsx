@@ -6,12 +6,12 @@ import {
   ArrowLeft,
   Tag,
   Copy,
-  Check,
   Bug,
   PencilSimple,
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { toast } from "sonner";
 import type { BabelPointEntry, BabelEquipmentEntry, BabelContributionType } from "@/lib/types";
 import { BabelContributionDialog } from "./babel-contribution-dialog";
 
@@ -21,8 +21,11 @@ interface BabelEntryDetailProps {
   isAuthenticated?: boolean;
 }
 
+function EmptyState({ text = "-" }: { text?: string }) {
+  return <span className="text-muted-foreground/50">{text}</span>;
+}
+
 export function BabelEntryDetail({ entry, type, isAuthenticated = false }: BabelEntryDetailProps) {
-  const [copiedAlias, setCopiedAlias] = useState<string | null>(null);
   const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
   const [contributionType, setContributionType] = useState<BabelContributionType>("edit");
 
@@ -55,19 +58,13 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
 
   const copyToClipboard = async (text: string) => {
     await navigator.clipboard.writeText(text);
-    setCopiedAlias(text);
-    setTimeout(() => setCopiedAlias(null), 2000);
+    toast.success("Alias copied");
   };
 
   const openContributionDialog = (dialogType: BabelContributionType) => {
     setContributionType(dialogType);
     setContributionDialogOpen(true);
   };
-
-  // Helper for empty state
-  const EmptyState = ({ text = "-" }: { text?: string }) => (
-    <span className="text-muted-foreground/50">{text}</span>
-  );
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -178,11 +175,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
                 >
                   <Tag className="size-3.5 opacity-50" />
                   {alias}
-                  {copiedAlias === alias ? (
-                    <Check className="size-3.5 text-green-500" />
-                  ) : (
-                    <Copy className="size-3.5 opacity-0 group-hover:opacity-50 transition-opacity" />
-                  )}
+                  <Copy className="size-3.5 opacity-0 group-hover:opacity-50 transition-opacity" />
                 </button>
               ))}
             </div>
