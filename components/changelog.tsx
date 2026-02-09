@@ -19,7 +19,7 @@ const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     title: "Community Features",
     items: [
       "Added Wiki with articles and categories",
-      "Launched Forum for community discussions",
+      "Launched PointStack community discussions",
       "Added user profiles and authentication",
       "Introduced Babel BAS terminology database",
     ],

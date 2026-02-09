@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 
 const STORAGE_KEY = "basidekick_bookmarks";
 
-export type BookmarkType = "wiki" | "forum" | "babel" | "calculator" | "reference";
+export type BookmarkType = "wiki" | "babel" | "calculator" | "reference";
 
 export interface Bookmark {
   id: string;

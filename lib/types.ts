@@ -74,7 +74,7 @@ export interface Resource {
 }
 
 // Color variants for navigation sections
-export type NavColorVariant = "default" | "tools" | "resources" | "wiki" | "forum";
+export type NavColorVariant = "default" | "tools" | "resources" | "wiki" | "pointstack";
 
 // Navigation tree node
 export interface NavNode {
@@ -105,7 +105,6 @@ export const VIEW_IDS = {
   EQUIPMENT: "equipment",
   REFERENCES: "references",
   WIKI: "wiki",
-  FORUM: "forum",
   POINTSTACK: "pointstack",
   PSK: "psk",
   CALCULATORS: "calculators",
@@ -147,49 +146,6 @@ export interface Profile {
   is_admin: boolean;
   created_at: string;
   updated_at: string;
-}
-
-// Forum types
-export interface ForumCategory {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  icon_name: string | null;
-  display_order: number;
-  created_at: string;
-  thread_count?: number;
-  post_count?: number;
-}
-
-export interface ForumThread {
-  id: string;
-  category_id: string;
-  author_id: string;
-  title: string;
-  slug: string;
-  is_pinned: boolean;
-  is_locked: boolean;
-  view_count: number;
-  created_at: string;
-  updated_at: string;
-  last_post_at: string | null;
-  // Joined data
-  author?: { display_name: string | null };
-  reply_count?: number;
-  last_post_author?: { display_name: string | null };
-}
-
-export interface ForumPost {
-  id: string;
-  thread_id: string;
-  author_id: string;
-  content: string;
-  is_edited: boolean;
-  created_at: string;
-  updated_at: string;
-  // Joined data
-  author?: { display_name: string | null };
 }
 
 // Wiki types
@@ -244,7 +200,7 @@ export interface WikiComment {
   author?: { display_name: string | null };
 }
 
-// Wiki suggestion (forum thread → wiki article)
+// Wiki suggestion
 export interface WikiSuggestion {
   id: string;
   thread_id: string;
@@ -1051,8 +1007,7 @@ export type ActivityItemType =
   | "babel_contribution"
   | "equipment_submission"
   | "equipment_note"
-  | "wiki_article"
-  | "forum_thread";
+  | "wiki_article";
 
 export interface ActivityItem {
   id: string;

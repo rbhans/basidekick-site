@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 const navLinks = [
   { href: "/", label: "Tools" },
   { href: "/wiki", label: "Wiki" },
-  { href: "/forum", label: "Forum" },
 ];
 
 export function Nav() {

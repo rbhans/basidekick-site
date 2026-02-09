@@ -11,10 +11,7 @@ import { ROUTES } from "@/lib/routes";
 import {
   Users,
   Article,
-  Chats,
   ChartBar,
-  PushPin,
-  Lock,
   Eye,
   EyeSlash,
   Trash,
@@ -22,8 +19,6 @@ import {
   X,
   ShieldCheck,
   ShieldSlash,
-  BookBookmark,
-  ArrowSquareOut,
   CaretDown,
   CaretUp,
   Translate,
@@ -32,6 +27,7 @@ import {
   Plus,
   GithubLogo,
   Gauge,
+  Buildings,
 } from "@phosphor-icons/react";
 
 interface AdminUser {
@@ -40,7 +36,6 @@ interface AdminUser {
   avatar_url: string | null;
   company: string | null;
   is_admin: boolean;
-  post_count: number;
   created_at: string;
 }
 
@@ -55,30 +50,14 @@ interface AdminArticle {
   category: { name: string } | null;
 }
 
-interface AdminThread {
+interface AdminCompany {
   id: string;
-  title: string;
+  name: string;
   slug: string;
-  is_pinned: boolean;
-  is_locked: boolean;
-  view_count: number;
-  reply_count: number | null;
+  owner_id: string;
+  is_verified: boolean;
   created_at: string;
-  author: { display_name: string | null } | null;
-  category: { name: string; slug: string } | null;
-}
-
-interface AdminSuggestion {
-  id: string;
-  created_at: string;
-  status: string;
-  thread: {
-    id: string;
-    title: string;
-    slug: string;
-    category: { slug: string } | null;
-  } | null;
-  suggested_by: { display_name: string | null } | null;
+  owner: { display_name: string | null; avatar_url: string | null } | null;
 }
 
 interface AdminBabelContribution {
@@ -124,9 +103,7 @@ interface AdminEquipmentSubmission {
 interface AdminStats {
   userCount: number;
   articleCount: number;
-  threadCount: number;
-  postCount: number;
-  pendingSuggestions: number;
+  companyCount: number;
   pendingBabelContributions: number;
   pendingEquipmentSubmissions: number;
 }
@@ -134,20 +111,18 @@ interface AdminStats {
 interface AdminViewProps {
   users: AdminUser[];
   articles: AdminArticle[];
-  threads: AdminThread[];
-  suggestions: AdminSuggestion[];
+  companies: AdminCompany[];
   babelContributions: AdminBabelContribution[];
   equipmentSubmissions: AdminEquipmentSubmission[];
   stats: AdminStats;
 }
 
-type TabId = "overview" | "users" | "wiki" | "forum" | "suggestions" | "babel" | "equipment";
+type TabId = "overview" | "users" | "wiki" | "babel" | "equipment" | "companies";
 
 export function AdminView({
   users: initialUsers,
   articles: initialArticles,
-  threads: initialThreads,
-  suggestions: initialSuggestions,
+  companies: initialCompanies,
   babelContributions: initialBabelContributions,
   equipmentSubmissions: initialEquipmentSubmissions,
   stats,
@@ -155,8 +130,7 @@ export function AdminView({
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [users, setUsers] = useState(initialUsers);
   const [articles, setArticles] = useState(initialArticles);
-  const [threads, setThreads] = useState(initialThreads);
-  const [suggestions, setSuggestions] = useState(initialSuggestions);
+  const [companies, setCompanies] = useState(initialCompanies);
   const [babelContributions, setBabelContributions] = useState(initialBabelContributions);
   const [equipmentSubmissions, setEquipmentSubmissions] = useState(initialEquipmentSubmissions);
   const [loading, setLoading] = useState<string | null>(null);
@@ -223,72 +197,37 @@ export function AdminView({
     setLoading(null);
   };
 
-  // Thread actions
-  const togglePinned = async (threadId: string, currentStatus: boolean) => {
-    setLoading(`pin-${threadId}`);
+  // Company actions
+  const toggleVerified = async (companyId: string, currentStatus: boolean) => {
+    setLoading(`verify-${companyId}`);
     const supabase = createClient();
     if (!supabase) return;
 
     const { error } = await supabase
-      .from("forum_threads")
-      .update({ is_pinned: !currentStatus })
-      .eq("id", threadId);
+      .from("pointstack_companies")
+      .update({ is_verified: !currentStatus })
+      .eq("id", companyId);
 
     if (!error) {
-      setThreads((prev) =>
-        prev.map((t) => (t.id === threadId ? { ...t, is_pinned: !currentStatus } : t))
+      setCompanies((prev) =>
+        prev.map((company) =>
+          company.id === companyId ? { ...company, is_verified: !currentStatus } : company
+        )
       );
     }
     setLoading(null);
   };
 
-  const toggleLocked = async (threadId: string, currentStatus: boolean) => {
-    setLoading(`lock-${threadId}`);
+  const deleteCompany = async (companyId: string, companyName: string) => {
+    if (!confirm(`Are you sure you want to delete ${companyName}?`)) return;
+    setLoading(`delete-company-${companyId}`);
     const supabase = createClient();
     if (!supabase) return;
 
-    const { error } = await supabase
-      .from("forum_threads")
-      .update({ is_locked: !currentStatus })
-      .eq("id", threadId);
+    const { error } = await supabase.from("pointstack_companies").delete().eq("id", companyId);
 
     if (!error) {
-      setThreads((prev) =>
-        prev.map((t) => (t.id === threadId ? { ...t, is_locked: !currentStatus } : t))
-      );
-    }
-    setLoading(null);
-  };
-
-  const deleteThread = async (threadId: string) => {
-    if (!confirm("Are you sure you want to delete this thread and all its posts?")) return;
-    setLoading(`delete-thread-${threadId}`);
-    const supabase = createClient();
-    if (!supabase) return;
-
-    const { error } = await supabase.from("forum_threads").delete().eq("id", threadId);
-
-    if (!error) {
-      setThreads((prev) => prev.filter((t) => t.id !== threadId));
-    }
-    setLoading(null);
-  };
-
-  // Suggestion actions
-  const updateSuggestionStatus = async (suggestionId: string, status: "approved" | "rejected") => {
-    setLoading(`suggestion-${suggestionId}`);
-    const supabase = createClient();
-    if (!supabase) return;
-
-    const { error } = await supabase
-      .from("wiki_suggestions")
-      .update({ status })
-      .eq("id", suggestionId);
-
-    if (!error) {
-      setSuggestions((prev) =>
-        prev.map((s) => (s.id === suggestionId ? { ...s, status } : s))
-      );
+      setCompanies((prev) => prev.filter((company) => company.id !== companyId));
     }
     setLoading(null);
   };
@@ -405,13 +344,6 @@ export function AdminView({
     { id: "overview", label: "Overview", icon: <ChartBar className="size-4" /> },
     { id: "users", label: "Users", icon: <Users className="size-4" />, count: stats.userCount },
     { id: "wiki", label: "Wiki", icon: <Article className="size-4" />, count: stats.articleCount },
-    { id: "forum", label: "Forum", icon: <Chats className="size-4" />, count: stats.threadCount },
-    {
-      id: "suggestions",
-      label: "Suggestions",
-      icon: <BookBookmark className="size-4" />,
-      count: stats.pendingSuggestions,
-    },
     {
       id: "babel",
       label: "Babel",
@@ -423,6 +355,12 @@ export function AdminView({
       label: "Atlas",
       icon: <Gauge className="size-4" />,
       count: stats.pendingEquipmentSubmissions,
+    },
+    {
+      id: "companies",
+      label: "Companies",
+      icon: <Buildings className="size-4" />,
+      count: stats.companyCount,
     },
   ];
 
@@ -477,7 +415,7 @@ export function AdminView({
           {activeTab === "overview" && (
             <div className="space-y-8">
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Users className="size-4" />
@@ -494,24 +432,10 @@ export function AdminView({
                 </div>
                 <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                    <Chats className="size-4" />
-                    <span className="text-sm">Threads</span>
+                    <Buildings className="size-4" />
+                    <span className="text-sm">Companies</span>
                   </div>
-                  <p className="text-3xl font-bold">{stats.threadCount}</p>
-                </div>
-                <div className="p-6 border border-border bg-card shadow-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                    <Chats className="size-4" />
-                    <span className="text-sm">Posts</span>
-                  </div>
-                  <p className="text-3xl font-bold">{stats.postCount}</p>
-                </div>
-                <div className="p-6 border border-border bg-card shadow-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                    <BookBookmark className="size-4" />
-                    <span className="text-sm">Wiki Pending</span>
-                  </div>
-                  <p className="text-3xl font-bold text-primary">{stats.pendingSuggestions}</p>
+                  <p className="text-3xl font-bold">{companies.length}</p>
                 </div>
                 <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
@@ -565,50 +489,30 @@ export function AdminView({
                   </div>
                 </div>
 
-                {/* Pending Suggestions */}
+                {/* Newest Companies */}
                 <div className="border border-border bg-card shadow-sm p-6">
                   <h3 className="font-semibold mb-4 flex items-center gap-2">
-                    <BookBookmark className="size-4 text-primary" />
-                    Pending Wiki Suggestions
+                    <Buildings className="size-4 text-primary" />
+                    Newest Companies
                   </h3>
                   <div className="space-y-3">
-                    {suggestions
-                      .filter((s) => s.status === "pending")
-                      .slice(0, 5)
-                      .map((suggestion) => (
-                        <div key={suggestion.id} className="flex items-center justify-between">
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium truncate">
-                              {suggestion.thread?.title || "Unknown thread"}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              by {suggestion.suggested_by?.display_name || "Anonymous"}
-                            </p>
-                          </div>
-                          <div className="flex gap-1 ml-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => updateSuggestionStatus(suggestion.id, "approved")}
-                              disabled={loading === `suggestion-${suggestion.id}`}
-                              className="text-emerald-500 hover:text-emerald-600"
-                            >
-                              <Check className="size-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => updateSuggestionStatus(suggestion.id, "rejected")}
-                              disabled={loading === `suggestion-${suggestion.id}`}
-                              className="text-destructive hover:text-destructive"
-                            >
-                              <X className="size-4" />
-                            </Button>
-                          </div>
+                    {companies.slice(0, 5).map((company) => (
+                      <div key={company.id} className="flex items-center justify-between">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium truncate">{company.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {company.owner?.display_name || "No owner"} · {formatDate(company.created_at)}
+                          </p>
                         </div>
-                      ))}
-                    {suggestions.filter((s) => s.status === "pending").length === 0 && (
-                      <p className="text-sm text-muted-foreground">No pending suggestions</p>
+                        {company.is_verified && (
+                          <span className="text-xs bg-emerald-500/10 text-emerald-600 px-2 py-0.5">
+                            Verified
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                    {companies.length === 0 && (
+                      <p className="text-sm text-muted-foreground">No companies yet</p>
                     )}
                   </div>
                 </div>
@@ -625,7 +529,6 @@ export function AdminView({
                     <tr>
                       <th className="text-left p-4 text-sm font-medium">User</th>
                       <th className="text-left p-4 text-sm font-medium hidden md:table-cell">Company</th>
-                      <th className="text-left p-4 text-sm font-medium hidden sm:table-cell">Posts</th>
                       <th className="text-left p-4 text-sm font-medium hidden lg:table-cell">Joined</th>
                       <th className="text-left p-4 text-sm font-medium">Admin</th>
                       <th className="text-right p-4 text-sm font-medium">Actions</th>
@@ -649,7 +552,6 @@ export function AdminView({
                         <td className="p-4 text-muted-foreground hidden md:table-cell">
                           {user.company || "-"}
                         </td>
-                        <td className="p-4 hidden sm:table-cell">{user.post_count}</td>
                         <td className="p-4 text-muted-foreground hidden lg:table-cell">
                           {formatDate(user.created_at)}
                         </td>
@@ -762,87 +664,78 @@ export function AdminView({
             </div>
           )}
 
-          {/* Forum Tab */}
-          {activeTab === "forum" && (
+          {/* Companies Tab */}
+          {activeTab === "companies" && (
             <div className="space-y-4">
               <div className="border border-border bg-card shadow-sm overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="text-left p-4 text-sm font-medium">Title</th>
-                      <th className="text-left p-4 text-sm font-medium hidden md:table-cell">Author</th>
-                      <th className="text-left p-4 text-sm font-medium hidden sm:table-cell">Category</th>
-                      <th className="text-left p-4 text-sm font-medium hidden lg:table-cell">Replies</th>
-                      <th className="text-left p-4 text-sm font-medium">Status</th>
+                      <th className="text-left p-4 text-sm font-medium">Name</th>
+                      <th className="text-left p-4 text-sm font-medium hidden md:table-cell">Owner</th>
+                      <th className="text-left p-4 text-sm font-medium hidden sm:table-cell">Verified</th>
+                      <th className="text-left p-4 text-sm font-medium hidden lg:table-cell">Created</th>
                       <th className="text-right p-4 text-sm font-medium">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {threads.map((thread) => (
-                      <tr key={thread.id} className="hover:bg-muted/30">
+                    {companies.map((company) => (
+                      <tr key={company.id} className="hover:bg-muted/30">
                         <td className="p-4">
-                          <Link
-                            href={ROUTES.FORUM_THREAD(
-                              thread.category?.slug || "general",
-                              thread.slug
-                            )}
-                            className="font-medium hover:text-primary transition-colors"
-                          >
-                            {thread.title}
-                          </Link>
+                          <div className="min-w-0">
+                            <p className="font-medium truncate">{company.name}</p>
+                            <p className="text-xs text-muted-foreground">/{company.slug}</p>
+                          </div>
                         </td>
-                        <td className="p-4 text-muted-foreground hidden md:table-cell">
-                          {thread.author?.display_name || "Anonymous"}
+                        <td className="p-4 hidden md:table-cell">
+                          <div className="flex items-center gap-2">
+                            <UserAvatar
+                              name={company.owner?.display_name ?? null}
+                              avatarUrl={company.owner?.avatar_url ?? null}
+                              size="sm"
+                            />
+                            <span className="text-sm text-muted-foreground">
+                              {company.owner?.display_name || "Unknown"}
+                            </span>
+                          </div>
                         </td>
                         <td className="p-4 hidden sm:table-cell">
-                          {thread.category?.name || "-"}
+                          {company.is_verified ? (
+                            <span className="text-xs bg-emerald-500/10 text-emerald-600 px-2 py-0.5">
+                              Verified
+                            </span>
+                          ) : (
+                            <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5">
+                              Unverified
+                            </span>
+                          )}
                         </td>
-                        <td className="p-4 hidden lg:table-cell">{thread.reply_count || 0}</td>
-                        <td className="p-4">
-                          <div className="flex gap-1">
-                            {thread.is_pinned && (
-                              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5">
-                                Pinned
-                              </span>
-                            )}
-                            {thread.is_locked && (
-                              <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5">
-                                Locked
-                              </span>
-                            )}
-                            {!thread.is_pinned && !thread.is_locked && (
-                              <span className="text-xs text-muted-foreground">-</span>
-                            )}
-                          </div>
+                        <td className="p-4 text-muted-foreground hidden lg:table-cell">
+                          {formatDate(company.created_at)}
                         </td>
                         <td className="p-4 text-right">
                           <div className="flex justify-end gap-1">
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => togglePinned(thread.id, thread.is_pinned)}
-                              disabled={loading === `pin-${thread.id}`}
-                              title={thread.is_pinned ? "Unpin" : "Pin"}
-                              className={thread.is_pinned ? "text-primary" : ""}
+                              onClick={() => toggleVerified(company.id, company.is_verified)}
+                              disabled={loading === `verify-${company.id}`}
+                              title={company.is_verified ? "Unverify" : "Verify"}
+                              className={company.is_verified ? "text-emerald-600" : ""}
                             >
-                              <PushPin className="size-4" />
+                              {company.is_verified ? (
+                                <X className="size-4" />
+                              ) : (
+                                <Check className="size-4" />
+                              )}
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => toggleLocked(thread.id, thread.is_locked)}
-                              disabled={loading === `lock-${thread.id}`}
-                              title={thread.is_locked ? "Unlock" : "Lock"}
-                              className={thread.is_locked ? "text-muted-foreground" : ""}
-                            >
-                              <Lock className="size-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => deleteThread(thread.id)}
-                              disabled={loading === `delete-thread-${thread.id}`}
+                              onClick={() => deleteCompany(company.id, company.name)}
+                              disabled={loading === `delete-company-${company.id}`}
                               className="text-destructive hover:text-destructive"
+                              title="Delete company"
                             >
                               <Trash className="size-4" />
                             </Button>
@@ -852,97 +745,11 @@ export function AdminView({
                     ))}
                   </tbody>
                 </table>
-              </div>
-            </div>
-          )}
-
-          {/* Suggestions Tab */}
-          {activeTab === "suggestions" && (
-            <div className="space-y-4">
-              <div className="border border-border bg-card shadow-sm overflow-hidden">
-                <table className="w-full">
-                  <thead className="bg-muted/50">
-                    <tr>
-                      <th className="text-left p-4 text-sm font-medium">Thread</th>
-                      <th className="text-left p-4 text-sm font-medium hidden md:table-cell">Suggested By</th>
-                      <th className="text-left p-4 text-sm font-medium hidden sm:table-cell">Date</th>
-                      <th className="text-left p-4 text-sm font-medium">Status</th>
-                      <th className="text-right p-4 text-sm font-medium">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {suggestions.map((suggestion) => (
-                      <tr key={suggestion.id} className="hover:bg-muted/30">
-                        <td className="p-4">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium">
-                              {suggestion.thread?.title || "Unknown thread"}
-                            </span>
-                            {suggestion.thread && (
-                              <Link
-                                href={ROUTES.FORUM_THREAD(
-                                  suggestion.thread.category?.slug || "general",
-                                  suggestion.thread.slug
-                                )}
-                                target="_blank"
-                                className="text-muted-foreground hover:text-primary"
-                              >
-                                <ArrowSquareOut className="size-4" />
-                              </Link>
-                            )}
-                          </div>
-                        </td>
-                        <td className="p-4 text-muted-foreground hidden md:table-cell">
-                          {suggestion.suggested_by?.display_name || "Anonymous"}
-                        </td>
-                        <td className="p-4 text-muted-foreground hidden sm:table-cell">
-                          {formatDate(suggestion.created_at)}
-                        </td>
-                        <td className="p-4">
-                          {suggestion.status === "pending" && (
-                            <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5">
-                              Pending
-                            </span>
-                          )}
-                          {suggestion.status === "approved" && (
-                            <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-0.5">
-                              Approved
-                            </span>
-                          )}
-                          {suggestion.status === "rejected" && (
-                            <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5">
-                              Rejected
-                            </span>
-                          )}
-                        </td>
-                        <td className="p-4 text-right">
-                          {suggestion.status === "pending" && (
-                            <div className="flex justify-end gap-1">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => updateSuggestionStatus(suggestion.id, "approved")}
-                                disabled={loading === `suggestion-${suggestion.id}`}
-                                className="text-emerald-500 hover:text-emerald-600"
-                              >
-                                <Check className="size-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => updateSuggestionStatus(suggestion.id, "rejected")}
-                                disabled={loading === `suggestion-${suggestion.id}`}
-                                className="text-destructive hover:text-destructive"
-                              >
-                                <X className="size-4" />
-                              </Button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {companies.length === 0 && (
+                  <div className="p-8 text-center text-muted-foreground">
+                    No companies yet
+                  </div>
+                )}
               </div>
             </div>
           )}

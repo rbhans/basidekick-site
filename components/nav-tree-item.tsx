@@ -24,7 +24,7 @@ const colorVariantClasses: Record<NavColorVariant, { icon: string; active: strin
     icon: "text-blue-500 dark:text-blue-400",
     active: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
   },
-  forum: {
+  pointstack: {
     icon: "text-emerald-500 dark:text-emerald-400",
     active: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   },

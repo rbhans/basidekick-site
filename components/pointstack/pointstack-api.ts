@@ -25,7 +25,6 @@ import {
   EquipmentSubmission,
   EquipmentNote,
   WikiArticle,
-  ForumThread,
 } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import { User } from "@supabase/supabase-js";
@@ -1874,23 +1873,6 @@ export async function fetchUserWikiArticles(userId: string, limit = 20): Promise
 
   if (error) throw error;
   return (data || []) as WikiArticle[];
-}
-
-export async function fetchUserForumThreads(userId: string, limit = 20): Promise<(ForumThread & { category?: { slug: string; name: string } })[]> {
-  const supabase = getClient();
-  const { data, error } = await supabase
-    .from("forum_threads")
-    .select(`
-      *,
-      author:profiles!author_id(display_name),
-      category:forum_categories!category_id(slug, name)
-    `)
-    .eq("author_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(limit);
-
-  if (error) throw error;
-  return (data || []) as (ForumThread & { category?: { slug: string; name: string } })[];
 }
 
 // ============================================================

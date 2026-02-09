@@ -32,8 +32,7 @@ export default async function AdminPage() {
   const [
     usersResult,
     articlesResult,
-    threadsResult,
-    suggestionsResult,
+    companiesResult,
     babelContributionsResult,
     equipmentSubmissionsResult,
     statsResult,
@@ -41,7 +40,7 @@ export default async function AdminPage() {
     // Users with profiles
     supabase
       .from("profiles")
-      .select("id, display_name, avatar_url, company, is_admin, post_count, created_at")
+      .select("id, display_name, avatar_url, company, is_admin, created_at")
       .order("created_at", { ascending: false })
       .limit(50),
     // Wiki articles
@@ -54,23 +53,12 @@ export default async function AdminPage() {
       `)
       .order("created_at", { ascending: false })
       .limit(50),
-    // Forum threads
+    // PointStack companies
     supabase
-      .from("forum_threads")
+      .from("pointstack_companies")
       .select(`
-        id, title, slug, is_pinned, is_locked, view_count, reply_count, created_at,
-        author:profiles!forum_threads_author_id_fkey(display_name),
-        category:forum_categories!forum_threads_category_id_fkey(name, slug)
-      `)
-      .order("created_at", { ascending: false })
-      .limit(50),
-    // Wiki suggestions
-    supabase
-      .from("wiki_suggestions")
-      .select(`
-        id, created_at, status,
-        thread:forum_threads!wiki_suggestions_thread_id_fkey(id, title, slug, category:forum_categories!forum_threads_category_id_fkey(slug)),
-        suggested_by:profiles!wiki_suggestions_suggested_by_fkey(display_name)
+        id, name, slug, owner_id, is_verified, created_at,
+        owner:profiles!pointstack_companies_owner_id_fkey(display_name, avatar_url)
       `)
       .order("created_at", { ascending: false })
       .limit(50),
@@ -99,9 +87,7 @@ export default async function AdminPage() {
     Promise.all([
       supabase.from("profiles").select("id", { count: "exact", head: true }),
       supabase.from("wiki_articles").select("id", { count: "exact", head: true }),
-      supabase.from("forum_threads").select("id", { count: "exact", head: true }),
-      supabase.from("forum_posts").select("id", { count: "exact", head: true }),
-      supabase.from("wiki_suggestions").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("pointstack_companies").select("id", { count: "exact", head: true }),
       supabase.from("babel_contributions").select("id", { count: "exact", head: true }).eq("status", "pending"),
       supabase.from("equipment_submissions").select("id", { count: "exact", head: true }).eq("review_status", "pending"),
     ]),
@@ -110,19 +96,16 @@ export default async function AdminPage() {
   const stats = {
     userCount: statsResult[0].count || 0,
     articleCount: statsResult[1].count || 0,
-    threadCount: statsResult[2].count || 0,
-    postCount: statsResult[3].count || 0,
-    pendingSuggestions: statsResult[4].count || 0,
-    pendingBabelContributions: statsResult[5].count || 0,
-    pendingEquipmentSubmissions: statsResult[6].count || 0,
+    companyCount: statsResult[2].count || 0,
+    pendingBabelContributions: statsResult[3].count || 0,
+    pendingEquipmentSubmissions: statsResult[4].count || 0,
   };
 
   return (
     <AdminView
       users={usersResult.data || []}
       articles={articlesResult.data || []}
-      threads={threadsResult.data || []}
-      suggestions={suggestionsResult.data || []}
+      companies={companiesResult.data || []}
       babelContributions={babelContributionsResult.data || []}
       equipmentSubmissions={equipmentSubmissionsResult.data || []}
       stats={stats}

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { MagnifyingGlass, Command, X, Spinner, Article, ChatCircle, Translate, WarningCircle, Gauge } from "@phosphor-icons/react";
+import { MagnifyingGlass, Command, X, Spinner, Article, Translate, WarningCircle, Gauge } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/lib/routes";
@@ -28,7 +28,7 @@ let atlasDataCache: AtlasData | null = null;
 interface SearchResult {
   id: string;
   title: string;
-  type: "babel" | "atlas" | "article" | "thread";
+  type: "babel" | "atlas" | "article";
   href: string;
   subtitle?: string;
 }
@@ -210,28 +210,6 @@ export function HeaderSearch() {
           );
         }
 
-        // Search forum threads
-        const { data: threads, error: threadsError } = await supabase
-          .from("forum_threads")
-          .select("id, title, slug, category:forum_categories(name, slug)")
-          .ilike("title", `%${searchQuery}%`)
-          .limit(5);
-
-        if (threadsError) {
-          console.error("[Search] Forum threads error:", threadsError);
-          hasError = true;
-        } else if (threads) {
-          searchResults.push(
-            ...threads.map((t: { id: string; title: string; slug: string; category: { name: string; slug: string } | null }) => ({
-              id: t.id,
-              title: t.title,
-              type: "thread" as const,
-              href: ROUTES.FORUM_THREAD(t.category?.slug || "general", t.slug),
-              subtitle: t.category?.name || "Forum",
-            }))
-          );
-        }
-
         // Only update if query hasn't changed (prevent race condition)
         if (query.trim() === searchQuery) {
           setResults(searchResults);
@@ -310,8 +288,6 @@ export function HeaderSearch() {
         return <Gauge className="size-4 text-sky-500" />;
       case "article":
         return <Article className="size-4 text-blue-500" />;
-      case "thread":
-        return <ChatCircle className="size-4 text-emerald-500" />;
     }
   };
 
@@ -489,42 +465,6 @@ export function HeaderSearch() {
                 </>
               )}
 
-              {/* Forum Threads Section */}
-              {results.filter(r => r.type === "thread").length > 0 && (
-                <>
-                  <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-muted/30 border-b border-border">
-                    Forum Discussions
-                  </div>
-                  {results.filter(r => r.type === "thread").map((result) => {
-                    const globalIndex = results.findIndex(r => r.id === result.id);
-                    return (
-                      <Link
-                        key={`${result.type}-${result.id}`}
-                        id={`search-result-${result.id}`}
-                        role="option"
-                        aria-selected={globalIndex === selectedIndex}
-                        href={result.href}
-                        onClick={() => {
-                          setIsOpen(false);
-                          setQuery("");
-                        }}
-                        className={cn(
-                          "flex items-start gap-3 px-3 py-2 hover:bg-muted/50 transition-colors",
-                          globalIndex === selectedIndex && "bg-muted/50"
-                        )}
-                      >
-                        <div className="mt-0.5">{getIcon(result.type)}</div>
-                        <div className="flex-1 min-w-0">
-                          <span className="text-sm font-medium truncate block">{result.title}</span>
-                          {result.subtitle && (
-                            <p className="text-xs text-muted-foreground truncate mt-0.5">{result.subtitle}</p>
-                          )}
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </>
-              )}
             </div>
           ) : searchError ? (
             <div className="p-4 text-center">

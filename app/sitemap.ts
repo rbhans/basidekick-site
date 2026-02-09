@@ -82,12 +82,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${BASE_URL}/forum`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
       url: `${BASE_URL}/resources`,
       lastModified: new Date(),
       changeFrequency: "weekly",
@@ -202,48 +196,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Fetch forum categories
-  const { data: forumCategories } = await supabase
-    .from("forum_categories")
-    .select("slug")
-    .order("display_order");
-
-  const forumCategoryPages: MetadataRoute.Sitemap = (forumCategories || []).map((category) => ({
-    url: `${BASE_URL}/forum/${category.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "daily" as const,
-    priority: 0.7,
-  }));
-
-  // Fetch forum threads (limit to recent/active ones for performance)
-  const { data: forumThreads } = await supabase
-    .from("forum_threads")
-    .select("slug, category:forum_categories!forum_threads_category_id_fkey(slug), last_post_at, created_at")
-    .order("last_post_at", { ascending: false, nullsFirst: false })
-    .limit(500);
-
-  type ThreadWithCategory = {
-    slug: string;
-    category: { slug: string } | { slug: string }[] | null;
-    last_post_at: string | null;
-    created_at: string;
-  };
-
-  const forumThreadPages: MetadataRoute.Sitemap = (forumThreads as ThreadWithCategory[] || [])
-    .filter((thread) => {
-      const cat = Array.isArray(thread.category) ? thread.category[0] : thread.category;
-      return cat?.slug;
-    })
-    .map((thread) => {
-      const cat = Array.isArray(thread.category) ? thread.category[0] : thread.category;
-      return {
-        url: `${BASE_URL}/forum/${cat!.slug}/${thread.slug}`,
-        lastModified: new Date(thread.last_post_at || thread.created_at),
-        changeFrequency: "daily" as const,
-        priority: 0.6,
-      };
-    });
-
   // Fetch wiki tags for tag pages
   const { data: wikiTags } = await supabase
     .from("wiki_tags")
@@ -265,7 +217,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...atlasModelPages,
     ...wikiPages,
     ...wikiTagPages,
-    ...forumCategoryPages,
-    ...forumThreadPages,
   ];
 }
