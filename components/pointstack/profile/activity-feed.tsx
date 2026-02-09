@@ -9,7 +9,6 @@ import {
   Note,
   Wrench,
   BookOpen,
-  Chats,
 } from "@phosphor-icons/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ActivityItem, ActivityItemType } from "@/lib/types";
@@ -26,7 +25,6 @@ const ACTIVITY_ICONS: Record<ActivityItemType, React.ElementType> = {
   equipment_submission: Wrench,
   equipment_note: Note,
   wiki_article: BookOpen,
-  forum_thread: Chats,
 };
 
 const ACTIVITY_COLORS: Record<ActivityItemType, string> = {
@@ -36,7 +34,6 @@ const ACTIVITY_COLORS: Record<ActivityItemType, string> = {
   equipment_submission: "text-purple-500 bg-purple-500/10",
   equipment_note: "text-yellow-500 bg-yellow-500/10",
   wiki_article: "text-cyan-500 bg-cyan-500/10",
-  forum_thread: "text-pink-500 bg-pink-500/10",
 };
 
 export function ActivityFeed({ userId }: ActivityFeedProps) {

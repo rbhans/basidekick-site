@@ -48,11 +48,11 @@ async function getRecentContent() {
   const supabase = getSupabaseClient();
 
   if (!supabase) {
-    return { recentArticles: [], recentThreads: [], stats: { articleCount: 0, termCount: 500, modelCount: 0 } };
+    return { recentArticles: [], stats: { articleCount: 0, termCount: 500, modelCount: 0 } };
   }
 
   // Fetch all data in parallel using foreign key joins
-  const [articlesResult, threadsResult, articleCountResult, termCount, modelCount] = await Promise.all([
+  const [articlesResult, articleCountResult, termCount, modelCount] = await Promise.all([
     // Wiki articles with category in single query
     supabase
       .from("wiki_articles")
@@ -61,16 +61,6 @@ async function getRecentContent() {
         category:wiki_categories!wiki_articles_category_id_fkey(name, slug)
       `)
       .eq("is_published", true)
-      .order("created_at", { ascending: false })
-      .limit(5),
-    // Forum threads with category and author in single query
-    supabase
-      .from("forum_threads")
-      .select(`
-        id, title, slug, created_at,
-        category:forum_categories!forum_threads_category_id_fkey(name, slug),
-        author:profiles!forum_threads_author_id_fkey(display_name)
-      `)
       .order("created_at", { ascending: false })
       .limit(5),
     // Counts
@@ -82,9 +72,6 @@ async function getRecentContent() {
 
   if (articlesResult.error) {
     console.error("[Home] Wiki articles error:", articlesResult.error);
-  }
-  if (threadsResult.error) {
-    console.error("[Home] Forum threads error:", threadsResult.error);
   }
 
   // Handle Supabase join returns (may be array or object)
@@ -102,15 +89,6 @@ async function getRecentContent() {
     category: normalizeJoin(article.category),
   }));
 
-  const recentThreads = (threadsResult.data || []).map(thread => ({
-    id: thread.id,
-    title: thread.title,
-    slug: thread.slug,
-    created_at: thread.created_at,
-    category: normalizeJoin(thread.category),
-    author: normalizeJoin(thread.author),
-  }));
-
   const stats = {
     articleCount: articleCountResult.count || 0,
     termCount,
@@ -119,18 +97,16 @@ async function getRecentContent() {
 
   return {
     recentArticles,
-    recentThreads,
     stats,
   };
 }
 
 export default async function HomePage() {
-  const { recentArticles, recentThreads, stats } = await getRecentContent();
+  const { recentArticles, stats } = await getRecentContent();
 
   return (
     <HomeView
       recentArticles={recentArticles}
-      recentThreads={recentThreads}
       stats={stats}
     />
   );

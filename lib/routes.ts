@@ -8,10 +8,6 @@ export const ROUTES = {
   WIKI: "/wiki",
   WIKI_ARTICLE: (slug: string) => `/wiki/${encodeURIComponent(slug)}`,
   WIKI_TAG: (tagSlug: string) => `/wiki/tags/${encodeURIComponent(tagSlug)}`,
-  FORUM: "/forum",
-  FORUM_CATEGORY: (categorySlug: string) => `/forum/${encodeURIComponent(categorySlug)}`,
-  FORUM_THREAD: (categorySlug: string, threadSlug: string) =>
-    `/forum/${encodeURIComponent(categorySlug)}/${encodeURIComponent(threadSlug)}`,
   RESOURCES: "/resources",
   BABEL: "/babel",
   EQUIPMENT: "/equipment",
@@ -64,8 +60,6 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.TOOL("qsk");
     case VIEW_IDS.WIKI:
       return ROUTES.WIKI;
-    case VIEW_IDS.FORUM:
-      return ROUTES.FORUM;
     case VIEW_IDS.POINTSTACK:
       return ROUTES.POINTSTACK;
     case VIEW_IDS.RESOURCES:
@@ -99,7 +93,6 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/") return VIEW_IDS.HOME;
   if (pathname === "/tools") return VIEW_IDS.TOOLS;
   if (pathname === "/wiki") return VIEW_IDS.WIKI;
-  if (pathname === "/forum") return VIEW_IDS.FORUM;
   if (pathname === "/pointstack") return VIEW_IDS.POINTSTACK;
   if (pathname === "/resources") return VIEW_IDS.RESOURCES;
   if (pathname === "/babel") return VIEW_IDS.BABEL;
@@ -128,11 +121,6 @@ export function getViewIdFromPath(pathname: string): string {
   // Wiki sub-pages (articles, tags)
   if (pathname.startsWith("/wiki/")) {
     return VIEW_IDS.WIKI;
-  }
-
-  // Forum sub-pages (categories, threads)
-  if (pathname.startsWith("/forum/")) {
-    return VIEW_IDS.FORUM;
   }
 
   // PointStack sub-pages

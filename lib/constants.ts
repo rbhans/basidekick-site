@@ -23,7 +23,6 @@ export const VIEW_TITLES: Record<string, string> = {
   [VIEW_IDS.BABEL]: "BAS Babel",
   [VIEW_IDS.REFERENCES]: "References",
   [VIEW_IDS.WIKI]: "Wiki",
-  [VIEW_IDS.FORUM]: "Forum",
   [VIEW_IDS.POINTSTACK]: "PointStack",
   [VIEW_IDS.PSK]: "ProjectSidekick",
   [VIEW_IDS.CALCULATORS]: "Calculators",
@@ -44,7 +43,6 @@ export const VIEW_LOADING_TEXT: Record<string, string> = {
   [VIEW_IDS.BABEL]: "BAS_BABEL",
   [VIEW_IDS.REFERENCES]: "REFERENCES",
   [VIEW_IDS.WIKI]: "WIKI",
-  [VIEW_IDS.FORUM]: "FORUM",
   [VIEW_IDS.POINTSTACK]: "POINTSTACK",
   [VIEW_IDS.PSK]: "PROJECT_SIDEKICK",
   [VIEW_IDS.CALCULATORS]: "CALCULATORS",
@@ -128,7 +126,7 @@ export const TOOLS: Record<string, Tool> = {
 export const TOOLS_LIST = Object.values(TOOLS);
 
 // =============================================================================
-// RESOURCES DATA - Free resources (excluding Wiki/Forum which have their own sections)
+// RESOURCES DATA - Free resources
 // =============================================================================
 
 export const RESOURCES: Resource[] = [
@@ -420,14 +418,14 @@ export const NAV_ITEMS: NavNode[] = [
     id: VIEW_IDS.POINTSTACK,
     label: "POINTSTACK",
     iconName: "UsersThree",
-    colorVariant: "forum",
+    colorVariant: "pointstack",
     defaultExpanded: true,
     children: [
       {
         id: "pointstack-feed",
         label: "Feed",
         iconName: "Chats",
-        colorVariant: "forum",
+        colorVariant: "pointstack",
         href: "/pointstack",
         exact: true,
       },
@@ -435,56 +433,56 @@ export const NAV_ITEMS: NavNode[] = [
         id: "pointstack-people",
         label: "People",
         iconName: "UsersThree",
-        colorVariant: "forum",
+        colorVariant: "pointstack",
         href: "/pointstack/people",
       },
       {
         id: "pointstack-companies",
         label: "Companies",
         iconName: "Buildings",
-        colorVariant: "forum",
+        colorVariant: "pointstack",
         href: "/pointstack/companies",
       },
       {
         id: "pointstack-projects",
         label: "Projects",
         iconName: "Image",
-        colorVariant: "forum",
+        colorVariant: "pointstack",
         href: "/pointstack/projects",
       },
       {
         id: "pointstack-questions",
         label: "Q&A",
         iconName: "Question",
-        colorVariant: "forum",
+        colorVariant: "pointstack",
         href: "/pointstack/questions",
       },
       {
         id: "pointstack-jobs",
         label: "Jobs",
         iconName: "Briefcase",
-        colorVariant: "forum",
+        colorVariant: "pointstack",
         href: "/pointstack/jobs",
       },
       {
         id: "pointstack-resources",
         label: "Resources",
         iconName: "Folder",
-        colorVariant: "forum",
+        colorVariant: "pointstack",
         href: "/pointstack/resources",
       },
       {
         id: "pointstack-messages",
         label: "Messages",
         iconName: "ChatCircle",
-        colorVariant: "forum",
+        colorVariant: "pointstack",
         href: "/pointstack/messages",
       },
       {
         id: "pointstack-notifications",
         label: "Notifications",
         iconName: "Bell",
-        colorVariant: "forum",
+        colorVariant: "pointstack",
         href: "/pointstack/notifications",
       },
     ],

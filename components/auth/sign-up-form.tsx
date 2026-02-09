@@ -84,7 +84,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
     <div className="p-8 max-w-sm mx-auto">
       <h1 className="text-2xl font-semibold mb-4">Sign Up</h1>
       <p className="text-muted-foreground mb-6">
-        Create an account for forum access, wiki editing, and project management.
+        Create an account for wiki editing, PointStack access, and project management.
       </p>
 
       {error && (

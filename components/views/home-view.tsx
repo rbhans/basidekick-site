@@ -9,18 +9,15 @@ import { CircuitBackground } from "@/components/circuit-background";
 import { BuildingWireframeIsometric } from "@/components/building-wireframe-isometric";
 import { AnimatedCounter } from "@/components/animated-counter";
 import { NewsletterSignup } from "@/components/newsletter-signup";
-import { UserAvatar } from "@/components/user-avatar";
 import { Changelog } from "@/components/changelog";
 import {
   ArrowRight,
   BookOpen,
-  ChatCircle,
   Book,
   Translate,
   Article,
   ClockCounterClockwise,
   Wrench,
-  UsersThree,
   Gauge,
 } from "@phosphor-icons/react";
 import { getIcon } from "@/lib/icons";
@@ -36,19 +33,8 @@ interface RecentArticle {
   category: { name: string; slug: string } | null;
 }
 
-interface RecentThread {
-  id: string;
-  title: string;
-  slug: string;
-  created_at: string;
-  reply_count?: number | null;
-  category: { name: string; slug: string } | null;
-  author: { display_name: string | null } | null;
-}
-
 interface HomeViewProps {
   recentArticles?: RecentArticle[];
-  recentThreads?: RecentThread[];
   stats?: {
     articleCount: number;
     termCount: number;
@@ -58,7 +44,6 @@ interface HomeViewProps {
 
 export function HomeView({
   recentArticles = [],
-  recentThreads = [],
   stats = { articleCount: 0, termCount: 0, modelCount: 0 },
 }: HomeViewProps) {
 
@@ -270,91 +255,6 @@ export function HomeView({
                   <span className="mt-3 text-xs text-muted-foreground block">
                     {formatDate(article.created_at)}
                   </span>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* PointStack Community Section */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <UsersThree className="size-6 text-emerald-500 dark:text-emerald-400" />
-              <SectionLabel variant="forum">community</SectionLabel>
-            </div>
-            <Button variant="outline" size="sm" asChild>
-              <Link href={ROUTES.POINTSTACK}>
-                View All
-                <ArrowRight className="size-3 ml-2" />
-              </Link>
-            </Button>
-          </div>
-
-          <p className="text-muted-foreground mb-6">
-            Connect with other BAS professionals. Ask questions, share projects,
-            and find resources.
-          </p>
-
-          {recentThreads.length === 0 ? (
-            <div className="space-y-2">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="p-4 border border-border bg-card shadow-sm flex items-center justify-between"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Skeleton className="h-4 w-16" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                    <Skeleton className="h-5 w-3/4" />
-                  </div>
-                  <Skeleton className="h-5 w-8" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {recentThreads.map((thread, index) => (
-                <Link
-                  key={thread.id}
-                  href={ROUTES.FORUM_THREAD(
-                    thread.category?.slug || "general",
-                    thread.slug
-                  )}
-                  className="group flex items-center justify-between p-4 border border-border bg-card shadow-sm hover:border-primary/50 transition-all card-hover-lift animate-fade-in-up"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <div className="min-w-0 flex-1 flex items-center gap-3">
-                    <UserAvatar
-                      name={thread.author?.display_name || null}
-                      size="sm"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                        {thread.category && (
-                          <span className="bg-primary/10 text-primary px-2 py-0.5">
-                            {thread.category.name}
-                          </span>
-                        )}
-                        <span>
-                          {thread.author?.display_name || "Anonymous"}
-                        </span>
-                        <span>&middot;</span>
-                        <span>{formatDate(thread.created_at)}</span>
-                      </div>
-                      <h3 className="font-semibold group-hover:text-primary transition-colors truncate">
-                        {thread.title}
-                      </h3>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm text-muted-foreground ml-4 shrink-0">
-                    <ChatCircle className="size-4" />
-                    <span>{thread.reply_count || 0}</span>
-                  </div>
                 </Link>
               ))}
             </div>

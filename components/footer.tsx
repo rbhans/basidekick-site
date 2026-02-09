@@ -12,7 +12,6 @@ const toolsLinks = [
 
 const resourcesLinks = [
   { href: "/wiki", label: "Wiki" },
-  { href: "/forum", label: "Forum" },
   { href: "/psk", label: "PSK" },
 ];
 

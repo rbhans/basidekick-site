@@ -7,7 +7,6 @@ import {
   Translate,
   HardDrives,
   BookOpen,
-  Chats,
   Check,
   Clock,
   X,
@@ -29,7 +28,7 @@ interface ContributionsTabProps {
   userId: string;
 }
 
-type ContributionSection = "babel" | "equipment" | "wiki" | "forum";
+type ContributionSection = "babel" | "equipment" | "wiki";
 
 const SECTION_CONFIG: Record<
   ContributionSection,
@@ -38,7 +37,6 @@ const SECTION_CONFIG: Record<
   babel: { label: "Babel Contributions", icon: Translate, color: "text-orange-500" },
   equipment: { label: "Equipment Submissions", icon: HardDrives, color: "text-purple-500" },
   wiki: { label: "Wiki Articles", icon: BookOpen, color: "text-cyan-500" },
-  forum: { label: "Forum Threads", icon: Chats, color: "text-pink-500" },
 };
 
 const STATUS_BADGES: Record<string, { label: string; className: string; icon: React.ElementType }> = {
@@ -52,25 +50,22 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
   const [babelContributions, setBabelContributions] = useState<BabelContribution[]>([]);
   const [equipmentSubmissions, setEquipmentSubmissions] = useState<EquipmentSubmission[]>([]);
   const [wikiArticles, setWikiArticles] = useState<WikiArticle[]>([]);
-  const [forumThreads, setForumThreads] = useState<Awaited<ReturnType<typeof api.fetchUserForumThreads>>>([]);
   const [expandedSections, setExpandedSections] = useState<Set<ContributionSection>>(
-    new Set(["babel", "equipment", "wiki", "forum"])
+    new Set(["babel", "equipment", "wiki"])
   );
 
   useEffect(() => {
     const fetchContributions = async () => {
       setLoading(true);
       try {
-        const [babel, equipment, wiki, forum] = await Promise.all([
+        const [babel, equipment, wiki] = await Promise.all([
           api.fetchUserBabelContributions(userId).catch(() => []),
           api.fetchUserEquipmentSubmissions(userId).catch(() => []),
           api.fetchUserWikiArticles(userId).catch(() => []),
-          api.fetchUserForumThreads(userId).catch(() => []),
         ]);
         setBabelContributions(babel);
         setEquipmentSubmissions(equipment);
         setWikiArticles(wiki);
-        setForumThreads(forum);
       } catch (error) {
         console.error("Error fetching contributions:", error);
       } finally {
@@ -112,8 +107,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
   const totalContributions =
     babelContributions.length +
     equipmentSubmissions.length +
-    wikiArticles.length +
-    forumThreads.length;
+    wikiArticles.length;
 
   if (totalContributions === 0) {
     return (
@@ -267,41 +261,6 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
         </div>
       )}
 
-      {/* Forum Threads */}
-      {forumThreads.length > 0 && (
-        <div className="border border-border rounded-md">
-          {renderSectionHeader("forum", forumThreads.length)}
-          {expandedSections.has("forum") && (
-            <div className="p-3 pt-0 space-y-2">
-              {forumThreads.map((thread) => {
-                const categorySlug = thread.category?.slug || "general";
-                return (
-                  <Link
-                    key={thread.id}
-                    href={ROUTES.FORUM_THREAD(categorySlug, thread.slug)}
-                    className="block p-3 border border-border rounded-md bg-muted/20 hover:bg-muted/40 transition-colors"
-                  >
-                    <p className="font-medium text-sm truncate">{thread.title}</p>
-                    <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                      {thread.category?.name && (
-                        <>
-                          <span>{thread.category.name}</span>
-                          <span>·</span>
-                        </>
-                      )}
-                      <span>{thread.view_count} views</span>
-                      <span>·</span>
-                      <span>
-                        {formatDistanceToNow(new Date(thread.created_at), { addSuffix: true })}
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }
