@@ -7,9 +7,9 @@ import { BabelSidebar } from "./babel-sidebar";
 import { BabelSearch } from "./babel-search";
 import { BabelEntryCard } from "./babel-entry-card";
 import { useBabelAll } from "./use-babel-data";
-import { GithubLogo, ArrowSquareOut, Code, Copy, Check } from "@phosphor-icons/react";
+import { GithubLogo, ArrowSquareOut, Code, Copy } from "@phosphor-icons/react";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
+import { toast } from "sonner";
 
 export function BabelView() {
   // Use combined hook for parallel data fetching
@@ -18,7 +18,6 @@ export function BabelView() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showApi, setShowApi] = useState(false);
-  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
 
   const apiEndpoints = [
     {
@@ -40,8 +39,7 @@ export function BabelView() {
 
   const copyToClipboard = (url: string) => {
     navigator.clipboard.writeText(url);
-    setCopiedUrl(url);
-    setTimeout(() => setCopiedUrl(null), 2000);
+    toast.success("API URL copied");
   };
 
   // Filter and search entries
@@ -169,11 +167,7 @@ export function BabelView() {
                         className="shrink-0 p-1.5 hover:bg-background rounded transition-colors"
                         title="Copy URL"
                       >
-                        {copiedUrl === endpoint.url ? (
-                          <Check className="size-4 text-green-500" />
-                        ) : (
-                          <Copy className="size-4" />
-                        )}
+                        <Copy className="size-4" />
                       </button>
                     </div>
                   </div>

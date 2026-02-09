@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import {
-  CaretDown,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Plugs,
   Factory,
   Lightning,
@@ -15,37 +19,32 @@ import {
 
 // Collapsible Section Component
 function Section({
+  sectionKey,
   title,
   icon,
   children,
-  defaultOpen = false,
 }: {
+  sectionKey: string;
   title: string;
   icon: React.ReactNode;
   children: React.ReactNode;
-  defaultOpen?: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="mb-3">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-card hover:bg-card/80 border border-border transition-all group"
+    <AccordionItem value={sectionKey} className="mb-3 border-0">
+      <AccordionTrigger
+        className="w-full p-4 bg-card hover:bg-card/80 border border-border transition-all group hover:no-underline"
       >
         <div className="flex items-center gap-3">
           <span className="text-primary">{icon}</span>
           <span className="font-semibold">{title}</span>
         </div>
-        <CaretDown
-          className={`size-5 text-primary transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-        />
-      </button>
-      {isOpen && (
+      </AccordionTrigger>
+      <AccordionContent className="pb-0">
         <div className="mt-1 p-4 bg-card/50 border border-border border-t-0 overflow-x-auto">
           {children}
         </div>
-      )}
-    </div>
+      </AccordionContent>
+    </AccordionItem>
   );
 }
 
@@ -246,8 +245,9 @@ export function ReferencesView() {
       {/* Reference Sections */}
       <section className="py-8">
         <div className="container mx-auto px-4 max-w-5xl">
+          <Accordion type="multiple" defaultValue={["bacnet"]} className="w-full">
           {/* BACnet Object Types */}
-          <Section title="BACnet Object Types" icon={<Plugs className="size-5" />} defaultOpen>
+          <Section sectionKey="bacnet" title="BACnet Object Types" icon={<Plugs className="size-5" />}>
             <ReferenceTable
               headers={["Code", "Abbr", "Name", "Description"]}
               rows={bacnetObjectTypes}
@@ -255,7 +255,7 @@ export function ReferencesView() {
           </Section>
 
           {/* Modbus Register Types */}
-          <Section title="Modbus Register Types" icon={<Cpu className="size-5" />}>
+          <Section sectionKey="modbus" title="Modbus Register Types" icon={<Cpu className="size-5" />}>
             <ReferenceTable
               headers={["Type", "Address Range", "Access", "Function Codes", "Description"]}
               rows={modbusRegisterTypes}
@@ -263,24 +263,25 @@ export function ReferencesView() {
           </Section>
 
           {/* HVAC Equipment */}
-          <Section title="HVAC Equipment" icon={<Factory className="size-5" />}>
+          <Section sectionKey="hvac" title="HVAC Equipment" icon={<Factory className="size-5" />}>
             <AbbreviationList items={hvacEquipment} />
           </Section>
 
           {/* Piping & Fluids */}
-          <Section title="Piping & Fluids" icon={<Drop className="size-5" />}>
+          <Section sectionKey="piping" title="Piping & Fluids" icon={<Drop className="size-5" />}>
             <AbbreviationList items={pipingFluids} />
           </Section>
 
           {/* Controls Abbreviations */}
-          <Section title="Controls Abbreviations" icon={<Gauge className="size-5" />}>
+          <Section sectionKey="controls" title="Controls Abbreviations" icon={<Gauge className="size-5" />}>
             <AbbreviationList items={controlsAbbreviations} />
           </Section>
 
           {/* Electrical & Power */}
-          <Section title="Electrical & Power" icon={<Lightning className="size-5" />}>
+          <Section sectionKey="electrical" title="Electrical & Power" icon={<Lightning className="size-5" />}>
             <AbbreviationList items={electricalPower} />
           </Section>
+          </Accordion>
         </div>
       </section>
     </div>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -18,8 +19,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { TagInput } from "../shared/tag-input";
 import { PointStackProfile, PointStackAvailabilityStatus } from "@/lib/types";
+import {
+  profileEditFormSchema,
+  type ProfileEditFormValues,
+} from "@/lib/schemas/pointstack-company-profile";
 import * as api from "../pointstack-api";
 
 interface ProfileEditDialogProps {
@@ -55,174 +68,232 @@ const AVAILABILITY_OPTIONS: { value: PointStackAvailabilityStatus; label: string
   { value: "not-looking", label: "Not looking" },
 ];
 
+function getDefaultValues(profile: PointStackProfile): ProfileEditFormValues {
+  return {
+    displayName: profile.display_name || "",
+    headline: profile.headline || "",
+    location: profile.location || "",
+    skills: profile.skills || [],
+    websiteUrl: profile.website_url || "",
+    linkedinUrl: profile.linkedin_url || "",
+    githubUrl: profile.github_url || "",
+    availabilityStatus: profile.availability_status || "not-looking",
+  };
+}
+
 export function ProfileEditDialog({
   open,
   onOpenChange,
   profile,
   onSave,
 }: ProfileEditDialogProps) {
-  const [loading, setLoading] = useState(false);
-  const [displayName, setDisplayName] = useState(profile.display_name || "");
-  const [headline, setHeadline] = useState(profile.headline || "");
-  const [location, setLocation] = useState(profile.location || "");
-  const [skills, setSkills] = useState<string[]>(profile.skills || []);
-  const [websiteUrl, setWebsiteUrl] = useState(profile.website_url || "");
-  const [linkedinUrl, setLinkedinUrl] = useState(profile.linkedin_url || "");
-  const [githubUrl, setGithubUrl] = useState(profile.github_url || "");
-  const [availabilityStatus, setAvailabilityStatus] = useState<PointStackAvailabilityStatus>(
-    profile.availability_status || "not-looking"
-  );
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Reset form when profile changes
+  const form = useForm<ProfileEditFormValues>({
+    resolver: zodResolver(profileEditFormSchema),
+    defaultValues: getDefaultValues(profile),
+  });
+
   useEffect(() => {
-    setDisplayName(profile.display_name || "");
-    setHeadline(profile.headline || "");
-    setLocation(profile.location || "");
-    setSkills(profile.skills || []);
-    setWebsiteUrl(profile.website_url || "");
-    setLinkedinUrl(profile.linkedin_url || "");
-    setGithubUrl(profile.github_url || "");
-    setAvailabilityStatus(profile.availability_status || "not-looking");
-  }, [profile]);
+    form.reset(getDefaultValues(profile));
+  }, [profile, open, form]);
 
-  const handleSave = async () => {
-    setLoading(true);
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setSubmitError(null);
+    }
+    onOpenChange(nextOpen);
+  };
+
+  const skills = useWatch({
+    control: form.control,
+    name: "skills",
+    defaultValue: [],
+  });
+
+  const onSubmit = async (values: ProfileEditFormValues) => {
+    setSubmitError(null);
+
     try {
       const updatedProfile = await api.updateProfile({
-        display_name: displayName || undefined,
-        headline: headline || undefined,
-        location: location || undefined,
-        skills: skills.length > 0 ? skills : undefined,
-        website_url: websiteUrl || undefined,
-        linkedin_url: linkedinUrl || undefined,
-        github_url: githubUrl || undefined,
-        availability_status: availabilityStatus,
+        display_name: values.displayName.trim() || undefined,
+        headline: values.headline.trim() || undefined,
+        location: values.location.trim() || undefined,
+        skills: values.skills.length > 0 ? values.skills : undefined,
+        website_url: values.websiteUrl.trim() || undefined,
+        linkedin_url: values.linkedinUrl.trim() || undefined,
+        github_url: values.githubUrl.trim() || undefined,
+        availability_status: values.availabilityStatus,
       });
+
       onSave(updatedProfile);
       onOpenChange(false);
     } catch (error) {
       console.error("Error updating profile:", error);
-    } finally {
-      setLoading(false);
+      setSubmitError("Failed to update profile. Please try again.");
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="displayName">Display Name</Label>
-            <Input
-              id="displayName"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="How should we call you?"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FormField
+              control={form.control}
+              name="displayName"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Display Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="How should we call you?" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="headline">Headline</Label>
-            <Input
-              id="headline"
-              value={headline}
-              onChange={(e) => setHeadline(e.target.value)}
-              placeholder="e.g., Niagara Developer at Acme Controls"
+            <FormField
+              control={form.control}
+              name="headline"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Headline</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Niagara Developer at Acme Controls" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
-            <Input
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="e.g., Denver, CO"
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Location</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Denver, CO" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label>Skills</Label>
-            <TagInput
-              value={skills}
-              onChange={setSkills}
-              placeholder="Add your BAS skills..."
-              maxTags={10}
-              suggestions={SUGGESTED_SKILLS}
+            <FormField
+              control={form.control}
+              name="skills"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Skills</FormLabel>
+                  <FormControl>
+                    <TagInput
+                      value={skills}
+                      onChange={field.onChange}
+                      placeholder="Add your BAS skills..."
+                      maxTags={10}
+                      suggestions={SUGGESTED_SKILLS}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="space-y-2">
-            <Label>Availability Status</Label>
-            <Select
-              value={availabilityStatus}
-              onValueChange={(value) => setAvailabilityStatus(value as PointStackAvailabilityStatus)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select availability" />
-              </SelectTrigger>
-              <SelectContent>
-                {AVAILABILITY_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <FormField
+              control={form.control}
+              name="availabilityStatus"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Availability Status</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select availability" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AVAILABILITY_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="border-t border-border pt-4 mt-4">
-            <h4 className="text-sm font-medium mb-3">Social Links</h4>
+            <div className="mt-4 border-t border-border pt-4">
+              <h4 className="mb-3 text-sm font-medium">Social Links</h4>
 
-            <div className="space-y-3">
-              <div className="space-y-2">
-                <Label htmlFor="websiteUrl">Website</Label>
-                <Input
-                  id="websiteUrl"
-                  type="url"
-                  value={websiteUrl}
-                  onChange={(e) => setWebsiteUrl(e.target.value)}
-                  placeholder="https://yoursite.com"
+              <div className="space-y-3">
+                <FormField
+                  control={form.control}
+                  name="websiteUrl"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>Website</FormLabel>
+                      <FormControl>
+                        <Input type="url" placeholder="https://yoursite.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="linkedinUrl">LinkedIn</Label>
-                <Input
-                  id="linkedinUrl"
-                  type="url"
-                  value={linkedinUrl}
-                  onChange={(e) => setLinkedinUrl(e.target.value)}
-                  placeholder="https://linkedin.com/in/yourprofile"
+                <FormField
+                  control={form.control}
+                  name="linkedinUrl"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>LinkedIn</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="url"
+                          placeholder="https://linkedin.com/in/yourprofile"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="githubUrl">GitHub</Label>
-                <Input
-                  id="githubUrl"
-                  type="url"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
-                  placeholder="https://github.com/yourusername"
+                <FormField
+                  control={form.control}
+                  name="githubUrl"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>GitHub</FormLabel>
+                      <FormControl>
+                        <Input type="url" placeholder="https://github.com/yourusername" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
             </div>
-          </div>
-        </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={loading}>
-            {loading ? "Saving..." : "Save Changes"}
-          </Button>
-        </DialogFooter>
+            {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

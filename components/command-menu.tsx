@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  MagnifyingGlass,
   House,
   Wrench,
   BookOpen,
@@ -12,13 +11,17 @@ import {
   Kanban,
   BookmarksSimple,
   User,
-  X,
   Gauge,
 } from "@phosphor-icons/react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { ROUTES } from "@/lib/routes";
-import { cn } from "@/lib/utils";
 
 interface SearchItem {
   id: string;
@@ -49,133 +52,63 @@ interface CommandMenuProps {
 export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const filteredItems = SEARCH_ITEMS.filter(
-    (item) =>
-      item.title.toLowerCase().includes(query.toLowerCase()) ||
-      item.description.toLowerCase().includes(query.toLowerCase()) ||
-      item.category.toLowerCase().includes(query.toLowerCase())
-  );
+  const groupedItems = useMemo(() => {
+    return SEARCH_ITEMS.reduce((acc, item) => {
+      if (!acc[item.category]) {
+        acc[item.category] = [];
+      }
+      acc[item.category].push(item);
+      return acc;
+    }, {} as Record<string, SearchItem[]>);
+  }, []);
 
-  // Group items by category
-  const groupedItems = filteredItems.reduce((acc, item) => {
-    if (!acc[item.category]) {
-      acc[item.category] = [];
-    }
-    acc[item.category].push(item);
-    return acc;
-  }, {} as Record<string, SearchItem[]>);
-
-  const handleSelect = useCallback((item: SearchItem) => {
-    onOpenChange(false);
+  const handleSelect = (item: SearchItem) => {
+    handleOpenChange(false);
     setQuery("");
     router.push(item.href);
-  }, [onOpenChange, router]);
+  };
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!open) return;
-
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          setSelectedIndex((prev) => Math.min(prev + 1, filteredItems.length - 1));
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setSelectedIndex((prev) => Math.max(prev - 1, 0));
-          break;
-        case "Enter":
-          e.preventDefault();
-          if (filteredItems[selectedIndex]) {
-            handleSelect(filteredItems[selectedIndex]);
-          }
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, filteredItems, selectedIndex, handleSelect]);
-
-  // Reset selection when query changes
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [query]);
-
-  // Reset when closed
-  useEffect(() => {
-    if (!open) {
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
       setQuery("");
-      setSelectedIndex(0);
     }
-  }, [open]);
+    onOpenChange(nextOpen);
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="p-0 gap-0 max-w-lg overflow-hidden">
-        <DialogTitle className="sr-only">Search</DialogTitle>
-        <div className="flex items-center border-b border-border px-3">
-          <MagnifyingGlass className="size-4 text-muted-foreground shrink-0" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search pages..."
-            className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-            autoFocus
-          />
-          <button
-            onClick={() => onOpenChange(false)}
-            className="p-1 text-muted-foreground hover:text-foreground"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
-        <div className="max-h-[300px] overflow-y-auto p-2">
-          {filteredItems.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-6">
-              No results found.
-            </p>
-          ) : (
-            Object.entries(groupedItems).map(([category, items]) => (
-              <div key={category} className="mb-2">
-                <p className="text-xs font-medium text-muted-foreground px-2 py-1">
-                  {category}
-                </p>
-                {items.map((item) => {
-                  const globalIndex = filteredItems.indexOf(item);
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleSelect(item)}
-                      className={cn(
-                        "w-full flex items-center gap-3 px-2 py-2 text-sm rounded-md transition-colors",
-                        globalIndex === selectedIndex
-                          ? "bg-primary/10 text-primary"
-                          : "hover:bg-muted"
-                      )}
-                    >
-                      <span className="text-muted-foreground">{item.icon}</span>
-                      <span className="font-medium">{item.title}</span>
-                      <span className="text-muted-foreground text-xs ml-auto">
-                        {item.description}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            ))
-          )}
-        </div>
-        <div className="border-t border-border px-3 py-2 text-xs text-muted-foreground flex items-center gap-4">
-          <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px]">↑↓</kbd> Navigate</span>
-          <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px]">↵</kbd> Select</span>
-          <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px]">Esc</kbd> Close</span>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <CommandDialog open={open} onOpenChange={handleOpenChange}>
+      <CommandInput
+        value={query}
+        onValueChange={setQuery}
+        placeholder="Search pages..."
+      />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        {Object.entries(groupedItems).map(([category, items]) => (
+          <CommandGroup key={category} heading={category}>
+            {items.map((item) => (
+              <CommandItem
+                key={item.id}
+                value={`${item.title} ${item.description} ${item.category}`}
+                onSelect={() => handleSelect(item)}
+              >
+                <span className="text-muted-foreground">{item.icon}</span>
+                <span className="font-medium">{item.title}</span>
+                <span className="text-muted-foreground text-xs ml-auto">
+                  {item.description}
+                </span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        ))}
+      </CommandList>
+      <div className="border-t border-border px-3 py-2 text-xs text-muted-foreground flex items-center gap-4">
+        <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px]">↑↓</kbd> Navigate</span>
+        <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px]">↵</kbd> Select</span>
+        <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px]">Esc</kbd> Close</span>
+      </div>
+    </CommandDialog>
   );
 }
 

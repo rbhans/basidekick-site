@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState, ReactNode } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, useWatch } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -20,6 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { TagInput } from "../shared/tag-input";
 import { useAtlasAll } from "@/components/atlas/use-atlas-data";
 import { useAuth } from "@/hooks/use-auth";
@@ -27,7 +37,10 @@ import { usePointStackStore } from "../pointstack-store";
 import { createClient } from "@/lib/supabase/client";
 import { PointStackPostType } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
-import { validateTitle, validateContent } from "@/lib/security";
+import {
+  createPostFormSchema,
+  CreatePostFormValues,
+} from "@/lib/schemas/pointstack-content";
 
 interface CreatePostDialogProps {
   trigger: ReactNode;
@@ -71,29 +84,60 @@ const DOC_TYPES = [
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const MAX_DOC_SIZE = 20 * 1024 * 1024;
 
+function getInitialValues(defaultType: PointStackPostType): CreatePostFormValues {
+  return {
+    postType: defaultType === "job" ? "discussion" : defaultType,
+    title: "",
+    content: "",
+    tags: [],
+    equipmentIds: [],
+    isShowcase: false,
+    imageUploads: [],
+    documentUploads: [],
+  };
+}
 
 export function CreatePostDialog({ trigger, defaultType = "discussion" }: CreatePostDialogProps) {
   const router = useRouter();
   const { createPost } = usePointStackStore();
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const [postType, setPostType] = useState<PointStackPostType>(defaultType);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
-  const { data: atlasData } = useAtlasAll();
-  const [equipmentIds, setEquipmentIds] = useState<string[]>([]);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [equipmentQuery, setEquipmentQuery] = useState("");
-
-  const [isShowcase, setIsShowcase] = useState(defaultType === "project");
-  const [imageUploads, setImageUploads] = useState<{ name: string; url: string }[]>([]);
-  const [documentUploads, setDocumentUploads] = useState<{ name: string; url: string }[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [uploadingDocuments, setUploadingDocuments] = useState(false);
+  const { data: atlasData } = useAtlasAll();
 
+  const form = useForm<CreatePostFormValues>({
+    resolver: zodResolver(createPostFormSchema),
+    defaultValues: getInitialValues(defaultType),
+  });
+
+  const postType = useWatch({
+    control: form.control,
+    name: "postType",
+    defaultValue: "discussion",
+  });
+  const content = useWatch({
+    control: form.control,
+    name: "content",
+    defaultValue: "",
+  });
+  const equipmentIds = useWatch({
+    control: form.control,
+    name: "equipmentIds",
+    defaultValue: [],
+  });
+  const imageUploads = useWatch({
+    control: form.control,
+    name: "imageUploads",
+    defaultValue: [],
+  });
+  const documentUploads = useWatch({
+    control: form.control,
+    name: "documentUploads",
+    defaultValue: [],
+  });
 
   const brandById = useMemo(() => {
     return new Map(atlasData?.brands.map((b) => [b.id, b]) || []);
@@ -117,24 +161,36 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
       .slice(0, 6);
   }, [atlasData, equipmentQuery, equipmentIds, brandById]);
 
+  useEffect(() => {
+    if (postType !== "project") {
+      form.setValue("isShowcase", false);
+      form.setValue("imageUploads", []);
+      form.setValue("documentUploads", []);
+    }
+  }, [postType, form]);
+
   const addEquipment = (id: string) => {
     if (!equipmentIds.includes(id)) {
-      setEquipmentIds((prev) => [...prev, id]);
+      form.setValue("equipmentIds", [...equipmentIds, id], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
       setEquipmentQuery("");
     }
   };
 
   const removeEquipment = (id: string) => {
-    setEquipmentIds((prev) => prev.filter((item) => item !== id));
+    form.setValue(
+      "equipmentIds",
+      equipmentIds.filter((item) => item !== id),
+      {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      }
+    );
   };
-
-  useEffect(() => {
-    if (postType !== "project") {
-      setIsShowcase(false);
-      setImageUploads([]);
-      setDocumentUploads([]);
-    }
-  }, [postType]);
 
   const uploadFiles = async (
     files: FileList,
@@ -143,24 +199,24 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
     maxSize: number
   ) => {
     if (!user) {
-      setError("You must be signed in to upload files.");
+      setSubmitError("You must be signed in to upload files.");
       return [] as { name: string; url: string }[];
     }
 
     const supabase = createClient();
     if (!supabase) {
-      setError("Upload service not available.");
+      setSubmitError("Upload service not available.");
       return [] as { name: string; url: string }[];
     }
 
     const uploads: { name: string; url: string }[] = [];
     for (const file of Array.from(files)) {
       if (allowedTypes.length > 0 && file.type && !allowedTypes.includes(file.type)) {
-        setError("Unsupported file type.");
+        setSubmitError("Unsupported file type.");
         continue;
       }
       if (file.size > maxSize) {
-        setError("File is too large.");
+        setSubmitError("File is too large.");
         continue;
       }
 
@@ -173,7 +229,7 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
 
       if (uploadError) {
         console.error(uploadError);
-        setError("Failed to upload file.");
+        setSubmitError("Failed to upload file.");
         continue;
       }
 
@@ -184,102 +240,95 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
     return uploads;
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
     if (!files || files.length === 0) return;
-    setError(null);
+    setSubmitError(null);
     setUploadingImages(true);
     const uploads = await uploadFiles(files, "images", IMAGE_TYPES, MAX_IMAGE_SIZE);
     if (uploads.length > 0) {
-      setImageUploads((prev) => [...prev, ...uploads]);
+      form.setValue("imageUploads", [...imageUploads, ...uploads], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
     }
     setUploadingImages(false);
-    e.target.value = "";
+    event.target.value = "";
   };
 
-  const handleDocumentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const handleDocumentUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
     if (!files || files.length === 0) return;
-    setError(null);
+    setSubmitError(null);
     setUploadingDocuments(true);
     const uploads = await uploadFiles(files, "documents", DOC_TYPES, MAX_DOC_SIZE);
     if (uploads.length > 0) {
-      setDocumentUploads((prev) => [...prev, ...uploads]);
+      form.setValue("documentUploads", [...documentUploads, ...uploads], {
+        shouldDirty: true,
+        shouldTouch: true,
+        shouldValidate: true,
+      });
     }
     setUploadingDocuments(false);
-    e.target.value = "";
+    event.target.value = "";
   };
 
   const removeImage = (url: string) => {
-    setImageUploads((prev) => prev.filter((img) => img.url !== url));
+    form.setValue(
+      "imageUploads",
+      imageUploads.filter((img) => img.url !== url),
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
   };
 
   const removeDocument = (url: string) => {
-    setDocumentUploads((prev) => prev.filter((doc) => doc.url !== url));
+    form.setValue(
+      "documentUploads",
+      documentUploads.filter((doc) => doc.url !== url),
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    // Validate
-    const titleValidation = validateTitle(title);
-    if (!titleValidation.valid) {
-      setError(titleValidation.error || "Invalid title");
-      return;
-    }
-
-    const contentValidation = validateContent(content);
-    if (!contentValidation.valid) {
-      setError(contentValidation.error || "Invalid content");
-      return;
-    }
-
-    setLoading(true);
+  const onSubmit = async (values: CreatePostFormValues) => {
+    setSubmitError(null);
 
     try {
-      const images = postType === "project" ? imageUploads.map((img) => img.url) : [];
-      const documents = postType === "project" ? documentUploads.map((doc) => doc.url) : [];
+      const images = values.postType === "project" ? values.imageUploads.map((img) => img.url) : [];
+      const documents = values.postType === "project" ? values.documentUploads.map((doc) => doc.url) : [];
 
       const post = await createPost({
-        post_type: postType,
-        title: title.trim(),
-        content: content.trim(),
-        tags,
-        equipment_ids: equipmentIds,
-        is_showcase: postType === "project" ? isShowcase : false,
-        cover_image_url: postType === "project" ? images[0] || null : null,
+        post_type: values.postType,
+        title: values.title.trim(),
+        content: values.content.trim(),
+        tags: values.tags,
+        equipment_ids: values.equipmentIds,
+        is_showcase: values.postType === "project" ? values.isShowcase : false,
+        cover_image_url: values.postType === "project" ? images[0] || null : null,
         images,
         documents,
       });
 
       setOpen(false);
-      // Reset form
-      setTitle("");
-      setContent("");
-      setTags([]);
-      setEquipmentIds([]);
       setEquipmentQuery("");
-      setIsShowcase(false);
-      setImageUploads([]);
-      setDocumentUploads([]);
+      form.reset({
+        ...getInitialValues(defaultType),
+        postType: values.postType,
+      });
 
-      // Navigate to the type-specific detail page
       const destination =
         post.post_type === "project"
           ? ROUTES.POINTSTACK_PROJECT(post.slug)
           : post.post_type === "question"
-          ? ROUTES.POINTSTACK_QUESTION(post.slug)
-          : post.post_type === "job"
-          ? ROUTES.POINTSTACK_JOB(post.slug)
-          : ROUTES.POINTSTACK_POST(post.slug);
+            ? ROUTES.POINTSTACK_QUESTION(post.slug)
+            : post.post_type === "job"
+              ? ROUTES.POINTSTACK_JOB(post.slug)
+              : ROUTES.POINTSTACK_POST(post.slug);
 
       router.push(destination);
-    } catch (err) {
-      console.error("Error creating post:", err);
-      setError("Failed to create post. Please try again.");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Error creating post:", error);
+      setSubmitError("Failed to create post. Please try again.");
     }
   };
 
@@ -291,235 +340,276 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
           <DialogTitle>Create Post</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Post type */}
-          <div className="space-y-2">
-            <Label>Post Type</Label>
-            <Select value={postType} onValueChange={(v) => setPostType(v as PointStackPostType)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {POST_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    <div>
-                      <span className="font-medium">{type.label}</span>
-                      <span className="text-muted-foreground ml-2">- {type.description}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Title */}
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder={
-                postType === "question"
-                  ? "What do you want to know?"
-                  : postType === "tip"
-                  ? "What's your tip about?"
-                  : "Give your post a title"
-              }
-              maxLength={200}
-              required
-            />
-          </div>
-
-          {/* Content */}
-          <div className="space-y-2">
-            <Label htmlFor="content">Content</Label>
-            <Textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder={
-                postType === "question"
-                  ? "Provide details about your question..."
-                  : postType === "tip"
-                  ? "Share your tip with the community..."
-                  : "Write your post content..."
-              }
-              rows={6}
-              maxLength={50000}
-              required
-            />
-            <p className="text-xs text-muted-foreground text-right">
-              {content.length.toLocaleString()} / 50,000
-            </p>
-          </div>
-
-          {/* Tags */}
-          <div className="space-y-2">
-            <Label>Tags</Label>
-            <TagInput
-              value={tags}
-              onChange={setTags}
-              placeholder="Add relevant tags..."
-              maxTags={5}
-              suggestions={SUGGESTED_TAGS}
-            />
-          </div>
-
-          {postType === "project" && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Showcase</Label>
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={isShowcase}
-                    onChange={(e) => setIsShowcase(e.target.checked)}
-                  />
-                  Show in Project Showcase
-                </label>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Project Images (optional)</Label>
-                <input
-                  type="file"
-                  accept={IMAGE_TYPES.join(",")}
-                  multiple
-                  onChange={handleImageUpload}
-                  disabled={uploadingImages}
-                />
-                {uploadingImages && (
-                  <p className="text-xs text-muted-foreground">Uploading images...</p>
-                )}
-                {imageUploads.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {imageUploads.map((img) => (
-                      <div key={img.url} className="flex items-center gap-2 border border-border rounded px-2 py-1 text-xs">
-                        <span className="truncate max-w-[180px]">{img.name}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeImage(img.url)}
-                          className="text-muted-foreground hover:text-foreground"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label>Project Documents (optional)</Label>
-                <input
-                  type="file"
-                  accept={DOC_TYPES.join(",")}
-                  multiple
-                  onChange={handleDocumentUpload}
-                  disabled={uploadingDocuments}
-                />
-                {uploadingDocuments && (
-                  <p className="text-xs text-muted-foreground">Uploading documents...</p>
-                )}
-                {documentUploads.length > 0 && (
-                  <div className="flex flex-col gap-2">
-                    {documentUploads.map((doc) => (
-                      <div key={doc.url} className="flex items-center justify-between border border-border rounded px-2 py-1 text-xs">
-                        <span className="truncate">{doc.name}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeDocument(doc.url)}
-                          className="text-muted-foreground hover:text-foreground"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Equipment Tags */}
-          {(postType === "question" || postType === "project") && (
-            <div className="space-y-2">
-              <Label>Tag equipment (optional)</Label>
-              {equipmentIds.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {equipmentIds.map((id) => {
-                    const model = atlasData?.models.find((m) => m.id === id);
-                    const brand = model ? brandById.get(model.brand) : null;
-                    return (
-                      <span
-                        key={id}
-                        className="inline-flex items-center gap-2 px-2 py-1 text-xs bg-muted rounded"
-                      >
-                        {model?.name || id}
-                        {brand?.name ? <span className="text-muted-foreground">· {brand.name}</span> : null}
-                        <button
-                          type="button"
-                          onClick={() => removeEquipment(id)}
-                          className="text-muted-foreground hover:text-foreground"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    );
-                  })}
-                </div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="postType"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Post Type</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value as PointStackPostType)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {POST_TYPES.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            <div>
+                              <span className="font-medium">{type.label}</span>
+                              <span className="text-muted-foreground ml-2">- {type.description}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
-              <div className="relative">
-                <Input
-                  value={equipmentQuery}
-                  onChange={(e) => setEquipmentQuery(e.target.value)}
-                  placeholder="Search equipment..."
+            />
+
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="title"
+                      placeholder={
+                        postType === "question"
+                          ? "What do you want to know?"
+                          : postType === "tip"
+                            ? "What's your tip about?"
+                            : "Give your post a title"
+                      }
+                      maxLength={200}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Content</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      id="content"
+                      placeholder={
+                        postType === "question"
+                          ? "Provide details about your question..."
+                          : postType === "tip"
+                            ? "Share your tip with the community..."
+                            : "Write your post content..."
+                      }
+                      rows={6}
+                      maxLength={50000}
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground text-right">
+                    {content.length.toLocaleString()} / 50,000
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Tags</FormLabel>
+                  <TagInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Add relevant tags..."
+                    maxTags={5}
+                    suggestions={SUGGESTED_TAGS}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {postType === "project" && (
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="isShowcase"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel>Showcase</FormLabel>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(event) => field.onChange(event.target.checked)}
+                        />
+                        Show in Project Showcase
+                      </label>
+                    </FormItem>
+                  )}
                 />
-                {equipmentQuery.trim() && equipmentMatches.length > 0 && (
-                  <div className="absolute z-10 mt-2 w-full border border-border bg-card rounded shadow">
-                    {equipmentMatches.map((model) => {
-                      const brand = brandById.get(model.brand);
-                      return (
-                        <button
-                          key={model.id}
-                          type="button"
-                          className="w-full text-left px-3 py-2 text-sm hover:bg-muted/50"
-                          onClick={() => addEquipment(model.id)}
+
+                <div className="space-y-2">
+                  <Label>Project Images (optional)</Label>
+                  <input
+                    type="file"
+                    accept={IMAGE_TYPES.join(",")}
+                    multiple
+                    onChange={handleImageUpload}
+                    disabled={uploadingImages}
+                  />
+                  {uploadingImages && (
+                    <p className="text-xs text-muted-foreground">Uploading images...</p>
+                  )}
+                  {imageUploads.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {imageUploads.map((img) => (
+                        <div
+                          key={img.url}
+                          className="flex items-center gap-2 border border-border rounded px-2 py-1 text-xs"
                         >
-                          {model.name}
-                          {brand?.name ? (
-                            <span className="text-xs text-muted-foreground ml-2">{brand.name}</span>
-                          ) : null}
-                        </button>
+                          <span className="truncate max-w-[180px]">{img.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeImage(img.url)}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Project Documents (optional)</Label>
+                  <input
+                    type="file"
+                    accept={DOC_TYPES.join(",")}
+                    multiple
+                    onChange={handleDocumentUpload}
+                    disabled={uploadingDocuments}
+                  />
+                  {uploadingDocuments && (
+                    <p className="text-xs text-muted-foreground">Uploading documents...</p>
+                  )}
+                  {documentUploads.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                      {documentUploads.map((doc) => (
+                        <div
+                          key={doc.url}
+                          className="flex items-center justify-between border border-border rounded px-2 py-1 text-xs"
+                        >
+                          <span className="truncate">{doc.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeDocument(doc.url)}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {(postType === "question" || postType === "project") && (
+              <div className="space-y-2">
+                <Label>Tag equipment (optional)</Label>
+                {equipmentIds.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {equipmentIds.map((id) => {
+                      const model = atlasData?.models.find((m) => m.id === id);
+                      const brand = model ? brandById.get(model.brand) : null;
+                      return (
+                        <span
+                          key={id}
+                          className="inline-flex items-center gap-2 px-2 py-1 text-xs bg-muted rounded"
+                        >
+                          {model?.name || id}
+                          {brand?.name ? <span className="text-muted-foreground">· {brand.name}</span> : null}
+                          <button
+                            type="button"
+                            onClick={() => removeEquipment(id)}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            ×
+                          </button>
+                        </span>
                       );
                     })}
                   </div>
                 )}
+                <div className="relative">
+                  <Input
+                    value={equipmentQuery}
+                    onChange={(event) => setEquipmentQuery(event.target.value)}
+                    placeholder="Search equipment..."
+                  />
+                  {equipmentQuery.trim() && equipmentMatches.length > 0 && (
+                    <div className="absolute z-10 mt-2 w-full border border-border bg-card rounded shadow">
+                      {equipmentMatches.map((model) => {
+                        const brand = brandById.get(model.brand);
+                        return (
+                          <button
+                            key={model.id}
+                            type="button"
+                            className="w-full text-left px-3 py-2 text-sm hover:bg-muted/50"
+                            onClick={() => addEquipment(model.id)}
+                          >
+                            {model.name}
+                            {brand?.name ? (
+                              <span className="text-xs text-muted-foreground ml-2">{brand.name}</span>
+                            ) : null}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
+            )}
+
+            {submitError && <p className="text-sm text-destructive">{submitError}</p>}
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+                disabled={form.formState.isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting || uploadingImages || uploadingDocuments}
+              >
+                {form.formState.isSubmitting ? "Creating..." : "Create Post"}
+              </Button>
             </div>
-          )}
-
-          {/* Error */}
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
-          )}
-
-          {/* Actions */}
-          <div className="flex justify-end gap-2 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading || uploadingImages || uploadingDocuments || !title.trim() || !content.trim()}>
-              {loading ? "Creating..." : "Create Post"}
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

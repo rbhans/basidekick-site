@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { Buildings } from "@phosphor-icons/react";
 import {
   Dialog,
@@ -14,6 +16,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { PointStackCompany } from "@/lib/types";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  createCompanyFormSchema,
+  type CreateCompanyFormValues,
+} from "@/lib/schemas/pointstack-company-profile";
 import * as api from "../pointstack-api";
 
 interface CreateCompanyDialogProps {
@@ -22,20 +36,26 @@ interface CreateCompanyDialogProps {
   onSuccess?: (company: PointStackCompany) => void | Promise<void>;
 }
 
+const defaultValues: CreateCompanyFormValues = {
+  name: "",
+  description: "",
+};
+
 export function CreateCompanyDialog({
   open,
   onOpenChange,
   onSuccess,
 }: CreateCompanyDialogProps) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [isCreating, setIsCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const form = useForm<CreateCompanyFormValues>({
+    resolver: zodResolver(createCompanyFormSchema),
+    defaultValues,
+  });
 
   const resetForm = () => {
-    setName("");
-    setDescription("");
-    setError(null);
+    form.reset(defaultValues);
+    setSubmitError(null);
   };
 
   const closeDialog = () => {
@@ -43,16 +63,13 @@ export function CreateCompanyDialog({
     onOpenChange(false);
   };
 
-  const handleCreate = async () => {
-    if (!name.trim()) return;
-
-    setIsCreating(true);
-    setError(null);
+  const onSubmit = async (values: CreateCompanyFormValues) => {
+    setSubmitError(null);
 
     try {
       const company = await api.createCompany(
-        name.trim(),
-        description.trim() || undefined
+        values.name.trim(),
+        values.description.trim() || undefined
       );
 
       if (onSuccess) {
@@ -60,11 +77,9 @@ export function CreateCompanyDialog({
       }
 
       closeDialog();
-    } catch (err) {
-      console.error("Failed to create company:", err);
-      setError("Failed to create company. Please try again.");
-    } finally {
-      setIsCreating(false);
+    } catch (error) {
+      console.error("Failed to create company:", error);
+      setSubmitError("Failed to create company. Please try again.");
     }
   };
 
@@ -89,44 +104,63 @@ export function CreateCompanyDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          <div>
-            <label className="text-sm font-medium mb-1.5 block">
-              Company Name
-            </label>
-            <Input
-              placeholder="Enter company name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              maxLength={120}
-              autoFocus
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Company Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter company name"
+                      maxLength={120}
+                      autoFocus
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div>
-            <label className="text-sm font-medium mb-1.5 block">
-              Description (optional)
-            </label>
-            <Textarea
-              placeholder="Tell the community what your company does"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              maxLength={1000}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description (optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell the community what your company does"
+                      rows={4}
+                      maxLength={1000}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
-        </div>
+            {submitError && <p className="text-sm text-destructive">{submitError}</p>}
 
-        <DialogFooter>
-          <Button variant="ghost" onClick={closeDialog} disabled={isCreating}>
-            Cancel
-          </Button>
-          <Button onClick={handleCreate} disabled={!name.trim() || isCreating}>
-            {isCreating ? "Creating..." : "Create Company"}
-          </Button>
-        </DialogFooter>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={closeDialog}
+                disabled={form.formState.isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Creating..." : "Create Company"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

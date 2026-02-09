@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import {
   Buildings,
   Copy,
-  Check,
   Trash,
   ArrowsClockwise,
   SignOut,
@@ -35,6 +34,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/components/providers/auth-provider";
 import { useProjectStore } from "./project-store";
 import * as companyApi from "./company-api";
+import { toast } from "sonner";
 import type { PSKCompany, PSKCompanyMember } from "@/lib/types";
 
 interface CompanySettingsProps {
@@ -49,12 +49,11 @@ export function CompanySettings({
   onOpenChange,
 }: CompanySettingsProps) {
   const { user } = useAuth();
-  const { companies, deleteCompany, initializeCompanies } = useProjectStore();
+  const { deleteCompany, initializeCompanies } = useProjectStore();
 
   const [company, setCompany] = useState<PSKCompany | null>(null);
   const [members, setMembers] = useState<PSKCompanyMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [memberToRemove, setMemberToRemove] = useState<PSKCompanyMember | null>(null);
@@ -93,10 +92,10 @@ export function CompanySettings({
 
     try {
       await navigator.clipboard.writeText(inviteUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      toast.success("Invite link copied");
     } catch (error) {
       console.error("Failed to copy:", error);
+      toast.error("Failed to copy invite link");
     }
   };
 
@@ -203,11 +202,7 @@ export function CompanySettings({
                     size="icon"
                     onClick={handleCopyInviteLink}
                   >
-                    {copied ? (
-                      <Check className="size-4 text-green-500" />
-                    ) : (
-                      <Copy className="size-4" />
-                    )}
+                    <Copy className="size-4" />
                   </Button>
                   <Button
                     variant="outline"
