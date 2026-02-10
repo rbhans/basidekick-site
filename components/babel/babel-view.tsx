@@ -7,7 +7,8 @@ import { BabelSidebar } from "./babel-sidebar";
 import { BabelSearch } from "./babel-search";
 import { BabelEntryCard } from "./babel-entry-card";
 import { useBabelAll } from "./use-babel-data";
-import { GithubLogo, ArrowSquareOut, Code, Copy } from "@phosphor-icons/react";
+import { GithubLogo, ArrowSquareOut, Code, Copy, Broom } from "@phosphor-icons/react";
+import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
@@ -135,6 +136,13 @@ export function BabelView() {
               View on GitHub
               <ArrowSquareOut className="size-3" />
             </a>
+            <Link
+              href="/babel/cleaner"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
+            >
+              <Broom className="size-4" weight="bold" />
+              Point Name Cleaner
+            </Link>
             <button
               onClick={() => setShowApi(!showApi)}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
