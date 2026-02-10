@@ -45,6 +45,15 @@
     "zod": "^4.3.5",
     "zustand": "^5.0.9"
   },
+  "pnpm": {
+    "packageExtensions": {
+      "@hookform/resolvers": {
+        "peerDependencies": {
+          "zod": "^4.0.0"
+        }
+      }
+    }
+  },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.1.1",
     "@tailwindcss/postcss": "^4",
