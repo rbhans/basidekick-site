@@ -33,6 +33,9 @@ const cspDirectives = [
 ];
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: process.cwd(),
+  },
   async headers() {
     return [
       {
