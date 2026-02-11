@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { MagnifyingGlass, MapPin, Users, Plus } from "@phosphor-icons/react";
+import { MagnifyingGlass, MapPin, Users, Plus, WarningCircle } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,14 +21,17 @@ export function PointStackCompaniesView() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCompanies = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await api.fetchCompanies(search || undefined);
       setCompanies(data);
     } catch (error) {
       console.error("Error fetching companies:", error);
+      setError("Failed to load companies. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -68,6 +71,20 @@ export function PointStackCompaniesView() {
           className="pl-9"
         />
       </div>
+
+      {/* Error */}
+      {error && !loading && (
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-lg bg-card text-center">
+          <WarningCircle className="w-8 h-8 text-destructive" />
+          <div>
+            <p className="font-medium mb-1">Something went wrong</p>
+            <p className="text-sm text-muted-foreground">{error}</p>
+            <Button variant="outline" size="sm" className="mt-3" onClick={() => fetchCompanies()}>
+              Try Again
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Loading */}
       {loading && (

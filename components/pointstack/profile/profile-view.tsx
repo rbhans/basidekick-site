@@ -27,6 +27,7 @@ import { ContributionsTab } from "./contributions-tab";
 import { PointStackProfile, PointStackPost } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import * as api from "../pointstack-api";
+import { toast } from "sonner";
 
 interface ProfileViewProps {
   username: string;
@@ -156,18 +157,23 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
 
   const handleFollow = async () => {
     if (!profile) return;
+    const wasFollowing = isFollowing;
+    const prevCount = followerCount;
     try {
       if (isFollowing) {
-        await api.unfollowUser(profile.id);
         setIsFollowing(false);
         setFollowerCount((c) => Math.max(0, c - 1));
+        await api.unfollowUser(profile.id);
       } else {
-        await api.followUser(profile.id);
         setIsFollowing(true);
         setFollowerCount((c) => c + 1);
+        await api.followUser(profile.id);
       }
     } catch (error) {
       console.error("Error toggling follow:", error);
+      setIsFollowing(wasFollowing);
+      setFollowerCount(prevCount);
+      toast.error("Failed to update follow status. Please try again.");
     }
   };
 

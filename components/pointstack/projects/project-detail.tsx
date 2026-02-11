@@ -94,7 +94,7 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
       setLiked(data?.vote_type === 1);
     };
 
-    fetchVote();
+    fetchVote().catch(console.error);
   }, [project, user]);
 
   useEffect(() => {

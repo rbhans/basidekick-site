@@ -102,7 +102,7 @@ export default function PointStackLayout({
       </nav>
 
       {/* Page content */}
-      <main className="flex-1">{children}</main>
+      <main className="flex-1" key={pathname}>{children}</main>
     </div>
   );
 }

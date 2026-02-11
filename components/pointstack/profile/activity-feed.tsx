@@ -10,6 +10,7 @@ import {
   Wrench,
   BookOpen,
 } from "@phosphor-icons/react";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ActivityItem, ActivityItemType } from "@/lib/types";
 import * as api from "../pointstack-api";
@@ -39,22 +40,26 @@ const ACTIVITY_COLORS: Record<ActivityItemType, string> = {
 export function ActivityFeed({ userId }: ActivityFeedProps) {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     const fetchActivity = async () => {
       setLoading(true);
+      setError(null);
       try {
         const data = await api.fetchUserActivity(userId, 30);
         setActivities(data);
       } catch (error) {
         console.error("Error fetching activity:", error);
+        setError("Failed to load activity. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchActivity();
-  }, [userId]);
+  }, [userId, retryCount]);
 
   if (loading) {
     return (
@@ -68,6 +73,17 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
             </div>
           </div>
         ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-sm text-destructive mb-3">{error}</p>
+        <Button variant="outline" size="sm" onClick={() => setRetryCount((c) => c + 1)}>
+          Try Again
+        </Button>
       </div>
     );
   }
