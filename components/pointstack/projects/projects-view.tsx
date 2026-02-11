@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { Plus, Heart, Eye, MapPin } from "@phosphor-icons/react";
+import { Plus, Heart, Eye, MapPin, WarningCircle } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,6 +17,7 @@ export function PointStackProjectsView() {
   const { user } = useAuth();
   const [projects, setProjects] = useState<PointStackPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const { data: atlasData } = useAtlasData();
 
@@ -42,19 +43,21 @@ export function PointStackProjectsView() {
       .filter(Boolean) as { id: string; name: string; href: string }[];
   };
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      setLoading(true);
-      try {
-        const data = await api.fetchShowcaseProjects();
-        setProjects(data);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchProjects = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await api.fetchShowcaseProjects();
+      setProjects(data);
+    } catch (err) {
+      console.error("Error fetching projects:", err);
+      setError(err instanceof Error ? err.message : "Failed to load projects");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchProjects();
   }, []);
 
@@ -79,6 +82,20 @@ export function PointStackProjectsView() {
           />
         )}
       </div>
+
+      {/* Error state */}
+      {error && (
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-lg bg-card text-center">
+          <WarningCircle className="w-8 h-8 text-destructive" />
+          <div>
+            <p className="font-medium mb-1">Something went wrong</p>
+            <p className="text-sm text-muted-foreground">{error}</p>
+            <Button variant="outline" size="sm" className="mt-3" onClick={fetchProjects}>
+              Try Again
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Loading */}
       {loading && (
