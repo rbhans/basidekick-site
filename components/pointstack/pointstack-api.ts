@@ -1583,15 +1583,15 @@ export async function fetchConversations(): Promise<PointStackConversation[]> {
         )
       )
     `)
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+    .eq("user_id", user.id);
 
   if (error) throw error;
 
-  // Extract and flatten conversations
+  // Extract, flatten, and sort conversations by most recent first
   const conversations = data
     ?.map((item: { conversation: PointStackConversation | null }) => item.conversation)
-    .filter((c: PointStackConversation | null): c is PointStackConversation => c !== null);
+    .filter((c: PointStackConversation | null): c is PointStackConversation => c !== null)
+    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
 
   return conversations || [];
 }
