@@ -138,10 +138,6 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
 
     set({ feedLoading: true, feedError: null });
 
-    if (reset) {
-      set({ posts: [], hasMorePosts: true });
-    }
-
     try {
       const posts = await api.fetchPosts(effectiveFilter, POSTS_PER_PAGE, 0);
       set({
@@ -152,7 +148,8 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
       });
     } catch (error) {
       console.error("Error fetching feed:", error);
-      set({ feedLoading: false, feedError: "Failed to load feed" });
+      // Keep existing posts visible on error instead of showing empty state
+      set({ feedLoading: false, feedError: getErrorMessage(error) });
     }
   },
 
