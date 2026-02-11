@@ -91,7 +91,7 @@ function getInitialValues(defaultType: PointStackPostType): CreatePostFormValues
     content: "",
     tags: [],
     equipmentIds: [],
-    isShowcase: false,
+    isShowcase: defaultType === "project",
     imageUploads: [],
     documentUploads: [],
   };
@@ -162,7 +162,9 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
   }, [atlasData, equipmentQuery, equipmentIds, brandById]);
 
   useEffect(() => {
-    if (postType !== "project") {
+    if (postType === "project") {
+      form.setValue("isShowcase", true);
+    } else {
       form.setValue("isShowcase", false);
       form.setValue("imageUploads", []);
       form.setValue("documentUploads", []);
@@ -328,7 +330,7 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
       router.push(destination);
     } catch (error) {
       console.error("Error creating post:", error);
-      setSubmitError("Failed to create post. Please try again.");
+      setSubmitError(error instanceof Error ? error.message : "Failed to create post. Please try again.");
     }
   };
 

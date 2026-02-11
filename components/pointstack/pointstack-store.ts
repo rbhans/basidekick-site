@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { toast } from "sonner";
 import {
   PointStackPost,
   PointStackPostComment,
@@ -11,6 +12,10 @@ import {
   PointStackProfile,
 } from "@/lib/types";
 import * as api from "./pointstack-api";
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "Something went wrong. Please try again.";
+}
 
 interface PointStackState {
   // Feed state
@@ -183,53 +188,66 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
   },
 
   updatePost: async (postId, updates) => {
-    const updated = await api.updatePost(postId, updates);
-    set((state) => ({
-      posts: state.posts.map((p) => (p.id === postId ? updated : p)),
-      currentPost: state.currentPost?.id === postId ? updated : state.currentPost,
-    }));
+    try {
+      const updated = await api.updatePost(postId, updates);
+      set((state) => ({
+        posts: state.posts.map((p) => (p.id === postId ? updated : p)),
+        currentPost: state.currentPost?.id === postId ? updated : state.currentPost,
+      }));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+      throw error;
+    }
   },
 
   deletePost: async (postId) => {
-    await api.deletePost(postId);
-    set((state) => ({
-      posts: state.posts.filter((p) => p.id !== postId),
-      currentPost: state.currentPost?.id === postId ? null : state.currentPost,
-    }));
+    try {
+      await api.deletePost(postId);
+      set((state) => ({
+        posts: state.posts.filter((p) => p.id !== postId),
+        currentPost: state.currentPost?.id === postId ? null : state.currentPost,
+      }));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+      throw error;
+    }
   },
 
   votePost: async (postId, voteType) => {
-    await api.votePost(postId, voteType);
-    // Optimistically update the UI
-    set((state) => ({
-      posts: state.posts.map((p) =>
-        p.id === postId
-          ? {
-              ...p,
-              upvote_count:
-                p.user_vote === voteType
-                  ? p.upvote_count - voteType
-                  : p.user_vote
-                  ? p.upvote_count - p.user_vote + voteType
-                  : p.upvote_count + voteType,
-              user_vote: p.user_vote === voteType ? null : voteType,
-            }
-          : p
-      ),
-      currentPost:
-        state.currentPost?.id === postId
-          ? {
-              ...state.currentPost,
-              upvote_count:
-                state.currentPost.user_vote === voteType
-                  ? state.currentPost.upvote_count - voteType
-                  : state.currentPost.user_vote
-                  ? state.currentPost.upvote_count - state.currentPost.user_vote + voteType
-                  : state.currentPost.upvote_count + voteType,
-              user_vote: state.currentPost.user_vote === voteType ? null : voteType,
-            }
-          : state.currentPost,
-    }));
+    try {
+      await api.votePost(postId, voteType);
+      set((state) => ({
+        posts: state.posts.map((p) =>
+          p.id === postId
+            ? {
+                ...p,
+                upvote_count:
+                  p.user_vote === voteType
+                    ? p.upvote_count - voteType
+                    : p.user_vote
+                    ? p.upvote_count - p.user_vote + voteType
+                    : p.upvote_count + voteType,
+                user_vote: p.user_vote === voteType ? null : voteType,
+              }
+            : p
+        ),
+        currentPost:
+          state.currentPost?.id === postId
+            ? {
+                ...state.currentPost,
+                upvote_count:
+                  state.currentPost.user_vote === voteType
+                    ? state.currentPost.upvote_count - voteType
+                    : state.currentPost.user_vote
+                    ? state.currentPost.upvote_count - state.currentPost.user_vote + voteType
+                    : state.currentPost.upvote_count + voteType,
+                user_vote: state.currentPost.user_vote === voteType ? null : voteType,
+              }
+            : state.currentPost,
+      }));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   },
 
   // Post detail actions
@@ -269,46 +287,59 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
   },
 
   deleteComment: async (commentId) => {
-    await api.deleteComment(commentId);
-    set((state) => ({
-      currentPostComments: state.currentPostComments.filter((c) => c.id !== commentId),
-      currentPost: state.currentPost
-        ? { ...state.currentPost, comment_count: Math.max(0, state.currentPost.comment_count - 1) }
-        : null,
-    }));
+    try {
+      await api.deleteComment(commentId);
+      set((state) => ({
+        currentPostComments: state.currentPostComments.filter((c) => c.id !== commentId),
+        currentPost: state.currentPost
+          ? { ...state.currentPost, comment_count: Math.max(0, state.currentPost.comment_count - 1) }
+          : null,
+      }));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+      throw error;
+    }
   },
 
   acceptAnswer: async (commentId) => {
     const state = get();
     if (!state.currentPost) return;
 
-    await api.acceptAnswer(commentId, state.currentPost.id);
-    set((state) => ({
-      currentPostComments: state.currentPostComments.map((c) => ({
-        ...c,
-        is_accepted: c.id === commentId,
-      })),
-    }));
+    try {
+      await api.acceptAnswer(commentId, state.currentPost.id);
+      set((state) => ({
+        currentPostComments: state.currentPostComments.map((c) => ({
+          ...c,
+          is_accepted: c.id === commentId,
+        })),
+      }));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   },
 
   voteComment: async (commentId, voteType) => {
-    await api.voteComment(commentId, voteType);
-    set((state) => ({
-      currentPostComments: state.currentPostComments.map((c) =>
-        c.id === commentId
-          ? {
-              ...c,
-              upvote_count:
-                c.user_vote === voteType
-                  ? c.upvote_count - voteType
-                  : c.user_vote
-                  ? c.upvote_count - c.user_vote + voteType
-                  : c.upvote_count + voteType,
-              user_vote: c.user_vote === voteType ? null : voteType,
-            }
-          : c
-      ),
-    }));
+    try {
+      await api.voteComment(commentId, voteType);
+      set((state) => ({
+        currentPostComments: state.currentPostComments.map((c) =>
+          c.id === commentId
+            ? {
+                ...c,
+                upvote_count:
+                  c.user_vote === voteType
+                    ? c.upvote_count - voteType
+                    : c.user_vote
+                    ? c.upvote_count - c.user_vote + voteType
+                    : c.upvote_count + voteType,
+                user_vote: c.user_vote === voteType ? null : voteType,
+              }
+            : c
+        ),
+      }));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   },
 
   clearCurrentPost: () => {
@@ -337,19 +368,27 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
   },
 
   markNotificationRead: async (id) => {
-    await api.markNotificationRead(id);
-    set((state) => ({
-      notifications: state.notifications.map((n) => (n.id === id ? { ...n, is_read: true } : n)),
-      unreadNotificationCount: Math.max(0, state.unreadNotificationCount - 1),
-    }));
+    try {
+      await api.markNotificationRead(id);
+      set((state) => ({
+        notifications: state.notifications.map((n) => (n.id === id ? { ...n, is_read: true } : n)),
+        unreadNotificationCount: Math.max(0, state.unreadNotificationCount - 1),
+      }));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   },
 
   markAllNotificationsRead: async () => {
-    await api.markAllNotificationsRead();
-    set((state) => ({
-      notifications: state.notifications.map((n) => ({ ...n, is_read: true })),
-      unreadNotificationCount: 0,
-    }));
+    try {
+      await api.markAllNotificationsRead();
+      set((state) => ({
+        notifications: state.notifications.map((n) => ({ ...n, is_read: true })),
+        unreadNotificationCount: 0,
+      }));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   },
 
   // Message actions
@@ -378,22 +417,37 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
   },
 
   sendMessage: async (conversationId, content) => {
-    const message = await api.sendMessage(conversationId, content);
-    set((state) => ({
-      currentMessages: [...state.currentMessages, message],
-    }));
+    try {
+      const message = await api.sendMessage(conversationId, content);
+      set((state) => ({
+        currentMessages: [...state.currentMessages, message],
+      }));
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+      throw error;
+    }
   },
 
   startConversation: async (userId, message) => {
-    const conversation = await api.startConversation(userId, message);
-    set((state) => ({
-      conversations: [conversation, ...state.conversations],
-    }));
-    return conversation;
+    try {
+      const conversation = await api.startConversation(userId, message);
+      set((state) => ({
+        conversations: [conversation, ...state.conversations],
+      }));
+      return conversation;
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+      throw error;
+    }
   },
 
   markConversationRead: async (conversationId) => {
-    await api.markConversationRead(conversationId);
+    try {
+      await api.markConversationRead(conversationId);
+    } catch (error) {
+      // Silent fail for read receipts - not critical
+      console.error("Error marking conversation read:", error);
+    }
   },
 
   // Floating messenger actions
@@ -444,11 +498,19 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
   },
 
   followUser: async (userId) => {
-    await api.followUser(userId);
+    try {
+      await api.followUser(userId);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   },
 
   unfollowUser: async (userId) => {
-    await api.unfollowUser(userId);
+    try {
+      await api.unfollowUser(userId);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   },
 
   // Reset
