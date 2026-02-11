@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Check, ChatCircle, Eye, Plus } from "@phosphor-icons/react";
+import { Check, ChatCircle, Eye, Plus, WarningCircle } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { usePointStackStore } from "../pointstack-store";
@@ -16,7 +16,7 @@ import { ROUTES } from "@/lib/routes";
 
 export function PointStackQuestionsView() {
   const { user } = useAuth();
-  const { posts, feedLoading, fetchFeed, setFeedFilter } = usePointStackStore();
+  const { posts, feedLoading, feedError, fetchFeed, setFeedFilter } = usePointStackStore();
   const { data: atlasData } = useAtlasData();
 
   useEffect(() => {
@@ -93,6 +93,25 @@ export function PointStackQuestionsView() {
           Popular
         </Button>
       </div>
+
+      {/* Error state */}
+      {feedError && (
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-lg bg-card text-center">
+          <WarningCircle className="w-8 h-8 text-destructive" />
+          <div>
+            <p className="font-medium mb-1">Something went wrong</p>
+            <p className="text-sm text-muted-foreground">{feedError}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-3"
+              onClick={() => setFeedFilter({ type: "question" })}
+            >
+              Try Again
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Loading */}
       {feedLoading && questions.length === 0 && (

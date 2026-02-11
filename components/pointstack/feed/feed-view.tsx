@@ -81,12 +81,13 @@ export function PointStackFeedView() {
       {/* Error state */}
       {feedError && (
         <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-lg bg-card text-center">
-          <WarningCircle className="w-8 h-8 text-muted-foreground" />
+          <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
-            <p className="font-medium mb-1">Community launching soon</p>
-            <p className="text-sm text-muted-foreground">
-              PointStack is being set up. Check back shortly!
-            </p>
+            <p className="font-medium mb-1">Something went wrong</p>
+            <p className="text-sm text-muted-foreground">{feedError}</p>
+            <Button variant="outline" size="sm" className="mt-3" onClick={() => fetchFeed()}>
+              Try Again
+            </Button>
           </div>
         </div>
       )}

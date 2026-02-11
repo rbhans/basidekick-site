@@ -47,7 +47,7 @@ interface UpdatePointStackCompanyInput {
 async function requireAuth(): Promise<User> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
   return user;
 }
 
@@ -264,7 +264,7 @@ export async function fetchPostBySlug(slug: string): Promise<PointStackPost | nu
 export async function createPost(input: CreatePointStackPostInput): Promise<PointStackPost> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const slug = generateSlug(input.title);
 
@@ -336,7 +336,7 @@ export async function deletePost(postId: string): Promise<void> {
 export async function votePost(postId: string, voteType: 1 | -1): Promise<void> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   // Check existing vote
   const { data: existingVote } = await supabase
@@ -427,7 +427,7 @@ export async function fetchComments(postId: string): Promise<PointStackPostComme
 export async function createComment(input: CreatePointStackCommentInput): Promise<PointStackPostComment> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const { data, error } = await supabase
     .from("pointstack_post_comments")
@@ -570,7 +570,7 @@ export async function acceptAnswer(commentId: string, postId: string): Promise<v
 export async function voteComment(commentId: string, voteType: 1 | -1): Promise<void> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const { data: existingVote } = await supabase
     .from("pointstack_comment_votes")
@@ -666,7 +666,7 @@ export async function fetchProfileById(userId: string): Promise<PointStackProfil
 export async function updateProfile(updates: UpdatePointStackProfileInput): Promise<PointStackProfile> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const { data, error } = await supabase
     .from("profiles")
@@ -682,7 +682,7 @@ export async function updateProfile(updates: UpdatePointStackProfileInput): Prom
 export async function completeOnboarding(): Promise<void> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const { error } = await supabase
     .from("profiles")
@@ -699,7 +699,7 @@ export async function completeOnboarding(): Promise<void> {
 export async function followUser(userId: string): Promise<void> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const { error } = await supabase.from("pointstack_user_follows").insert({
     follower_id: user.id,
@@ -729,7 +729,7 @@ export async function followUser(userId: string): Promise<void> {
 export async function unfollowUser(userId: string): Promise<void> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const { error } = await supabase
     .from("pointstack_user_follows")
@@ -828,7 +828,7 @@ export async function fetchCompanyBySlug(slug: string): Promise<PointStackCompan
 export async function createCompany(name: string, description?: string): Promise<PointStackCompany> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const slug = generateSlug(name);
 
@@ -1263,6 +1263,7 @@ export async function fetchShowcaseProjects(
     `)
     .eq("post_type", "project")
     .eq("is_showcase", true)
+    .eq("is_published", true)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -1293,6 +1294,7 @@ export async function fetchShowcaseProjectBySlug(slug: string): Promise<PointSta
     .eq("slug", slug)
     .eq("post_type", "project")
     .eq("is_showcase", true)
+    .eq("is_published", true)
     .single();
 
   if (error) {
@@ -1361,7 +1363,7 @@ export async function fetchJobBySlug(slug: string): Promise<PointStackJob | null
 export async function createJob(input: CreatePointStackJobInput): Promise<PointStackJob> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const slug = generateSlug(input.title);
 
@@ -1444,7 +1446,7 @@ export async function fetchResourceBySlug(slug: string): Promise<PointStackResou
 export async function createResource(input: CreatePointStackResourceInput): Promise<PointStackResourceListing> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const slug = generateSlug(input.title);
 
@@ -1615,7 +1617,7 @@ export async function fetchMessages(conversationId: string): Promise<PointStackM
 export async function sendMessage(conversationId: string, content: string): Promise<PointStackMessage> {
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
 
   const { data, error } = await supabase
     .from("pointstack_messages")

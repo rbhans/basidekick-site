@@ -41,7 +41,7 @@ export function CommentForm({ postId, parentId, isQuestion, onSuccess }: Comment
       onSuccess?.();
     } catch (err) {
       console.error("Error creating comment:", err);
-      setError("Failed to post. Please try again.");
+      setError(err instanceof Error ? err.message : "Failed to post. Please try again.");
     } finally {
       setLoading(false);
     }
