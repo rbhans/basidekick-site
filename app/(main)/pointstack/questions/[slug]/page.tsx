@@ -1,18 +1,11 @@
-import { PointStackQuestionDetail } from "@/components/pointstack/questions/question-detail";
+import { ROUTES } from "@/lib/routes";
+import { redirect } from "next/navigation";
 
 interface QuestionPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: QuestionPageProps) {
-  const { slug } = await params;
-  return {
-    title: `Question - PointStack Q&A`,
-    description: `View question and answers on PointStack`,
-  };
-}
-
 export default async function QuestionPage({ params }: QuestionPageProps) {
   const { slug } = await params;
-  return <PointStackQuestionDetail slug={slug} />;
+  redirect(ROUTES.POINTSTACK_POST(slug));
 }

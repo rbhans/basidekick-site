@@ -12,11 +12,11 @@ import { CreatePostDialog } from "../feed/create-post-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, getPointStackPostRoute } from "@/lib/routes";
 
 export function PointStackQuestionsView() {
   const { user } = useAuth();
-  const { posts, feedLoading, feedError, fetchFeed, setFeedFilter } = usePointStackStore();
+  const { posts, feedLoading, feedError, setFeedFilter } = usePointStackStore();
   const { data: atlasData } = useAtlasData();
 
   useEffect(() => {
@@ -130,7 +130,7 @@ export function PointStackQuestionsView() {
             return (
               <Link
                 key={question.id}
-                href={ROUTES.POINTSTACK_QUESTION(question.slug)}
+                href={getPointStackPostRoute(question.post_type, question.slug)}
                 className="block p-5 border border-border rounded-lg hover:border-primary/30 transition-colors"
               >
                 <div className="flex gap-4">

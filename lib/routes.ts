@@ -43,6 +43,11 @@ export const ROUTES = {
   ADMIN: "/admin",
 } as const;
 
+export function getPointStackPostRoute(postType: string, slug: string): string {
+  if (postType === "job") return ROUTES.POINTSTACK_JOB(slug);
+  return ROUTES.POINTSTACK_POST(slug);
+}
+
 // Map VIEW_ID to route path
 export function getRouteForViewId(viewId: string): string {
   switch (viewId) {

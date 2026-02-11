@@ -71,28 +71,6 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
     return decodeURIComponent(name);
   };
 
-  if (loading) {
-    return <PostDetailSkeleton />;
-  }
-
-  if (!post) {
-    return (
-      <div className="max-w-3xl mx-auto p-6">
-        <div className="text-center py-12">
-          <h2 className="text-xl font-semibold mb-2">Post not found</h2>
-          <p className="text-muted-foreground mb-4">This post may have been deleted or moved.</p>
-          <Button asChild>
-            <Link href={ROUTES.POINTSTACK}>Back to Feed</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  const typeInfo = POST_TYPE_LABELS[post.post_type];
-  const isAuthor = user?.id === post.author_id;
-  const isQuestion = post.post_type === "question";
-
   const equipmentLinks = useMemo(() => {
     if (!atlasData || !post?.equipment_ids) return [];
     const brandById = new Map(atlasData.brands.map((b) => [b.id, b]));
@@ -114,6 +92,28 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
       })
       .filter(Boolean) as { id: string; name: string; href: string }[];
   }, [atlasData, post]);
+
+  if (loading) {
+    return <PostDetailSkeleton />;
+  }
+
+  if (!post) {
+    return (
+      <div className="max-w-3xl mx-auto p-6">
+        <div className="text-center py-12">
+          <h2 className="text-xl font-semibold mb-2">Post not found</h2>
+          <p className="text-muted-foreground mb-4">This post may have been deleted or moved.</p>
+          <Button asChild>
+            <Link href={ROUTES.POINTSTACK}>Back to Feed</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const typeInfo = POST_TYPE_LABELS[post.post_type];
+  const isAuthor = user?.id === post.author_id;
+  const isQuestion = post.post_type === "question";
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6">
