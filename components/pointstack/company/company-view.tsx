@@ -408,23 +408,42 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
         <TabsContent value="team" className="mt-6">
           {company.members && company.members.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {company.members.map((member) => (
-                <Link
-                  key={member.id}
-                  href={ROUTES.POINTSTACK_PROFILE(member.profile?.display_name || "")}
-                  className="flex items-center gap-3 p-3 border border-border rounded-lg hover:border-primary/30"
-                >
-                  <UserAvatar
-                    displayName={member.profile?.display_name || null}
-                    avatarUrl={member.profile?.avatar_url}
-                    size="md"
-                  />
-                  <div>
-                    <p className="font-medium">{member.profile?.display_name || "Anonymous"}</p>
-                    <p className="text-sm text-muted-foreground">{member.title || member.role}</p>
+              {company.members.map((member) => {
+                const memberContent = (
+                  <>
+                    <UserAvatar
+                      displayName={member.profile?.display_name || null}
+                      avatarUrl={member.profile?.avatar_url}
+                      size="md"
+                    />
+                    <div>
+                      <p className="font-medium">{member.profile?.display_name || "Anonymous"}</p>
+                      <p className="text-sm text-muted-foreground">{member.title || member.role}</p>
+                    </div>
+                  </>
+                );
+
+                if (member.profile?.display_name) {
+                  return (
+                    <Link
+                      key={member.id}
+                      href={ROUTES.POINTSTACK_PROFILE(member.profile.display_name)}
+                      className="flex items-center gap-3 p-3 border border-border rounded-lg hover:border-primary/30"
+                    >
+                      {memberContent}
+                    </Link>
+                  );
+                }
+
+                return (
+                  <div
+                    key={member.id}
+                    className="flex items-center gap-3 p-3 border border-border rounded-lg"
+                  >
+                    {memberContent}
                   </div>
-                </Link>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-12 text-muted-foreground">

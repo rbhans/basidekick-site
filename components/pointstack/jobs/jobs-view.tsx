@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { MapPin, Briefcase, CurrencyDollar, Plus, House } from "@phosphor-icons/react";
+import { MapPin, Briefcase, CurrencyDollar, Plus, House, WarningCircle } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,9 +26,11 @@ export function PointStackJobsView() {
   const [loading, setLoading] = useState(true);
   const [jobType, setJobType] = useState<string | undefined>();
   const [remoteOnly, setRemoteOnly] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const loadJobs = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const data = await api.fetchJobs({
         jobType,
@@ -37,6 +39,7 @@ export function PointStackJobsView() {
       setJobs(data);
     } catch (error) {
       console.error("Error fetching jobs:", error);
+      setError("Failed to load jobs. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -94,6 +97,20 @@ export function PointStackJobsView() {
           Remote Only
         </Button>
       </div>
+
+      {/* Error */}
+      {error && !loading && (
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-lg bg-card text-center">
+          <WarningCircle className="w-8 h-8 text-destructive" />
+          <div>
+            <p className="font-medium mb-1">Something went wrong</p>
+            <p className="text-sm text-muted-foreground">{error}</p>
+            <Button variant="outline" size="sm" className="mt-3" onClick={() => loadJobs()}>
+              Try Again
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Loading */}
       {loading && (

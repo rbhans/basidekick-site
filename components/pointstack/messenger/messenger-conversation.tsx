@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export function MessengerConversation() {
   const { user } = useAuth();
@@ -39,6 +40,7 @@ export function MessengerConversation() {
       setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
     } finally {
       setSending(false);
     }
