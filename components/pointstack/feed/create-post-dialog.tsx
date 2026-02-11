@@ -36,7 +36,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { usePointStackStore } from "../pointstack-store";
 import { createClient } from "@/lib/supabase/client";
 import { PointStackPostType } from "@/lib/types";
-import { ROUTES } from "@/lib/routes";
+import { getPointStackPostRoute } from "@/lib/routes";
 import {
   createPostFormSchema,
   CreatePostFormValues,
@@ -318,16 +318,7 @@ export function CreatePostDialog({ trigger, defaultType = "discussion" }: Create
         postType: values.postType,
       });
 
-      const destination =
-        post.post_type === "project"
-          ? ROUTES.POINTSTACK_PROJECT(post.slug)
-          : post.post_type === "question"
-            ? ROUTES.POINTSTACK_QUESTION(post.slug)
-            : post.post_type === "job"
-              ? ROUTES.POINTSTACK_JOB(post.slug)
-              : ROUTES.POINTSTACK_POST(post.slug);
-
-      router.push(destination);
+      router.push(getPointStackPostRoute(post.post_type, post.slug));
     } catch (error) {
       console.error("Error creating post:", error);
       setSubmitError(error instanceof Error ? error.message : "Failed to create post. Please try again.");

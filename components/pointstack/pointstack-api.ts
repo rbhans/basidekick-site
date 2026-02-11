@@ -11,7 +11,6 @@ import {
   PointStackConversation,
   PointStackMessage,
   PointStackProfile,
-  PointStackUserFollow,
   PointStackFeedFilter,
   PointStackJoinRequestStatus,
   CreatePointStackPostInput,
@@ -19,14 +18,13 @@ import {
   CreatePointStackJobInput,
   CreatePointStackResourceInput,
   UpdatePointStackProfileInput,
-  PointStackPostType,
   ActivityItem,
   BabelContribution,
   EquipmentSubmission,
   EquipmentNote,
   WikiArticle,
 } from "@/lib/types";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, getPointStackPostRoute } from "@/lib/routes";
 import { User } from "@supabase/supabase-js";
 
 interface UpdatePointStackCompanyInput {
@@ -189,6 +187,53 @@ async function fetchProfileDisplayName(userId: string): Promise<string | null> {
   return data?.display_name ?? null;
 }
 
+type RawPointStackPost = Partial<PointStackPost> & {
+  author?: PointStackPost["author"] | PointStackPost["author"][] | null;
+  company?: PointStackPost["company"] | PointStackPost["company"][] | null;
+};
+
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === "string");
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return value as Record<string, unknown>;
+}
+
+function asNumber(value: unknown, fallback = 0): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function normalizePost(post: RawPointStackPost): PointStackPost {
+  const author = Array.isArray(post.author) ? post.author[0] || undefined : post.author || undefined;
+  const company = Array.isArray(post.company) ? post.company[0] || null : post.company || null;
+
+  return {
+    ...(post as PointStackPost),
+    title: typeof post.title === "string" ? post.title : "Untitled",
+    content: typeof post.content === "string" ? post.content : "",
+    tags: asStringArray(post.tags),
+    equipment_ids: asStringArray(post.equipment_ids),
+    images: asStringArray(post.images),
+    documents: asStringArray(post.documents),
+    building_types: asStringArray(post.building_types),
+    systems: asStringArray(post.systems),
+    technologies: asStringArray(post.technologies),
+    view_count: asNumber(post.view_count),
+    upvote_count: asNumber(post.upvote_count),
+    comment_count: asNumber(post.comment_count),
+    metadata: asRecord(post.metadata),
+    author,
+    company,
+  };
+}
+
+function normalizePosts(posts: RawPointStackPost[] | null | undefined): PointStackPost[] {
+  return (posts || []).map(normalizePost);
+}
+
 // Helper to generate URL-friendly slugs with cryptographic randomness
 function generateSlug(title: string): string {
   const base = title
@@ -240,7 +285,7 @@ export async function fetchPosts(
 
   const { data, error } = await query;
   if (error) throw error;
-  return data || [];
+  return normalizePosts(data as RawPointStackPost[] | null);
 }
 
 export async function fetchPostBySlug(slug: string): Promise<PointStackPost | null> {
@@ -258,7 +303,7 @@ export async function fetchPostBySlug(slug: string): Promise<PointStackPost | nu
     if (error.code === "PGRST116") return null;
     throw error;
   }
-  return data;
+  return data ? normalizePost(data as RawPointStackPost) : null;
 }
 
 export async function createPost(input: CreatePointStackPostInput): Promise<PointStackPost> {
@@ -299,7 +344,7 @@ export async function createPost(input: CreatePointStackPostInput): Promise<Poin
     .single();
 
   if (error) throw error;
-  return data;
+  return normalizePost(data as RawPointStackPost);
 }
 
 export async function updatePost(
@@ -321,7 +366,7 @@ export async function updatePost(
     .single();
 
   if (error) throw error;
-  return data;
+  return normalizePost(data as RawPointStackPost);
 }
 
 export async function deletePost(postId: string): Promise<void> {
@@ -377,7 +422,7 @@ export async function votePost(postId: string, voteType: 1 | -1): Promise<void> 
     try {
       const { data: post } = await supabase
         .from("pointstack_posts")
-        .select("author_id, title, slug")
+        .select("author_id, title, slug, post_type")
         .eq("id", postId)
         .single();
 
@@ -388,7 +433,7 @@ export async function votePost(postId: string, voteType: 1 | -1): Promise<void> 
           type: "like",
           title: "New like on your post",
           body: post.title || null,
-          link: post.slug ? ROUTES.POINTSTACK_POST(post.slug) : null,
+          link: post.slug ? getPointStackPostRoute(post.post_type || "discussion", post.slug) : null,
           metadata: { post_id: postId },
         });
       }
@@ -448,7 +493,7 @@ export async function createComment(input: CreatePointStackCommentInput): Promis
   try {
     const { data: post } = await supabase
       .from("pointstack_posts")
-      .select("author_id, title, slug")
+      .select("author_id, title, slug, post_type")
       .eq("id", input.post_id)
       .single();
 
@@ -470,7 +515,9 @@ export async function createComment(input: CreatePointStackCommentInput): Promis
       recipients.set(parentAuthorId, "New reply to your comment");
     }
 
-    const link = post?.slug ? ROUTES.POINTSTACK_POST(post.slug) : null;
+    const link = post?.slug
+      ? getPointStackPostRoute(post.post_type || "discussion", post.slug)
+      : null;
     const body = data.content ? data.content.slice(0, 200) : null;
 
     for (const [recipientId, title] of recipients) {
@@ -544,12 +591,14 @@ export async function acceptAnswer(commentId: string, postId: string): Promise<v
   try {
     const { data } = await supabase
       .from("pointstack_post_comments")
-      .select("author_id, post:pointstack_posts!post_id(title, slug)")
+      .select("author_id, post:pointstack_posts!post_id(title, slug, post_type)")
       .eq("id", commentId)
       .single();
 
     const recipientId = data?.author_id;
-    const post = (data?.post as { title?: string | null; slug?: string | null } | null) ?? null;
+    const post = (
+      data?.post as { title?: string | null; slug?: string | null; post_type?: string | null } | null
+    ) ?? null;
 
     if (recipientId && recipientId !== user.id) {
       await createNotification({
@@ -558,7 +607,9 @@ export async function acceptAnswer(commentId: string, postId: string): Promise<v
         type: "answer_accepted",
         title: "Your answer was accepted",
         body: post?.title || null,
-        link: post?.slug ? ROUTES.POINTSTACK_POST(post.slug) : null,
+        link: post?.slug
+          ? getPointStackPostRoute(post.post_type || "discussion", post.slug)
+          : null,
         metadata: { post_id: postId, comment_id: commentId },
       });
     }
@@ -822,7 +873,7 @@ export async function fetchCompanyBySlug(slug: string): Promise<PointStackCompan
     if (error.code === "PGRST116") return null;
     throw error;
   }
-  return data;
+  return data as PointStackCompany;
 }
 
 export async function createCompany(name: string, description?: string): Promise<PointStackCompany> {
@@ -967,7 +1018,7 @@ export async function fetchCompanyProjects(
     .range(offset, offset + limit - 1);
 
   if (error) throw error;
-  return data || [];
+  return normalizePosts(data as RawPointStackPost[] | null);
 }
 
 export async function fetchCompanyJobs(
@@ -1279,7 +1330,7 @@ export async function fetchShowcaseProjects(
 
   const { data, error } = await query;
   if (error) throw error;
-  return data || [];
+  return normalizePosts(data as RawPointStackPost[] | null);
 }
 
 export async function fetchShowcaseProjectBySlug(slug: string): Promise<PointStackPost | null> {
@@ -1301,7 +1352,7 @@ export async function fetchShowcaseProjectBySlug(slug: string): Promise<PointSta
     if (error.code === "PGRST116") return null;
     throw error;
   }
-  return data;
+  return data ? normalizePost(data as RawPointStackPost) : null;
 }
 
 
@@ -1722,7 +1773,7 @@ export async function fetchUserShowcaseProjects(userId: string): Promise<PointSt
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data || [];
+  return normalizePosts(data as RawPointStackPost[] | null);
 }
 
 // ============================================================
@@ -1749,7 +1800,7 @@ export async function fetchUserActivity(userId: string, limit = 20): Promise<Act
         type: "post",
         title: post.title,
         description: `Created a ${post.post_type}`,
-        link: `/pointstack/posts/${post.slug}`,
+        link: getPointStackPostRoute(post.post_type, post.slug),
         created_at: post.created_at,
       });
     }

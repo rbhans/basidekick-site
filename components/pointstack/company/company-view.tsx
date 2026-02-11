@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { UserAvatar } from "../shared/user-avatar";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, getPointStackPostRoute } from "@/lib/routes";
 import { PointStackCompany, PointStackCompanyJoinRequest, PointStackJob, PointStackPost } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
 import { EditCompanyDialog } from "./edit-company-dialog";
@@ -476,7 +476,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
               {companyProjects.map((project) => (
                 <Link
                   key={project.id}
-                  href={ROUTES.POINTSTACK_PROJECT(project.slug)}
+                  href={getPointStackPostRoute(project.post_type, project.slug)}
                   className="block rounded-lg border border-border hover:border-primary/30 transition-colors p-4"
                 >
                   <div className="flex gap-4">

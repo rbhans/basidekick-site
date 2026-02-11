@@ -6,7 +6,7 @@ import { Plus, Heart, Eye, MapPin, WarningCircle } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, getPointStackPostRoute } from "@/lib/routes";
 import { PointStackPost } from "@/lib/types";
 import { useAuth } from "@/hooks/use-auth";
 import { CreatePostDialog } from "../feed/create-post-dialog";
@@ -112,7 +112,7 @@ export function PointStackProjectsView() {
           {projects.map((project) => (
             <Link
               key={project.id}
-              href={ROUTES.POINTSTACK_PROJECT(project.slug)}
+              href={getPointStackPostRoute(project.post_type, project.slug)}
               className="group block border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-colors"
             >
               {/* Cover image */}

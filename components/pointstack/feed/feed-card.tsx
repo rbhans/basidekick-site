@@ -4,7 +4,7 @@ import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { ChatCircle, Eye, Share, DotsThree } from "@phosphor-icons/react";
 import { PointStackPost, PointStackPostType } from "@/lib/types";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, getPointStackPostRoute } from "@/lib/routes";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,9 +36,12 @@ export function FeedCard({ post, equipmentLinks = [] }: FeedCardProps) {
   const { user } = useAuth();
   const { votePost, deletePost } = usePointStackStore();
   const typeInfo = POST_TYPE_LABELS[post.post_type];
+  const postHref = getPointStackPostRoute(post.post_type, post.slug);
+  const postTags = post.tags || [];
+  const postContent = post.content || "";
 
   const handleShare = async () => {
-    const url = `${window.location.origin}${ROUTES.POINTSTACK_POST(post.slug)}`;
+    const url = `${window.location.origin}${postHref}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: post.title, url });
@@ -90,7 +93,7 @@ export function FeedCard({ post, equipmentLinks = [] }: FeedCardProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Link href={`${ROUTES.POINTSTACK_POST(post.slug)}?edit=true`}>Edit</Link>
+                <Link href={`${postHref}?edit=true`}>Edit</Link>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-destructive"
@@ -108,27 +111,27 @@ export function FeedCard({ post, equipmentLinks = [] }: FeedCardProps) {
       </div>
 
       {/* Content */}
-      <Link href={ROUTES.POINTSTACK_POST(post.slug)} className="block">
+      <Link href={postHref} className="block">
         <h3 className="text-lg font-semibold mb-2 hover:text-primary transition-colors">
           {post.title}
         </h3>
         <p className="text-muted-foreground text-sm line-clamp-3 mb-3">
-          {post.content.slice(0, 250)}
-          {post.content.length > 250 && "..."}
+          {postContent.slice(0, 250)}
+          {postContent.length > 250 && "..."}
         </p>
       </Link>
 
       {/* Tags */}
-      {post.tags.length > 0 && (
+      {postTags.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mb-4">
-          {post.tags.slice(0, 5).map((tag) => (
+          {postTags.slice(0, 5).map((tag) => (
             <Badge key={tag} variant="secondary" className="text-xs">
               {tag}
             </Badge>
           ))}
-          {post.tags.length > 5 && (
+          {postTags.length > 5 && (
             <Badge variant="secondary" className="text-xs">
-              +{post.tags.length - 5}
+              +{postTags.length - 5}
             </Badge>
           )}
         </div>
@@ -157,7 +160,7 @@ export function FeedCard({ post, equipmentLinks = [] }: FeedCardProps) {
         />
 
         <Link
-          href={ROUTES.POINTSTACK_POST(post.slug)}
+          href={postHref}
           className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ChatCircle className="w-4 h-4" />
