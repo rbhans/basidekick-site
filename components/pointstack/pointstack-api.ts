@@ -1591,7 +1591,7 @@ export async function fetchConversations(): Promise<PointStackConversation[]> {
   const conversations = data
     ?.map((item: { conversation: PointStackConversation | null }) => item.conversation)
     .filter((c: PointStackConversation | null): c is PointStackConversation => c !== null)
-    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
+    .sort((a: PointStackConversation, b: PointStackConversation) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime());
 
   return conversations || [];
 }
