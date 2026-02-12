@@ -11,7 +11,7 @@ import { getIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 interface ToolDetailViewProps {
-  toolId: "nsk" | "ssk" | "msk" | "qsk";
+  toolId: "ssk" | "qsk";
 }
 
 export function ToolDetailView({ toolId }: ToolDetailViewProps) {
