@@ -96,9 +96,7 @@ export interface NavNode {
 export const VIEW_IDS = {
   HOME: "home",
   TOOLS: "tools",
-  NSK: "nsk",
   SSK: "ssk",
-  MSK: "msk",
   QSK: "qsk",
   RESOURCES: "resources",
   BABEL: "babel",
@@ -119,7 +117,7 @@ export type ViewId = (typeof VIEW_IDS)[keyof typeof VIEW_IDS];
 // License from Lemon Squeezy purchases
 export interface License {
   id: string;
-  product_id: string; // 'nsk', 'ssk', 'msk'
+  product_id: string; // 'ssk'
   license_key: string;
   lemon_squeezy_order_id: string | null;
   purchased_at: string;

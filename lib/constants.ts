@@ -15,9 +15,7 @@ import { ROUTES } from "./routes";
 export const VIEW_TITLES: Record<string, string> = {
   [VIEW_IDS.HOME]: "Home",
   [VIEW_IDS.TOOLS]: "Tools",
-  [VIEW_IDS.NSK]: "NiagaraSidekick",
   [VIEW_IDS.SSK]: "SimulatorSidekick",
-  [VIEW_IDS.MSK]: "MetasysSidekick",
   [VIEW_IDS.QSK]: "QR Sidekick",
   [VIEW_IDS.RESOURCES]: "Resources",
   [VIEW_IDS.BABEL]: "BAS Babel",
@@ -35,9 +33,7 @@ export const VIEW_TITLES: Record<string, string> = {
 export const VIEW_LOADING_TEXT: Record<string, string> = {
   [VIEW_IDS.HOME]: "HOME",
   [VIEW_IDS.TOOLS]: "TOOLS",
-  [VIEW_IDS.NSK]: "NIAGARA_SIDEKICK",
   [VIEW_IDS.SSK]: "SIMULATOR_SIDEKICK",
-  [VIEW_IDS.MSK]: "METASYS_SIDEKICK",
   [VIEW_IDS.QSK]: "QR_SIDEKICK",
   [VIEW_IDS.RESOURCES]: "RESOURCES",
   [VIEW_IDS.BABEL]: "BAS_BABEL",
@@ -56,22 +52,6 @@ export const VIEW_LOADING_TEXT: Record<string, string> = {
 // =============================================================================
 
 export const TOOLS: Record<string, Tool> = {
-  [VIEW_IDS.NSK]: {
-    id: VIEW_IDS.NSK,
-    name: "NiagaraSidekick",
-    shortName: "NSK",
-    tagline: "QA tool for Niagara stations",
-    description: "Finds typos, compares templates, verifies points, generates clean reports.",
-    status: "coming",
-    iconName: "Desktop",
-    webVersion: true,
-    features: [
-      "Template comparison",
-      "Typo detection",
-      "Point verification",
-      "PDF report generation",
-    ],
-  },
   [VIEW_IDS.SSK]: {
     id: VIEW_IDS.SSK,
     name: "SimulatorSidekick",
@@ -86,22 +66,6 @@ export const TOOLS: Record<string, Tool> = {
       "Modbus TCP/RTU support",
       "Multiple virtual devices",
       "Save/load templates",
-    ],
-  },
-  [VIEW_IDS.MSK]: {
-    id: VIEW_IDS.MSK,
-    name: "MetasysSidekick",
-    shortName: "MSK",
-    tagline: "QA tool for Metasys systems",
-    description: "Same power as NSK, built for JCI environments.",
-    status: "coming",
-    iconName: "Buildings",
-    webVersion: false,
-    features: [
-      "Metasys integration",
-      "Template comparison",
-      "Typo detection",
-      "PDF report generation",
     ],
   },
   [VIEW_IDS.QSK]: {
@@ -182,41 +146,6 @@ export const RESOURCES: Resource[] = [
 // =============================================================================
 
 export const TOOL_DETAILS: Record<string, ToolDetail> = {
-  [VIEW_IDS.NSK]: {
-    ...TOOLS[VIEW_IDS.NSK],
-    detailedFeatures: [
-      {
-        iconName: "FileMagnifyingGlass",
-        title: "Template Comparison",
-        description: "Compare points against templates to find inconsistencies and deviations instantly.",
-      },
-      {
-        iconName: "TextAa",
-        title: "Typo Detection",
-        description: "Smart analysis finds naming errors, misspellings, and formatting issues.",
-      },
-      {
-        iconName: "CheckCircle",
-        title: "Point Verification",
-        description: "Validate point configurations against standards and best practices.",
-      },
-      {
-        iconName: "FileText",
-        title: "Report Generation",
-        description: "Generate clean, professional PDF reports to share with customers.",
-      },
-    ],
-    steps: [
-      { number: 1, title: "Export or Connect", description: "Export station CSV or connect live to your Niagara station" },
-      { number: 2, title: "Analyze", description: "NSK analyzes and groups points by template automatically" },
-      { number: 3, title: "Review & Report", description: "Review findings, fix issues, and generate clean reports" },
-    ],
-    requirements: [
-      { label: "Platform", value: "Windows 10+" },
-      { label: "For live connection", value: "Niagara 4.x" },
-      { label: "CSV works with", value: "Any Niagara version" },
-    ],
-  },
   [VIEW_IDS.SSK]: {
     ...TOOLS[VIEW_IDS.SSK],
     detailedFeatures: [
@@ -250,41 +179,6 @@ export const TOOL_DETAILS: Record<string, ToolDetail> = {
       { label: "Platform", value: "Windows 10+" },
       { label: "BACnet", value: "BACnet/IP" },
       { label: "Modbus", value: "TCP & RTU" },
-    ],
-  },
-  [VIEW_IDS.MSK]: {
-    ...TOOLS[VIEW_IDS.MSK],
-    detailedFeatures: [
-      {
-        iconName: "Buildings",
-        title: "Metasys Integration",
-        description: "Native support for Metasys system exports and configurations.",
-      },
-      {
-        iconName: "FileMagnifyingGlass",
-        title: "Template Comparison",
-        description: "Compare points against templates to find inconsistencies.",
-      },
-      {
-        iconName: "TextAa",
-        title: "Typo Detection",
-        description: "Smart analysis finds naming errors and formatting issues.",
-      },
-      {
-        iconName: "FileText",
-        title: "Report Generation",
-        description: "Generate clean, professional PDF reports.",
-      },
-    ],
-    steps: [
-      { number: 1, title: "Export Data", description: "Export your Metasys system configuration" },
-      { number: 2, title: "Analyze", description: "MSK analyzes and groups points automatically" },
-      { number: 3, title: "Review & Report", description: "Review findings and generate reports" },
-    ],
-    requirements: [
-      { label: "Platform", value: "Windows 10+" },
-      { label: "Metasys Version", value: "10.x+" },
-      { label: "Export Format", value: "CSV/XML" },
     ],
   },
   [VIEW_IDS.QSK]: {
@@ -352,22 +246,12 @@ export const USE_CASES: UseCase[] = [
   {
     title: "Commissioning a new building",
     description: "Verify point configurations and simulate devices before go-live",
-    tools: ["NSK", "SSK"],
-  },
-  {
-    title: "QA check before handoff",
-    description: "Generate clean reports showing all points are correctly configured",
-    tools: ["NSK", "MSK"],
+    tools: ["SSK"],
   },
   {
     title: "Testing integrations offline",
     description: "Simulate BACnet/Modbus devices without physical hardware",
     tools: ["SSK"],
-  },
-  {
-    title: "Metasys site audit",
-    description: "Review and document Metasys system configurations",
-    tools: ["MSK"],
   },
   {
     title: "Field equipment tracking",
@@ -389,21 +273,9 @@ export const NAV_ITEMS: NavNode[] = [
     defaultExpanded: true,
     children: [
       {
-        id: VIEW_IDS.NSK,
-        label: "NiagaraSidekick",
-        iconName: "Desktop",
-        colorVariant: "tools",
-      },
-      {
         id: VIEW_IDS.SSK,
         label: "SimulatorSidekick",
         iconName: "WaveTriangle",
-        colorVariant: "tools",
-      },
-      {
-        id: VIEW_IDS.MSK,
-        label: "MetasysSidekick",
-        iconName: "Buildings",
         colorVariant: "tools",
       },
       {

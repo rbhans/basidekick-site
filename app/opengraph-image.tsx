@@ -87,11 +87,9 @@ export default async function Image() {
             fontFamily: "monospace",
           }}
         >
-          <span>NiagaraSidekick</span>
-          <span style={{ color: "#3f3f46" }}>|</span>
           <span>SimulatorSidekick</span>
           <span style={{ color: "#3f3f46" }}>|</span>
-          <span>MetasysSidekick</span>
+          <span>QR Sidekick</span>
         </div>
       </div>
     ),

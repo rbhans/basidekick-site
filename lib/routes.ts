@@ -55,12 +55,8 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.HOME;
     case VIEW_IDS.TOOLS:
       return ROUTES.TOOLS;
-    case VIEW_IDS.NSK:
-      return ROUTES.TOOL("nsk");
     case VIEW_IDS.SSK:
       return ROUTES.TOOL("ssk");
-    case VIEW_IDS.MSK:
-      return ROUTES.TOOL("msk");
     case VIEW_IDS.QSK:
       return ROUTES.TOOL("qsk");
     case VIEW_IDS.WIKI:
@@ -116,9 +112,7 @@ export function getViewIdFromPath(pathname: string): string {
   // Tool detail pages
   if (pathname.startsWith("/tools/")) {
     const toolId = pathname.split("/")[2];
-    if (toolId === "nsk") return VIEW_IDS.NSK;
     if (toolId === "ssk") return VIEW_IDS.SSK;
-    if (toolId === "msk") return VIEW_IDS.MSK;
     if (toolId === "qsk") return VIEW_IDS.QSK;
     return VIEW_IDS.TOOLS;
   }

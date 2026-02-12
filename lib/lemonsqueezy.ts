@@ -4,9 +4,7 @@
 // Map tool IDs to Lemon Squeezy store product/variant IDs
 // These will need to be filled in when you set up products in Lemon Squeezy
 export const LEMON_SQUEEZY_PRODUCTS: Record<string, { productId: string; variantId: string }> = {
-  nsk: { productId: "", variantId: "" }, // NiagaraSidekick
   ssk: { productId: "", variantId: "" }, // SimulatorSidekick
-  msk: { productId: "", variantId: "" }, // MetasysSidekick
 };
 
 // Your Lemon Squeezy store slug
