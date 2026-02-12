@@ -7,8 +7,6 @@ import {
   House,
   UsersThree,
   Buildings,
-  Image,
-  Question,
   Briefcase,
   Folder,
   ChatCircle,
@@ -20,8 +18,6 @@ const NAV_ITEMS = [
   { href: "/pointstack", label: "Feed", icon: House, exact: true },
   { href: "/pointstack/people", label: "People", icon: UsersThree },
   { href: "/pointstack/companies", label: "Companies", icon: Buildings },
-  { href: "/pointstack/projects", label: "Projects", icon: Image },
-  { href: "/pointstack/questions", label: "Q&A", icon: Question },
   { href: "/pointstack/jobs", label: "Jobs", icon: Briefcase },
   { href: "/pointstack/resources", label: "Resources", icon: Folder },
 ];

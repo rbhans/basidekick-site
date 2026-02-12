@@ -316,20 +316,6 @@ export const NAV_ITEMS: NavNode[] = [
         href: "/pointstack/companies",
       },
       {
-        id: "pointstack-projects",
-        label: "Projects",
-        iconName: "Image",
-        colorVariant: "pointstack",
-        href: "/pointstack/projects",
-      },
-      {
-        id: "pointstack-questions",
-        label: "Q&A",
-        iconName: "Question",
-        colorVariant: "pointstack",
-        href: "/pointstack/questions",
-      },
-      {
         id: "pointstack-jobs",
         label: "Jobs",
         iconName: "Briefcase",
