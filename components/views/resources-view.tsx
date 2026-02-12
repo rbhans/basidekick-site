@@ -3,10 +3,18 @@
 import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
-import { BookOpen, Kanban, ArrowRight, Translate, Gauge } from "@phosphor-icons/react";
+import { BookOpen, Kanban, ArrowRight, Translate, Gauge, Cpu } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 
 const resources = [
+  {
+    id: "rust",
+    title: "Rust",
+    description: "Open source Rust crates for BAS protocols. Start with rustbac for BACnet and build toward a full protocol suite.",
+    icon: Cpu,
+    cta: "Explore Rust Crates",
+    href: ROUTES.RESOURCES_RUST,
+  },
   {
     id: "babel",
     title: "BAS Babel",

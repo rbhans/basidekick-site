@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Logo } from "@/components/logo";
+import { ROUTES } from "@/lib/routes";
 import { ArrowUp } from "@phosphor-icons/react";
 
 const toolsLinks = [
@@ -11,8 +12,9 @@ const toolsLinks = [
 ];
 
 const resourcesLinks = [
-  { href: "/wiki", label: "Wiki" },
-  { href: "/psk", label: "PSK" },
+  { href: ROUTES.WIKI, label: "Wiki" },
+  { href: ROUTES.RESOURCES_RUST, label: "Rust" },
+  { href: ROUTES.PSK, label: "PSK" },
 ];
 
 export function Footer() {

@@ -9,6 +9,7 @@ export const ROUTES = {
   WIKI_ARTICLE: (slug: string) => `/wiki/${encodeURIComponent(slug)}`,
   WIKI_TAG: (tagSlug: string) => `/wiki/tags/${encodeURIComponent(tagSlug)}`,
   RESOURCES: "/resources",
+  RESOURCES_RUST: "/resources/rust",
   BABEL: "/babel",
   EQUIPMENT: "/equipment",
   EQUIPMENT_BRAND: (brand: string) => `/equipment/${encodeURIComponent(brand)}`,
@@ -96,6 +97,7 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/wiki") return VIEW_IDS.WIKI;
   if (pathname === "/pointstack") return VIEW_IDS.POINTSTACK;
   if (pathname === "/resources") return VIEW_IDS.RESOURCES;
+  if (pathname.startsWith("/resources/")) return VIEW_IDS.RESOURCES;
   if (pathname === "/babel") return VIEW_IDS.BABEL;
   if (pathname.startsWith("/babel/")) return VIEW_IDS.BABEL;
   if (pathname === "/equipment") return VIEW_IDS.EQUIPMENT;

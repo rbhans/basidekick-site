@@ -95,6 +95,15 @@ export const TOOLS_LIST = Object.values(TOOLS);
 
 export const RESOURCES: Resource[] = [
   {
+    id: "rust",
+    name: "Rust",
+    shortName: "Rust",
+    tagline: "Open source BAS crates",
+    description: "Protocol crates for open source BAS software in Rust, starting with rustbac for BACnet.",
+    iconName: "Cpu",
+    href: ROUTES.RESOURCES_RUST,
+  },
+  {
     id: VIEW_IDS.BABEL,
     name: "BAS Babel",
     shortName: "Babel",
@@ -354,6 +363,7 @@ export const NAV_ITEMS: NavNode[] = [
     children: [
       { id: VIEW_IDS.BABEL, label: "BAS Babel", iconName: "Translate", colorVariant: "resources" },
       { id: VIEW_IDS.EQUIPMENT, label: "BAS Atlas", iconName: "Gauge", colorVariant: "resources" },
+      { id: "resources-rust", label: "Rust", iconName: "Cpu", colorVariant: "resources", href: ROUTES.RESOURCES_RUST },
       { id: VIEW_IDS.CALCULATORS, label: "Calculators", iconName: "Calculator", colorVariant: "resources" },
       { id: VIEW_IDS.PSK, label: "ProjectSidekick", iconName: "Kanban", colorVariant: "resources" },
       { id: VIEW_IDS.REFERENCES, label: "References", iconName: "BookmarksSimple", colorVariant: "resources" },
