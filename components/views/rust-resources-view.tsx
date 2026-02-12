@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Cpu } from "@phosphor-icons/react";
 import { CircuitBackground } from "@/components/circuit-background";
