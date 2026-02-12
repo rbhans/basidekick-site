@@ -1,10 +1,6 @@
-import { PointStackProjectsView } from "@/components/pointstack/projects/projects-view";
-
-export const metadata = {
-  title: "Projects - PointStack",
-  description: "Explore showcase projects from BAS professionals in the PointStack community.",
-};
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/lib/routes";
 
 export default function ProjectsPage() {
-  return <PointStackProjectsView />;
+  redirect(ROUTES.POINTSTACK);
 }
