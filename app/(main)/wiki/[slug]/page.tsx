@@ -66,7 +66,7 @@ export async function generateMetadata({ params }: WikiArticlePageProps): Promis
       url: `https://basidekick.com/wiki/${slug}`,
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: article.title,
       description,
     },
@@ -152,12 +152,40 @@ export default async function WikiArticlePage({ params }: WikiArticlePageProps) 
   }).filter(Boolean);
 
   const jsonLd = generateArticleJsonLd(article);
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://basidekick.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Wiki",
+        item: "https://basidekick.com/wiki",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: article.title,
+        item: `https://basidekick.com/wiki/${slug}`,
+      },
+    ],
+  };
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: escapeJsonLd(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: escapeJsonLd(breadcrumbJsonLd) }}
       />
       <WikiArticleDetail article={article} tags={tags} />
     </>

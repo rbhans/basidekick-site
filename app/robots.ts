@@ -11,9 +11,9 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           "/api/",
           "/auth/",
-          "/account",
-          "/signin",
-          "/signup",
+          "/account/",
+          "/signin/",
+          "/signup/",
         ],
       },
     ],

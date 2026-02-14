@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { EquipmentTypeView } from "@/components/atlas/equipment-type-view";
+import { escapeJsonLd } from "@/lib/security";
 import { getAllTypeSlugs, getAtlasBrand, getAtlasType } from "@/lib/data/atlas";
 
 export const revalidate = 3600;
@@ -50,5 +51,53 @@ export async function generateMetadata({ params }: TypePageProps): Promise<Metad
 
 export default async function TypePage({ params }: TypePageProps) {
   const { brand, type } = await params;
-  return <EquipmentTypeView brandSlug={brand} typeSlug={type} />;
+  const [brandEntry, typeEntry] = await Promise.all([
+    getAtlasBrand(brand),
+    getAtlasType(brand, type),
+  ]);
+
+  const breadcrumbJsonLd = brandEntry && typeEntry
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://basidekick.com",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Equipment",
+            item: "https://basidekick.com/equipment",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: brandEntry.name,
+            item: `https://basidekick.com/equipment/${brandEntry.slug || brandEntry.id}`,
+          },
+          {
+            "@type": "ListItem",
+            position: 4,
+            name: typeEntry.name,
+            item: `https://basidekick.com/equipment/${brandEntry.slug || brandEntry.id}/${typeEntry.slug || typeEntry.id}`,
+          },
+        ],
+      }
+    : null;
+
+  return (
+    <>
+      {breadcrumbJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: escapeJsonLd(breadcrumbJsonLd) }}
+        />
+      )}
+      <EquipmentTypeView brandSlug={brand} typeSlug={type} />
+    </>
+  );
 }

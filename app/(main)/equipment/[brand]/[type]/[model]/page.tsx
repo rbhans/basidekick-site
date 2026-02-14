@@ -115,14 +115,60 @@ export default async function ModelPage({ params }: ModelPageProps) {
       ? generateModelJsonLd(modelEntry, brandEntry, typeEntry, canonical)
       : null;
 
+  const breadcrumbJsonLd =
+    brandEntry && typeEntry && modelEntry
+      ? {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Home",
+              item: "https://basidekick.com",
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Equipment",
+              item: "https://basidekick.com/equipment",
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: brandEntry.name,
+              item: `https://basidekick.com/equipment/${brandEntry.slug || brandEntry.id}`,
+            },
+            {
+              "@type": "ListItem",
+              position: 4,
+              name: typeEntry.name,
+              item: `https://basidekick.com/equipment/${brandEntry.slug || brandEntry.id}/${typeEntry.slug || typeEntry.id}`,
+            },
+            {
+              "@type": "ListItem",
+              position: 5,
+              name: modelEntry.name,
+              item: canonical,
+            },
+          ],
+        }
+      : null;
+
   return (
     <>
-      {jsonLd ? (
+      {jsonLd && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: escapeJsonLd(jsonLd) }}
         />
-      ) : null}
+      )}
+      {breadcrumbJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: escapeJsonLd(breadcrumbJsonLd) }}
+        />
+      )}
       <EquipmentModelView brandSlug={brand} typeSlug={type} modelSlug={model} />
     </>
   );

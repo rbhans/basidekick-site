@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: BabelEntryPageProps): Promise
       url: canonical,
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: `${name} - BAS Babel`,
       description: description || fallbackDescription,
     },
@@ -140,12 +140,43 @@ export default async function BabelEntryPage({ params }: BabelEntryPageProps) {
 
   const canonical = `${BASE_URL}/babel/${id}`;
   const jsonLd = generateBabelJsonLd(entry, canonical);
+  const name = entry.type === "point"
+    ? (entry.data as BabelPointEntry).concept.name
+    : (entry.data as BabelEquipmentEntry).name;
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: BASE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "BAS Babel",
+        item: `${BASE_URL}/babel`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name,
+        item: canonical,
+      },
+    ],
+  };
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: escapeJsonLd(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: escapeJsonLd(breadcrumbJsonLd) }}
       />
       <div className="min-h-full">
         {/* Header */}
