@@ -14,8 +14,20 @@ interface ChangelogEntry {
 
 const CHANGELOG_ENTRIES: ChangelogEntry[] = [
   {
+    version: "0.4.0",
+    date: "Feb 2026",
+    title: "SEO & Discovery",
+    items: [
+      "Added structured data and breadcrumbs for better search visibility",
+      "Improved metadata across all pages",
+      "Added Rust resources and learning guides",
+      "Simplified PointStack navigation",
+    ],
+    isNew: true,
+  },
+  {
     version: "0.3.0",
-    date: "Jan 2025",
+    date: "Jan 2026",
     title: "Community Features",
     items: [
       "Added Wiki with articles and categories",
@@ -23,11 +35,10 @@ const CHANGELOG_ENTRIES: ChangelogEntry[] = [
       "Added user profiles and authentication",
       "Introduced Babel BAS terminology database",
     ],
-    isNew: true,
   },
   {
     version: "0.2.0",
-    date: "Dec 2024",
+    date: "Dec 2025",
     title: "Resources & Tools",
     items: [
       "Added ProjectSidekick for project management",
@@ -38,7 +49,7 @@ const CHANGELOG_ENTRIES: ChangelogEntry[] = [
   },
   {
     version: "0.1.0",
-    date: "Nov 2024",
+    date: "Nov 2025",
     title: "Initial Launch",
     items: [
       "Launched BASidekick.com",
