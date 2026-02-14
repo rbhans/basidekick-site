@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { EquipmentBrandView } from "@/components/atlas/equipment-brand-view";
+import { escapeJsonLd } from "@/lib/security";
 import { getAllBrandSlugs, getAtlasBrand } from "@/lib/data/atlas";
 
 export const revalidate = 3600;
@@ -45,5 +46,44 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
 
 export default async function BrandPage({ params }: BrandPageProps) {
   const { brand } = await params;
-  return <EquipmentBrandView brandSlug={brand} />;
+  const brandEntry = await getAtlasBrand(brand);
+
+  const breadcrumbJsonLd = brandEntry
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://basidekick.com",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Equipment",
+            item: "https://basidekick.com/equipment",
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: brandEntry.name,
+            item: `https://basidekick.com/equipment/${brandEntry.slug || brandEntry.id}`,
+          },
+        ],
+      }
+    : null;
+
+  return (
+    <>
+      {breadcrumbJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: escapeJsonLd(breadcrumbJsonLd) }}
+        />
+      )}
+      <EquipmentBrandView brandSlug={brand} />
+    </>
+  );
 }

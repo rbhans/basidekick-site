@@ -33,6 +33,9 @@ export const metadata: Metadata = {
     title: "BASidekick - Tools for BAS Professionals",
     description: "QA tools for building automation professionals. No subscriptions. No bloat.",
   },
+  alternates: {
+    canonical: "https://basidekick.com",
+  },
 };
 
 export default function RootLayout({
@@ -43,6 +46,33 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${ibmPlexSans.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": "https://basidekick.com/#organization",
+                  name: "BASidekick",
+                  url: "https://basidekick.com",
+                  description:
+                    "Tools, community, and knowledge for building automation professionals.",
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://basidekick.com/#website",
+                  url: "https://basidekick.com",
+                  name: "BASidekick",
+                  publisher: {
+                    "@id": "https://basidekick.com/#organization",
+                  },
+                },
+              ],
+            }),
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
