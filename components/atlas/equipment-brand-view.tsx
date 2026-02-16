@@ -10,6 +10,7 @@ import { getBrandBySlug } from "./atlas-utils";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
 import { AtlasBreadcrumb } from "./atlas-breadcrumb";
+import { AtlasBrandLogo } from "./atlas-brand-logo";
 
 interface EquipmentBrandViewProps {
   brandSlug: string;
@@ -105,13 +106,11 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
             items={[{ label: brand.name }]}
           />
           <div className="flex items-center gap-4 mt-4">
-            {brand.logo_url ? (
-              <img src={brand.logo_url} alt={brand.name} className="size-12 object-contain" />
-            ) : (
-              <div className="size-12 rounded bg-muted flex items-center justify-center text-lg font-semibold">
-                {brand.name.charAt(0)}
-              </div>
-            )}
+            <AtlasBrandLogo
+              brand={brand}
+              className="size-12"
+              fallbackClassName="size-12 rounded bg-muted flex items-center justify-center text-lg font-semibold"
+            />
             <div>
               <h1 className="text-2xl md:text-3xl font-semibold">{brand.name}</h1>
               <p className="text-sm text-muted-foreground">

@@ -5,7 +5,9 @@ import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getBabelIdsForAtlasType } from "@/lib/data/atlas-babel-map";
 import { useAtlasAll } from "./use-atlas-data";
+import { useBabelData } from "@/components/babel/use-babel-data";
 import { getBrandBySlug, getTypeBySlug } from "./atlas-utils";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
@@ -14,6 +16,74 @@ import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 interface EquipmentTypeViewProps {
   brandSlug: string;
   typeSlug: string;
+}
+
+function formatBabelEquipmentLabel(babelId: string): string {
+  return babelId
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function BabelTypeLink({ atlasTypeId }: { atlasTypeId: string }) {
+  const babelIds = useMemo(() => getBabelIdsForAtlasType(atlasTypeId), [atlasTypeId]);
+  const { data: babelData, loading: babelLoading } = useBabelData();
+
+  const linkedEquipment = useMemo(() => {
+    const equipmentById = new Map(
+      (babelData?.equipment ?? []).map((entry) => [entry.id, entry] as const)
+    );
+    return babelIds.map((babelId) => {
+      const entry = equipmentById.get(babelId);
+      return {
+        id: babelId,
+        name: entry?.name ?? formatBabelEquipmentLabel(babelId),
+        isBroken: !babelLoading && !entry,
+      };
+    });
+  }, [babelData, babelIds, babelLoading]);
+
+  if (babelIds.length === 0) return null;
+
+  if (linkedEquipment.length === 1) {
+    const entry = linkedEquipment[0];
+    return (
+      <p className="mt-3 text-sm text-muted-foreground">
+        {entry.isBroken ? (
+          <>
+            Point standards mapping for <span className="text-destructive">{entry.name}</span> is broken.
+          </>
+        ) : (
+          <>
+            View point naming standards for{" "}
+            <Link href={ROUTES.BABEL_ENTRY(entry.id)} className="text-primary hover:underline">
+              {entry.name}
+            </Link>{" "}
+            in BAS Babel.
+          </>
+        )}
+      </p>
+    );
+  }
+
+  return (
+    <p className="mt-3 text-sm text-muted-foreground">
+      View point naming standards in BAS Babel:{" "}
+      {linkedEquipment.map((entry, index) => (
+        <span key={entry.id}>
+          {entry.isBroken ? (
+            <span className="text-destructive">{entry.name} (broken mapping)</span>
+          ) : (
+            <Link href={ROUTES.BABEL_ENTRY(entry.id)} className="text-primary hover:underline">
+              {entry.name}
+            </Link>
+          )}
+          {index < linkedEquipment.length - 1 ? ", " : ""}
+        </span>
+      ))}
+      .
+    </p>
+  );
 }
 
 export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProps) {
@@ -93,6 +163,9 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
             ]}
           />
           <h1 className="mt-4 text-2xl md:text-3xl font-semibold">{type.name}</h1>
+          {getBabelIdsForAtlasType(type.id).length > 0 ? (
+            <BabelTypeLink atlasTypeId={type.id} />
+          ) : null}
         </div>
       </section>
 

@@ -7,7 +7,9 @@ import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
+import { getBabelIdsForAtlasType } from "@/lib/data/atlas-babel-map";
 import { useAtlasAll } from "./use-atlas-data";
+import { useBabelData } from "@/components/babel/use-babel-data";
 import { getBrandBySlug, getTypeBySlug, getModelBySlug } from "./atlas-utils";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
@@ -31,6 +33,61 @@ interface EquipmentImage {
 interface EquipmentPerson {
   user_id: string;
   user?: { display_name: string | null; avatar_url: string | null } | null;
+}
+
+function formatBabelEquipmentLabel(babelId: string): string {
+  return babelId
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function PointStandardsCard({ atlasTypeId }: { atlasTypeId: string }) {
+  const babelIds = useMemo(() => getBabelIdsForAtlasType(atlasTypeId), [atlasTypeId]);
+  const { data: babelData, loading: babelLoading } = useBabelData();
+
+  const linkedEquipment = useMemo(() => {
+    const equipmentById = new Map(
+      (babelData?.equipment ?? []).map((entry) => [entry.id, entry] as const)
+    );
+
+    return babelIds.map((babelId) => {
+      const entry = equipmentById.get(babelId);
+      return {
+        id: babelId,
+        name: entry?.name ?? formatBabelEquipmentLabel(babelId),
+        abbreviation: entry?.abbreviation,
+        isBroken: !babelLoading && !entry,
+      };
+    });
+  }, [babelData, babelIds, babelLoading]);
+
+  if (babelIds.length === 0) return null;
+
+  return (
+    <div className="border border-border bg-card shadow-sm p-4">
+      <h2 className="text-sm font-semibold mb-3">Point Standards</h2>
+      <ul className="space-y-2">
+        {linkedEquipment.map((entry) => (
+          <li key={entry.id}>
+            {entry.isBroken ? (
+              <span className="text-sm text-destructive">
+                {entry.name}
+                <span className="text-destructive/80"> (broken mapping)</span>
+              </span>
+            ) : (
+              <Link href={ROUTES.BABEL_ENTRY(entry.id)} className="text-sm text-primary hover:underline">
+                {entry.name}
+                {entry.abbreviation ? (
+                  <span className="text-muted-foreground"> ({entry.abbreviation})</span>
+                ) : null}
+              </Link>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: EquipmentModelViewProps) {
@@ -275,6 +332,10 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
                 </div>
               )}
             </div>
+
+            {getBabelIdsForAtlasType(model.type).length > 0 ? (
+              <PointStandardsCard atlasTypeId={model.type} />
+            ) : null}
           </div>
         </div>
       </section>
