@@ -28,26 +28,36 @@ export function EquipmentBrowseView() {
     return new Map(data?.types.map((t) => [t.id, t]) || []);
   }, [data]);
 
-  const brandCards = useMemo(() => {
-    if (!data) return [];
-    if (categories?.brands) {
-      return categories.brands.map((brand) => ({
-        ...brand,
-        logo_url: brandById.get(brand.id)?.logo_url || "",
-        website: brandById.get(brand.id)?.website || "",
-      }));
+  const modelCountByBrand = useMemo(() => {
+    const counts = new Map<string, number>();
+    if (!data) return counts;
+
+    for (const model of data.models) {
+      counts.set(model.brand, (counts.get(model.brand) || 0) + 1);
     }
 
-    return data.brands.map((brand) => ({
-      id: brand.id,
-      name: brand.name,
-      slug: brand.slug,
-      count: data.models.filter((m) => m.brand === brand.id).length,
-      types: [],
-      logo_url: brand.logo_url || "",
-      website: brand.website || "",
-    }));
-  }, [data, categories, brandById]);
+    return counts;
+  }, [data]);
+
+  const brandCards = useMemo(() => {
+    if (!data) return [];
+
+    // categories.json can be partial; always include every brand from index.json.
+    const categoryBrandById = new Map((categories?.brands || []).map((b) => [b.id, b]));
+
+    return data.brands.map((brand) => {
+      const categoryBrand = categoryBrandById.get(brand.id);
+      return {
+        id: brand.id,
+        name: brand.name,
+        slug: brand.slug,
+        count: categoryBrand?.count ?? modelCountByBrand.get(brand.id) ?? 0,
+        types: categoryBrand?.types || [],
+        logo_url: brand.logo_url || "",
+        website: brand.website || "",
+      };
+    });
+  }, [data, categories, modelCountByBrand]);
 
   const recentModels = useMemo(() => {
     if (!data) return [];
