@@ -10,10 +10,12 @@ import {
   PencilSimple,
 } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { BabelPointEntry, BabelEquipmentEntry, BabelContributionType } from "@/lib/types";
 import { BabelContributionDialog } from "./babel-contribution-dialog";
+import { useAtlasData } from "@/components/atlas/use-atlas-data";
+import { getAtlasTypeIdForBabelEquipment } from "@/lib/data/atlas-babel-map";
 
 interface BabelEntryDetailProps {
   entry: BabelPointEntry | BabelEquipmentEntry;
@@ -23,6 +25,113 @@ interface BabelEntryDetailProps {
 
 function EmptyState({ text = "-" }: { text?: string }) {
   return <span className="text-muted-foreground/50">{text}</span>;
+}
+
+function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
+  const { data: atlasData, loading, error } = useAtlasData();
+
+  const { atlasTypeExists, modelsByBrand } = useMemo(() => {
+    if (!atlasData) return { atlasTypeExists: true, modelsByBrand: [] };
+
+    const atlasType = atlasData.types.find((type) => type.id === atlasTypeId);
+    if (!atlasType) return { atlasTypeExists: false, modelsByBrand: [] };
+
+    const brandById = new Map(atlasData.brands.map((brand) => [brand.id, brand] as const));
+    const grouped = new Map<
+      string,
+      {
+        brandName: string;
+        brandSlug: string;
+        models: typeof atlasData.models;
+        typeSlug: string;
+      }
+    >();
+
+    for (const model of atlasData.models) {
+      if (model.type !== atlasTypeId) continue;
+      const brand = brandById.get(model.brand);
+      if (!brand) continue;
+
+      const existing = grouped.get(brand.id);
+      if (existing) {
+        existing.models.push(model);
+        continue;
+      }
+
+      grouped.set(brand.id, {
+        brandName: brand.name,
+        brandSlug: brand.slug || brand.id,
+        models: [model],
+        typeSlug: atlasType.slug || atlasType.id,
+      });
+    }
+
+    const sortedGroups = Array.from(grouped.values())
+      .map((group) => ({
+        ...group,
+        models: [...group.models].sort((a, b) => a.name.localeCompare(b.name)),
+      }))
+      .sort((a, b) => a.brandName.localeCompare(b.brandName));
+
+    return { atlasTypeExists: true, modelsByBrand: sortedGroups };
+  }, [atlasData, atlasTypeId]);
+
+  if (loading) {
+    return (
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-3">Equipment in BAS Atlas</h2>
+        <p className="text-sm text-muted-foreground">Loading Atlas equipment models...</p>
+      </div>
+    );
+  }
+
+  if (error || !atlasData) return null;
+
+  if (!atlasTypeExists) {
+    return (
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-3">Equipment in BAS Atlas</h2>
+        <p className="text-sm text-destructive">
+          Broken mapping: this BAS Babel entry references an Atlas type that no longer exists.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-6">
+      <h2 className="text-lg font-semibold mb-3">Equipment in BAS Atlas</h2>
+      {modelsByBrand.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          No models tracked yet.{" "}
+          <Link href={ROUTES.EQUIPMENT_ADD} className="text-primary hover:underline">
+            Add one in BAS Atlas
+          </Link>
+          .
+        </p>
+      ) : (
+        <div className="space-y-4">
+          {modelsByBrand.map((group) => (
+            <div key={group.brandSlug} className="p-3 bg-card border border-border rounded">
+              <p className="text-sm font-semibold mb-2">{group.brandName}</p>
+              <ul className="space-y-1">
+                {group.models.map((model) => (
+                  <li key={model.id}>
+                    <Link
+                      href={ROUTES.EQUIPMENT_MODEL(group.brandSlug, group.typeSlug, model.slug || model.id)}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      {model.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function BabelEntryDetail({ entry, type, isAuthenticated = false }: BabelEntryDetailProps) {
@@ -55,6 +164,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
   const fullName = !isPoint ? equipEntry.full_name : undefined;
   const subtypes = !isPoint ? equipEntry.subtypes : undefined;
   const typicalPoints = !isPoint ? equipEntry.typical_points : undefined;
+  const atlasTypeId = !isPoint ? getAtlasTypeIdForBabelEquipment(equipEntry.id) : null;
 
   const copyToClipboard = async (text: string) => {
     await navigator.clipboard.writeText(text);
@@ -297,6 +407,8 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
           )}
         </div>
       )}
+
+      {!isPoint && atlasTypeId && <AtlasEquipmentSection atlasTypeId={atlasTypeId} />}
 
       {/* Actions */}
       <div className="flex items-center gap-3 pt-6 border-t border-border">

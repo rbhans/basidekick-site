@@ -11,6 +11,7 @@ import { useAtlasAll } from "./use-atlas-data";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
 import { AtlasBreadcrumb } from "./atlas-breadcrumb";
+import { AtlasBrandLogo } from "./atlas-brand-logo";
 import type { AtlasModel } from "@/lib/types";
 
 export function EquipmentBrowseView() {
@@ -33,6 +34,7 @@ export function EquipmentBrowseView() {
       return categories.brands.map((brand) => ({
         ...brand,
         logo_url: brandById.get(brand.id)?.logo_url || "",
+        website: brandById.get(brand.id)?.website || "",
       }));
     }
 
@@ -43,6 +45,7 @@ export function EquipmentBrowseView() {
       count: data.models.filter((m) => m.brand === brand.id).length,
       types: [],
       logo_url: brand.logo_url || "",
+      website: brand.website || "",
     }));
   }, [data, categories, brandById]);
 
@@ -227,13 +230,11 @@ export function EquipmentBrowseView() {
                   className="group p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    {brand.logo_url ? (
-                      <img src={brand.logo_url} alt={brand.name} className="size-8 object-contain" />
-                    ) : (
-                      <div className="size-8 rounded bg-muted flex items-center justify-center text-sm font-semibold">
-                        {brand.name.charAt(0)}
-                      </div>
-                    )}
+                    <AtlasBrandLogo
+                      brand={brand}
+                      className="size-8"
+                      fallbackClassName="size-8 rounded bg-muted flex items-center justify-center text-sm font-semibold"
+                    />
                     <div>
                       <p className="text-sm font-medium group-hover:text-primary transition-colors">
                         {brand.name}
