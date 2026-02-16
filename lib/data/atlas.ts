@@ -35,10 +35,8 @@ async function fetchRemoteAtlasData(): Promise<AtlasData | null> {
 }
 
 export const getAtlasData = cache(async (): Promise<AtlasData | null> => {
-  if (process.env.NODE_ENV === "development") {
-    const local = await loadLocalAtlasData();
-    if (local) return local;
-  }
+  const local = await loadLocalAtlasData();
+  if (local) return local;
 
   return fetchRemoteAtlasData();
 });
