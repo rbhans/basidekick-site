@@ -3,13 +3,40 @@
 import { useState, useEffect, useRef } from "react";
 import type { AtlasData, AtlasCategoriesData } from "@/lib/types";
 
-const DATA_URL = process.env.NODE_ENV === "development"
-  ? "/data/atlas/index.json"
-  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/index.json";
+const LOCAL_DATA_URL = "/data/atlas/index.json";
+const REMOTE_DATA_URL = "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/index.json";
+const DATA_URLS = [LOCAL_DATA_URL, REMOTE_DATA_URL];
 
-const CATEGORIES_URL = process.env.NODE_ENV === "development"
-  ? "/data/atlas/categories.json"
-  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/categories.json";
+const LOCAL_CATEGORIES_URL = "/data/atlas/categories.json";
+const REMOTE_CATEGORIES_URL = "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/categories.json";
+const CATEGORIES_URLS = [LOCAL_CATEGORIES_URL, REMOTE_CATEGORIES_URL];
+
+function isAbortError(err: unknown): boolean {
+  return err instanceof Error && err.name === "AbortError";
+}
+
+async function fetchJsonWithFallback<T>(
+  urls: string[],
+  signal: AbortSignal,
+  label: string
+): Promise<T> {
+  let lastError: Error | null = null;
+
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { signal });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${label} from ${url}: ${response.status}`);
+      }
+      return (await response.json()) as T;
+    } catch (err) {
+      if (isAbortError(err)) throw err;
+      lastError = err instanceof Error ? err : new Error(String(err));
+    }
+  }
+
+  throw lastError ?? new Error(`Failed to fetch ${label}`);
+}
 
 export function useAtlasAll() {
   const [data, setData] = useState<AtlasData | null>(null);
@@ -25,21 +52,9 @@ export function useAtlasAll() {
 
     async function fetchAll() {
       try {
-        const [dataResponse, categoriesResponse] = await Promise.all([
-          fetch(DATA_URL, { signal }),
-          fetch(CATEGORIES_URL, { signal }),
-        ]);
-
-        if (!dataResponse.ok) {
-          throw new Error(`Failed to fetch atlas data: ${dataResponse.status}`);
-        }
-        if (!categoriesResponse.ok) {
-          throw new Error(`Failed to fetch atlas categories: ${categoriesResponse.status}`);
-        }
-
         const [dataJson, categoriesJson] = await Promise.all([
-          dataResponse.json(),
-          categoriesResponse.json(),
+          fetchJsonWithFallback<AtlasData>(DATA_URLS, signal, "atlas data"),
+          fetchJsonWithFallback<AtlasCategoriesData>(CATEGORIES_URLS, signal, "atlas categories"),
         ]);
 
         if (!signal.aborted) {
@@ -47,7 +62,7 @@ export function useAtlasAll() {
           setCategories(categoriesJson);
         }
       } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") return;
+        if (isAbortError(err)) return;
         setError(err instanceof Error ? err : new Error("Unknown error"));
       } finally {
         if (!signal.aborted) {
@@ -76,16 +91,12 @@ export function useAtlasData() {
 
     async function fetchData() {
       try {
-        const response = await fetch(DATA_URL, { signal: controller.signal });
-        if (!response.ok) {
-          throw new Error(`Failed to fetch atlas data: ${response.status}`);
-        }
-        const json = await response.json();
+        const json = await fetchJsonWithFallback<AtlasData>(DATA_URLS, controller.signal, "atlas data");
         if (!controller.signal.aborted) {
           setData(json);
         }
       } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") return;
+        if (isAbortError(err)) return;
         setError(err instanceof Error ? err : new Error("Unknown error"));
       } finally {
         if (!controller.signal.aborted) {
