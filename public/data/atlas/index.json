@@ -9,7 +9,7 @@
       "id": "automated-logic",
       "name": "Automated Logic",
       "slug": "automated-logic",
-      "logo_url": "",
+      "logo_url": "/images/brands/automated-logic.png",
       "website": "https://www.automatedlogic.com",
       "description": "Building automation systems and controls"
     },
@@ -17,7 +17,7 @@
       "id": "belimo",
       "name": "Belimo",
       "slug": "belimo",
-      "logo_url": "",
+      "logo_url": "/images/brands/belimo.svg",
       "website": "https://www.belimo.com",
       "description": "Damper actuators, control valves, and sensors"
     },
@@ -25,7 +25,7 @@
       "id": "carrier",
       "name": "Carrier",
       "slug": "carrier",
-      "logo_url": "",
+      "logo_url": "/images/brands/carrier.png",
       "website": "https://www.carrier.com",
       "description": "HVAC equipment and building automation"
     },
@@ -33,7 +33,7 @@
       "id": "daikin",
       "name": "Daikin",
       "slug": "daikin",
-      "logo_url": "",
+      "logo_url": "/images/brands/daikin.png",
       "website": "https://www.daikin.com",
       "description": "Air conditioning and refrigeration equipment"
     },
@@ -41,7 +41,7 @@
       "id": "delta-controls",
       "name": "Delta Controls",
       "slug": "delta-controls",
-      "logo_url": "",
+      "logo_url": "/images/brands/delta-controls.png",
       "website": "https://www.deltacontrols.com",
       "description": "Building automation and HVAC controls"
     },
@@ -49,7 +49,7 @@
       "id": "distech-controls",
       "name": "Distech Controls",
       "slug": "distech-controls",
-      "logo_url": "",
+      "logo_url": "/images/brands/distech-controls.png",
       "website": "https://www.distech-controls.com",
       "description": "Building automation and energy management"
     },
@@ -57,7 +57,7 @@
       "id": "honeywell",
       "name": "Honeywell",
       "slug": "honeywell",
-      "logo_url": "",
+      "logo_url": "/images/brands/honeywell.svg",
       "website": "https://www.honeywell.com",
       "description": "Building technologies and automation"
     },
@@ -65,7 +65,7 @@
       "id": "johnson-controls",
       "name": "Johnson Controls",
       "slug": "johnson-controls",
-      "logo_url": "",
+      "logo_url": "/images/brands/johnson-controls.svg",
       "website": "https://www.johnsoncontrols.com",
       "description": "Building automation and HVAC equipment"
     },
@@ -73,7 +73,7 @@
       "id": "lennox",
       "name": "Lennox",
       "slug": "lennox",
-      "logo_url": "",
+      "logo_url": "/images/brands/lennox.svg",
       "website": "https://www.lennox.com",
       "description": "Heating, cooling, and indoor air quality"
     },
@@ -81,7 +81,7 @@
       "id": "liebert",
       "name": "Liebert",
       "slug": "liebert",
-      "logo_url": "",
+      "logo_url": "/images/brands/liebert.png",
       "website": "https://www.vertiv.com/liebert",
       "description": "Precision cooling and power protection"
     },
@@ -89,7 +89,7 @@
       "id": "mcquay",
       "name": "McQuay",
       "slug": "mcquay",
-      "logo_url": "",
+      "logo_url": "/images/brands/mcquay.png",
       "website": "https://www.daikincomfort.com",
       "description": "Commercial HVAC equipment"
     },
@@ -97,7 +97,7 @@
       "id": "neptronic",
       "name": "Neptronic",
       "slug": "neptronic",
-      "logo_url": "",
+      "logo_url": "/images/brands/neptronic.png",
       "website": "https://www.neptronic.com",
       "description": "HVAC actuators, valves, and humidifiers"
     },
@@ -105,7 +105,7 @@
       "id": "schneider-electric",
       "name": "Schneider Electric",
       "slug": "schneider-electric",
-      "logo_url": "",
+      "logo_url": "/images/brands/schneider-electric.png",
       "website": "https://www.se.com",
       "description": "Building management and energy solutions"
     },
@@ -113,7 +113,7 @@
       "id": "siemens",
       "name": "Siemens",
       "slug": "siemens",
-      "logo_url": "",
+      "logo_url": "/images/brands/siemens.svg",
       "website": "https://www.siemens.com",
       "description": "Building technologies and automation"
     },
@@ -121,7 +121,7 @@
       "id": "trane",
       "name": "Trane",
       "slug": "trane",
-      "logo_url": "",
+      "logo_url": "/images/brands/trane.png",
       "website": "https://www.trane.com",
       "description": "HVAC systems and building automation"
     },
@@ -129,7 +129,7 @@
       "id": "veris",
       "name": "Veris",
       "slug": "veris",
-      "logo_url": "",
+      "logo_url": "/images/brands/veris.png",
       "website": "https://www.veris.com",
       "description": "Sensors and transducers for BAS"
     },
@@ -137,7 +137,7 @@
       "id": "york",
       "name": "York",
       "slug": "york",
-      "logo_url": "",
+      "logo_url": "/images/brands/york.png",
       "website": "https://www.york.com",
       "description": "Commercial and residential HVAC"
     },
@@ -145,7 +145,7 @@
       "id": "abb",
       "name": "ABB",
       "slug": "abb",
-      "logo_url": "",
+      "logo_url": "/images/brands/abb.png",
       "website": "https://www.abb.com",
       "description": "Drives, motors, and automation"
     },
@@ -153,7 +153,7 @@
       "id": "danfoss",
       "name": "Danfoss",
       "slug": "danfoss",
-      "logo_url": "",
+      "logo_url": "/images/brands/danfoss.svg",
       "website": "https://www.danfoss.com",
       "description": "Drives, valves, and controls"
     },
@@ -161,7 +161,7 @@
       "id": "grundfos",
       "name": "Grundfos",
       "slug": "grundfos",
-      "logo_url": "",
+      "logo_url": "/images/brands/grundfos.png",
       "website": "https://www.grundfos.com",
       "description": "Pumps and water technology"
     },
@@ -169,7 +169,7 @@
       "id": "armstrong",
       "name": "Armstrong",
       "slug": "armstrong",
-      "logo_url": "",
+      "logo_url": "/images/brands/armstrong.png",
       "website": "https://www.armstronginternational.com",
       "description": "Pumps, HVAC, and steam products"
     },
@@ -177,7 +177,7 @@
       "id": "bell-gossett",
       "name": "Bell & Gossett",
       "slug": "bell-gossett",
-      "logo_url": "",
+      "logo_url": "/images/brands/bell-gossett.png",
       "website": "https://www.bellgossett.com",
       "description": "Pumps, valves, and heat exchangers"
     },
@@ -185,7 +185,7 @@
       "id": "taco",
       "name": "Taco Comfort Solutions",
       "slug": "taco",
-      "logo_url": "",
+      "logo_url": "/images/brands/taco.png",
       "website": "https://www.tacocomfort.com",
       "description": "Hydronic heating and cooling"
     },
@@ -193,7 +193,7 @@
       "id": "yaskawa",
       "name": "Yaskawa",
       "slug": "yaskawa",
-      "logo_url": "",
+      "logo_url": "/images/brands/yaskawa.png",
       "website": "https://www.yaskawa.com",
       "description": "Variable frequency drives and motion control"
     },
@@ -201,7 +201,7 @@
       "id": "contemporary-controls",
       "name": "Contemporary Controls",
       "slug": "contemporary-controls",
-      "logo_url": "",
+      "logo_url": "/images/brands/contemporary-controls.png",
       "website": "https://www.ccontrols.com",
       "description": "BACnet routers, gateways, and networking"
     }
