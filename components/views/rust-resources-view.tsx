@@ -15,6 +15,14 @@ const rustCrates = [
       "Open source Rust crate for BACnet communication in BAS applications. This is the first protocol crate in the BASidekick Rust suite.",
     githubUrl: "https://github.com/rbhans/rust-bac",
   },
+  {
+    id: "rustmod",
+    name: "rustmod",
+    protocol: "Modbus",
+    description:
+      "Open source Rust crate for Modbus communication in BAS applications.",
+    githubUrl: "https://github.com/rbhans/rust-mod",
+  },
 ];
 
 export function RustResourcesView() {
