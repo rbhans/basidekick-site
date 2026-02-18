@@ -385,6 +385,10 @@ export interface BabelAliases {
   abbreviated?: string[];
   verbose?: string[];
   misspellings?: string[];
+  variants?: Array<{
+    value: string;
+    type: "abbrev" | "expanded" | "misspelling" | "format" | "vendor";
+  }>;
 }
 
 export interface BabelPointConcept {
@@ -401,6 +405,14 @@ export interface BabelPointConcept {
   engineering_units?: string;
   point_function?: string;
   states?: Record<string, string | string[]>;
+  kind?: "point";
+  type?: "sensor" | "command" | "setpoint" | "alarm" | "status" | "calc";
+  unitsNormalized?: string[];
+  statesNormalized?: Record<string, string>;
+  tags?: {
+    haystack: string[];
+    brick?: string;
+  };
 }
 
 export interface BabelPointEntry {
@@ -431,6 +443,16 @@ export interface BabelEquipmentEntry {
   typical_points?: string[];
 }
 
+export interface BabelEquipmentConceptMetadata {
+  kind: "equipment";
+  system?: string;
+  synonyms: string[];
+}
+
+export type BabelEquipmentEntryEnhanced = BabelEquipmentEntry & {
+  concept?: BabelEquipmentConceptMetadata;
+};
+
 export interface BabelCategory {
   id: string;
   name: string;
@@ -444,6 +466,8 @@ export interface BabelSearchIndexEntry {
   type: "point" | "equipment";
   name: string;
   tokens: string[];
+  weightedTokens?: Array<{ token: string; weight: number; source: string }>;
+  ngrams?: string[];
 }
 
 export interface BabelData {
@@ -463,6 +487,44 @@ export interface BabelCategoriesData {
 export interface BabelSearchIndexData {
   version: string;
   entries: BabelSearchIndexEntry[];
+}
+
+export interface BabelTemplateRelationship {
+  from: string;
+  rel: "feeds" | "controls" | "depends_on" | "measures" | "commands";
+  to: string;
+}
+
+export interface BabelTemplate {
+  id: string;
+  equipmentTypeId: string;
+  version: string;
+  requiredPoints: string[];
+  optionalPoints: string[];
+  recommendedPoints: string[];
+  relationships: BabelTemplateRelationship[];
+  notes: string[];
+}
+
+export interface BabelTemplatesData {
+  version: string;
+  lastUpdated: string;
+  templates: BabelTemplate[];
+}
+
+export interface BabelGraphEdge {
+  from: string;
+  rel: string;
+  to: string;
+  source: "point-related" | "template";
+}
+
+export interface BabelGraphData {
+  version: string;
+  lastUpdated: string;
+  nodes: Array<{ id: string; type: "point" | "equipment" | "template"; name?: string }>;
+  edges: BabelGraphEdge[];
+  adjacency: Record<string, Array<{ to: string; rel: string }>>;
 }
 
 // BAS Atlas types

@@ -9,7 +9,8 @@
     "start": "next start",
     "validate:atlas-brand-logos": "node scripts/validate-atlas-brand-logos.mjs",
     "lint": "pnpm validate:atlas-brand-logos && eslint",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "api:smoke": "tsx scripts/api-smoke.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
@@ -63,6 +64,7 @@
     "eslint-config-next": "16.1.1",
     "shadcn": "^3.6.2",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }
