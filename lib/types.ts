@@ -387,7 +387,7 @@ export interface BabelAliases {
   misspellings?: string[];
   variants?: Array<{
     value: string;
-    type: "alias" | "misspelling";
+    type: "abbrev" | "expanded" | "misspelling" | "format" | "vendor";
   }>;
 }
 

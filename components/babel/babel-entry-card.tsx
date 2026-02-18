@@ -3,17 +3,17 @@
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 import { ArrowRight, Tag } from "@phosphor-icons/react";
-import type { BabelPointEntry, BabelEquipmentEntryEnhanced } from "@/lib/types";
+import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
 
 interface BabelEntryCardProps {
-  entry: BabelPointEntry | BabelEquipmentEntryEnhanced;
+  entry: BabelPointEntry | BabelEquipmentEntry;
   type: "point" | "equipment";
 }
 
 export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
   const isPoint = type === "point";
   const pointEntry = entry as BabelPointEntry;
-  const equipEntry = entry as BabelEquipmentEntryEnhanced;
+  const equipEntry = entry as BabelEquipmentEntry;
 
   const id = isPoint ? pointEntry.concept.id : equipEntry.id;
   const name = isPoint ? pointEntry.concept.name : equipEntry.name;
@@ -21,8 +21,6 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
   const haystack = isPoint ? pointEntry.concept.haystack : equipEntry.haystack;
   const brick = isPoint ? pointEntry.concept.brick : equipEntry.brick;
   const aliases = isPoint ? pointEntry.aliases : equipEntry.aliases;
-  const pointType = isPoint ? pointEntry.concept.type : null;
-  const equipmentSystem = !isPoint ? equipEntry.concept?.system : null;
 
   // Get top 4 common aliases
   const topAliases = aliases.common.slice(0, 4);
@@ -37,11 +35,6 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
           <h3 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
             {name}
           </h3>
-          {(pointType || equipmentSystem) && (
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wider mt-0.5">
-              {pointType ? `Type: ${pointType}` : `System: ${equipmentSystem?.replace(/-/g, " ")}`}
-            </p>
-          )}
           <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 min-w-0">
             <p className="text-xs font-mono truncate max-w-full">
               <span className="text-muted-foreground">Haystack:</span>{" "}
