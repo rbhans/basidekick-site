@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { SectionLabel } from "@/components/section-label";
+import { CircuitBackground } from "@/components/circuit-background";
 import { BabelSidebar } from "./babel-sidebar";
 import { BabelSearch } from "./babel-search";
 import { BabelEntryCard } from "./babel-entry-card";
@@ -9,59 +11,6 @@ import { GithubLogo, ArrowSquareOut, Code, Copy, Broom } from "@phosphor-icons/r
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-
-type HeroNodeTone = "cyan" | "emerald" | "amber" | "rose" | "indigo" | "slate";
-
-type HeroNode = {
-  id: string;
-  label: string;
-  detail: string;
-  x: number;
-  y: number;
-  tone: HeroNodeTone;
-};
-
-const HERO_CENTER = {
-  label: "BAS Babel",
-  detail: "Canonical Concepts",
-  x: 50,
-  y: 50,
-};
-
-const HERO_NODES: HeroNode[] = [
-  { id: "aliases", label: "Aliases", detail: "Vendor + Misspellings", x: 19, y: 22, tone: "cyan" },
-  { id: "normalizer", label: "Normalizer", detail: "Name Matching", x: 31, y: 80, tone: "emerald" },
-  { id: "search", label: "Search Index", detail: "Weighted Tokens", x: 14, y: 54, tone: "indigo" },
-  { id: "templates", label: "Templates", detail: "Equipment to Points", x: 78, y: 17, tone: "amber" },
-  { id: "validator", label: "Validator", detail: "Required + Suggested", x: 85, y: 49, tone: "rose" },
-  { id: "graph", label: "Graph Layer", detail: "Related Traversal", x: 74, y: 79, tone: "slate" },
-];
-
-const HERO_LINKS: Array<{ from: string; to: string }> = [
-  { from: "aliases", to: "normalizer" },
-  { from: "search", to: "normalizer" },
-  { from: "templates", to: "validator" },
-  { from: "graph", to: "validator" },
-  { from: "search", to: "templates" },
-];
-
-function heroNodeToneClasses(tone: HeroNodeTone) {
-  switch (tone) {
-    case "cyan":
-      return "border-cyan-500/40 bg-cyan-500/10 text-cyan-200";
-    case "emerald":
-      return "border-emerald-500/40 bg-emerald-500/10 text-emerald-200";
-    case "amber":
-      return "border-amber-500/40 bg-amber-500/10 text-amber-200";
-    case "rose":
-      return "border-rose-500/40 bg-rose-500/10 text-rose-200";
-    case "indigo":
-      return "border-indigo-500/40 bg-indigo-500/10 text-indigo-200";
-    case "slate":
-    default:
-      return "border-slate-400/40 bg-slate-500/10 text-slate-200";
-  }
-}
 
 export function BabelView() {
   // Use combined hook for parallel data fetching
@@ -161,130 +110,51 @@ export function BabelView() {
 
   return (
     <div className="min-h-full">
-      {/* Hero */}
-      <section className="relative overflow-hidden py-12 md:py-16">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(14,165,233,0.14),_transparent_42%),radial-gradient(circle_at_85%_25%,_rgba(16,185,129,0.12),_transparent_44%),radial-gradient(circle_at_30%_100%,_rgba(245,158,11,0.10),_transparent_52%)]" />
-        <div className="absolute inset-0 opacity-25 [background-image:linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] [background-size:36px_36px]" />
+      {/* Header */}
+      <section className="relative py-12 overflow-hidden">
+        <CircuitBackground opacity={0.15} colorGradient />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,620px)] lg:items-center">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                BAS Resource Graph
-              </p>
-              <h1 className="mt-4 text-3xl md:text-5xl font-semibold tracking-tight">
-                BAS Babel as a connected data map
-              </h1>
-              <p className="mt-4 max-w-xl text-sm md:text-base text-muted-foreground">
-                Explore how aliases, templates, search indexing, and validation link together around canonical
-                BAS point and equipment concepts. The dataset remains backward-compatible while adding richer
-                relationships for tooling and discovery.
-              </p>
+          <SectionLabel variant="resources">resources</SectionLabel>
 
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <a
-                  href="https://github.com/rbhans/bas-babel"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors rounded-md"
-                >
-                  <GithubLogo className="size-4" weight="bold" />
-                  Open Repository
-                  <ArrowSquareOut className="size-3" />
-                </a>
-                <Link
-                  href="/babel/cleaner"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors rounded-md"
-                >
-                  <Broom className="size-4" weight="bold" />
-                  Point Name Cleaner
-                </Link>
-                <button
-                  onClick={() => setShowApi(!showApi)}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors rounded-md"
-                >
-                  <Code className="size-4" weight="bold" />
-                  {showApi ? "Hide API Access" : "Show API Access"}
-                </button>
-              </div>
+          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+            BAS Babel
+          </h1>
+          <p className="mt-3 text-muted-foreground max-w-2xl">
+            An open source, community-driven database of BAS point naming standards and equipment definitions.
+            Translate between vendor conventions, Haystack tags, and Brick schema with a shared reference
+            that grows with contributions from the industry.
+          </p>
 
-              <div className="mt-6 grid grid-cols-3 gap-2 max-w-md">
-                <div className="rounded-lg border border-border/80 bg-background/70 px-3 py-2 backdrop-blur">
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Points</p>
-                  <p className="mt-1 text-base font-semibold">{loading ? "..." : data?.totalPoints ?? 0}</p>
-                </div>
-                <div className="rounded-lg border border-border/80 bg-background/70 px-3 py-2 backdrop-blur">
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Equipment</p>
-                  <p className="mt-1 text-base font-semibold">{loading ? "..." : data?.totalEquipment ?? 0}</p>
-                </div>
-                <div className="rounded-lg border border-border/80 bg-background/70 px-3 py-2 backdrop-blur">
-                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Results</p>
-                  <p className="mt-1 text-base font-semibold">{loading ? "..." : totalResults}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="relative rounded-2xl border border-border/70 bg-background/80 p-4 md:p-6 shadow-sm backdrop-blur">
-                <p className="mb-4 text-xs uppercase tracking-[0.22em] text-muted-foreground">
-                  Connected Layers
-                </p>
-                <div className="relative mx-auto aspect-[4/3] w-full max-w-[620px]">
-                  <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden>
-                    {HERO_NODES.map((node) => (
-                      <line
-                        key={`${node.id}-root`}
-                        x1={HERO_CENTER.x}
-                        y1={HERO_CENTER.y}
-                        x2={node.x}
-                        y2={node.y}
-                        stroke="hsl(var(--muted-foreground) / 0.35)"
-                        strokeWidth="0.65"
-                      />
-                    ))}
-                    {HERO_LINKS.map((link) => {
-                      const from = HERO_NODES.find((node) => node.id === link.from);
-                      const to = HERO_NODES.find((node) => node.id === link.to);
-                      if (!from || !to) return null;
-                      return (
-                        <line
-                          key={`${link.from}-${link.to}`}
-                          x1={from.x}
-                          y1={from.y}
-                          x2={to.x}
-                          y2={to.y}
-                          stroke="hsl(var(--muted-foreground) / 0.20)"
-                          strokeWidth="0.45"
-                          strokeDasharray="1.6 1.2"
-                        />
-                      );
-                    })}
-                  </svg>
-
-                  <div
-                    className="absolute w-[32%] min-w-[148px] max-w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-primary/45 bg-primary/10 px-3 py-2.5 text-center shadow-sm"
-                    style={{ left: `${HERO_CENTER.x}%`, top: `${HERO_CENTER.y}%` }}
-                  >
-                    <p className="text-sm font-semibold">{HERO_CENTER.label}</p>
-                    <p className="mt-1 text-[11px] text-primary/80">{HERO_CENTER.detail}</p>
-                  </div>
-
-                  {HERO_NODES.map((node) => (
-                    <div
-                      key={node.id}
-                      className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-lg border px-2.5 py-2 text-center shadow-sm transition-transform duration-300 hover:scale-[1.03] ${heroNodeToneClasses(node.tone)} w-[24%] min-w-[112px] max-w-[170px]`}
-                      style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                    >
-                      <p className="text-[11px] font-semibold leading-tight">{node.label}</p>
-                      <p className="mt-1 text-[10px] opacity-90 leading-tight">{node.detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <a
+              href="https://github.com/rbhans/bas-babel"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors"
+            >
+              <GithubLogo className="size-4" weight="bold" />
+              View on GitHub
+              <ArrowSquareOut className="size-3" />
+            </a>
+            <Link
+              href="/babel/cleaner"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
+            >
+              <Broom className="size-4" weight="bold" />
+              Point Name Cleaner
+            </Link>
+            <button
+              onClick={() => setShowApi(!showApi)}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
+            >
+              <Code className="size-4" weight="bold" />
+              API Access
+            </button>
           </div>
 
+          {/* API Section */}
           {showApi && (
-            <div className="mt-8 p-4 bg-muted/50 rounded-lg border">
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
               <h3 className="text-sm font-semibold mb-2">Free JSON API</h3>
               <p className="text-sm text-muted-foreground mb-4">
                 Access the complete dataset via jsDelivr CDN. No authentication required.
