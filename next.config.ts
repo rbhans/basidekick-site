@@ -36,6 +36,40 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  async redirects() {
+    return [
+      {
+        source: "/ssk",
+        destination: "/tools/ssk",
+        permanent: true,
+      },
+      {
+        source: "/qsk",
+        destination: "/tools/qsk",
+        permanent: true,
+      },
+      {
+        source: "/nsk",
+        destination: "/tools",
+        permanent: true,
+      },
+      {
+        source: "/msk",
+        destination: "/tools",
+        permanent: true,
+      },
+      {
+        source: "/tools/nsk",
+        destination: "/tools",
+        permanent: true,
+      },
+      {
+        source: "/tools/msk",
+        destination: "/tools",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

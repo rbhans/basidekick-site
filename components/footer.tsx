@@ -6,9 +6,8 @@ import { ROUTES } from "@/lib/routes";
 import { ArrowUp } from "@phosphor-icons/react";
 
 const toolsLinks = [
-  { href: "/nsk", label: "NSK" },
-  { href: "/ssk", label: "SSK" },
-  { href: "/msk", label: "MSK" },
+  { href: ROUTES.TOOL("ssk"), label: "SSK" },
+  { href: ROUTES.TOOL("qsk"), label: "QSK" },
 ];
 
 const resourcesLinks = [
