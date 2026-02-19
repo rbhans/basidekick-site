@@ -16,6 +16,7 @@ import type { BabelPointEntry, BabelEquipmentEntry, BabelContributionType } from
 import { BabelContributionDialog } from "./babel-contribution-dialog";
 import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { getAtlasTypeIdForBabelEquipment } from "@/lib/data/atlas-babel-map";
+import { inferBabelPointKind } from "@/lib/data/babel-kind";
 
 interface BabelEntryDetailProps {
   entry: BabelPointEntry | BabelEquipmentEntry;
@@ -159,6 +160,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
   const states = isPoint ? pointEntry.concept.states : undefined;
   const notes = isPoint ? pointEntry.notes : undefined;
   const related = isPoint ? pointEntry.related : undefined;
+  const inferredPointKind = isPoint ? inferBabelPointKind(pointEntry.concept) : null;
 
   // Equipment-specific fields
   const fullName = !isPoint ? equipEntry.full_name : undefined;
@@ -204,12 +206,6 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
       {/* Metadata */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-card border border-border rounded mb-6">
         <div className="min-w-0">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Haystack</p>
-          <p className={`font-mono text-sm mt-1 break-words ${haystack ? "" : "text-muted-foreground/50"}`}>
-            {haystack || "-"}
-          </p>
-        </div>
-        <div className="min-w-0">
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Brick</p>
           <p className={`font-mono text-sm mt-1 break-words ${brick ? "" : "text-muted-foreground/50"}`}>
             {brick || "-"}
@@ -223,12 +219,6 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
         {/* Point-specific metadata */}
         {isPoint && (
           <>
-            <div className="min-w-0">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Unit</p>
-              <p className={`font-mono text-sm mt-1 ${unit ? "" : "text-muted-foreground/50"}`}>
-                {unit ? (Array.isArray(unit) ? unit.join(" / ") : unit) : "-"}
-              </p>
-            </div>
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Typical Range</p>
               <p className={`font-mono text-sm mt-1 ${typicalRange ? "" : "text-muted-foreground/50"}`}>
@@ -245,29 +235,66 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
         )}
       </div>
 
-      {/* States (points only, not for numeric/analog points with units) */}
-      {isPoint && !unit && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-3">States</h2>
-          {states && Object.keys(states).length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {Object.entries(states).map(([value, labels]) => {
-                const labelArray = Array.isArray(labels) ? labels : [labels];
-                return (
-                  <div key={value} className="p-2 bg-muted/30 rounded">
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-mono text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{value}</span>
-                      <span className="text-sm">{labelArray.join(", ")}</span>
-                    </div>
+      {/* Haystack */}
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-3">Haystack</h2>
+        <div className="p-4 bg-card border border-border rounded space-y-4">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Tags</p>
+            <p className={`font-mono text-sm mt-1 break-words ${haystack ? "" : "text-muted-foreground/50"}`}>
+              {haystack || "-"}
+            </p>
+          </div>
+
+          {isPoint ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Kind</p>
+                  <p className="font-mono text-sm mt-1">{inferredPointKind}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Point Function</p>
+                  <p className={`font-mono text-sm mt-1 ${pointEntry.concept.point_function ? "" : "text-muted-foreground/50"}`}>
+                    {pointEntry.concept.point_function || "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Unit</p>
+                  <p className={`font-mono text-sm mt-1 ${unit ? "" : "text-muted-foreground/50"}`}>
+                    {unit ? (Array.isArray(unit) ? unit.join(" / ") : unit) : "-"}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">States</p>
+                {states && Object.keys(states).length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {Object.entries(states).map(([value, labels]) => {
+                      const labelArray = Array.isArray(labels) ? labels : [labels];
+                      return (
+                        <div key={value} className="p-2 bg-muted/30 rounded">
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-mono text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{value}</span>
+                            <span className="text-sm">{labelArray.join(", ")}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground/50">-</p>
+                )}
+              </div>
+            </>
           ) : (
-            <p className="text-sm text-muted-foreground/50">-</p>
+            <p className="text-sm text-muted-foreground">
+              Structured Haystack metadata for equipment will be added here as the model expands.
+            </p>
           )}
         </div>
-      )}
+      </div>
 
       {/* Aliases */}
       <div className="space-y-4 mb-6">

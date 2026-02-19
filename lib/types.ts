@@ -395,7 +395,8 @@ export interface BabelPointConcept {
   description: string;
   haystack?: string;
   brick?: string;
-  unit?: string;
+  kind?: "Number" | "Bool" | string;
+  unit?: string | string[];
   typical_range?: BabelTypicalRange;
   object_type?: string;
   engineering_units?: string;
