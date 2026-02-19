@@ -18,6 +18,19 @@ type SidebarBabelEntry = {
   tags: string[];
 };
 
+function formatUnit(unit: string | string[] | undefined): string | undefined {
+  if (Array.isArray(unit)) {
+    if (unit.length === 0) return undefined;
+    return unit.join(" / ");
+  }
+
+  if (typeof unit === "string" && unit.trim().length > 0) {
+    return unit;
+  }
+
+  return undefined;
+}
+
 function toSidebarEntry(entry: BabelPointEntry | BabelEquipmentEntry): SidebarBabelEntry {
   if ("concept" in entry) {
     return {
@@ -28,7 +41,7 @@ function toSidebarEntry(entry: BabelPointEntry | BabelEquipmentEntry): SidebarBa
       aliases: entry.aliases.common ?? [],
       category: entry.concept.category,
       subcategory: entry.concept.subcategory,
-      unit: entry.concept.unit,
+      unit: formatUnit(entry.concept.unit),
       tags: [entry.concept.haystack, entry.concept.brick].filter((value): value is string => Boolean(value)),
     };
   }
