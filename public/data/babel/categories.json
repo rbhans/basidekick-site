@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
   "categories": [
     {
       "id": "air-handling",
@@ -11,7 +11,19 @@
       "id": "central-plant",
       "name": "Central Plant",
       "type": "equipment",
-      "count": 9
+      "count": 12
+    },
+    {
+      "id": "domestic-water",
+      "name": "domestic-water",
+      "type": "equipment",
+      "count": 2
+    },
+    {
+      "id": "life-safety",
+      "name": "life-safety",
+      "type": "equipment",
+      "count": 2
     },
     {
       "id": "metering",
@@ -20,10 +32,22 @@
       "count": 5
     },
     {
+      "id": "power-distribution",
+      "name": "power-distribution",
+      "type": "equipment",
+      "count": 3
+    },
+    {
+      "id": "standalone-fans",
+      "name": "standalone-fans",
+      "type": "equipment",
+      "count": 2
+    },
+    {
       "id": "terminal-units",
       "name": "Terminal Units",
       "type": "equipment",
-      "count": 10
+      "count": 11
     },
     {
       "id": "vrf",
@@ -35,37 +59,61 @@
       "id": "alarms",
       "name": "Alarms",
       "type": "points",
-      "count": 31
+      "count": 15
     },
     {
       "id": "commands",
       "name": "Commands",
       "type": "points",
-      "count": 70
+      "count": 40
     },
     {
       "id": "dampers",
       "name": "Dampers",
       "type": "points",
-      "count": 18
+      "count": 23
+    },
+    {
+      "id": "electrical",
+      "name": "electrical",
+      "type": "points",
+      "count": 8
     },
     {
       "id": "fans",
       "name": "Fans",
       "type": "points",
-      "count": 24
+      "count": 28
     },
     {
       "id": "flows",
       "name": "Flows",
       "type": "points",
-      "count": 5
+      "count": 9
     },
     {
       "id": "humidity",
       "name": "Humidity",
       "type": "points",
+      "count": 7
+    },
+    {
+      "id": "iaq",
+      "name": "iaq",
+      "type": "points",
       "count": 6
+    },
+    {
+      "id": "lighting",
+      "name": "lighting",
+      "type": "points",
+      "count": 4
+    },
+    {
+      "id": "maintenance",
+      "name": "maintenance",
+      "type": "points",
+      "count": 4
     },
     {
       "id": "pressures",
@@ -77,25 +125,25 @@
       "id": "setpoints",
       "name": "Setpoints",
       "type": "points",
-      "count": 10
+      "count": 24
     },
     {
       "id": "status",
       "name": "Status",
       "type": "points",
-      "count": 52
+      "count": 21
     },
     {
       "id": "temperatures",
       "name": "Temperatures",
       "type": "points",
-      "count": 51
+      "count": 29
     },
     {
       "id": "valves",
       "name": "Valves",
       "type": "points",
-      "count": 13
+      "count": 29
     }
   ]
 }

@@ -41,7 +41,7 @@ export function MatchPickerDialog({
       .filter((point) => {
         if (point.concept.name.toLowerCase().includes(query)) return true;
         if (point.concept.id.includes(query)) return true;
-        if (point.concept.haystack?.toLowerCase().includes(query)) return true;
+        if (point.concept.haystack?.tagString.toLowerCase().includes(query)) return true;
         return point.aliases.common.some((a) => a.toLowerCase().includes(query));
       })
       .slice(0, 20);
@@ -95,7 +95,7 @@ export function MatchPickerDialog({
                 <p className="text-sm font-medium">{point.concept.name}</p>
                 <p className="text-xs text-muted-foreground">
                   {point.concept.category} &middot; {point.concept.point_function ?? "point"}
-                  {point.concept.haystack && ` \u00B7 ${point.concept.haystack}`}
+                  {point.concept.haystack && ` \u00B7 ${point.concept.haystack.tagString}`}
                 </p>
               </button>
             ))

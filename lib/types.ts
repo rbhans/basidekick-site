@@ -375,6 +375,27 @@ export interface PSKNote {
 }
 
 // BAS Babel types
+export type BabelHaystackTagKind = "Marker" | "Str" | "Number" | "Bool" | "Ref";
+
+export interface BabelHaystackTag {
+  name: string;
+  kind: BabelHaystackTagKind;
+}
+
+export interface BabelPointHaystackData {
+  tags: BabelHaystackTag[];
+  tagString: string;
+  markers: string[];
+  unit?: string;
+  kind?: string;
+}
+
+export interface BabelEquipmentHaystackData {
+  tags: BabelHaystackTag[];
+  tagString: string;
+  markers: string[];
+}
+
 export interface BabelTypicalRange {
   min: number;
   max: number;
@@ -393,7 +414,7 @@ export interface BabelPointConcept {
   category: string;
   subcategory?: string;
   description: string;
-  haystack?: string;
+  haystack?: BabelPointHaystackData;
   brick?: string;
   kind?: "Number" | "Bool" | string;
   unit?: string | string[];
@@ -425,7 +446,7 @@ export interface BabelEquipmentEntry {
   abbreviation?: string;
   category: string;
   description: string;
-  haystack?: string;
+  haystack?: BabelEquipmentHaystackData;
   brick?: string;
   aliases: BabelAliases;
   subtypes?: BabelEquipmentSubtype[];

@@ -42,7 +42,7 @@ function toSidebarEntry(entry: BabelPointEntry | BabelEquipmentEntry): SidebarBa
       category: entry.concept.category,
       subcategory: entry.concept.subcategory,
       unit: formatUnit(entry.concept.unit),
-      tags: [entry.concept.haystack, entry.concept.brick].filter((value): value is string => Boolean(value)),
+      tags: [entry.concept.haystack?.tagString, entry.concept.brick].filter((value): value is string => Boolean(value)),
     };
   }
 
@@ -54,7 +54,7 @@ function toSidebarEntry(entry: BabelPointEntry | BabelEquipmentEntry): SidebarBa
     aliases: entry.aliases.common ?? [],
     category: entry.category,
     unit: entry.abbreviation,
-    tags: [entry.haystack, entry.brick].filter((value): value is string => Boolean(value)),
+    tags: [entry.haystack?.tagString, entry.brick].filter((value): value is string => Boolean(value)),
   };
 }
 

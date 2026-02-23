@@ -18,7 +18,7 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
   const id = isPoint ? pointEntry.concept.id : equipEntry.id;
   const name = isPoint ? pointEntry.concept.name : equipEntry.name;
   const description = isPoint ? pointEntry.concept.description : equipEntry.description;
-  const haystack = isPoint ? pointEntry.concept.haystack : equipEntry.haystack;
+  const haystackTagString = isPoint ? pointEntry.concept.haystack?.tagString : equipEntry.haystack?.tagString;
   const brick = isPoint ? pointEntry.concept.brick : equipEntry.brick;
   const aliases = isPoint ? pointEntry.aliases : equipEntry.aliases;
 
@@ -38,8 +38,8 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
           <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 min-w-0">
             <p className="text-xs font-mono truncate max-w-full">
               <span className="text-muted-foreground">Haystack:</span>{" "}
-              <span className={haystack && haystack !== "-" ? "text-primary/70" : "text-muted-foreground/50"}>
-                {haystack || "-"}
+              <span className={haystackTagString ? "text-primary/70" : "text-muted-foreground/50"}>
+                {haystackTagString || "-"}
               </span>
             </p>
             <p className="text-xs font-mono truncate max-w-full">
