@@ -239,59 +239,78 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">Haystack</h2>
         <div className="p-4 bg-card border border-border rounded space-y-4">
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Tags</p>
-            <p className={`font-mono text-sm mt-1 break-words ${haystack ? "" : "text-muted-foreground/50"}`}>
-              {haystack || "-"}
-            </p>
-          </div>
-
-          {isPoint ? (
+          {haystack ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Kind</p>
-                  <p className="font-mono text-sm mt-1">{inferredPointKind}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Point Function</p>
-                  <p className={`font-mono text-sm mt-1 ${pointEntry.concept.point_function ? "" : "text-muted-foreground/50"}`}>
-                    {pointEntry.concept.point_function || "-"}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Unit</p>
-                  <p className={`font-mono text-sm mt-1 ${unit ? "" : "text-muted-foreground/50"}`}>
-                    {unit ? (Array.isArray(unit) ? unit.join(" / ") : unit) : "-"}
-                  </p>
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Tags</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {haystack.tags.map((tag) => (
+                    <span
+                      key={tag.name}
+                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-mono bg-primary/10 text-primary rounded"
+                    >
+                      {tag.name}
+                      <span className="text-[10px] text-primary/50">{tag.kind}</span>
+                    </span>
+                  ))}
                 </div>
               </div>
 
-              <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">States</p>
-                {states && Object.keys(states).length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {Object.entries(states).map(([value, labels]) => {
-                      const labelArray = Array.isArray(labels) ? labels : [labels];
-                      return (
-                        <div key={value} className="p-2 bg-muted/30 rounded">
-                          <div className="flex items-baseline gap-2">
-                            <span className="font-mono text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{value}</span>
-                            <span className="text-sm">{labelArray.join(", ")}</span>
-                          </div>
-                        </div>
-                      );
-                    })}
+              {isPoint && (
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Kind</p>
+                      <p className="font-mono text-sm mt-1">{pointEntry.concept.haystack?.kind ?? inferredPointKind}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Point Function</p>
+                      <p className={`font-mono text-sm mt-1 ${pointEntry.concept.point_function ? "" : "text-muted-foreground/50"}`}>
+                        {pointEntry.concept.point_function || "-"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Haystack Unit</p>
+                      <p className={`font-mono text-sm mt-1 ${pointEntry.concept.haystack?.unit ? "" : "text-muted-foreground/50"}`}>
+                        {pointEntry.concept.haystack?.unit || "-"}
+                      </p>
+                    </div>
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground/50">-</p>
-                )}
-              </div>
+
+                  {unit && (
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Source Units</p>
+                      <p className="font-mono text-sm mt-1">
+                        {Array.isArray(unit) ? unit.join(" / ") : unit}
+                      </p>
+                    </div>
+                  )}
+
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">States</p>
+                    {states && Object.keys(states).length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {Object.entries(states).map(([value, labels]) => {
+                          const labelArray = Array.isArray(labels) ? labels : [labels];
+                          return (
+                            <div key={value} className="p-2 bg-muted/30 rounded">
+                              <div className="flex items-baseline gap-2">
+                                <span className="font-mono text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">{value}</span>
+                                <span className="text-sm">{labelArray.join(", ")}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground/50">-</p>
+                    )}
+                  </div>
+                </>
+              )}
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">
-              Structured Haystack metadata for equipment will be added here as the model expands.
-            </p>
+            <p className="text-sm text-muted-foreground/50">No Haystack data</p>
           )}
         </div>
       </div>

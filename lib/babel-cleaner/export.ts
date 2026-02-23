@@ -33,7 +33,7 @@ export function exportResultsCsv(results: CleanerRow[], data: BabelData): void {
       row.userOverride ? "manual" : (row.bestMatch?.confidence ?? "none"),
       csvEscape(row.strippedPrefix ?? ""),
       csvEscape(point?.concept.point_function ?? ""),
-      csvEscape(point?.concept.haystack ?? ""),
+      csvEscape(point?.concept.haystack?.tagString ?? ""),
       csvEscape(point?.concept.brick ?? ""),
     ].join(",");
   });

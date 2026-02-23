@@ -20,7 +20,7 @@ function buildAliasIndex(points: BabelPointEntry[]): Map<string, BabelPointEntry
     ];
 
     if (point.concept.haystack) {
-      keys.push(point.concept.haystack.toLowerCase());
+      keys.push(point.concept.haystack.tagString.toLowerCase());
     }
 
     for (const key of keys) {

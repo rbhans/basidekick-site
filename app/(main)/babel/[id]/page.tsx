@@ -64,7 +64,7 @@ function generateBabelJsonLd(entry: BabelEntryLookup, canonical: string) {
     const pointEntry = entry.data as BabelPointEntry;
     const additionalProperty = [
       pointEntry.concept.haystack
-        ? { "@type": "PropertyValue", name: "Haystack", value: pointEntry.concept.haystack }
+        ? { "@type": "PropertyValue", name: "Haystack", value: pointEntry.concept.haystack.tagString }
         : null,
       pointEntry.concept.brick
         ? { "@type": "PropertyValue", name: "Brick", value: pointEntry.concept.brick }
@@ -97,7 +97,7 @@ function generateBabelJsonLd(entry: BabelEntryLookup, canonical: string) {
       ? { "@type": "PropertyValue", name: "Category", value: equipmentEntry.category }
       : null,
     equipmentEntry.haystack
-      ? { "@type": "PropertyValue", name: "Haystack", value: equipmentEntry.haystack }
+      ? { "@type": "PropertyValue", name: "Haystack", value: equipmentEntry.haystack.tagString }
       : null,
     equipmentEntry.brick
       ? { "@type": "PropertyValue", name: "Brick", value: equipmentEntry.brick }

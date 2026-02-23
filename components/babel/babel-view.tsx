@@ -73,8 +73,8 @@ export function BabelView() {
         if (entry.concept.name.toLowerCase().includes(query)) return true;
         // Search in description
         if (entry.concept.description?.toLowerCase().includes(query)) return true;
-        // Search in haystack
-        if (entry.concept.haystack?.toLowerCase().includes(query)) return true;
+        // Search in haystack tags
+        if (entry.concept.haystack?.tagString.toLowerCase().includes(query)) return true;
         // Search in aliases
         const allAliases = [
           ...entry.aliases.common,
