@@ -1,8 +1,8 @@
 import { HomeView } from "@/components/views/home-view";
 import { createClient } from "@supabase/supabase-js";
 
-// ISR: Revalidate every 5 minutes for fresh content without blocking
-export const revalidate = 300;
+// ISR: Revalidate daily — content updates come via redeployments
+export const revalidate = 86400;
 
 // Simple Supabase client for public data (no cookies needed)
 function getSupabaseClient() {
@@ -20,7 +20,7 @@ async function getBabelTermCount(): Promise<number> {
   try {
     const response = await fetch(
       "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json",
-      { next: { revalidate: 300 } }
+      { next: { revalidate: 86400 } }
     );
     if (!response.ok) return 500;
     const data = await response.json();
@@ -34,7 +34,7 @@ async function getAtlasModelCount(): Promise<number> {
   try {
     const response = await fetch(
       "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/index.json",
-      { next: { revalidate: 300 } }
+      { next: { revalidate: 86400 } }
     );
     if (!response.ok) return 0;
     const data = await response.json();

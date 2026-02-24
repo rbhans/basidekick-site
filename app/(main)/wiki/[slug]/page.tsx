@@ -5,8 +5,8 @@ import { WikiArticleDetail } from "@/components/wiki/wiki-article-detail";
 import { WikiTag } from "@/lib/types";
 import { escapeJsonLd } from "@/lib/security";
 
-// ISR: Revalidate every hour - articles rarely change
-export const revalidate = 3600;
+// ISR: Revalidate daily — articles rarely change
+export const revalidate = 86400;
 
 // Create a Supabase client for server-side data fetching
 function getSupabaseClient() {

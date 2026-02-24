@@ -25,7 +25,7 @@ async function loadLocalBabelData(): Promise<BabelData | null> {
 async function fetchRemoteBabelData(): Promise<BabelData | null> {
   try {
     const response = await fetch(REMOTE_BABEL_DATA_URL, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 86400 },
     });
     if (!response.ok) return null;
     return (await response.json()) as BabelData;

@@ -8,7 +8,7 @@ import type { BabelEquipmentEntry, BabelPointEntry } from "@/lib/types";
 
 const BASE_URL = "https://basidekick.com";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 interface BabelEntryPageProps {
   params: Promise<{ id: string }>;
