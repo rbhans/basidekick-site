@@ -3,7 +3,7 @@ import { EquipmentTypeView } from "@/components/atlas/equipment-type-view";
 import { escapeJsonLd } from "@/lib/security";
 import { getAllTypeSlugs, getAtlasBrand, getAtlasType } from "@/lib/data/atlas";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 interface TypePageProps {
   params: Promise<{ brand: string; type: string }>;

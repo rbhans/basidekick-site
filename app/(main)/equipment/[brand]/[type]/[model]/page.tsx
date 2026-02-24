@@ -9,7 +9,7 @@ import {
 } from "@/lib/data/atlas";
 import type { AtlasBrand, AtlasModel, AtlasType } from "@/lib/types";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 interface ModelPageProps {
   params: Promise<{ brand: string; type: string; model: string }>;

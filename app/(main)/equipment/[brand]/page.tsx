@@ -3,7 +3,7 @@ import { EquipmentBrandView } from "@/components/atlas/equipment-brand-view";
 import { escapeJsonLd } from "@/lib/security";
 import { getAllBrandSlugs, getAtlasBrand } from "@/lib/data/atlas";
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 interface BrandPageProps {
   params: Promise<{ brand: string }>;
