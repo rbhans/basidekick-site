@@ -3,42 +3,47 @@ import path from "path";
 import { readFile } from "fs/promises";
 import type { BabelData, BabelEquipmentEntry, BabelPointEntry } from "@/lib/types";
 
-const REMOTE_BABEL_DATA_URL =
-  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json";
-const LOCAL_BABEL_DATA_PATH = path.join(
-  process.cwd(),
-  "public",
-  "data",
-  "babel",
-  "index.json"
-);
+const REMOTE_BABEL_DATA_URLS = [
+  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json",
+  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/atlas/index.json",
+];
+const LOCAL_BABEL_DATA_PATHS = [
+  path.join(process.cwd(), "public", "data", "atlas-terms", "index.json"),
+  path.join(process.cwd(), "public", "data", "babel", "index.json"),
+];
 
 async function loadLocalBabelData(): Promise<BabelData | null> {
-  try {
-    const raw = await readFile(LOCAL_BABEL_DATA_PATH, "utf8");
-    return JSON.parse(raw) as BabelData;
-  } catch {
-    return null;
+  for (const localPath of LOCAL_BABEL_DATA_PATHS) {
+    try {
+      const raw = await readFile(localPath, "utf8");
+      return JSON.parse(raw) as BabelData;
+    } catch {
+      continue;
+    }
   }
+
+  return null;
 }
 
 async function fetchRemoteBabelData(): Promise<BabelData | null> {
-  try {
-    const response = await fetch(REMOTE_BABEL_DATA_URL, {
-      next: { revalidate: 86400 },
-    });
-    if (!response.ok) return null;
-    return (await response.json()) as BabelData;
-  } catch {
-    return null;
+  for (const remoteUrl of REMOTE_BABEL_DATA_URLS) {
+    try {
+      const response = await fetch(remoteUrl, {
+        next: { revalidate: 86400 },
+      });
+      if (!response.ok) continue;
+      return (await response.json()) as BabelData;
+    } catch {
+      continue;
+    }
   }
+
+  return null;
 }
 
 export const getBabelData = cache(async (): Promise<BabelData | null> => {
-  if (process.env.NODE_ENV === "development") {
-    const local = await loadLocalBabelData();
-    if (local) return local;
-  }
+  const local = await loadLocalBabelData();
+  if (local) return local;
 
   return fetchRemoteBabelData();
 });

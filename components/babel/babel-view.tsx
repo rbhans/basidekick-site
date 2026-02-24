@@ -26,17 +26,17 @@ function BabelViewShell({ showHeader }: BabelViewShellProps) {
   const apiEndpoints = [
     {
       name: "Full Dataset",
-      url: "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json",
+      url: "https://basidekick.com/data/atlas-terms/index.json",
       description: "Complete point and equipment definitions",
     },
     {
       name: "Categories",
-      url: "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/categories.json",
+      url: "https://basidekick.com/data/atlas-terms/categories.json",
       description: "Category tree with counts",
     },
     {
       name: "Search Index",
-      url: "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/search-index.json",
+      url: "https://basidekick.com/data/atlas-terms/search-index.json",
       description: "Pre-tokenized search data",
     },
   ];
@@ -127,7 +127,7 @@ function BabelViewShell({ showHeader }: BabelViewShellProps) {
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <a
-                href="https://github.com/rbhans/bas-atlas"
+                href="https://github.com/rbhans/bas-babel"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors"
@@ -156,7 +156,7 @@ function BabelViewShell({ showHeader }: BabelViewShellProps) {
               <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
                 <h3 className="text-sm font-semibold mb-2">Free JSON API</h3>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Access the complete dataset via GitHub raw URLs. No authentication required.
+                  Access the complete dataset via stable BASidekick URLs. No authentication required.
                 </p>
                 <div className="space-y-3">
                   {apiEndpoints.map((endpoint) => (
@@ -183,7 +183,7 @@ function BabelViewShell({ showHeader }: BabelViewShellProps) {
                 <div className="mt-4 pt-4 border-t">
                   <p className="text-xs text-muted-foreground mb-2">Example usage:</p>
                   <pre className="text-xs bg-background p-3 rounded border overflow-x-auto">
-{`fetch("https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json")
+{`fetch("https://basidekick.com/data/atlas-terms/index.json")
   .then(res => res.json())
   .then(data => console.log(data));`}
                   </pre>

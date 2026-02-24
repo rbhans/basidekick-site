@@ -3,14 +3,46 @@
 import { useState, useEffect, useRef } from "react";
 import type { BabelData, BabelCategoriesData } from "@/lib/types";
 
-// For development, use local data. For production, use GitHub raw (jsDelivr has cache issues)
-const DATA_URL = process.env.NODE_ENV === "development"
-  ? "/data/babel/index.json"
-  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json";
+const DATA_URLS = [
+  "/data/atlas-terms/index.json",
+  "/data/babel/index.json",
+  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json",
+  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/atlas/index.json",
+];
 
-const CATEGORIES_URL = process.env.NODE_ENV === "development"
-  ? "/data/babel/categories.json"
-  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/categories.json";
+const CATEGORIES_URLS = [
+  "/data/atlas-terms/categories.json",
+  "/data/babel/categories.json",
+  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/categories.json",
+  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/atlas/categories.json",
+];
+
+function isAbortError(err: unknown): boolean {
+  return err instanceof Error && err.name === "AbortError";
+}
+
+async function fetchJsonWithFallback<T>(
+  urls: string[],
+  signal: AbortSignal,
+  label: string
+): Promise<T> {
+  let lastError: Error | null = null;
+
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { signal });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${label} from ${url}: ${response.status}`);
+      }
+      return (await response.json()) as T;
+    } catch (err) {
+      if (isAbortError(err)) throw err;
+      lastError = err instanceof Error ? err : new Error(String(err));
+    }
+  }
+
+  throw lastError ?? new Error(`Failed to fetch ${label}`);
+}
 
 // Combined hook that fetches both data and categories in parallel
 export function useBabelAll() {
@@ -28,22 +60,9 @@ export function useBabelAll() {
 
     async function fetchAll() {
       try {
-        // Fetch both in parallel
-        const [dataResponse, categoriesResponse] = await Promise.all([
-          fetch(DATA_URL, { signal }),
-          fetch(CATEGORIES_URL, { signal }),
-        ]);
-
-        if (!dataResponse.ok) {
-          throw new Error(`Failed to fetch babel data: ${dataResponse.status}`);
-        }
-        if (!categoriesResponse.ok) {
-          throw new Error(`Failed to fetch categories: ${categoriesResponse.status}`);
-        }
-
         const [dataJson, categoriesJson] = await Promise.all([
-          dataResponse.json(),
-          categoriesResponse.json(),
+          fetchJsonWithFallback<BabelData>(DATA_URLS, signal, "atlas terms data"),
+          fetchJsonWithFallback<BabelCategoriesData>(CATEGORIES_URLS, signal, "atlas terms categories"),
         ]);
 
         if (!signal.aborted) {
@@ -51,9 +70,7 @@ export function useBabelAll() {
           setCategories(categoriesJson);
         }
       } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") {
-          return; // Ignore abort errors
-        }
+        if (isAbortError(err)) return;
         setError(err instanceof Error ? err : new Error("Unknown error"));
       } finally {
         if (!signal.aborted) {
@@ -83,16 +100,16 @@ export function useBabelData() {
 
     async function fetchData() {
       try {
-        const response = await fetch(DATA_URL, { signal: controller.signal });
-        if (!response.ok) {
-          throw new Error(`Failed to fetch babel data: ${response.status}`);
-        }
-        const json = await response.json();
+        const json = await fetchJsonWithFallback<BabelData>(
+          DATA_URLS,
+          controller.signal,
+          "atlas terms data"
+        );
         if (!controller.signal.aborted) {
           setData(json);
         }
       } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") return;
+        if (isAbortError(err)) return;
         setError(err instanceof Error ? err : new Error("Unknown error"));
       } finally {
         if (!controller.signal.aborted) {
@@ -118,16 +135,16 @@ export function useBabelCategories() {
 
     async function fetchCategories() {
       try {
-        const response = await fetch(CATEGORIES_URL, { signal: controller.signal });
-        if (!response.ok) {
-          throw new Error(`Failed to fetch categories: ${response.status}`);
-        }
-        const json = await response.json();
+        const json = await fetchJsonWithFallback<BabelCategoriesData>(
+          CATEGORIES_URLS,
+          controller.signal,
+          "atlas terms categories"
+        );
         if (!controller.signal.aborted) {
           setCategories(json);
         }
       } catch (err) {
-        if (err instanceof Error && err.name === "AbortError") return;
+        if (isAbortError(err)) return;
         setError(err instanceof Error ? err : new Error("Unknown error"));
       } finally {
         if (!controller.signal.aborted) {

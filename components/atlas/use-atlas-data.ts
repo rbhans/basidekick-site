@@ -4,12 +4,18 @@ import { useState, useEffect, useRef } from "react";
 import type { AtlasData, AtlasCategoriesData } from "@/lib/types";
 
 const LOCAL_DATA_URL = "/data/atlas/index.json";
-const REMOTE_DATA_URL = "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/index.json";
-const DATA_URLS = [LOCAL_DATA_URL, REMOTE_DATA_URL];
+const DATA_URLS = [
+  LOCAL_DATA_URL,
+  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/index.json",
+  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/catalog/index.json",
+];
 
 const LOCAL_CATEGORIES_URL = "/data/atlas/categories.json";
-const REMOTE_CATEGORIES_URL = "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/categories.json";
-const CATEGORIES_URLS = [LOCAL_CATEGORIES_URL, REMOTE_CATEGORIES_URL];
+const CATEGORIES_URLS = [
+  LOCAL_CATEGORIES_URL,
+  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/categories.json",
+  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/catalog/categories.json",
+];
 
 function isAbortError(err: unknown): boolean {
   return err instanceof Error && err.name === "AbortError";

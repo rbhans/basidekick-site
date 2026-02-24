@@ -3,8 +3,10 @@ import path from "path";
 import { readFile } from "fs/promises";
 import type { AtlasBrand, AtlasData, AtlasModel, AtlasType } from "@/lib/types";
 
-const REMOTE_ATLAS_DATA_URL =
-  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/index.json";
+const REMOTE_ATLAS_DATA_URLS = [
+  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/index.json",
+  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/catalog/index.json",
+];
 const LOCAL_ATLAS_DATA_PATH = path.join(
   process.cwd(),
   "public",
@@ -23,15 +25,19 @@ async function loadLocalAtlasData(): Promise<AtlasData | null> {
 }
 
 async function fetchRemoteAtlasData(): Promise<AtlasData | null> {
-  try {
-    const response = await fetch(REMOTE_ATLAS_DATA_URL, {
-      next: { revalidate: 86400 },
-    });
-    if (!response.ok) return null;
-    return (await response.json()) as AtlasData;
-  } catch {
-    return null;
+  for (const remoteUrl of REMOTE_ATLAS_DATA_URLS) {
+    try {
+      const response = await fetch(remoteUrl, {
+        next: { revalidate: 86400 },
+      });
+      if (!response.ok) continue;
+      return (await response.json()) as AtlasData;
+    } catch {
+      continue;
+    }
   }
+
+  return null;
 }
 
 export const getAtlasData = cache(async (): Promise<AtlasData | null> => {
