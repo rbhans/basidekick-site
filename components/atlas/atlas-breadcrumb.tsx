@@ -13,7 +13,7 @@ interface AtlasBreadcrumbProps {
 
 export function AtlasBreadcrumb({ items }: AtlasBreadcrumbProps) {
   const allItems: BreadcrumbItem[] = [
-    { label: "BAS Atlas", href: ROUTES.EQUIPMENT },
+    { label: "BAS Atlas", href: ROUTES.ATLAS_EQUIPMENT },
     ...items,
   ];
 

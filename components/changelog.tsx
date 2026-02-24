@@ -33,7 +33,7 @@ const CHANGELOG_ENTRIES: ChangelogEntry[] = [
       "Added Wiki with articles and categories",
       "Launched PointStack community discussions",
       "Added user profiles and authentication",
-      "Introduced Babel BAS terminology database",
+      "Introduced BAS Atlas terminology database",
     ],
   },
   {

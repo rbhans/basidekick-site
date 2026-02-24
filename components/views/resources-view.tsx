@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
-import { BookOpen, Kanban, ArrowRight, Translate, Gauge, Cpu } from "@phosphor-icons/react";
+import { BookOpen, Kanban, ArrowRight, Gauge, Cpu } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 
 const resources = [
@@ -16,20 +16,12 @@ const resources = [
     href: ROUTES.RESOURCES_RUST,
   },
   {
-    id: "babel",
-    title: "BAS Babel",
-    description: "Point naming standards and aliases across BAS platforms. Translate between vendor conventions and industry standards.",
-    icon: Translate,
-    cta: "Browse Standards",
-    href: ROUTES.BABEL,
-  },
-  {
     id: "atlas",
     title: "BAS Atlas",
-    description: "Community-driven equipment database with brands, types, and models for BAS professionals.",
+    description: "Point naming standards and equipment reference in one place for BAS professionals.",
     icon: Gauge,
-    cta: "Browse Equipment",
-    href: ROUTES.EQUIPMENT,
+    cta: "Open BAS Atlas",
+    href: ROUTES.ATLAS,
   },
   {
     id: "wiki",

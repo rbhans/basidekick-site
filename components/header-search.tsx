@@ -9,18 +9,18 @@ import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/lib/routes";
 import type { BabelData, AtlasData } from "@/lib/types";
 
-// Babel data URL
+// Atlas points data URL
 const BABEL_DATA_URL = process.env.NODE_ENV === "development"
   ? "/data/babel/index.json"
-  : "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json";
+  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json";
 
-// Cache babel data to avoid refetching on every search
+// Cache points data to avoid refetching on every search
 let babelDataCache: BabelData | null = null;
 
 // Atlas data URL
 const ATLAS_DATA_URL = process.env.NODE_ENV === "development"
   ? "/data/atlas/index.json"
-  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/index.json";
+  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/index.json";
 
 // Cache atlas data to avoid refetching on every search
 let atlasDataCache: AtlasData | null = null;
@@ -66,7 +66,7 @@ export function HeaderSearch() {
       let hasError = false;
 
       try {
-        // Search Babel entries (from external JSON)
+        // Search Atlas points entries (from external JSON)
         if (!babelDataCache) {
           try {
             const response = await fetch(BABEL_DATA_URL);
@@ -74,7 +74,7 @@ export function HeaderSearch() {
               babelDataCache = await response.json();
             }
           } catch (e) {
-            console.error("[Search] Failed to fetch Babel data:", e);
+            console.error("[Search] Failed to fetch Atlas points data:", e);
           }
         }
 
@@ -96,7 +96,7 @@ export function HeaderSearch() {
               id: `equipment-${e.id}`,
               title: e.abbreviation ? `${e.abbreviation} - ${e.name}` : e.name,
               type: "babel" as const,
-              href: ROUTES.BABEL_ENTRY(e.id),
+              href: ROUTES.ATLAS_ENTRY(e.id),
               subtitle: e.category,
             }))
           );
@@ -117,7 +117,7 @@ export function HeaderSearch() {
               id: `point-${p.concept.id}`,
               title: `${p.concept.id} - ${p.concept.name}`,
               type: "babel" as const,
-              href: `${ROUTES.BABEL}?q=${encodeURIComponent(p.concept.id)}`,
+              href: ROUTES.ATLAS_ENTRY(p.concept.id),
               subtitle: p.concept.category,
             }))
           );
@@ -162,7 +162,7 @@ export function HeaderSearch() {
                 id: `atlas-model-${m.id}`,
                 title: m.name,
                 type: "atlas" as const,
-                href: ROUTES.EQUIPMENT_MODEL(brandSlug, typeSlug, m.slug || m.id),
+                href: ROUTES.ATLAS_EQUIPMENT_MODEL(brandSlug, typeSlug, m.slug || m.id),
                 subtitle: brand?.name || "",
               };
             })
@@ -181,7 +181,7 @@ export function HeaderSearch() {
               id: `atlas-brand-${b.id}`,
               title: b.name,
               type: "atlas" as const,
-              href: ROUTES.EQUIPMENT_BRAND(b.slug || b.id),
+              href: ROUTES.ATLAS_EQUIPMENT_BRAND(b.slug || b.id),
               subtitle: "Brand",
             }))
           );
@@ -353,8 +353,6 @@ export function HeaderSearch() {
                 </div>
               )}
 
-              {/* Babel Terms Section */}
-
               {/* Atlas Equipment Section */}
               {results.filter(r => r.type === "atlas").length > 0 && (
                 <>
@@ -395,7 +393,7 @@ export function HeaderSearch() {
               {results.filter(r => r.type === "babel").length > 0 && (
                 <>
                   <div className="px-3 py-1.5 text-[10px] uppercase tracking-wider text-muted-foreground font-medium bg-muted/30 border-b border-border">
-                    Babel Terms
+                    Atlas Terms
                   </div>
                   {results.filter(r => r.type === "babel").map((result) => {
                     const globalIndex = results.findIndex(r => r.id === result.id);

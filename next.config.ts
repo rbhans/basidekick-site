@@ -39,6 +39,36 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/babel",
+        destination: "/atlas",
+        permanent: true,
+      },
+      {
+        source: "/babel/:path*",
+        destination: "/atlas/:path*",
+        permanent: true,
+      },
+      {
+        source: "/equipment",
+        destination: "/atlas?tab=equipment",
+        permanent: true,
+      },
+      {
+        source: "/equipment/:path*",
+        destination: "/atlas/equipment/:path*",
+        permanent: true,
+      },
+      {
+        source: "/resources/babel",
+        destination: "/atlas",
+        permanent: true,
+      },
+      {
+        source: "/resources/babel/:path*",
+        destination: "/atlas/:path*",
+        permanent: true,
+      },
+      {
         source: "/ssk",
         destination: "/tools/ssk",
         permanent: true,

@@ -193,7 +193,7 @@ export function BabelContributionDialog({
           <DialogHeader>
             <DialogTitle>Sign in to Contribute</DialogTitle>
             <DialogDescription>
-              You need to be signed in to submit contributions to BAS Babel.
+              You need to be signed in to submit contributions to BAS Atlas.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -231,14 +231,14 @@ export function BabelContributionDialog({
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Contribute to BAS Babel</DialogTitle>
+          <DialogTitle>Contribute to BAS Atlas</DialogTitle>
           <DialogDescription>
             {entryName ? (
               <>
                 Help improve the entry for <span className="font-medium text-foreground">{entryName}</span>
               </>
             ) : (
-              "Share your knowledge to help improve BAS Babel"
+              "Share your knowledge to help improve BAS Atlas"
             )}
           </DialogDescription>
         </DialogHeader>

@@ -34,7 +34,7 @@ const SECTION_CONFIG: Record<
   ContributionSection,
   { label: string; icon: React.ElementType; color: string }
 > = {
-  babel: { label: "Babel Contributions", icon: Translate, color: "text-orange-500" },
+  babel: { label: "Atlas Terms Contributions", icon: Translate, color: "text-orange-500" },
   equipment: { label: "Equipment Submissions", icon: HardDrives, color: "text-purple-500" },
   wiki: { label: "Wiki Articles", icon: BookOpen, color: "text-cyan-500" },
 };
@@ -142,7 +142,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
 
   return (
     <div className="space-y-4">
-      {/* Babel Contributions */}
+      {/* Atlas Terms Contributions */}
       {babelContributions.length > 0 && (
         <div className="border border-border rounded-md">
           {renderSectionHeader("babel", babelContributions.length)}

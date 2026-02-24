@@ -10,13 +10,30 @@ export const ROUTES = {
   WIKI_TAG: (tagSlug: string) => `/wiki/tags/${encodeURIComponent(tagSlug)}`,
   RESOURCES: "/resources",
   RESOURCES_RUST: "/resources/rust",
-  BABEL: "/babel",
-  EQUIPMENT: "/equipment",
-  EQUIPMENT_BRAND: (brand: string) => `/equipment/${encodeURIComponent(brand)}`,
-  EQUIPMENT_TYPE: (brand: string, type: string) => `/equipment/${encodeURIComponent(brand)}/${encodeURIComponent(type)}`,
-  EQUIPMENT_MODEL: (brand: string, type: string, model: string) => `/equipment/${encodeURIComponent(brand)}/${encodeURIComponent(type)}/${encodeURIComponent(model)}`,
-  EQUIPMENT_ADD: "/equipment/add",
-  BABEL_ENTRY: (id: string) => `/babel/${encodeURIComponent(id)}`,
+
+  // Atlas unified routes
+  ATLAS: "/atlas",
+  ATLAS_ENTRY: (id: string) => `/atlas/${encodeURIComponent(id)}`,
+  ATLAS_CLEANER: "/atlas/cleaner",
+  ATLAS_EQUIPMENT: "/atlas?tab=equipment",
+  ATLAS_EQUIPMENT_ADD: "/atlas/equipment/add",
+  ATLAS_EQUIPMENT_BRAND: (brand: string) => `/atlas/equipment/${encodeURIComponent(brand)}`,
+  ATLAS_EQUIPMENT_TYPE: (brand: string, type: string) =>
+    `/atlas/equipment/${encodeURIComponent(brand)}/${encodeURIComponent(type)}`,
+  ATLAS_EQUIPMENT_MODEL: (brand: string, type: string, model: string) =>
+    `/atlas/equipment/${encodeURIComponent(brand)}/${encodeURIComponent(type)}/${encodeURIComponent(model)}`,
+
+  // Legacy aliases kept for compatibility in remaining references
+  BABEL: "/atlas",
+  BABEL_ENTRY: (id: string) => `/atlas/${encodeURIComponent(id)}`,
+  EQUIPMENT: "/atlas?tab=equipment",
+  EQUIPMENT_ADD: "/atlas/equipment/add",
+  EQUIPMENT_BRAND: (brand: string) => `/atlas/equipment/${encodeURIComponent(brand)}`,
+  EQUIPMENT_TYPE: (brand: string, type: string) =>
+    `/atlas/equipment/${encodeURIComponent(brand)}/${encodeURIComponent(type)}`,
+  EQUIPMENT_MODEL: (brand: string, type: string, model: string) =>
+    `/atlas/equipment/${encodeURIComponent(brand)}/${encodeURIComponent(type)}/${encodeURIComponent(model)}`,
+
   REFERENCES: "/references",
   CALCULATORS: "/calculators",
   ACCOUNT: "/account",
@@ -66,10 +83,12 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.POINTSTACK;
     case VIEW_IDS.RESOURCES:
       return ROUTES.RESOURCES;
+    case VIEW_IDS.ATLAS:
+      return ROUTES.ATLAS;
     case VIEW_IDS.BABEL:
-      return ROUTES.BABEL;
+      return ROUTES.ATLAS;
     case VIEW_IDS.EQUIPMENT:
-      return ROUTES.EQUIPMENT;
+      return ROUTES.ATLAS;
     case VIEW_IDS.REFERENCES:
       return ROUTES.REFERENCES;
     case VIEW_IDS.CALCULATORS:
@@ -98,10 +117,12 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/pointstack") return VIEW_IDS.POINTSTACK;
   if (pathname === "/resources") return VIEW_IDS.RESOURCES;
   if (pathname.startsWith("/resources/")) return VIEW_IDS.RESOURCES;
-  if (pathname === "/babel") return VIEW_IDS.BABEL;
-  if (pathname.startsWith("/babel/")) return VIEW_IDS.BABEL;
-  if (pathname === "/equipment") return VIEW_IDS.EQUIPMENT;
-  if (pathname.startsWith("/equipment/")) return VIEW_IDS.EQUIPMENT;
+  if (pathname === "/atlas") return VIEW_IDS.ATLAS;
+  if (pathname.startsWith("/atlas/")) return VIEW_IDS.ATLAS;
+  if (pathname === "/babel") return VIEW_IDS.ATLAS;
+  if (pathname.startsWith("/babel/")) return VIEW_IDS.ATLAS;
+  if (pathname === "/equipment") return VIEW_IDS.ATLAS;
+  if (pathname.startsWith("/equipment/")) return VIEW_IDS.ATLAS;
   if (pathname === "/references") return VIEW_IDS.REFERENCES;
   if (pathname === "/calculators") return VIEW_IDS.CALCULATORS;
   if (pathname === "/account") return VIEW_IDS.ACCOUNT;

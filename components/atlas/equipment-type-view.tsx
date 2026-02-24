@@ -56,10 +56,10 @@ function BabelTypeLink({ atlasTypeId }: { atlasTypeId: string }) {
         ) : (
           <>
             View point naming standards for{" "}
-            <Link href={ROUTES.BABEL_ENTRY(entry.id)} className="text-primary hover:underline">
+            <Link href={ROUTES.ATLAS_ENTRY(entry.id)} className="text-primary hover:underline">
               {entry.name}
             </Link>{" "}
-            in BAS Babel.
+            in BAS Atlas.
           </>
         )}
       </p>
@@ -68,13 +68,13 @@ function BabelTypeLink({ atlasTypeId }: { atlasTypeId: string }) {
 
   return (
     <p className="mt-3 text-sm text-muted-foreground">
-      View point naming standards in BAS Babel:{" "}
+      View point naming standards in BAS Atlas:{" "}
       {linkedEquipment.map((entry, index) => (
         <span key={entry.id}>
           {entry.isBroken ? (
             <span className="text-destructive">{entry.name} (broken mapping)</span>
           ) : (
-            <Link href={ROUTES.BABEL_ENTRY(entry.id)} className="text-primary hover:underline">
+            <Link href={ROUTES.ATLAS_ENTRY(entry.id)} className="text-primary hover:underline">
               {entry.name}
             </Link>
           )}
@@ -158,7 +158,7 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
           <SectionLabel variant="resources">equipment</SectionLabel>
           <AtlasBreadcrumb
             items={[
-              { label: brand.name, href: ROUTES.EQUIPMENT_BRAND(brand.slug || brand.id) },
+              { label: brand.name, href: ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id) },
               { label: type.name },
             ]}
           />
@@ -173,7 +173,7 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Models</h2>
-            <Link href={ROUTES.EQUIPMENT_ADD} className="text-sm text-primary hover:underline">
+            <Link href={ROUTES.ATLAS_EQUIPMENT_ADD} className="text-sm text-primary hover:underline">
               Add model
             </Link>
           </div>
@@ -185,7 +185,7 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
               {models.map((model) => (
                 <Link
                   key={model.id}
-                  href={ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id)}
+                  href={ROUTES.ATLAS_EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id)}
                   className="p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                 >
                   <p className="text-sm font-semibold">{model.name}</p>

@@ -4,7 +4,7 @@ import { readFile } from "fs/promises";
 import type { AtlasBrand, AtlasData, AtlasModel, AtlasType } from "@/lib/types";
 
 const REMOTE_ATLAS_DATA_URL =
-  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/index.json";
+  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/index.json";
 const LOCAL_ATLAS_DATA_PATH = path.join(
   process.cwd(),
   "public",

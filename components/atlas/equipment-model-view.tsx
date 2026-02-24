@@ -76,7 +76,7 @@ function PointStandardsCard({ atlasTypeId }: { atlasTypeId: string }) {
                 <span className="text-destructive/80"> (broken mapping)</span>
               </span>
             ) : (
-              <Link href={ROUTES.BABEL_ENTRY(entry.id)} className="text-sm text-primary hover:underline">
+              <Link href={ROUTES.ATLAS_ENTRY(entry.id)} className="text-sm text-primary hover:underline">
                 {entry.name}
                 {entry.abbreviation ? (
                   <span className="text-muted-foreground"> ({entry.abbreviation})</span>
@@ -219,8 +219,8 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
           <SectionLabel variant="resources">equipment</SectionLabel>
           <AtlasBreadcrumb
             items={[
-              { label: brand.name, href: ROUTES.EQUIPMENT_BRAND(brand.slug || brand.id) },
-              { label: type.name, href: ROUTES.EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id) },
+              { label: brand.name, href: ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id) },
+              { label: type.name, href: ROUTES.ATLAS_EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id) },
               { label: model.name },
             ]}
           />

@@ -19,7 +19,7 @@ function getSupabaseClient() {
 async function getBabelTermCount(): Promise<number> {
   try {
     const response = await fetch(
-      "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json",
+      "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json",
       { next: { revalidate: 86400 } }
     );
     if (!response.ok) return 500;
@@ -33,7 +33,7 @@ async function getBabelTermCount(): Promise<number> {
 async function getAtlasModelCount(): Promise<number> {
   try {
     const response = await fetch(
-      "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/index.json",
+      "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/index.json",
       { next: { revalidate: 86400 } }
     );
     if (!response.ok) return 0;

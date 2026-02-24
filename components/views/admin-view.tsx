@@ -346,7 +346,7 @@ export function AdminView({
     { id: "wiki", label: "Wiki", icon: <Article className="size-4" />, count: stats.articleCount },
     {
       id: "babel",
-      label: "Babel",
+      label: "Atlas Terms",
       icon: <Translate className="size-4" />,
       count: stats.pendingBabelContributions,
     },
@@ -440,7 +440,7 @@ export function AdminView({
                 <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Translate className="size-4" />
-                    <span className="text-sm">Babel Pending</span>
+                    <span className="text-sm">Atlas Terms Pending</span>
                   </div>
                   <p className="text-3xl font-bold text-primary">{stats.pendingBabelContributions}</p>
                 </div>
@@ -916,7 +916,7 @@ export function AdminView({
             </div>
           )}
 
-          {/* Babel Contributions Tab */}
+          {/* Atlas Terms Contributions Tab */}
           {activeTab === "babel" && (
             <div className="space-y-4">
               <div className="border border-border bg-card shadow-sm overflow-hidden">
@@ -963,7 +963,7 @@ export function AdminView({
                           <td className="p-4 hidden sm:table-cell">
                             {contribution.entry_id ? (
                               <Link
-                                href={ROUTES.BABEL_ENTRY(contribution.entry_id)}
+                                href={ROUTES.ATLAS_ENTRY(contribution.entry_id)}
                                 className="font-mono text-sm text-primary hover:underline"
                                 onClick={(e) => e.stopPropagation()}
                               >
@@ -1075,7 +1075,7 @@ export function AdminView({
                 </table>
                 {babelContributions.length === 0 && (
                   <div className="p-8 text-center text-muted-foreground">
-                    No babel contributions yet
+                    No Atlas terms contributions yet
                   </div>
                 )}
               </div>

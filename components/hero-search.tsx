@@ -16,8 +16,8 @@ export function HeroSearch({ onCommandMenuOpen }: HeroSearchProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
-      // Search in Babel by default
-      router.push(`${ROUTES.BABEL}?q=${encodeURIComponent(query.trim())}`);
+      // Search Atlas by default
+      router.push(`${ROUTES.ATLAS}?q=${encodeURIComponent(query.trim())}`);
     }
   };
 

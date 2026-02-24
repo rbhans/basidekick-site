@@ -4,7 +4,7 @@ import { readFile } from "fs/promises";
 import type { BabelData, BabelEquipmentEntry, BabelPointEntry } from "@/lib/types";
 
 const REMOTE_BABEL_DATA_URL =
-  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json";
+  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json";
 const LOCAL_BABEL_DATA_PATH = path.join(
   process.cwd(),
   "public",

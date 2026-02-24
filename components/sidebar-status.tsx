@@ -154,10 +154,10 @@ export function SidebarStatus() {
   return (
     <div className="px-3 py-3 border-t border-border">
       <div className="text-[10px] font-mono text-cyan-500 dark:text-cyan-400 uppercase tracking-wider mb-1.5">
-        Babel
+        Atlas
       </div>
       <Link
-        href={ROUTES.BABEL_ENTRY(entry.id)}
+        href={ROUTES.ATLAS_ENTRY(entry.id)}
         className={`block rounded-md border border-border/60 bg-muted/20 p-2.5 overflow-hidden transition-all duration-300 hover:border-cyan-500/40 hover:bg-muted/40 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}

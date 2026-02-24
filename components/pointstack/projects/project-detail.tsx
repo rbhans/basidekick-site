@@ -66,7 +66,7 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
         return {
           id,
           name: model.name,
-          href: ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
+          href: ROUTES.ATLAS_EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
         };
       })
       .filter(Boolean) as { id: string; name: string; href: string }[];

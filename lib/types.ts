@@ -99,6 +99,7 @@ export const VIEW_IDS = {
   SSK: "ssk",
   QSK: "qsk",
   RESOURCES: "resources",
+  ATLAS: "atlas",
   BABEL: "babel",
   EQUIPMENT: "equipment",
   REFERENCES: "references",

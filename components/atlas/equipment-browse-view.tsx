@@ -3,30 +3,29 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { MagnifyingGlass, ArrowRight } from "@phosphor-icons/react";
-import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
+import { SectionLabel } from "@/components/section-label";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAtlasAll } from "./use-atlas-data";
-import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
+import { ROUTES } from "@/lib/routes";
+import type { AtlasModel } from "@/lib/types";
 import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 import { AtlasBrandLogo } from "./atlas-brand-logo";
-import type { AtlasModel } from "@/lib/types";
+import { useAtlasAll } from "./use-atlas-data";
 
-export function EquipmentBrowseView() {
+interface EquipmentBrowseViewShellProps {
+  showHeader: boolean;
+}
+
+function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps) {
   const { data, categories, loading, error } = useAtlasAll();
   const [query, setQuery] = useState("");
   const [popularModels, setPopularModels] = useState<AtlasModel[]>([]);
   const [popularCounts, setPopularCounts] = useState<Record<string, number>>({});
 
-  const brandById = useMemo(() => {
-    return new Map(data?.brands.map((b) => [b.id, b]) || []);
-  }, [data]);
-
-  const typeById = useMemo(() => {
-    return new Map(data?.types.map((t) => [t.id, t]) || []);
-  }, [data]);
+  const brandById = useMemo(() => new Map(data?.brands.map((brand) => [brand.id, brand]) || []), [data]);
+  const typeById = useMemo(() => new Map(data?.types.map((type) => [type.id, type]) || []), [data]);
 
   const modelCountByBrand = useMemo(() => {
     const counts = new Map<string, number>();
@@ -42,8 +41,7 @@ export function EquipmentBrowseView() {
   const brandCards = useMemo(() => {
     if (!data) return [];
 
-    // categories.json can be partial; always include every brand from index.json.
-    const categoryBrandById = new Map((categories?.brands || []).map((b) => [b.id, b]));
+    const categoryBrandById = new Map((categories?.brands || []).map((brand) => [brand.id, brand]));
 
     return data.brands.map((brand) => {
       const categoryBrand = categoryBrandById.get(brand.id);
@@ -74,24 +72,29 @@ export function EquipmentBrowseView() {
     if (!data || !query.trim()) return { brands: [], models: [] };
     const lower = query.toLowerCase();
 
-    const brands = data.brands.filter((brand) =>
-      brand.name.toLowerCase().includes(lower) ||
-      brand.id.toLowerCase().includes(lower) ||
-      (brand.slug || "").toLowerCase().includes(lower)
-    ).slice(0, 4);
+    const brands = data.brands
+      .filter(
+        (brand) =>
+          brand.name.toLowerCase().includes(lower) ||
+          brand.id.toLowerCase().includes(lower) ||
+          (brand.slug || "").toLowerCase().includes(lower),
+      )
+      .slice(0, 4);
 
-    const models = data.models.filter((model) => {
-      const brandName = brandById.get(model.brand)?.name || "";
-      const typeName = typeById.get(model.type)?.name || "";
-      return (
-        model.name.toLowerCase().includes(lower) ||
-        model.id.toLowerCase().includes(lower) ||
-        (model.slug || "").toLowerCase().includes(lower) ||
-        (model.model_numbers || []).some((num) => num.toLowerCase().includes(lower)) ||
-        brandName.toLowerCase().includes(lower) ||
-        typeName.toLowerCase().includes(lower)
-      );
-    }).slice(0, 6);
+    const models = data.models
+      .filter((model) => {
+        const brandName = brandById.get(model.brand)?.name || "";
+        const typeName = typeById.get(model.type)?.name || "";
+        return (
+          model.name.toLowerCase().includes(lower) ||
+          model.id.toLowerCase().includes(lower) ||
+          (model.slug || "").toLowerCase().includes(lower) ||
+          (model.model_numbers || []).some((num) => num.toLowerCase().includes(lower)) ||
+          brandName.toLowerCase().includes(lower) ||
+          typeName.toLowerCase().includes(lower)
+        );
+      })
+      .slice(0, 6);
 
     return { brands, models };
   }, [data, query, brandById, typeById]);
@@ -134,29 +137,29 @@ export function EquipmentBrowseView() {
 
   return (
     <div className="min-h-full">
-      {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">resources</SectionLabel>
-          <AtlasBreadcrumb items={[]} />
+      {showHeader && (
+        <section className="relative py-12 overflow-hidden">
+          <CircuitBackground opacity={0.15} colorGradient />
+          <div className="container mx-auto px-4 relative z-10">
+            <SectionLabel variant="resources">resources</SectionLabel>
+            <AtlasBreadcrumb items={[]} />
 
-          <h1 className="mt-4 text-3xl md:text-4xl font-semibold tracking-tight">BAS Atlas</h1>
-          <p className="mt-3 text-muted-foreground max-w-2xl">
-            A community-driven equipment database for BAS professionals. Browse by brand and type,
-            track what you&apos;ve worked with, and share field notes.
-          </p>
-        </div>
-      </section>
+            <h1 className="mt-4 text-3xl md:text-4xl font-semibold tracking-tight">BAS Atlas Equipment</h1>
+            <p className="mt-3 text-muted-foreground max-w-2xl">
+              Community-driven equipment catalog for BAS professionals. Browse by brand and type, track what
+              you&apos;ve worked with, and share field notes.
+            </p>
+          </div>
+        </section>
+      )}
 
-      {/* Search */}
       <section className="py-6">
         <div className="container mx-auto px-4">
           <div className="relative max-w-xl">
             <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(event) => setQuery(event.target.value)}
               placeholder="Search by brand or model..."
               className="pl-9"
             />
@@ -175,7 +178,7 @@ export function EquipmentBrowseView() {
                         {searchResults.brands.map((brand) => (
                           <Link
                             key={brand.id}
-                            href={ROUTES.EQUIPMENT_BRAND(brand.slug || brand.id)}
+                            href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
                             className="flex items-center justify-between text-sm hover:text-primary"
                           >
                             {brand.name}
@@ -197,7 +200,11 @@ export function EquipmentBrowseView() {
                           return (
                             <Link
                               key={model.id}
-                              href={ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id)}
+                              href={ROUTES.ATLAS_EQUIPMENT_MODEL(
+                                brand.slug || brand.id,
+                                type.slug || type.id,
+                                model.slug || model.id,
+                              )}
                               className="flex items-center justify-between text-sm hover:text-primary"
                             >
                               <span>{model.name}</span>
@@ -215,12 +222,11 @@ export function EquipmentBrowseView() {
         </div>
       </section>
 
-      {/* Brand Grid */}
       <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Brands</h2>
-            <Link href={ROUTES.EQUIPMENT_ADD} className="text-sm text-primary hover:underline">
+            <Link href={ROUTES.ATLAS_EQUIPMENT_ADD} className="text-sm text-primary hover:underline">
               Add equipment
             </Link>
           </div>
@@ -236,7 +242,7 @@ export function EquipmentBrowseView() {
               {brandCards.map((brand) => (
                 <Link
                   key={brand.id}
-                  href={ROUTES.EQUIPMENT_BRAND(brand.slug || brand.id)}
+                  href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
                   className="group p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                 >
                   <div className="flex items-center gap-3">
@@ -246,9 +252,7 @@ export function EquipmentBrowseView() {
                       fallbackClassName="size-8 rounded bg-muted flex items-center justify-center text-sm font-semibold"
                     />
                     <div>
-                      <p className="text-sm font-medium group-hover:text-primary transition-colors">
-                        {brand.name}
-                      </p>
+                      <p className="text-sm font-medium group-hover:text-primary transition-colors">{brand.name}</p>
                       <p className="text-xs text-muted-foreground">
                         {brand.count} model{brand.count === 1 ? "" : "s"}
                       </p>
@@ -261,7 +265,6 @@ export function EquipmentBrowseView() {
         </div>
       </section>
 
-      {/* Recently added */}
       <section className="py-8 border-t border-border">
         <div className="container mx-auto px-4">
           <h2 className="text-xl font-semibold mb-4">Recently added</h2>
@@ -280,11 +283,17 @@ export function EquipmentBrowseView() {
                 return (
                   <Link
                     key={model.id}
-                    href={ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id)}
+                    href={ROUTES.ATLAS_EQUIPMENT_MODEL(
+                      brand.slug || brand.id,
+                      type.slug || type.id,
+                      model.slug || model.id,
+                    )}
                     className="p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                   >
                     <p className="text-sm font-semibold">{model.name}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{brand.name} · {type.name}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {brand.name} · {type.name}
+                    </p>
                   </Link>
                 );
               })}
@@ -293,7 +302,6 @@ export function EquipmentBrowseView() {
         </div>
       </section>
 
-      {/* Most popular */}
       <section className="py-8 border-t border-border">
         <div className="container mx-auto px-4">
           <h2 className="text-xl font-semibold mb-4">Most popular</h2>
@@ -312,11 +320,17 @@ export function EquipmentBrowseView() {
                 return (
                   <Link
                     key={model.id}
-                    href={ROUTES.EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id)}
+                    href={ROUTES.ATLAS_EQUIPMENT_MODEL(
+                      brand.slug || brand.id,
+                      type.slug || type.id,
+                      model.slug || model.id,
+                    )}
                     className="p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                   >
                     <p className="text-sm font-semibold">{model.name}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{brand.name} · {type.name}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {brand.name} · {type.name}
+                    </p>
                     <p className="text-xs text-muted-foreground mt-2">
                       {popularCounts[model.id] || 0} people worked with this
                     </p>
@@ -329,4 +343,12 @@ export function EquipmentBrowseView() {
       </section>
     </div>
   );
+}
+
+export function EquipmentBrowseView() {
+  return <EquipmentBrowseViewShell showHeader />;
+}
+
+export function EquipmentBrowseContent() {
+  return <EquipmentBrowseViewShell showHeader={false} />;
 }

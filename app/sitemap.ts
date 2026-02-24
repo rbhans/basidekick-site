@@ -52,16 +52,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/babel`,
+      url: `${BASE_URL}/atlas`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${BASE_URL}/equipment`,
+      url: `${BASE_URL}/atlas/cleaner`,
       lastModified: new Date(),
       changeFrequency: "weekly",
-      priority: 0.8,
+      priority: 0.7,
     },
     {
       url: `${BASE_URL}/wiki`,
@@ -102,16 +102,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ? new Date(atlasData.lastUpdated)
     : new Date();
 
-  const babelEntryPages: MetadataRoute.Sitemap = babelData
+  const atlasEntryPages: MetadataRoute.Sitemap = babelData
     ? [
       ...babelData.points.map((point) => ({
-        url: `${BASE_URL}/babel/${point.concept.id}`,
+        url: `${BASE_URL}/atlas/${point.concept.id}`,
         lastModified: babelLastModified,
         changeFrequency: "monthly" as const,
         priority: 0.6,
       })),
       ...babelData.equipment.map((equipment) => ({
-        url: `${BASE_URL}/babel/${equipment.id}`,
+        url: `${BASE_URL}/atlas/${equipment.id}`,
         lastModified: babelLastModified,
         changeFrequency: "monthly" as const,
         priority: 0.6,
@@ -121,7 +121,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const atlasBrandPages: MetadataRoute.Sitemap = atlasData
     ? atlasData.brands.map((brand) => ({
-      url: `${BASE_URL}/equipment/${brand.slug || brand.id}`,
+      url: `${BASE_URL}/atlas/equipment/${brand.slug || brand.id}`,
       lastModified: atlasLastModified,
       changeFrequency: "monthly" as const,
       priority: 0.6,
@@ -149,7 +149,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (!typePairs.has(typeKey)) {
         typePairs.add(typeKey);
         atlasTypePages.push({
-          url: `${BASE_URL}/equipment/${brandSlug}/${typeSlug}`,
+          url: `${BASE_URL}/atlas/equipment/${brandSlug}/${typeSlug}`,
           lastModified: atlasLastModified,
           changeFrequency: "monthly" as const,
           priority: 0.5,
@@ -157,7 +157,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
 
       atlasModelPages.push({
-        url: `${BASE_URL}/equipment/${brandSlug}/${typeSlug}/${modelSlug}`,
+        url: `${BASE_URL}/atlas/equipment/${brandSlug}/${typeSlug}/${modelSlug}`,
         lastModified: atlasLastModified,
         changeFrequency: "monthly" as const,
         priority: 0.5,
@@ -165,11 +165,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // If no Supabase, return static + Babel + Atlas pages
+  // If no Supabase, return static + Atlas pages
   if (!supabase) {
     return [
       ...staticPages,
-      ...babelEntryPages,
+      ...atlasEntryPages,
       ...atlasBrandPages,
       ...atlasTypePages,
       ...atlasModelPages,
@@ -205,7 +205,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticPages,
-    ...babelEntryPages,
+    ...atlasEntryPages,
     ...atlasBrandPages,
     ...atlasTypePages,
     ...atlasModelPages,

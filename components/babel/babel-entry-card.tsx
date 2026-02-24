@@ -27,7 +27,7 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
 
   return (
     <Link
-      href={ROUTES.BABEL_ENTRY(id)}
+      href={ROUTES.ATLAS_ENTRY(id)}
       className="group block p-4 border border-border bg-card shadow-sm hover:border-primary/50 transition-all"
     >
       <div className="flex items-start justify-between gap-2">

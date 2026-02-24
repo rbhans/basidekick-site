@@ -1,21 +1,24 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
-import { BabelSidebar } from "./babel-sidebar";
-import { BabelSearch } from "./babel-search";
-import { BabelEntryCard } from "./babel-entry-card";
-import { useBabelAll } from "./use-babel-data";
-import { GithubLogo, ArrowSquareOut, Code, Copy, Broom } from "@phosphor-icons/react";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
+import { GithubLogo, ArrowSquareOut, Code, Copy, Broom } from "@phosphor-icons/react";
 import { toast } from "sonner";
+import { CircuitBackground } from "@/components/circuit-background";
+import { SectionLabel } from "@/components/section-label";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ROUTES } from "@/lib/routes";
+import { BabelEntryCard } from "./babel-entry-card";
+import { BabelSearch } from "./babel-search";
+import { BabelSidebar } from "./babel-sidebar";
+import { useBabelAll } from "./use-babel-data";
 
-export function BabelView() {
-  // Use combined hook for parallel data fetching
+interface BabelViewShellProps {
+  showHeader: boolean;
+}
+
+function BabelViewShell({ showHeader }: BabelViewShellProps) {
   const { data, categories, loading, error: dataError } = useBabelAll();
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showApi, setShowApi] = useState(false);
@@ -23,17 +26,17 @@ export function BabelView() {
   const apiEndpoints = [
     {
       name: "Full Dataset",
-      url: "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json",
+      url: "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json",
       description: "Complete point and equipment definitions",
     },
     {
       name: "Categories",
-      url: "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/categories.json",
+      url: "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/categories.json",
       description: "Category tree with counts",
     },
     {
       name: "Search Index",
-      url: "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/search-index.json",
+      url: "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/search-index.json",
       description: "Pre-tokenized search data",
     },
   ];
@@ -43,51 +46,50 @@ export function BabelView() {
     toast.success("API URL copied");
   };
 
-  // Filter and search entries
   const filteredEntries = useMemo(() => {
     if (!data) return { points: [], equipment: [] };
 
     let points = [...data.points];
     let equipment = [...data.equipment];
 
-    // Filter by category
     if (selectedCategory) {
-      // Check if it's an equipment category
-      const isEquipmentCategory = ["air-handling", "terminal-units", "central-plant", "metering", "motors", "vrf"].includes(selectedCategory);
+      const isEquipmentCategory = [
+        "air-handling",
+        "terminal-units",
+        "central-plant",
+        "metering",
+        "motors",
+        "vrf",
+      ].includes(selectedCategory);
 
       if (isEquipmentCategory) {
         points = [];
-        equipment = equipment.filter((e) => e.category === selectedCategory);
+        equipment = equipment.filter((entry) => entry.category === selectedCategory);
       } else {
         equipment = [];
-        points = points.filter((p) => p.concept.category === selectedCategory);
+        points = points.filter((entry) => entry.concept.category === selectedCategory);
       }
     }
 
-    // Search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
 
       points = points.filter((entry) => {
-        // Search in name
         if (entry.concept.name.toLowerCase().includes(query)) return true;
-        // Search in description
         if (entry.concept.description?.toLowerCase().includes(query)) return true;
-        // Search in haystack tags
         if (entry.concept.haystack?.tagString.toLowerCase().includes(query)) return true;
-        // Search in aliases
         const allAliases = [
           ...entry.aliases.common,
           ...(entry.aliases.misspellings || []),
         ];
-        return allAliases.some((a) => a.toLowerCase().includes(query));
+        return allAliases.some((alias) => alias.toLowerCase().includes(query));
       });
 
       equipment = equipment.filter((entry) => {
         if (entry.name.toLowerCase().includes(query)) return true;
         if (entry.full_name?.toLowerCase().includes(query)) return true;
         if (entry.description?.toLowerCase().includes(query)) return true;
-        return entry.aliases.common.some((a) => a.toLowerCase().includes(query));
+        return entry.aliases.common.some((alias) => alias.toLowerCase().includes(query));
       });
     }
 
@@ -101,7 +103,7 @@ export function BabelView() {
     return (
       <div className="min-h-full flex items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">Failed to load babel data</p>
+          <p className="text-muted-foreground">Failed to load Atlas core data</p>
           <p className="text-sm text-muted-foreground mt-1">{dataError.message}</p>
         </div>
       </div>
@@ -110,95 +112,91 @@ export function BabelView() {
 
   return (
     <div className="min-h-full">
-      {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">resources</SectionLabel>
+      {showHeader && (
+        <section className="relative py-12 overflow-hidden">
+          <CircuitBackground opacity={0.15} colorGradient />
+          <div className="container mx-auto px-4 relative z-10">
+            <SectionLabel variant="resources">resources</SectionLabel>
 
-          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
-            BAS Babel
-          </h1>
-          <p className="mt-3 text-muted-foreground max-w-2xl">
-            An open source, community-driven database of BAS point naming standards and equipment definitions.
-            Translate between vendor conventions, Haystack tags, and Brick schema with a shared reference
-            that grows with contributions from the industry.
-          </p>
+            <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">Atlas Points</h1>
+            <p className="mt-3 text-muted-foreground max-w-2xl">
+              Open, community-driven BAS point naming standards and equipment definitions. Translate between vendor
+              conventions, Haystack tags, and Brick schema with a shared reference that grows with contributions from
+              the industry.
+            </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <a
-              href="https://github.com/rbhans/bas-babel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors"
-            >
-              <GithubLogo className="size-4" weight="bold" />
-              View on GitHub
-              <ArrowSquareOut className="size-3" />
-            </a>
-            <Link
-              href="/babel/cleaner"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
-            >
-              <Broom className="size-4" weight="bold" />
-              Point Name Cleaner
-            </Link>
-            <button
-              onClick={() => setShowApi(!showApi)}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
-            >
-              <Code className="size-4" weight="bold" />
-              API Access
-            </button>
-          </div>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <a
+                href="https://github.com/rbhans/bas-atlas"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors"
+              >
+                <GithubLogo className="size-4" weight="bold" />
+                View on GitHub
+                <ArrowSquareOut className="size-3" />
+              </a>
+              <Link
+                href={ROUTES.ATLAS_CLEANER}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
+              >
+                <Broom className="size-4" weight="bold" />
+                Point Name Cleaner
+              </Link>
+              <button
+                onClick={() => setShowApi(!showApi)}
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
+              >
+                <Code className="size-4" weight="bold" />
+                API Access
+              </button>
+            </div>
 
-          {/* API Section */}
-          {showApi && (
-            <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
-              <h3 className="text-sm font-semibold mb-2">Free JSON API</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Access the complete dataset via jsDelivr CDN. No authentication required.
-              </p>
-              <div className="space-y-3">
-                {apiEndpoints.map((endpoint) => (
-                  <div key={endpoint.name} className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{endpoint.name}</p>
-                      <p className="text-xs text-muted-foreground">{endpoint.description}</p>
+            {showApi && (
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h3 className="text-sm font-semibold mb-2">Free JSON API</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Access the complete dataset via GitHub raw URLs. No authentication required.
+                </p>
+                <div className="space-y-3">
+                  {apiEndpoints.map((endpoint) => (
+                    <div key={endpoint.name} className="flex flex-col sm:flex-row sm:items-center gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{endpoint.name}</p>
+                        <p className="text-xs text-muted-foreground">{endpoint.description}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <code className="text-xs bg-background px-2 py-1 rounded border truncate max-w-[300px]">
+                          {endpoint.url}
+                        </code>
+                        <button
+                          onClick={() => copyToClipboard(endpoint.url)}
+                          className="shrink-0 p-1.5 hover:bg-background rounded transition-colors"
+                          title="Copy URL"
+                        >
+                          <Copy className="size-4" />
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <code className="text-xs bg-background px-2 py-1 rounded border truncate max-w-[300px]">
-                        {endpoint.url}
-                      </code>
-                      <button
-                        onClick={() => copyToClipboard(endpoint.url)}
-                        className="shrink-0 p-1.5 hover:bg-background rounded transition-colors"
-                        title="Copy URL"
-                      >
-                        <Copy className="size-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 pt-4 border-t">
-                <p className="text-xs text-muted-foreground mb-2">Example usage:</p>
-                <pre className="text-xs bg-background p-3 rounded border overflow-x-auto">
-{`fetch("https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json")
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t">
+                  <p className="text-xs text-muted-foreground mb-2">Example usage:</p>
+                  <pre className="text-xs bg-background p-3 rounded border overflow-x-auto">
+{`fetch("https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json")
   .then(res => res.json())
   .then(data => console.log(data));`}
-                </pre>
+                  </pre>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      </section>
+            )}
+          </div>
+        </section>
+      )}
 
-      {/* Content */}
       <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar */}
             {loading ? (
               <aside className="w-full lg:w-56 shrink-0 space-y-2">
                 <Skeleton className="h-10 w-full" />
@@ -214,9 +212,7 @@ export function BabelView() {
               />
             )}
 
-            {/* Main content */}
             <div className="flex-1 min-w-0">
-              {/* Search */}
               <BabelSearch
                 query={searchQuery}
                 onQueryChange={setSearchQuery}
@@ -224,7 +220,6 @@ export function BabelView() {
                 totalCount={totalEntries}
               />
 
-              {/* Results */}
               <div className="mt-6">
                 {loading ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -236,14 +231,11 @@ export function BabelView() {
                   <div className="text-center py-12">
                     <p className="text-muted-foreground">No entries found</p>
                     {searchQuery && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Try a different search term
-                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">Try a different search term</p>
                     )}
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {/* Equipment results */}
                     {filteredEntries.equipment.length > 0 && (
                       <div>
                         {!selectedCategory && (
@@ -253,17 +245,12 @@ export function BabelView() {
                         )}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {filteredEntries.equipment.map((entry) => (
-                            <BabelEntryCard
-                              key={entry.id}
-                              entry={entry}
-                              type="equipment"
-                            />
+                            <BabelEntryCard key={entry.id} entry={entry} type="equipment" />
                           ))}
                         </div>
                       </div>
                     )}
 
-                    {/* Point results */}
                     {filteredEntries.points.length > 0 && (
                       <div>
                         {!selectedCategory && (
@@ -273,11 +260,7 @@ export function BabelView() {
                         )}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {filteredEntries.points.map((entry) => (
-                            <BabelEntryCard
-                              key={entry.concept.id}
-                              entry={entry}
-                              type="point"
-                            />
+                            <BabelEntryCard key={entry.concept.id} entry={entry} type="point" />
                           ))}
                         </div>
                       </div>
@@ -291,4 +274,12 @@ export function BabelView() {
       </section>
     </div>
   );
+}
+
+export function BabelView() {
+  return <BabelViewShell showHeader />;
+}
+
+export function BabelViewContent() {
+  return <BabelViewShell showHeader={false} />;
 }

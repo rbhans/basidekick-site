@@ -131,7 +131,7 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
               {typeCards.map((type) => (
                 <Link
                   key={type.id}
-                  href={ROUTES.EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id)}
+                  href={ROUTES.ATLAS_EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id)}
                   className="p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
                 >
                   <p className="text-sm font-semibold">{type.name}</p>

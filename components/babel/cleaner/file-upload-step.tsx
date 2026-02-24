@@ -2,7 +2,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { UploadSimple, File as FileIcon, Warning } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
 import { validateFile, parseFile } from "@/lib/babel-cleaner";
 import type { ParsedFile } from "@/lib/babel-cleaner";
 
@@ -78,7 +77,7 @@ export function FileUploadStep({ onFileReady }: FileUploadStepProps) {
         <h2 className="text-lg font-semibold">Upload Point Names</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Upload a CSV or Excel file containing BAS point names. The tool will match
-          them against the Babel database and suggest standardized names.
+          them against Atlas terms and suggest standardized names.
         </p>
       </div>
 

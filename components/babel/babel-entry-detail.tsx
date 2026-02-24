@@ -93,7 +93,7 @@ function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
       <div className="mb-6">
         <h2 className="text-lg font-semibold mb-3">Equipment in BAS Atlas</h2>
         <p className="text-sm text-destructive">
-          Broken mapping: this BAS Babel entry references an Atlas type that no longer exists.
+          Broken mapping: this BAS Atlas term references an Atlas type that no longer exists.
         </p>
       </div>
     );
@@ -105,7 +105,7 @@ function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
       {modelsByBrand.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           No models tracked yet.{" "}
-          <Link href={ROUTES.EQUIPMENT_ADD} className="text-primary hover:underline">
+          <Link href={ROUTES.ATLAS_EQUIPMENT_ADD} className="text-primary hover:underline">
             Add one in BAS Atlas
           </Link>
           .
@@ -119,7 +119,7 @@ function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
                 {group.models.map((model) => (
                   <li key={model.id}>
                     <Link
-                      href={ROUTES.EQUIPMENT_MODEL(group.brandSlug, group.typeSlug, model.slug || model.id)}
+                      href={ROUTES.ATLAS_EQUIPMENT_MODEL(group.brandSlug, group.typeSlug, model.slug || model.id)}
                       className="text-sm text-primary hover:underline"
                     >
                       {model.name}
@@ -182,11 +182,11 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
     <div className="max-w-3xl mx-auto">
       {/* Back link */}
       <Link
-        href={ROUTES.BABEL}
+        href={ROUTES.ATLAS}
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
       >
         <ArrowLeft className="size-4" />
-        Back to BAS Babel
+        Back to BAS Atlas
       </Link>
 
       {/* Header */}
@@ -419,7 +419,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
               {related.map((relatedId) => (
                 <Link
                   key={relatedId}
-                  href={ROUTES.BABEL_ENTRY(relatedId)}
+                  href={ROUTES.ATLAS_ENTRY(relatedId)}
                   className="text-sm px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded transition-colors"
                 >
                   {relatedId}
@@ -441,7 +441,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
               {typicalPoints.map((pointId) => (
                 <Link
                   key={pointId}
-                  href={ROUTES.BABEL_ENTRY(pointId)}
+                  href={ROUTES.ATLAS_ENTRY(pointId)}
                   className="text-sm px-3 py-1.5 bg-muted/50 hover:bg-muted rounded font-mono transition-colors"
                 >
                   {pointId}

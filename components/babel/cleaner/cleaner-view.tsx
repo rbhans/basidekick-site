@@ -9,6 +9,7 @@ import { CircuitBackground } from "@/components/circuit-background";
 import { useBabelAll } from "@/components/babel/use-babel-data";
 import { matchAllPoints } from "@/lib/babel-cleaner";
 import { abbreviationData } from "@/lib/babel-cleaner/abbreviation-data";
+import { ROUTES } from "@/lib/routes";
 import { FileUploadStep } from "./file-upload-step";
 import { ColumnSelectStep } from "./column-select-step";
 import { ResultsTable } from "./results-table";
@@ -156,7 +157,7 @@ export function CleanerView() {
     return (
       <div className="min-h-full flex items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">Failed to load Babel data</p>
+          <p className="text-muted-foreground">Failed to load Atlas data</p>
           <p className="text-sm text-muted-foreground mt-1">{dataError.message}</p>
         </div>
       </div>
@@ -173,11 +174,11 @@ export function CleanerView() {
 
           <div className="mt-6 flex items-center gap-3">
             <Link
-              href="/babel"
+              href={ROUTES.ATLAS}
               className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="size-4" />
-              BAS Babel
+              BAS Atlas
             </Link>
           </div>
 
@@ -185,7 +186,7 @@ export function CleanerView() {
             Point Name Cleaner
           </h1>
           <p className="mt-3 text-muted-foreground max-w-2xl">
-            Upload a file with BAS point names and match them against the Babel database.
+            Upload a file with BAS point names and match them against Atlas terms.
             Correct any mismatches to help grow the database with new aliases.
           </p>
         </div>

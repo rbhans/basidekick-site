@@ -89,7 +89,7 @@ export function CleanerSummary({
             entry_type: null,
             entry_category: null,
             title: `New point: "${row.originalName}"`,
-            description: `Point name "${row.originalName}" could not be matched to any existing BAS Babel entry during Point Name Cleaner import. Requesting a new entry.`,
+            description: `Point name "${row.originalName}" could not be matched to any existing BAS Atlas term during Point Name Cleaner import. Requesting a new entry.`,
             suggested_changes: {
               action: "new_entry",
               original_name: row.originalName,

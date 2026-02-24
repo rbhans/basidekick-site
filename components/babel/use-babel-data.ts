@@ -6,11 +6,11 @@ import type { BabelData, BabelCategoriesData } from "@/lib/types";
 // For development, use local data. For production, use GitHub raw (jsDelivr has cache issues)
 const DATA_URL = process.env.NODE_ENV === "development"
   ? "/data/babel/index.json"
-  : "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/index.json";
+  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json";
 
 const CATEGORIES_URL = process.env.NODE_ENV === "development"
   ? "/data/babel/categories.json"
-  : "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/categories.json";
+  : "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/categories.json";
 
 // Combined hook that fetches both data and categories in parallel
 export function useBabelAll() {
