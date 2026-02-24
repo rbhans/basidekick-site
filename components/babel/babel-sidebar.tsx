@@ -53,8 +53,8 @@ export function BabelSidebar({
   selectedCategory,
   onCategorySelect,
 }: BabelSidebarProps) {
-  const equipmentCategories = categories.filter((c) => c.type === "equipment");
-  const pointCategories = categories.filter((c) => c.type === "points");
+  const equipmentCategories = categories.filter((c) => c.type === "equipment" && c.count > 0);
+  const pointCategories = categories.filter((c) => c.type === "points" && c.count > 0);
 
   return (
     <aside className="w-full lg:w-56 shrink-0">
