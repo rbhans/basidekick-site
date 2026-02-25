@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAtlasAll } from "./use-atlas-data";
 import { getBrandBySlug } from "./atlas-utils";
@@ -11,6 +10,7 @@ import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
 import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 import { AtlasBrandLogo } from "./atlas-brand-logo";
+import { PageHero } from "@/components/page-hero";
 
 interface EquipmentBrandViewProps {
   brandSlug: string;
@@ -98,10 +98,8 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
 
   return (
     <div className="min-h-full">
-      <section className="relative py-10 overflow-hidden">
-        <CircuitBackground opacity={0.12} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">equipment</SectionLabel>
+            <PageHero>
+          <SiteBadge label="EQUIPMENT" />
           <AtlasBreadcrumb
             items={[{ label: brand.name }]}
           />
@@ -112,14 +110,13 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
               fallbackClassName="size-12 rounded bg-muted flex items-center justify-center text-lg font-semibold"
             />
             <div>
-              <h1 className="text-2xl md:text-3xl font-semibold">{brand.name}</h1>
+              <h1 className="text-2xl md:text-3xl font-heading font-bold">{brand.name}</h1>
               <p className="text-sm text-muted-foreground">
                 {peopleCount} people have worked with {brand.name} equipment
               </p>
             </div>
           </div>
-        </div>
-      </section>
+      </PageHero>
 
       <section className="py-8">
         <div className="container mx-auto px-4">

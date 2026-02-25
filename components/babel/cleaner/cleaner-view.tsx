@@ -4,8 +4,7 @@ import { useReducer, useCallback, useEffect, useState } from "react";
 import { ArrowLeft, ArrowCounterClockwise } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { useBabelAll } from "@/components/babel/use-babel-data";
 import { matchAllPoints } from "@/lib/babel-cleaner";
 import { abbreviationData } from "@/lib/babel-cleaner/abbreviation-data";
@@ -17,6 +16,7 @@ import { CleanerSummary } from "./cleaner-summary";
 import { createClient } from "@/lib/supabase/client";
 import type { CleanerState, CleanerAction, ParsedFile } from "@/lib/babel-cleaner/types";
 import Link from "next/link";
+import { PageHero } from "@/components/page-hero";
 
 const initialState: CleanerState = {
   step: "upload",
@@ -167,10 +167,8 @@ export function CleanerView() {
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">resources</SectionLabel>
+      <PageHero>
+          <SiteBadge label="RESOURCES" />
 
           <div className="mt-6 flex items-center gap-3">
             <Link
@@ -182,15 +180,14 @@ export function CleanerView() {
             </Link>
           </div>
 
-          <h1 className="mt-3 text-3xl md:text-4xl font-semibold tracking-tight">
+          <h1 className="mt-3 text-3xl md:text-4xl font-heading font-bold tracking-tight">
             Point Name Cleaner
           </h1>
           <p className="mt-3 text-muted-foreground max-w-2xl">
             Upload a file with BAS point names and match them against Atlas terms.
             Correct any mismatches to help grow the database with new aliases.
           </p>
-        </div>
-      </section>
+      </PageHero>
 
       {/* Content */}
       <section className="py-8">

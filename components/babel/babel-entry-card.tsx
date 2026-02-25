@@ -28,11 +28,16 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
   return (
     <Link
       href={ROUTES.ATLAS_ENTRY(id)}
-      className="group block p-4 border border-border bg-card shadow-sm hover:border-primary/50 transition-all"
+      className="group block p-5 border border-border bg-card rounded-xl hover:border-primary/50 transition-all"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm truncate group-hover:text-primary transition-colors">
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-mono text-[11px] font-bold text-primary tracking-[1px] uppercase">
+              {type === "equipment" ? "Equipment" : "Point"}
+            </span>
+          </div>
+          <h3 className="font-heading text-[15px] font-bold truncate group-hover:text-primary transition-colors">
             {name}
           </h3>
           <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 min-w-0">
@@ -49,7 +54,7 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
               </span>
             </p>
           </div>
-          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+          <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
             {description}
           </p>
         </div>
@@ -61,7 +66,7 @@ export function BabelEntryCard({ entry, type }: BabelEntryCardProps) {
           {topAliases.map((alias, index) => (
             <span
               key={index}
-              className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-muted/50 rounded font-mono"
+              className="inline-flex items-center gap-1 px-2 py-0.5 text-xs bg-muted/50 rounded-full font-mono"
             >
               <Tag className="size-3 opacity-50" />
               {alias}

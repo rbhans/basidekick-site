@@ -1,17 +1,18 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
+import { ArticleCard } from "@/components/article-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
-import { WikiArticleRow, WikiFilterBar, WikiSidebar, SortOption } from "@/components/wiki";
+import { WikiFilterBar, WikiSidebar, SortOption } from "@/components/wiki";
 import { createClient } from "@/lib/supabase/client";
 import { WikiCategory, WikiArticle, WikiTag } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import { sanitizeSearchInput } from "@/lib/security";
+import { getWikiCategoryColor } from "@/lib/wiki-colors";
+import { PageHero } from "@/components/page-hero";
 import {
   BookOpen,
   ArrowLeft,
@@ -218,24 +219,23 @@ export function WikiView() {
 
   return (
       <div className="min-h-full">
-        {/* Header */}
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel variant="wiki">wiki</SectionLabel>
-            <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+        {/* Hero */}
+                <PageHero centered>
+            <div className="flex justify-center">
+              <SiteBadge label="WIKI" icon={BookOpen} />
+            </div>
+            <h1 className="mt-6 text-3xl md:text-[42px] font-heading font-bold tracking-tight">
               Knowledge Base
             </h1>
-            <p className="mt-2 text-muted-foreground max-w-xl">
-              Browse guides, troubleshooting articles, and best practices for building
-              automation systems.
+            <p className="mt-3 text-muted-foreground max-w-[600px] mx-auto text-lg">
+              Articles, guides, and references for building automation professionals.
+              Learn from industry experts and community contributors.
             </p>
-          </div>
-        </section>
+        </PageHero>
 
         {/* Main Content */}
-        <section className="py-8">
-          <div className="container mx-auto px-4">
+        <section className="py-8 pb-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-20">
             <div className="flex flex-col lg:flex-row gap-6">
               {/* Sidebar - Desktop */}
               <div className="hidden lg:block">
@@ -326,14 +326,24 @@ export function WikiView() {
                   </div>
                 )}
 
-                {/* Article List */}
-                <div className="mt-4">
+                {/* Article Count */}
+                <p className="mt-4 mb-4 text-sm text-muted-foreground">
+                  {totalArticles} articles available
+                </p>
+
+                {/* Section Header */}
+                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">
+                  ARTICLES ({totalArticles})
+                </h3>
+
+                {/* Article Grid */}
+                <div>
                   {loading ? (
                     <div className="p-8 text-center">
                       <p className="text-muted-foreground font-mono">Loading articles...</p>
                     </div>
                   ) : articles.length === 0 ? (
-                    <div className="border border-dashed border-border p-8 text-center">
+                    <div className="border border-dashed border-border rounded-xl p-8 text-center">
                       <List className="size-10 text-muted-foreground mx-auto mb-4" />
                       <p className="text-muted-foreground">No articles found.</p>
                       {(activeSearch || selectedTagIds.length > 0) && (
@@ -343,13 +353,19 @@ export function WikiView() {
                       )}
                     </div>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {articles.map((article) => (
-                        <WikiArticleRow
+                        <ArticleCard
                           key={article.id}
-                          article={article}
-                          tags={articleTags.get(article.id)}
-                          href={ROUTES.WIKI_ARTICLE(article.slug)}
+                          slug={article.slug}
+                          category={
+                            (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.name
+                          }
+                          title={article.title}
+                          description={article.summary || ""}
+                          accentColor={getWikiCategoryColor(
+                            (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.name
+                          )}
                         />
                       ))}
                     </div>
@@ -378,10 +394,9 @@ export function WikiView() {
         <div className="lg:hidden fixed bottom-4 right-4 z-40">
           <Button
             size="lg"
-            className="shadow-lg"
+            className="shadow-lg rounded-xl"
             onClick={() => {
               // Could implement a mobile drawer here
-              // For now, just show categories in a simple way
             }}
           >
             <BookOpen className="size-5 mr-2" />

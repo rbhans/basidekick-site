@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PageHero } from "@/components/page-hero";
 import {
   Accordion,
   AccordionContent,
@@ -818,20 +818,16 @@ export function CalculatorsView() {
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">resources</SectionLabel>
-
-          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+            <PageHero>
+          <SiteBadge label="RESOURCES" />
+          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
             BAS Calculators
           </h1>
           <p className="mt-3 text-muted-foreground max-w-xl">
             Quick reference calculators for building automation professionals. For estimation
             purposes—verify critical calculations.
           </p>
-        </div>
-      </section>
+      </PageHero>
 
       {/* Calculators */}
       <section className="py-8">

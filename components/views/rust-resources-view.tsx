@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Cpu } from "@phosphor-icons/react";
-import { CircuitBackground } from "@/components/circuit-background";
-import { SectionLabel } from "@/components/section-label";
+import { SiteBadge } from "@/components/site-badge";
 import { ROUTES } from "@/lib/routes";
+import { PageHero } from "@/components/page-hero";
 
 const rustCrates = [
   {
@@ -28,12 +28,9 @@ const rustCrates = [
 export function RustResourcesView() {
   return (
     <div className="min-h-full">
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">rust</SectionLabel>
-
-          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+            <PageHero>
+          <SiteBadge label="RUST" />
+          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
             Open Source Rust Crates for BAS
           </h1>
           <p className="mt-3 text-muted-foreground max-w-2xl">
@@ -48,8 +45,7 @@ export function RustResourcesView() {
             <ArrowLeft className="size-3" />
             Back to Resources
           </Link>
-        </div>
-      </section>
+      </PageHero>
 
       <section className="py-8">
         <div className="container mx-auto px-4">

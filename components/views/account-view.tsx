@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
@@ -31,6 +30,7 @@ import {
 import { AvatarUpload } from "@/components/avatar-upload";
 import { UserAvatar } from "@/components/user-avatar";
 import { fetchUserCompanies } from "@/components/pointstack/pointstack-api";
+import { PageHero } from "@/components/page-hero";
 
 export function AccountView() {
   const router = useRouter();
@@ -143,10 +143,8 @@ export function AccountView() {
   if (!authLoading && !user) {
     return (
       <div className="min-h-full">
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel>account</SectionLabel>
+        <PageHero>
+            <SiteBadge label="ACCOUNT" />
 
             <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
               Sign In Required
@@ -168,8 +166,7 @@ export function AccountView() {
                 </Link>
               </Button>
             </div>
-          </div>
-        </section>
+        </PageHero>
       </div>
     );
   }
@@ -186,10 +183,8 @@ export function AccountView() {
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel>account</SectionLabel>
+      <PageHero>
+          <SiteBadge label="ACCOUNT" />
 
           <div className="mt-6 flex items-start justify-between">
             <div className="flex items-start gap-4">
@@ -220,8 +215,7 @@ export function AccountView() {
               Sign Out
             </Button>
           </div>
-        </div>
-      </section>
+      </PageHero>
 
       {/* PointStack */}
       <section className="py-8">

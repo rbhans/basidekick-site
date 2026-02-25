@@ -1,99 +1,101 @@
 "use client";
 
-import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
-import { BookOpen, ArrowRight, Gauge, Cpu } from "@phosphor-icons/react";
+import { SiteBadge } from "@/components/site-badge";
+import { ResourceCard } from "@/components/resource-card";
+import {
+  BookOpen,
+  Gauge,
+  Cpu,
+  Calculator,
+  BookmarksSimple,
+  UsersThree,
+  Broom,
+  Wrench,
+} from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
+import { PageHero } from "@/components/page-hero";
 
 const resources = [
   {
-    id: "rust",
-    title: "Rust",
-    description: "Open source Rust crates for BAS protocols. Start with rustbac for BACnet and build toward a full protocol suite.",
-    icon: Cpu,
-    cta: "Explore Rust Crates",
+    title: "Rust BAS Tools",
+    description: "Open source Rust crates for BAS protocols, starting with rustbac for BACnet.",
     href: ROUTES.RESOURCES_RUST,
+    icon: <Cpu className="w-5 h-5 text-primary" />,
   },
   {
-    id: "atlas",
     title: "BAS Atlas",
-    description: "Point naming standards and equipment reference in one place for BAS professionals.",
-    icon: Gauge,
-    cta: "Open BAS Atlas",
+    description: "Unified BAS reference for point naming standards and equipment catalog.",
     href: ROUTES.ATLAS,
+    icon: <Gauge className="w-5 h-5 text-primary" />,
   },
   {
-    id: "wiki",
     title: "Wiki",
-    description: "Guides, tutorials, and reference documentation for BAS professionals. Learn best practices and troubleshooting tips.",
-    icon: BookOpen,
-    cta: "Browse Wiki",
+    description: "Guides, tutorials, and reference documentation for BAS professionals.",
     href: ROUTES.WIKI,
+    icon: <BookOpen className="w-5 h-5 text-primary" />,
+  },
+  {
+    title: "Calculators",
+    description: "CFM, BTU, duct sizing, and other common calculations for BAS professionals.",
+    href: ROUTES.CALCULATORS,
+    icon: <Calculator className="w-5 h-5 text-primary" />,
+  },
+  {
+    title: "References",
+    description: "Protocol specs, wiring diagrams, and cheat sheets for common BAS tasks.",
+    href: ROUTES.REFERENCES,
+    icon: <BookmarksSimple className="w-5 h-5 text-primary" />,
+  },
+  {
+    title: "PointStack",
+    description: "Community platform for BAS professionals to share knowledge and connect.",
+    href: ROUTES.POINTSTACK,
+    icon: <UsersThree className="w-5 h-5 text-primary" />,
+  },
+  {
+    title: "Point Name Cleaner",
+    description: "Clean up messy point names using standardized naming conventions.",
+    href: ROUTES.ATLAS_CLEANER,
+    icon: <Broom className="w-5 h-5 text-primary" />,
+  },
+  {
+    title: "Tools",
+    description: "Professional software tools for building automation simulation and QR tracking.",
+    href: ROUTES.TOOLS,
+    icon: <Wrench className="w-5 h-5 text-primary" />,
   },
 ];
 
 export function ResourcesView() {
   return (
     <div className="min-h-full">
-      {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">resources</SectionLabel>
-
-          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+      {/* Hero */}
+      <PageHero>
+        <SiteBadge label="RESOURCES" />
+          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
             Free Resources
           </h1>
           <p className="mt-3 text-muted-foreground max-w-xl">
-            Knowledge base and free tools to help you succeed.
+            Knowledge base, tools, and references to help BAS professionals succeed.
           </p>
-        </div>
-      </section>
+      </PageHero>
 
       {/* Resources Grid */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
+      <section className="py-8 pb-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-20">
+          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-6">
+            ALL RESOURCES ({resources.length})
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {resources.map((resource) => (
-              <Link
-                key={resource.id}
+              <ResourceCard
+                key={resource.title}
+                title={resource.title}
+                description={resource.description}
                 href={resource.href}
-                className="group p-6 border border-border bg-card shadow-sm hover:border-primary/50 transition-all text-left block"
-              >
-                <resource.icon className="size-8 text-primary mb-4" />
-                <h3 className="text-lg font-semibold mb-2">{resource.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {resource.description}
-                </p>
-                <span className="inline-flex items-center gap-1 text-sm font-medium text-primary group-hover:underline underline-offset-4">
-                  {resource.cta}
-                  <ArrowRight className="size-3" />
-                </span>
-              </Link>
+                icon={resource.icon}
+              />
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Community Stats (placeholder) */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <SectionLabel variant="pointstack">community</SectionLabel>
-
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl">
-            <div className="p-4 text-center">
-              <p className="text-2xl font-mono font-semibold">500+</p>
-              <p className="text-xs text-muted-foreground mt-1">Wiki Articles</p>
-            </div>
-            <div className="p-4 text-center">
-              <p className="text-2xl font-mono font-semibold">1.2k</p>
-              <p className="text-xs text-muted-foreground mt-1">PointStack Members</p>
-            </div>
-            <div className="p-4 text-center">
-              <p className="text-2xl font-mono font-semibold">24hr</p>
-              <p className="text-xs text-muted-foreground mt-1">Avg Response</p>
-            </div>
           </div>
         </div>
       </section>

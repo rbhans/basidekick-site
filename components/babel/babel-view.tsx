@@ -4,14 +4,14 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GithubLogo, ArrowSquareOut, Code, Copy, Broom } from "@phosphor-icons/react";
 import { toast } from "sonner";
-import { CircuitBackground } from "@/components/circuit-background";
-import { SectionLabel } from "@/components/section-label";
+import { SiteBadge } from "@/components/site-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
 import { BabelEntryCard } from "./babel-entry-card";
 import { BabelSearch } from "./babel-search";
 import { BabelSidebar } from "./babel-sidebar";
 import { useBabelAll } from "./use-babel-data";
+import { PageHero } from "@/components/page-hero";
 
 interface BabelViewShellProps {
   showHeader: boolean;
@@ -113,12 +113,10 @@ function BabelViewShell({ showHeader }: BabelViewShellProps) {
   return (
     <div className="min-h-full">
       {showHeader && (
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel variant="resources">resources</SectionLabel>
+        <PageHero>
+            <SiteBadge label="RESOURCES" />
 
-            <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">Atlas Points</h1>
+            <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">Atlas Points</h1>
             <p className="mt-3 text-muted-foreground max-w-2xl">
               Open, community-driven BAS point naming standards and equipment definitions. Translate between vendor
               conventions, Haystack tags, and Brick schema with a shared reference that grows with contributions from
@@ -190,8 +188,7 @@ function BabelViewShell({ showHeader }: BabelViewShellProps) {
                 </div>
               </div>
             )}
-          </div>
-        </section>
+        </PageHero>
       )}
 
       <section className="py-8">

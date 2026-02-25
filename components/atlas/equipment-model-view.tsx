@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
@@ -17,6 +16,7 @@ import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 import { EquipmentImageUpload } from "./equipment-image-upload";
 import { EquipmentNotes } from "./equipment-notes";
 import { UserAvatar } from "@/components/user-avatar";
+import { PageHero } from "@/components/page-hero";
 
 interface EquipmentModelViewProps {
   brandSlug: string;
@@ -213,10 +213,8 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
 
   return (
     <div className="min-h-full">
-      <section className="relative py-10 overflow-hidden">
-        <CircuitBackground opacity={0.12} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">equipment</SectionLabel>
+            <PageHero>
+          <SiteBadge label="EQUIPMENT" />
           <AtlasBreadcrumb
             items={[
               { label: brand.name, href: ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id) },
@@ -225,10 +223,9 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
             ]}
           />
           <div className="mt-4">
-            <h1 className="text-2xl md:text-3xl font-semibold">{model.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-heading font-bold">{model.name}</h1>
           </div>
-        </div>
-      </section>
+      </PageHero>
 
       <section className="py-8">
         <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-8">

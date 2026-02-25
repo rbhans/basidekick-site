@@ -10,14 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
+  --font-heading: var(--font-heading);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -46,7 +39,6 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
-  --color-cyan: var(--accent-cyan);
 }
 
 /* Light Mode */
@@ -57,7 +49,7 @@
   --card-foreground: #18181b;
   --popover: #ffffff;
   --popover-foreground: #18181b;
-  --primary: #d97706;
+  --primary: #9AC820;
   --primary-foreground: #ffffff;
   --secondary: #f4f4f5;
   --secondary-foreground: #18181b;
@@ -65,61 +57,61 @@
   --muted-foreground: #71717a;
   --accent: #f4f4f5;
   --accent-foreground: #18181b;
-  --destructive: #ef4444;
+  --destructive: #FA541C;
   --border: #d4d4d8;
   --input: #d4d4d8;
-  --ring: #d97706;
-  --chart-1: #fbbf24;
-  --chart-2: #f59e0b;
-  --chart-3: #d97706;
-  --chart-4: #b45309;
-  --chart-5: #92400e;
+  --ring: #9AC820;
+  --chart-1: #C4F82A;
+  --chart-2: #9AC820;
+  --chart-3: #7BA318;
+  --chart-4: #5C7D10;
+  --chart-5: #3D5708;
   --radius: 0.5rem;
-  --sidebar: #fafafa;
-  --sidebar-foreground: #18181b;
-  --sidebar-primary: #d97706;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f4f4f5;
-  --sidebar-accent-foreground: #18181b;
-  --sidebar-border: #e4e4e7;
-  --sidebar-ring: #d97706;
-  --accent-amber: #d97706;
+
+  /* Wiki category colors */
+  --wiki-networking: #C4F82A;
+  --wiki-programming: #3B82F6;
+  --wiki-standards: #F59E0B;
+  --wiki-commissioning: #8B5CF6;
+  --wiki-cybersecurity: #EF4444;
+  --wiki-troubleshooting: #10B981;
+  --wiki-best-practices: #F97316;
 }
 
 /* Dark Mode (Default) */
 .dark {
-  --background: #09090b;
-  --foreground: #fafafa;
-  --card: #18181b;
-  --card-foreground: #fafafa;
-  --popover: #18181b;
-  --popover-foreground: #fafafa;
-  --primary: #fbbf24;
-  --primary-foreground: #09090b;
-  --secondary: #27272a;
-  --secondary-foreground: #fafafa;
-  --muted: #27272a;
-  --muted-foreground: #a1a1aa;
-  --accent: #27272a;
-  --accent-foreground: #fafafa;
-  --destructive: #f87171;
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #fbbf24;
-  --chart-1: #fbbf24;
-  --chart-2: #f59e0b;
-  --chart-3: #d97706;
-  --chart-4: #b45309;
-  --chart-5: #92400e;
-  --sidebar: #18181b;
-  --sidebar-foreground: #fafafa;
-  --sidebar-primary: #fbbf24;
-  --sidebar-primary-foreground: #09090b;
-  --sidebar-accent: #27272a;
-  --sidebar-accent-foreground: #fafafa;
-  --sidebar-border: #27272a;
-  --sidebar-ring: #fbbf24;
-  --accent-amber: #fbbf24;
+  --background: #0A0A0A;
+  --foreground: #FFFFFF;
+  --card: #18181B;
+  --card-foreground: #FFFFFF;
+  --popover: #18181B;
+  --popover-foreground: #FFFFFF;
+  --primary: #C4F82A;
+  --primary-foreground: #0A0A0A;
+  --secondary: #18181B;
+  --secondary-foreground: #FFFFFF;
+  --muted: #27272A;
+  --muted-foreground: #A1A1AA;
+  --accent: #27272A;
+  --accent-foreground: #FFFFFF;
+  --destructive: #FA541C;
+  --border: #27272A;
+  --input: #27272A;
+  --ring: #C4F82A;
+  --chart-1: #C4F82A;
+  --chart-2: #9AC820;
+  --chart-3: #7BA318;
+  --chart-4: #5C7D10;
+  --chart-5: #3D5708;
+
+  /* Wiki category colors */
+  --wiki-networking: #C4F82A;
+  --wiki-programming: #3B82F6;
+  --wiki-standards: #F59E0B;
+  --wiki-commissioning: #8B5CF6;
+  --wiki-cybersecurity: #EF4444;
+  --wiki-troubleshooting: #10B981;
+  --wiki-best-practices: #F97316;
 }
 
 @layer base {
@@ -193,28 +185,15 @@
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--chart-1) 50%, var(--primary) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #d4ff5a 50%, var(--primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Gradient border */
-.gradient-border {
-  position: relative;
-}
-
-.gradient-border::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  padding: 1px;
-  background: linear-gradient(135deg, var(--primary), var(--chart-1), var(--primary));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+/* Gradient glow - uses CSS variable so accent color changes propagate */
+.gradient-glow {
+  background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
 }
 
 /* Card hover lift effect */
@@ -224,7 +203,7 @@
 
 .card-hover-lift:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px -8px hsl(var(--primary) / 0.15);
+  box-shadow: 0 8px 24px -8px hsl(from var(--primary) h s l / 0.15);
 }
 
 /* Reduce motion for accessibility */

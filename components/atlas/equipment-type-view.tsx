@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getBabelIdsForAtlasType } from "@/lib/data/atlas-babel-map";
 import { useAtlasAll } from "./use-atlas-data";
@@ -12,6 +11,7 @@ import { getBrandBySlug, getTypeBySlug } from "./atlas-utils";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
 import { AtlasBreadcrumb } from "./atlas-breadcrumb";
+import { PageHero } from "@/components/page-hero";
 
 interface EquipmentTypeViewProps {
   brandSlug: string;
@@ -152,22 +152,19 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
 
   return (
     <div className="min-h-full">
-      <section className="relative py-10 overflow-hidden">
-        <CircuitBackground opacity={0.12} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">equipment</SectionLabel>
+      <PageHero>
+          <SiteBadge label="EQUIPMENT" />
           <AtlasBreadcrumb
             items={[
               { label: brand.name, href: ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id) },
               { label: type.name },
             ]}
           />
-          <h1 className="mt-4 text-2xl md:text-3xl font-semibold">{type.name}</h1>
+          <h1 className="mt-4 text-2xl md:text-3xl font-heading font-bold">{type.name}</h1>
           {getBabelIdsForAtlasType(type.id).length > 0 ? (
             <BabelTypeLink atlasTypeId={type.id} />
           ) : null}
-        </div>
-      </section>
+      </PageHero>
 
       <section className="py-8">
         <div className="container mx-auto px-4">

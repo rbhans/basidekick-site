@@ -1,10 +1,10 @@
 import { Metadata } from "next";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { BabelEntryPageClient } from "@/components/babel/babel-entry-page-client";
 import { escapeJsonLd } from "@/lib/security";
 import { getAllBabelIds, getBabelEntry, type BabelEntryLookup } from "@/lib/data/babel";
 import type { BabelEquipmentEntry, BabelPointEntry } from "@/lib/types";
+import { PageHero } from "@/components/page-hero";
 
 const BASE_URL = "https://basidekick.com";
 
@@ -180,12 +180,9 @@ export default async function BabelEntryPage({ params }: BabelEntryPageProps) {
       />
       <div className="min-h-full">
         {/* Header */}
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel>bas atlas</SectionLabel>
-          </div>
-        </section>
+                <PageHero>
+            <SiteBadge label="BAS ATLAS" />
+        </PageHero>
 
         {/* Content */}
         <section className="py-8">

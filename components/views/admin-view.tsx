@@ -2,8 +2,7 @@
 
 import { useState, Fragment } from "react";
 import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/user-avatar";
 import { createClient } from "@/lib/supabase/client";
@@ -29,6 +28,7 @@ import {
   Gauge,
   Buildings,
 } from "@phosphor-icons/react";
+import { PageHero } from "@/components/page-hero";
 
 interface AdminUser {
   id: string;
@@ -367,19 +367,16 @@ export function AdminView({
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel>admin</SectionLabel>
+      <PageHero>
+          <SiteBadge label="ADMIN" />
 
-          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
             Admin Dashboard
           </h1>
           <p className="mt-2 text-muted-foreground">
             Manage users, content, and site settings.
           </p>
-        </div>
-      </section>
+      </PageHero>
 
       {/* Tabs */}
       <section className="border-b border-border bg-card/50">

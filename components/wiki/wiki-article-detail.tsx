@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
@@ -21,6 +20,7 @@ import {
 import { MarkdownContent } from "@/components/markdown-content";
 import { RelatedArticles } from "@/components/wiki/related-articles";
 import { BookmarkButton } from "@/components/bookmark-button";
+import { PageHero } from "@/components/page-hero";
 
 interface WikiArticleDetailProps {
   article: WikiArticle;
@@ -148,9 +148,7 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
 
   return (
     <div className="min-h-full">
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
+      <PageHero>
           <Link
             href={ROUTES.WIKI}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
@@ -165,7 +163,7 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
             </Badge>
           )}
 
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-heading font-bold tracking-tight">
             {article.title}
           </h1>
 
@@ -209,8 +207,7 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
               ))}
             </div>
           )}
-        </div>
-      </section>
+      </PageHero>
 
       {/* Article Content */}
       <section className="py-8">

@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { MagnifyingGlass, ArrowRight } from "@phosphor-icons/react";
-import { CircuitBackground } from "@/components/circuit-background";
-import { SectionLabel } from "@/components/section-label";
+import { SiteBadge } from "@/components/site-badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
@@ -13,6 +12,7 @@ import type { AtlasModel } from "@/lib/types";
 import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 import { AtlasBrandLogo } from "./atlas-brand-logo";
 import { useAtlasAll } from "./use-atlas-data";
+import { PageHero } from "@/components/page-hero";
 
 interface EquipmentBrowseViewShellProps {
   showHeader: boolean;
@@ -138,19 +138,16 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
   return (
     <div className="min-h-full">
       {showHeader && (
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel variant="resources">resources</SectionLabel>
+                <PageHero>
+            <SiteBadge label="RESOURCES" />
             <AtlasBreadcrumb items={[]} />
 
-            <h1 className="mt-4 text-3xl md:text-4xl font-semibold tracking-tight">BAS Atlas Equipment</h1>
+            <h1 className="mt-4 text-3xl md:text-4xl font-heading font-bold tracking-tight">BAS Atlas Equipment</h1>
             <p className="mt-3 text-muted-foreground max-w-2xl">
               Community-driven equipment catalog for BAS professionals. Browse by brand and type, track what
               you&apos;ve worked with, and share field notes.
             </p>
-          </div>
-        </section>
+        </PageHero>
       )}
 
       <section className="py-6">
