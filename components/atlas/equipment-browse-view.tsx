@@ -12,6 +12,7 @@ import type { AtlasModel } from "@/lib/types";
 import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 import { AtlasBrandLogo } from "./atlas-brand-logo";
 import { useAtlasAll } from "./use-atlas-data";
+import { PageHero } from "@/components/page-hero";
 
 interface EquipmentBrowseViewShellProps {
   showHeader: boolean;
@@ -137,14 +138,7 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
   return (
     <div className="min-h-full">
       {showHeader && (
-        <section className="relative py-16 md:py-20 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-            <div
-              className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]"
-              style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }}
-            />
-          </div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
+                <PageHero>
             <SiteBadge label="RESOURCES" />
             <AtlasBreadcrumb items={[]} />
 
@@ -153,8 +147,7 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
               Community-driven equipment catalog for BAS professionals. Browse by brand and type, track what
               you&apos;ve worked with, and share field notes.
             </p>
-          </div>
-        </section>
+        </PageHero>
       )}
 
       <section className="py-6">

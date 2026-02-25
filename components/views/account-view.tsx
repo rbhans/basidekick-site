@@ -30,6 +30,7 @@ import {
 import { AvatarUpload } from "@/components/avatar-upload";
 import { UserAvatar } from "@/components/user-avatar";
 import { fetchUserCompanies } from "@/components/pointstack/pointstack-api";
+import { PageHero } from "@/components/page-hero";
 
 export function AccountView() {
   const router = useRouter();
@@ -142,11 +143,7 @@ export function AccountView() {
   if (!authLoading && !user) {
     return (
       <div className="min-h-full">
-        <section className="relative py-16 md:py-20 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }} />
-          </div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
+        <PageHero>
             <SiteBadge label="ACCOUNT" />
 
             <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
@@ -169,8 +166,7 @@ export function AccountView() {
                 </Link>
               </Button>
             </div>
-          </div>
-        </section>
+        </PageHero>
       </div>
     );
   }
@@ -187,11 +183,7 @@ export function AccountView() {
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-16 md:py-20 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }} />
-        </div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
+      <PageHero>
           <SiteBadge label="ACCOUNT" />
 
           <div className="mt-6 flex items-start justify-between">
@@ -223,8 +215,7 @@ export function AccountView() {
               Sign Out
             </Button>
           </div>
-        </div>
-      </section>
+      </PageHero>
 
       {/* PointStack */}
       <section className="py-8">

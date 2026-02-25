@@ -191,6 +191,11 @@
   background-clip: text;
 }
 
+/* Gradient glow - uses CSS variable so accent color changes propagate */
+.gradient-glow {
+  background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+}
+
 /* Card hover lift effect */
 .card-hover-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;

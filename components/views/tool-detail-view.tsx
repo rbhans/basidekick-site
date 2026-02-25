@@ -8,6 +8,7 @@ import Link from "next/link";
 import { TOOL_DETAILS } from "@/lib/constants";
 import { getIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
+import { PageHero } from "@/components/page-hero";
 
 interface ToolDetailViewProps {
   toolId: "ssk" | "qsk";
@@ -36,11 +37,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
   return (
     <div className="min-h-full">
       {/* Hero Section */}
-      <section className="relative py-16 md:py-20 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }} />
-        </div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
+      <PageHero>
           <div className="flex items-center gap-3 mb-4">
             <SiteBadge label={tool.id.toUpperCase()} />
             <Badge variant="outline">
@@ -73,8 +70,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
               renderPurchaseButton("lg")
             )}
           </div>
-        </div>
-      </section>
+      </PageHero>
 
       {/* Demo Section */}
       <section className="py-12">

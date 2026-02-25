@@ -19,6 +19,7 @@ export function RotatingAtlasCard({
 }: RotatingAtlasCardProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visible, setVisible] = useState(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (entries.length <= 1) return;
@@ -26,14 +27,17 @@ export function RotatingAtlasCard({
     const interval = setInterval(() => {
       // Fade out
       setVisible(false);
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setCurrentIndex((prev) => (prev + 1) % entries.length);
         // Fade in
         setVisible(true);
       }, 300);
     }, intervalMs);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, [entries.length, intervalMs]);
 
   if (entries.length === 0) return null;

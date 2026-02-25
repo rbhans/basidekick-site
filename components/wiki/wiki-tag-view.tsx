@@ -5,6 +5,7 @@ import { WikiArticleRow } from "@/components/wiki";
 import { WikiArticle, WikiTag } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import { ArrowLeft, Tag } from "@phosphor-icons/react";
+import { PageHero } from "@/components/page-hero";
 
 interface WikiTagViewProps {
   tag: WikiTag;
@@ -14,11 +15,7 @@ interface WikiTagViewProps {
 export function WikiTagView({ tag, articles }: WikiTagViewProps) {
   return (
     <div className="min-h-full">
-      <section className="relative py-16 md:py-20 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }} />
-        </div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
+      <PageHero>
           <Link
             href={ROUTES.WIKI}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
@@ -36,8 +33,7 @@ export function WikiTagView({ tag, articles }: WikiTagViewProps) {
           <p className="mt-2 text-sm text-muted-foreground">
             {articles.length} {articles.length === 1 ? "article" : "articles"}
           </p>
-        </div>
-      </section>
+      </PageHero>
 
       <section className="py-8">
         <div className="container mx-auto px-4">

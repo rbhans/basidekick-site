@@ -13,6 +13,7 @@ import {
   Wrench,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
+import { PageHero } from "@/components/page-hero";
 
 const resources = [
   {
@@ -69,23 +70,15 @@ export function ResourcesView() {
   return (
     <div className="min-h-full">
       {/* Hero */}
-      <section className="relative py-16 md:py-20 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]"
-            style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }}
-          />
-        </div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
-          <SiteBadge label="RESOURCES" />
+      <PageHero>
+        <SiteBadge label="RESOURCES" />
           <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
             Free Resources
           </h1>
           <p className="mt-3 text-muted-foreground max-w-xl">
             Knowledge base, tools, and references to help BAS professionals succeed.
           </p>
-        </div>
-      </section>
+      </PageHero>
 
       {/* Resources Grid */}
       <section className="py-8 pb-16">

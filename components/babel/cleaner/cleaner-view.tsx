@@ -16,6 +16,7 @@ import { CleanerSummary } from "./cleaner-summary";
 import { createClient } from "@/lib/supabase/client";
 import type { CleanerState, CleanerAction, ParsedFile } from "@/lib/babel-cleaner/types";
 import Link from "next/link";
+import { PageHero } from "@/components/page-hero";
 
 const initialState: CleanerState = {
   step: "upload",
@@ -166,11 +167,7 @@ export function CleanerView() {
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-16 md:py-20 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }} />
-        </div>
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
+      <PageHero>
           <SiteBadge label="RESOURCES" />
 
           <div className="mt-6 flex items-center gap-3">
@@ -190,8 +187,7 @@ export function CleanerView() {
             Upload a file with BAS point names and match them against Atlas terms.
             Correct any mismatches to help grow the database with new aliases.
           </p>
-        </div>
-      </section>
+      </PageHero>
 
       {/* Content */}
       <section className="py-8">

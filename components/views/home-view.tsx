@@ -55,14 +55,8 @@ export function HomeView({
       <section className="relative py-20 md:py-28 overflow-hidden">
         {/* Gradient background overlays */}
         <div className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.05]"
-            style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }}
-          />
-          <div
-            className="absolute bottom-[-150px] right-[-100px] w-[400px] h-[400px] rounded-full opacity-[0.03]"
-            style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }}
-          />
+          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.05] gradient-glow" />
+          <div className="absolute bottom-[-150px] right-[-100px] w-[400px] h-[400px] rounded-full opacity-[0.03] gradient-glow" />
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">

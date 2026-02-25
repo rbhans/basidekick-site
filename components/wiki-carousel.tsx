@@ -51,20 +51,25 @@ export function WikiCarousel({ articles }: WikiCarouselProps) {
     setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   }, [maxIndex]);
 
-  // Auto-advance
+  // Respect reduced motion — reactive via matchMedia listener
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   useEffect(() => {
-    if (isPaused || articles.length <= visibleCount) return;
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mql.matches);
+    const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  // Auto-advance (disabled when reduced motion is preferred)
+  useEffect(() => {
+    if (isPaused || prefersReducedMotion || articles.length <= visibleCount) return;
 
     intervalRef.current = setInterval(goNext, 6000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPaused, goNext, articles.length, visibleCount]);
-
-  // Respect reduced motion
-  const prefersReducedMotion = typeof window !== "undefined"
-    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    : false;
+  }, [isPaused, prefersReducedMotion, goNext, articles.length, visibleCount]);
 
   if (articles.length === 0) return null;
 

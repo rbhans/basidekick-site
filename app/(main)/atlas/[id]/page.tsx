@@ -4,6 +4,7 @@ import { BabelEntryPageClient } from "@/components/babel/babel-entry-page-client
 import { escapeJsonLd } from "@/lib/security";
 import { getAllBabelIds, getBabelEntry, type BabelEntryLookup } from "@/lib/data/babel";
 import type { BabelEquipmentEntry, BabelPointEntry } from "@/lib/types";
+import { PageHero } from "@/components/page-hero";
 
 const BASE_URL = "https://basidekick.com";
 
@@ -179,17 +180,9 @@ export default async function BabelEntryPage({ params }: BabelEntryPageProps) {
       />
       <div className="min-h-full">
         {/* Header */}
-        <section className="relative py-16 md:py-20 overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-            <div
-              className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]"
-              style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }}
-            />
-          </div>
-          <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
+                <PageHero>
             <SiteBadge label="BAS ATLAS" />
-          </div>
-        </section>
+        </PageHero>
 
         {/* Content */}
         <section className="py-8">
