@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, Plus, Timer } from "@phosphor-icons/react";
+import { Clock } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useProjects, useTimeEntries } from "./project-hooks";
@@ -18,7 +18,6 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
   const { projects } = useProjects();
   const { addTimeEntry } = useTimeEntries();
 
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formState, setFormState] = useState({
     project_id: "",
@@ -70,148 +69,110 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
 
   const selectedProject = projects.find((p) => p.id === formState.project_id);
 
-  if (!isExpanded) {
-    return (
-      <div className={cn("rounded-lg border border-border/60 bg-card/50", className)}>
-        <button
-          onClick={() => setIsExpanded(true)}
-          className="w-full p-4 flex items-center justify-between hover:bg-accent/50 transition"
+  return (
+    <div className={cn("space-y-3", className)}>
+      {/* Project Select */}
+      <div>
+        <label className="block text-sm font-medium mb-1">Project *</label>
+        <select
+          value={formState.project_id}
+          onChange={(e) =>
+            setFormState((prev) => ({ ...prev, project_id: e.target.value }))
+          }
+          className="w-full h-8 px-3 rounded-md border border-border/60 bg-background text-sm"
         >
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-md bg-muted flex items-center justify-center">
-              <Timer className="size-5 text-primary" />
+          <option value="">Select a project...</option>
+          {activeProjects.map((project) => (
+            <option key={project.id} value={project.id}>
+              {project.name}
+            </option>
+          ))}
+        </select>
+        {selectedProject?.hourly_rate && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Rate: ${selectedProject.hourly_rate}/hr
+          </p>
+        )}
+      </div>
+
+      {/* Description */}
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          Description (optional)
+        </label>
+        <Input
+          placeholder="What did you work on?"
+          value={formState.description}
+          onChange={(e) =>
+            setFormState((prev) => ({ ...prev, description: e.target.value }))
+          }
+          className="h-8 text-sm"
+        />
+      </div>
+
+      {/* Duration & Date Row */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <label className="block text-sm font-medium mb-1">Duration *</label>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <Input
+                type="number"
+                placeholder="Hours"
+                min="0"
+                value={formState.hours}
+                onChange={(e) =>
+                  setFormState((prev) => ({ ...prev, hours: e.target.value }))
+                }
+                className="h-8 text-sm"
+              />
             </div>
-            <div className="text-left">
-              <p className="font-semibold">Quick Time Entry</p>
-              <p className="text-sm text-muted-foreground">
-                Log time to any project
-              </p>
+            <div className="flex-1">
+              <Input
+                type="number"
+                placeholder="Minutes"
+                min="0"
+                max="59"
+                value={formState.minutes}
+                onChange={(e) =>
+                  setFormState((prev) => ({
+                    ...prev,
+                    minutes: e.target.value,
+                  }))
+                }
+                className="h-8 text-sm"
+              />
             </div>
           </div>
-          <Plus className="size-5 text-muted-foreground" />
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className={cn("rounded-lg border border-border/60 bg-card/50", className)}>
-      {/* Header */}
-      <div className="p-4 border-b border-border/40 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Timer className="size-5 text-primary" />
-          <h2 className="font-semibold">Quick Time Entry</h2>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsExpanded(false)}
-          className="text-muted-foreground"
-        >
-          Collapse
-        </Button>
-      </div>
-
-      {/* Form */}
-      <div className="p-4 space-y-4">
-        {/* Project Select */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Project *</label>
-          <select
-            value={formState.project_id}
-            onChange={(e) =>
-              setFormState((prev) => ({ ...prev, project_id: e.target.value }))
-            }
-            className="w-full h-10 px-3 rounded-md border border-border/60 bg-background text-sm"
-          >
-            <option value="">Select a project...</option>
-            {activeProjects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-          {selectedProject?.hourly_rate && (
-            <p className="mt-1 text-xs text-muted-foreground">
-              Rate: ${selectedProject.hourly_rate}/hr
-            </p>
-          )}
         </div>
 
-        {/* Description */}
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Description (optional)
-          </label>
+          <label className="block text-sm font-medium mb-1">Date</label>
           <Input
-            placeholder="What did you work on?"
-            value={formState.description}
+            type="date"
+            value={formState.date}
             onChange={(e) =>
-              setFormState((prev) => ({ ...prev, description: e.target.value }))
+              setFormState((prev) => ({ ...prev, date: e.target.value }))
             }
+            className="h-8 text-sm"
           />
         </div>
-
-        {/* Duration & Date Row */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="block text-sm font-medium mb-1">Duration *</label>
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <Input
-                  type="number"
-                  placeholder="Hours"
-                  min="0"
-                  value={formState.hours}
-                  onChange={(e) =>
-                    setFormState((prev) => ({ ...prev, hours: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="flex-1">
-                <Input
-                  type="number"
-                  placeholder="Minutes"
-                  min="0"
-                  max="59"
-                  value={formState.minutes}
-                  onChange={(e) =>
-                    setFormState((prev) => ({
-                      ...prev,
-                      minutes: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Date</label>
-            <Input
-              type="date"
-              value={formState.date}
-              onChange={(e) =>
-                setFormState((prev) => ({ ...prev, date: e.target.value }))
-              }
-            />
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <Button
-          onClick={handleSubmit}
-          disabled={
-            isSubmitting ||
-            !formState.project_id ||
-            (!formState.hours && !formState.minutes)
-          }
-          className="w-full"
-        >
-          <Clock className="mr-2 size-4" />
-          {isSubmitting ? "Logging..." : "Log Time"}
-        </Button>
       </div>
+
+      {/* Submit Button */}
+      <Button
+        onClick={handleSubmit}
+        disabled={
+          isSubmitting ||
+          !formState.project_id ||
+          (!formState.hours && !formState.minutes)
+        }
+        className="w-full h-8 text-sm"
+        size="sm"
+      >
+        <Clock className="mr-1.5 size-3.5" />
+        {isSubmitting ? "Logging..." : "Log Time"}
+      </Button>
     </div>
   );
 }

@@ -14,7 +14,7 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { DotsSixVertical, User, UsersThree } from "@phosphor-icons/react";
+import { User, UsersThree } from "@phosphor-icons/react";
 import { useProjects, useClients } from "./project-hooks";
 import { ROUTES } from "@/lib/routes";
 import type { PSKKanbanStatus, PSKProject } from "@/lib/types";
@@ -52,7 +52,7 @@ function ProjectCard({ project, clientName, onOpen }: ProjectCardProps) {
       {...attributes}
       onClick={() => onOpen(project.id)}
       className={cn(
-        "cursor-move rounded-md border border-border/60 bg-card/50 p-4 text-left transition",
+        "cursor-move rounded-sm border border-border/60 bg-card/50 px-2.5 py-2 text-left transition",
         "hover:bg-muted/80 hover:border-border",
         isDragging && "opacity-50"
       )}
@@ -71,32 +71,26 @@ function ProjectCardContent({
 }) {
   return (
     <>
-      <div className="mb-2 flex items-start justify-between gap-3">
-        <p className="text-sm font-medium text-foreground">{project.name}</p>
-        <DotsSixVertical className="size-4 shrink-0 text-muted-foreground" />
-      </div>
+      <p className="text-sm font-medium text-foreground">{project.name}</p>
       {project.description && (
-        <p className="line-clamp-2 text-xs text-muted-foreground">
+        <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
           {project.description}
         </p>
       )}
-      {clientName && (
-        <p className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
-          <User className="size-3" />
-          {clientName}
-        </p>
-      )}
-      {project.is_internal && (
-        <p className="mt-1 text-xs text-muted-foreground italic">
-          Internal project
-        </p>
-      )}
-      {project.company_id && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-primary">
-          <UsersThree className="size-3" weight="fill" />
-          Shared
-        </p>
-      )}
+      <div className="mt-1 flex items-center gap-2">
+        {clientName && (
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
+            <User className="size-3" />
+            {clientName}
+          </span>
+        )}
+        {project.company_id && (
+          <span className="flex items-center gap-1 text-xs text-primary">
+            <UsersThree className="size-3" weight="fill" />
+            Shared
+          </span>
+        )}
+      </div>
     </>
   );
 }
@@ -120,19 +114,17 @@ function KanbanColumn({
     <section
       ref={setNodeRef}
       className={cn(
-        "rounded-lg border border-border/40 bg-muted/20 p-4 transition-colors",
+        "rounded-md border border-border/40 bg-muted/10 p-2 transition-colors",
         isOver && "border-primary ring-1 ring-primary/40"
       )}
     >
-      <header className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+      <header className="mb-2 flex items-center justify-between px-1">
+        <h3 className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           {title}
         </h3>
-        <span className="text-xs text-muted-foreground">
-          {count}
-        </span>
+        <span className="text-xs text-muted-foreground">{count}</span>
       </header>
-      <div className="space-y-3">{children}</div>
+      <div className="space-y-1.5">{children}</div>
     </section>
   );
 }
@@ -199,7 +191,7 @@ export function KanbanBoard() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-4">
         {groupedProjects.map((column) => (
           <KanbanColumn
             key={column.status}
@@ -216,7 +208,7 @@ export function KanbanBoard() {
               />
             ))}
             {column.projects.length === 0 && (
-              <p className="py-4 text-center text-xs text-muted-foreground">
+              <p className="py-3 text-center text-xs text-muted-foreground">
                 Drop projects here
               </p>
             )}
@@ -226,7 +218,7 @@ export function KanbanBoard() {
 
       <DragOverlay>
         {activeProject ? (
-          <div className="w-[260px] rounded-md border border-border/60 bg-card shadow-lg p-4">
+          <div className="w-[240px] rounded-sm border border-border/60 bg-card shadow-lg px-2.5 py-2">
             <ProjectCardContent
               project={activeProject}
               clientName={getClientName(activeProject.client_id)}

@@ -149,7 +149,7 @@ function CalendarDayCell({ day }: { day: CalendarDay }) {
     <div
       ref={setNodeRef}
       className={cn(
-        "min-h-[80px] p-1 border border-border/30 rounded-sm transition-colors",
+        "min-h-[72px] p-1 border border-border/30 rounded-sm transition-colors",
         day.isCurrentMonth ? "bg-background" : "bg-muted/30",
         day.isToday && "ring-2 ring-primary",
         isOver && "border-primary ring-1 ring-primary/50"
@@ -253,9 +253,9 @@ export function ProjectCalendar() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="rounded-lg border border-border/60 bg-card/50">
-        <div className="flex items-center justify-between p-4 border-b border-border/40">
-          <h3 className="font-semibold">Project Calendar</h3>
+      <div className="rounded-md border border-border/40">
+        <div className="flex items-center justify-between px-3 py-2 border-b border-border/40">
+          <h3 className="text-sm font-semibold">Calendar</h3>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={goToToday}>
               Today
@@ -272,7 +272,7 @@ export function ProjectCalendar() {
           </div>
         </div>
 
-        <div className="p-4">
+        <div className="p-3">
           <div className="grid grid-cols-7 gap-1 mb-1">
             {DAYS_OF_WEEK.map((day) => (
               <div
@@ -291,7 +291,7 @@ export function ProjectCalendar() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 px-4 pb-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-4 px-3 pb-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <span className="size-3 rounded-sm bg-emerald-500/20 border border-emerald-500/50" />
             On track

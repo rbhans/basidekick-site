@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -23,16 +25,15 @@ import {
   useProjects,
   useNotes,
   ProjectForm,
+  STATUS_DOT_COLOR,
 } from "@/components/projects";
 import { useAuth } from "@/components/providers/auth-provider";
 import {
   ArrowLeft,
   CalendarBlank,
   Clock,
-  CheckSquare,
   CurrencyDollar,
   User,
-  Buildings,
   Plus,
   Trash,
   Check,
@@ -45,6 +46,11 @@ import {
   X,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
+import { cn } from "@/lib/utils";
+import type { PSKKanbanStatus } from "@/lib/types";
+
+const TAB_TRIGGER_CLASS =
+  "rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none px-3 py-2 text-sm";
 
 interface PSKProjectViewProps {
   projectId: string;
@@ -128,40 +134,39 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-full">
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Project</p>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-              Loading...
-            </h1>
-          </div>
-        </section>
+      <div className="flex items-center h-12 px-4 border-b border-border/40">
+        <Link href={ROUTES.PSK} className="text-sm text-muted-foreground hover:text-foreground">
+          Projects
+        </Link>
+        <span className="mx-1.5 text-muted-foreground">/</span>
+        <span className="text-sm text-muted-foreground">Loading...</span>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="min-h-full">
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Project</p>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-              Project Not Found
-            </h1>
-            <p className="mt-1 text-muted-foreground">
-              This project doesn&apos;t exist or you don&apos;t have access to
-              it.
+      <div className="flex flex-col h-full">
+        <header className="flex items-center gap-3 h-12 px-4 border-b border-border/40 shrink-0">
+          <Link href={ROUTES.PSK} className="text-sm text-muted-foreground hover:text-foreground">
+            Projects
+          </Link>
+          <span className="text-muted-foreground">/</span>
+          <span className="text-sm font-medium">Not Found</span>
+        </header>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground mb-4">
+              This project doesn&apos;t exist or you don&apos;t have access.
             </p>
-            <Button asChild className="mt-4">
+            <Button asChild size="sm">
               <Link href={ROUTES.PSK}>
-                <ArrowLeft className="mr-2 size-4" />
+                <ArrowLeft className="mr-1.5 size-3.5" />
                 Back to Projects
               </Link>
             </Button>
           </div>
-        </section>
+        </div>
       </div>
     );
   }
@@ -259,8 +264,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
 
   // File handlers
   const handleAddFile = async () => {
-    if (!user?.id || !fileForm.name.trim() || !fileForm.url.trim())
-      return;
+    if (!user?.id || !fileForm.name.trim() || !fileForm.url.trim()) return;
 
     await addFile({
       user_id: user.id,
@@ -360,10 +364,10 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
         status: "backlog",
         is_internal: project.is_internal,
         is_archived: false,
-        due_date: null, // Reset due date for the clone
+        due_date: null,
         budget: project.budget,
         hourly_rate: project.hourly_rate,
-        proton_drive_link: null, // Don't copy cloud storage link
+        proton_drive_link: null,
         notes: project.notes,
         color: project.color,
         company_id: project.company_id,
@@ -377,754 +381,527 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
   };
 
   return (
-    <div className="min-h-full">
-      {/* Header */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex items-start justify-between">
-            <div>
-              <Link
-                href={ROUTES.PSK}
-                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
-              >
-                <ArrowLeft className="size-4" />
-                Back to Projects
-              </Link>
-              <span className="rounded-full text-xs px-2.5 py-0.5 bg-muted text-muted-foreground capitalize inline-block mb-3">
-                {project.status.replace("-", " ")}
+    <div className="flex flex-col h-full">
+      {/* Compact Breadcrumb Header */}
+      <header className="flex items-center gap-3 h-12 px-4 border-b border-border/40 shrink-0">
+        <div className="flex items-center gap-1.5 text-sm min-w-0">
+          <Link href={ROUTES.PSK} className="text-muted-foreground hover:text-foreground shrink-0">
+            Projects
+          </Link>
+          <span className="text-muted-foreground">/</span>
+          <span
+            className={cn(
+              "size-2 rounded-full shrink-0",
+              STATUS_DOT_COLOR[project.status as PSKKanbanStatus] || "bg-muted-foreground"
+            )}
+          />
+          <span className="font-medium truncate">{project.name}</span>
+        </div>
+
+        <Separator orientation="vertical" className="h-4" />
+
+        {/* Inline Stats */}
+        <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0 hidden sm:flex">
+          <span>
+            <span className="font-medium text-foreground">{stats.completedTasks}/{stats.taskCount}</span> tasks
+          </span>
+          <span>
+            <span className="font-medium text-foreground">{formatMinutes(stats.totalTime)}</span> logged
+          </span>
+          {project.budget ? (
+            <span>
+              <span className={cn("font-medium text-foreground", totalSpent > project.budget && "text-destructive")}>
+                ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </span>
-              <h1 className="text-2xl font-semibold tracking-tight">
-                {project.name}
-              </h1>
-              {project.description && (
-                <p className="mt-2 text-muted-foreground max-w-xl">
-                  {project.description}
-                </p>
-              )}
+              /${project.budget.toLocaleString()} budget
+            </span>
+          ) : null}
+        </div>
 
-              {/* Client/Internal badge */}
-              <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
-                {project.client ? (
-                  <span className="flex items-center gap-1">
-                    <User className="size-4" />
-                    {project.client.name}
-                  </span>
-                ) : project.is_internal ? (
-                  <span className="flex items-center gap-1">
-                    <Buildings className="size-4" />
-                    Internal Project
-                  </span>
-                ) : null}
-                {project.due_date && (
-                  <span className="flex items-center gap-1">
-                    <CalendarBlank className="size-4" />
-                    Due {formatDate(project.due_date)}
-                  </span>
-                )}
-                {project.proton_drive_link && (
-                  <a
-                    href={project.proton_drive_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1 hover:text-primary"
-                  >
-                    <LinkSimple className="size-4" />
-                    Cloud Storage
-                  </a>
-                )}
-                {project.company_id && (
-                  <span className="flex items-center gap-1 text-primary">
-                    <UsersThree className="size-4" weight="fill" />
-                    Shared with team
-                  </span>
-                )}
-              </div>
-            </div>
+        <div className="flex-1" />
 
-            {/* Action buttons */}
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCloneProject}
-                disabled={isCloning}
-              >
-                <Copy className="mr-1 size-4" />
-                {isCloning ? "Cloning..." : "Clone"}
+        {/* Metadata */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground shrink-0 hidden md:flex">
+          {project.client && (
+            <span className="flex items-center gap-1">
+              <User className="size-3" />
+              {project.client.name}
+            </span>
+          )}
+          {project.due_date && (
+            <span className="flex items-center gap-1">
+              <CalendarBlank className="size-3" />
+              {formatDate(project.due_date)}
+            </span>
+          )}
+          {project.proton_drive_link && (
+            <a
+              href={project.proton_drive_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 hover:text-primary"
+            >
+              <LinkSimple className="size-3" />
+              Cloud
+            </a>
+          )}
+          {project.company_id && (
+            <span className="flex items-center gap-1 text-primary">
+              <UsersThree className="size-3" weight="fill" />
+              Shared
+            </span>
+          )}
+        </div>
+
+        <Separator orientation="vertical" className="h-4 hidden md:block" />
+
+        {/* Actions */}
+        <div className="flex items-center gap-1 shrink-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 text-xs"
+            onClick={handleCloneProject}
+            disabled={isCloning}
+          >
+            <Copy className="size-3.5 mr-1" />
+            {isCloning ? "..." : "Clone"}
+          </Button>
+          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-7 text-xs">
+                <PencilSimple className="size-3.5 mr-1" />
+                Edit
               </Button>
-              <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <PencilSimple className="mr-1 size-4" />
-                    Edit
-                  </Button>
-                </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Edit Project</DialogTitle>
-                </DialogHeader>
-                <ProjectForm
-                  project={project}
-                  onSave={() => setIsEditDialogOpen(false)}
-                  onCancel={() => setIsEditDialogOpen(false)}
-                />
-              </DialogContent>
-              </Dialog>
-            </div>
-          </div>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Edit Project</DialogTitle>
+              </DialogHeader>
+              <ProjectForm
+                project={project}
+                onSave={() => setIsEditDialogOpen(false)}
+                onCancel={() => setIsEditDialogOpen(false)}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
-      </section>
+      </header>
 
-      {/* Stats Grid */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-            <div className="rounded-lg border border-border/60 bg-card/50 p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Tasks
-                </span>
-                <CheckSquare className="size-4 text-muted-foreground" />
-              </div>
-              <p className="text-2xl font-semibold">
-                {stats.completedTasks}/{stats.taskCount}
-              </p>
-              <p className="text-xs text-muted-foreground">Completed</p>
-            </div>
+      {/* Tabbed Content */}
+      <Tabs defaultValue="tasks" className="flex-1 flex flex-col min-h-0">
+        <TabsList className="bg-transparent rounded-none border-b border-border/40 h-10 px-4 justify-start gap-0 shrink-0">
+          <TabsTrigger value="tasks" className={TAB_TRIGGER_CLASS}>
+            Tasks
+          </TabsTrigger>
+          <TabsTrigger value="time" className={TAB_TRIGGER_CLASS}>
+            Time
+          </TabsTrigger>
+          <TabsTrigger value="budget" className={TAB_TRIGGER_CLASS}>
+            Budget
+          </TabsTrigger>
+          <TabsTrigger value="files" className={TAB_TRIGGER_CLASS}>
+            Files
+          </TabsTrigger>
+          <TabsTrigger value="notes" className={TAB_TRIGGER_CLASS}>
+            Notes
+          </TabsTrigger>
+        </TabsList>
 
-            <div className="rounded-lg border border-border/60 bg-card/50 p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Time Logged
-                </span>
-                <Clock className="size-4 text-muted-foreground" />
-              </div>
-              <p className="text-2xl font-semibold">
-                {formatMinutes(stats.totalTime)}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {timeEntries.length} entries
-              </p>
-            </div>
-
-            <div className="rounded-lg border border-border/60 bg-card/50 p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Budget
-                </span>
-                <CurrencyDollar className="size-4 text-muted-foreground" />
-              </div>
-              <p className="text-2xl font-semibold">
-                ${project.budget?.toLocaleString() || 0}
-              </p>
-              <p className="text-xs text-muted-foreground">Total budget</p>
-            </div>
-
-            <div className="rounded-lg border border-border/60 bg-card/50 p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Spent
-                </span>
-                <CurrencyDollar className="size-4 text-muted-foreground" />
-              </div>
-              <p
-                className={`text-2xl font-semibold ${totalSpent > (project.budget || 0) && project.budget ? "text-destructive" : ""}`}
-              >
-                $
-                {totalSpent.toLocaleString(undefined, {
-                  maximumFractionDigits: 2,
-                })}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {project.budget
-                  ? `${Math.round((totalSpent / project.budget) * 100)}% of budget`
-                  : "No budget set"}
-              </p>
-            </div>
+        {/* Tasks Tab */}
+        <TabsContent value="tasks" className="flex-1 flex flex-col overflow-hidden mt-0">
+          <div className="flex gap-2 px-3 py-2 border-b border-border/40">
+            <Input
+              placeholder="Add a task..."
+              value={newTaskTitle}
+              onChange={(e) => setNewTaskTitle(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
+              className="h-8 text-sm"
+            />
+            <Button onClick={handleAddTask} disabled={!newTaskTitle.trim()} size="sm" className="h-8">
+              <Plus className="size-3.5" />
+            </Button>
           </div>
-
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Left Column */}
-            <div className="space-y-6">
-              {/* Tasks */}
-              <div className="rounded-lg border border-border/60 bg-card/50">
-                <div className="p-4 border-b border-border/40 flex items-center justify-between">
-                  <h2 className="font-semibold">Tasks</h2>
-                </div>
-                <div className="p-4 border-b border-border/40">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Add a task..."
-                      value={newTaskTitle}
-                      onChange={(e) => setNewTaskTitle(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
+          <div className="flex-1 overflow-auto">
+            {tasks.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No tasks yet.</p>
+            ) : (
+              <ul>
+                {tasks.map((task) => (
+                  <li
+                    key={task.id}
+                    className="flex items-center gap-2 px-3 py-1.5 border-b border-border/40 last:border-b-0"
+                  >
+                    <button
+                      onClick={() => toggleTaskComplete(task.id)}
+                      className={cn(
+                        "size-4 flex items-center justify-center rounded-sm border",
+                        task.status === "completed"
+                          ? "bg-primary border-primary text-primary-foreground"
+                          : "border-muted-foreground hover:border-primary"
+                      )}
+                    >
+                      {task.status === "completed" && <Check className="size-2.5" weight="bold" />}
+                    </button>
+                    <span
+                      className={cn(
+                        "flex-1 text-sm",
+                        task.status === "completed" && "line-through text-muted-foreground"
+                      )}
+                    >
+                      {task.title}
+                    </span>
+                    <span
+                      className={cn(
+                        "size-1.5 rounded-full",
+                        task.priority === "high"
+                          ? "bg-red-500"
+                          : task.priority === "medium"
+                            ? "bg-amber-500"
+                            : "bg-muted-foreground"
+                      )}
                     />
                     <Button
-                      onClick={handleAddTask}
-                      disabled={!newTaskTitle.trim()}
+                      variant="ghost"
+                      size="icon"
+                      className="size-5"
+                      onClick={() => deleteTask(task.id)}
                     >
-                      <Plus className="size-4" />
+                      <Trash className="size-3 text-muted-foreground" />
                     </Button>
-                  </div>
-                </div>
-                <div className="p-4 max-h-[300px] overflow-y-auto">
-                  {tasks.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-4 text-center">
-                      No tasks yet. Add one above!
-                    </p>
-                  ) : (
-                    <ul>
-                      {tasks.map((task) => (
-                        <li
-                          key={task.id}
-                          className="flex items-center gap-3 p-2 border-b border-border/40 last:border-b-0"
-                        >
-                          <button
-                            onClick={() => toggleTaskComplete(task.id)}
-                            className={`size-5 flex items-center justify-center rounded-sm border ${
-                              task.status === "completed"
-                                ? "bg-primary border-primary text-primary-foreground"
-                                : "border-muted-foreground hover:border-primary"
-                            }`}
-                          >
-                            {task.status === "completed" && (
-                              <Check className="size-3" weight="bold" />
-                            )}
-                          </button>
-                          <span
-                            className={`flex-1 text-sm ${
-                              task.status === "completed"
-                                ? "line-through text-muted-foreground"
-                                : ""
-                            }`}
-                          >
-                            {task.title}
-                          </span>
-                          <span
-                            className={`text-xs px-2 py-0.5 rounded-md ${
-                              task.priority === "high"
-                                ? "bg-red-500/20 text-red-500"
-                                : task.priority === "medium"
-                                  ? "bg-amber-500/20 text-amber-500"
-                                  : "bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            {task.priority}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-6"
-                            onClick={() => deleteTask(task.id)}
-                          >
-                            <Trash className="size-3.5 text-muted-foreground" />
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </TabsContent>
 
-              {/* Time Entries */}
-              <div className="rounded-lg border border-border/60 bg-card/50">
-                <div className="p-4 border-b border-border/40">
-                  <h2 className="font-semibold">Time Entries</h2>
-                </div>
-                <div className="p-4 border-b border-border/40">
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <Input
-                      placeholder="Description..."
-                      value={timeEntryForm.description}
-                      onChange={(e) =>
-                        setTimeEntryForm((prev) => ({
-                          ...prev,
-                          description: e.target.value,
-                        }))
-                      }
-                    />
-                    <Input
-                      type="date"
-                      value={timeEntryForm.date}
-                      onChange={(e) =>
-                        setTimeEntryForm((prev) => ({
-                          ...prev,
-                          date: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    <Input
-                      type="number"
-                      placeholder="Hours"
-                      min="0"
-                      value={timeEntryForm.hours}
-                      onChange={(e) =>
-                        setTimeEntryForm((prev) => ({
-                          ...prev,
-                          hours: e.target.value,
-                        }))
-                      }
-                      className="w-24"
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Minutes"
-                      min="0"
-                      max="59"
-                      value={timeEntryForm.minutes}
-                      onChange={(e) =>
-                        setTimeEntryForm((prev) => ({
-                          ...prev,
-                          minutes: e.target.value,
-                        }))
-                      }
-                      className="w-24"
-                    />
-                    <Button onClick={handleAddTimeEntry} className="ml-auto">
-                      <Plus className="size-4 mr-1" />
-                      Log Time
-                    </Button>
-                  </div>
-                </div>
-                <div className="p-4 max-h-[250px] overflow-y-auto">
-                  {timeEntries.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-4 text-center">
-                      No time logged yet.
-                    </p>
-                  ) : (
-                    <ul>
-                      {timeEntries.map((entry) => (
-                        <li
-                          key={entry.id}
-                          className="border-b border-border/40 last:border-b-0"
-                        >
-                          {editingTimeEntryId === entry.id ? (
-                            <div className="p-2 space-y-2">
-                              <div className="grid gap-2 sm:grid-cols-2">
-                                <Input
-                                  placeholder="Description..."
-                                  value={editingTimeEntry.description}
-                                  onChange={(e) =>
-                                    setEditingTimeEntry((prev) => ({
-                                      ...prev,
-                                      description: e.target.value,
-                                    }))
-                                  }
-                                />
-                                <Input
-                                  type="date"
-                                  value={editingTimeEntry.date}
-                                  onChange={(e) =>
-                                    setEditingTimeEntry((prev) => ({
-                                      ...prev,
-                                      date: e.target.value,
-                                    }))
-                                  }
-                                />
-                              </div>
-                              <div className="flex gap-2">
-                                <Input
-                                  type="number"
-                                  placeholder="Hours"
-                                  min="0"
-                                  value={editingTimeEntry.hours}
-                                  onChange={(e) =>
-                                    setEditingTimeEntry((prev) => ({
-                                      ...prev,
-                                      hours: e.target.value,
-                                    }))
-                                  }
-                                  className="w-24"
-                                />
-                                <Input
-                                  type="number"
-                                  placeholder="Minutes"
-                                  min="0"
-                                  max="59"
-                                  value={editingTimeEntry.minutes}
-                                  onChange={(e) =>
-                                    setEditingTimeEntry((prev) => ({
-                                      ...prev,
-                                      minutes: e.target.value,
-                                    }))
-                                  }
-                                  className="w-24"
-                                />
-                                <div className="ml-auto flex gap-1">
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={handleCancelEditTimeEntry}
-                                  >
-                                    <X className="size-4" />
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    onClick={handleSaveTimeEntry}
-                                  >
-                                    <Check className="size-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-3 p-2">
-                              <Clock className="size-4 text-muted-foreground" />
-                              <span className="flex-1 text-sm">
-                                {entry.description || "No description"}
-                              </span>
-                              <span className="text-sm font-medium">
-                                {formatMinutes(entry.duration)}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {formatDate(entry.date)}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="size-6"
-                                onClick={() => handleEditTimeEntry(entry.id)}
-                              >
-                                <PencilSimple className="size-3.5 text-muted-foreground" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="size-6"
-                                onClick={() => deleteTimeEntry(entry.id)}
-                              >
-                                <Trash className="size-3.5 text-muted-foreground" />
-                              </Button>
-                            </div>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
+        {/* Time Tab */}
+        <TabsContent value="time" className="flex-1 flex flex-col overflow-hidden mt-0">
+          <div className="px-3 py-2 border-b border-border/40 space-y-2">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Input
+                placeholder="Description..."
+                value={timeEntryForm.description}
+                onChange={(e) => setTimeEntryForm((prev) => ({ ...prev, description: e.target.value }))}
+                className="h-8 text-sm"
+              />
+              <Input
+                type="date"
+                value={timeEntryForm.date}
+                onChange={(e) => setTimeEntryForm((prev) => ({ ...prev, date: e.target.value }))}
+                className="h-8 text-sm"
+              />
             </div>
-
-            {/* Right Column */}
-            <div className="space-y-6">
-              {/* Budget Items */}
-              <div className="rounded-lg border border-border/60 bg-card/50">
-                <div className="p-4 border-b border-border/40">
-                  <h2 className="font-semibold">Expenses</h2>
-                  {project.hourly_rate ? (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Hourly rate: ${project.hourly_rate}/hr • Time cost: $
-                      {timeCost.toFixed(2)}
-                    </p>
-                  ) : null}
-                </div>
-                <div className="p-4 border-b border-border/40">
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <Input
-                      placeholder="Description..."
-                      value={budgetItemForm.description}
-                      onChange={(e) =>
-                        setBudgetItemForm((prev) => ({
-                          ...prev,
-                          description: e.target.value,
-                        }))
-                      }
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Cost ($)"
-                      min="0"
-                      step="0.01"
-                      value={budgetItemForm.cost}
-                      onChange={(e) =>
-                        setBudgetItemForm((prev) => ({
-                          ...prev,
-                          cost: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    <Input
-                      placeholder="Category"
-                      value={budgetItemForm.category}
-                      onChange={(e) =>
-                        setBudgetItemForm((prev) => ({
-                          ...prev,
-                          category: e.target.value,
-                        }))
-                      }
-                    />
-                    <Input
-                      type="date"
-                      value={budgetItemForm.date}
-                      onChange={(e) =>
-                        setBudgetItemForm((prev) => ({
-                          ...prev,
-                          date: e.target.value,
-                        }))
-                      }
-                    />
-                    <Button onClick={handleAddBudgetItem}>
-                      <Plus className="size-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="p-4 max-h-[250px] overflow-y-auto">
-                  {budgetLineItems.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-4 text-center">
-                      No expenses logged yet.
-                    </p>
-                  ) : (
-                    <ul>
-                      {budgetLineItems.map((item) => (
-                        <li
-                          key={item.id}
-                          className="flex items-center gap-3 p-2 border-b border-border/40 last:border-b-0"
-                        >
-                          <CurrencyDollar className="size-4 text-muted-foreground" />
-                          <span className="flex-1 text-sm">
-                            {item.description}
-                          </span>
-                          {item.category && (
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded-md">
-                              {item.category}
-                            </span>
-                          )}
-                          <span className="text-sm font-medium">
-                            ${item.cost.toLocaleString()}
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-6"
-                            onClick={() => deleteBudgetLineItem(item.id)}
-                          >
-                            <Trash className="size-3.5 text-muted-foreground" />
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                {budgetLineItems.length > 0 && (
-                  <div className="p-4 border-t border-border">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        Expenses Total:
-                      </span>
-                      <span className="font-medium">
-                        ${totalBudgetSpent.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Files */}
-              <div className="rounded-lg border border-border/60 bg-card/50">
-                <div className="p-4 border-b border-border/40">
-                  <h2 className="font-semibold">Files & Links</h2>
-                </div>
-                <div className="p-4 border-b border-border/40">
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <Input
-                      placeholder="File name..."
-                      value={fileForm.name}
-                      onChange={(e) =>
-                        setFileForm((prev) => ({
-                          ...prev,
-                          name: e.target.value,
-                        }))
-                      }
-                    />
-                    <Input
-                      placeholder="URL..."
-                      value={fileForm.url}
-                      onChange={(e) =>
-                        setFileForm((prev) => ({
-                          ...prev,
-                          url: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    <Input
-                      placeholder="Type (e.g., pdf, image, doc)"
-                      value={fileForm.type}
-                      onChange={(e) =>
-                        setFileForm((prev) => ({
-                          ...prev,
-                          type: e.target.value,
-                        }))
-                      }
-                    />
-                    <Button onClick={handleAddFile}>
-                      <Plus className="size-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="p-4 max-h-[250px] overflow-y-auto">
-                  {files.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-4 text-center">
-                      No files added yet.
-                    </p>
-                  ) : (
-                    <ul>
-                      {files.map((file) => (
-                        <li
-                          key={file.id}
-                          className="flex items-center gap-3 p-2 border-b border-border/40 last:border-b-0"
-                        >
-                          <File className="size-4 text-muted-foreground" />
-                          <a
-                            href={file.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1 text-sm hover:text-primary hover:underline"
-                          >
-                            {file.name}
-                          </a>
-                          {file.type && (
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded-md uppercase">
-                              {file.type}
-                            </span>
-                          )}
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="size-6"
-                            onClick={() => deleteFile(file.id)}
-                          >
-                            <Trash className="size-3.5 text-muted-foreground" />
-                          </Button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-
-              {/* Work Notes / Site Log */}
-              <div className="rounded-lg border border-border/60 bg-card/50">
-                <div className="p-4 border-b border-border/40">
-                  <h2 className="font-semibold">Work Notes</h2>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Site log and project updates
-                  </p>
-                </div>
-                <div className="p-4 border-b border-border/40">
-                  <textarea
-                    placeholder="Add a note..."
-                    value={newNoteContent}
-                    onChange={(e) => setNewNoteContent(e.target.value)}
-                    className="w-full min-h-[80px] px-3 py-2 text-sm rounded-md border border-border/60 bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
-                  />
-                  <div className="flex justify-end mt-2">
-                    <Button
-                      onClick={handleAddNote}
-                      disabled={!newNoteContent.trim()}
-                    >
-                      <Plus className="size-4 mr-1" />
-                      Add Note
-                    </Button>
-                  </div>
-                </div>
-                <div className="p-4 max-h-[350px] overflow-y-auto">
-                  {notes.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-4 text-center">
-                      No notes yet. Add one to keep track of project updates.
-                    </p>
-                  ) : (
-                    <ul>
-                      {notes.map((note) => (
-                        <li
-                          key={note.id}
-                          className="border-b border-border/40 last:border-b-0"
-                        >
-                          {editingNoteId === note.id ? (
-                            <div className="p-3 space-y-2">
-                              <textarea
-                                value={editingNoteContent}
-                                onChange={(e) => setEditingNoteContent(e.target.value)}
-                                className="w-full min-h-[80px] px-3 py-2 text-sm rounded-md border border-border/60 bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
-                              />
-                              <div className="flex justify-end gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={handleCancelEditNote}
-                                >
-                                  <X className="size-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  onClick={handleSaveNote}
-                                >
-                                  <Check className="size-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="p-3">
-                              <div className="flex items-start gap-2">
-                                <Notepad className="size-4 text-muted-foreground mt-0.5 shrink-0" />
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm whitespace-pre-wrap break-words">
-                                    {note.content}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground mt-2">
-                                    {formatDate(note.created_at)}
-                                  </p>
-                                </div>
-                                <div className="flex gap-1 shrink-0">
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="size-6"
-                                    onClick={() => handleEditNote(note.id, note.content)}
-                                  >
-                                    <PencilSimple className="size-3.5 text-muted-foreground" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="size-6"
-                                    onClick={() => deleteNote(note.id)}
-                                  >
-                                    <Trash className="size-3.5 text-muted-foreground" />
-                                  </Button>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-
-              {/* Project Notes (from project form) */}
-              {project.notes && (
-                <div className="rounded-lg border border-border/60 bg-card/50">
-                  <div className="p-4 border-b border-border/40">
-                    <h2 className="font-semibold">Project Description</h2>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                      {project.notes}
-                    </p>
-                  </div>
-                </div>
-              )}
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                placeholder="Hours"
+                min="0"
+                value={timeEntryForm.hours}
+                onChange={(e) => setTimeEntryForm((prev) => ({ ...prev, hours: e.target.value }))}
+                className="w-20 h-8 text-sm"
+              />
+              <Input
+                type="number"
+                placeholder="Minutes"
+                min="0"
+                max="59"
+                value={timeEntryForm.minutes}
+                onChange={(e) => setTimeEntryForm((prev) => ({ ...prev, minutes: e.target.value }))}
+                className="w-20 h-8 text-sm"
+              />
+              <Button onClick={handleAddTimeEntry} size="sm" className="ml-auto h-8 text-xs">
+                <Plus className="size-3.5 mr-1" />
+                Log Time
+              </Button>
             </div>
           </div>
-        </div>
-      </section>
+          <div className="flex-1 overflow-auto">
+            {timeEntries.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No time logged yet.</p>
+            ) : (
+              <ul>
+                {timeEntries.map((entry) => (
+                  <li key={entry.id} className="border-b border-border/40 last:border-b-0">
+                    {editingTimeEntryId === entry.id ? (
+                      <div className="px-3 py-2 space-y-2">
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          <Input
+                            placeholder="Description..."
+                            value={editingTimeEntry.description}
+                            onChange={(e) => setEditingTimeEntry((prev) => ({ ...prev, description: e.target.value }))}
+                            className="h-8 text-sm"
+                          />
+                          <Input
+                            type="date"
+                            value={editingTimeEntry.date}
+                            onChange={(e) => setEditingTimeEntry((prev) => ({ ...prev, date: e.target.value }))}
+                            className="h-8 text-sm"
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            type="number"
+                            placeholder="Hours"
+                            min="0"
+                            value={editingTimeEntry.hours}
+                            onChange={(e) => setEditingTimeEntry((prev) => ({ ...prev, hours: e.target.value }))}
+                            className="w-20 h-8 text-sm"
+                          />
+                          <Input
+                            type="number"
+                            placeholder="Minutes"
+                            min="0"
+                            max="59"
+                            value={editingTimeEntry.minutes}
+                            onChange={(e) => setEditingTimeEntry((prev) => ({ ...prev, minutes: e.target.value }))}
+                            className="w-20 h-8 text-sm"
+                          />
+                          <div className="ml-auto flex gap-1">
+                            <Button size="sm" variant="ghost" className="h-8" onClick={handleCancelEditTimeEntry}>
+                              <X className="size-3.5" />
+                            </Button>
+                            <Button size="sm" className="h-8" onClick={handleSaveTimeEntry}>
+                              <Check className="size-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 px-3 py-1.5">
+                        <Clock className="size-3.5 text-muted-foreground shrink-0" />
+                        <span className="flex-1 text-sm truncate">{entry.description || "No description"}</span>
+                        <span className="text-sm font-medium shrink-0">{formatMinutes(entry.duration)}</span>
+                        <span className="text-xs text-muted-foreground shrink-0">{formatDate(entry.date)}</span>
+                        <Button variant="ghost" size="icon" className="size-5" onClick={() => handleEditTimeEntry(entry.id)}>
+                          <PencilSimple className="size-3 text-muted-foreground" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="size-5" onClick={() => deleteTimeEntry(entry.id)}>
+                          <Trash className="size-3 text-muted-foreground" />
+                        </Button>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Budget Tab */}
+        <TabsContent value="budget" className="flex-1 flex flex-col overflow-hidden mt-0">
+          {project.hourly_rate ? (
+            <div className="px-3 py-1.5 border-b border-border/40 text-xs text-muted-foreground">
+              Rate: ${project.hourly_rate}/hr &middot; Time cost: ${timeCost.toFixed(2)} &middot;{" "}
+              <span className={cn("font-medium", totalSpent > (project.budget || 0) && project.budget ? "text-destructive" : "text-foreground")}>
+                Total: ${totalSpent.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </span>
+            </div>
+          ) : null}
+          <div className="px-3 py-2 border-b border-border/40 space-y-2">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Input
+                placeholder="Description..."
+                value={budgetItemForm.description}
+                onChange={(e) => setBudgetItemForm((prev) => ({ ...prev, description: e.target.value }))}
+                className="h-8 text-sm"
+              />
+              <Input
+                type="number"
+                placeholder="Cost ($)"
+                min="0"
+                step="0.01"
+                value={budgetItemForm.cost}
+                onChange={(e) => setBudgetItemForm((prev) => ({ ...prev, cost: e.target.value }))}
+                className="h-8 text-sm"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Category"
+                value={budgetItemForm.category}
+                onChange={(e) => setBudgetItemForm((prev) => ({ ...prev, category: e.target.value }))}
+                className="h-8 text-sm"
+              />
+              <Input
+                type="date"
+                value={budgetItemForm.date}
+                onChange={(e) => setBudgetItemForm((prev) => ({ ...prev, date: e.target.value }))}
+                className="h-8 text-sm"
+              />
+              <Button onClick={handleAddBudgetItem} size="sm" className="h-8">
+                <Plus className="size-3.5" />
+              </Button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-auto">
+            {budgetLineItems.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No expenses logged yet.</p>
+            ) : (
+              <>
+                <ul>
+                  {budgetLineItems.map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex items-center gap-2 px-3 py-1.5 border-b border-border/40 last:border-b-0"
+                    >
+                      <CurrencyDollar className="size-3.5 text-muted-foreground shrink-0" />
+                      <span className="flex-1 text-sm truncate">{item.description}</span>
+                      {item.category && (
+                        <span className="text-xs bg-muted px-1.5 py-0.5 rounded-sm">{item.category}</span>
+                      )}
+                      <span className="text-sm font-medium shrink-0">${item.cost.toLocaleString()}</span>
+                      <Button variant="ghost" size="icon" className="size-5" onClick={() => deleteBudgetLineItem(item.id)}>
+                        <Trash className="size-3 text-muted-foreground" />
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+                <div className="px-3 py-2 border-t border-border/40 flex justify-between text-sm">
+                  <span className="text-muted-foreground">Expenses Total:</span>
+                  <span className="font-medium">${totalBudgetSpent.toLocaleString()}</span>
+                </div>
+              </>
+            )}
+          </div>
+          {/* Project description if present */}
+          {project.notes && (
+            <div className="px-3 py-2 border-t border-border/40">
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">Project Description</p>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{project.notes}</p>
+            </div>
+          )}
+        </TabsContent>
+
+        {/* Files Tab */}
+        <TabsContent value="files" className="flex-1 flex flex-col overflow-hidden mt-0">
+          <div className="px-3 py-2 border-b border-border/40 space-y-2">
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Input
+                placeholder="File name..."
+                value={fileForm.name}
+                onChange={(e) => setFileForm((prev) => ({ ...prev, name: e.target.value }))}
+                className="h-8 text-sm"
+              />
+              <Input
+                placeholder="URL..."
+                value={fileForm.url}
+                onChange={(e) => setFileForm((prev) => ({ ...prev, url: e.target.value }))}
+                className="h-8 text-sm"
+              />
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Type (e.g., pdf, image, doc)"
+                value={fileForm.type}
+                onChange={(e) => setFileForm((prev) => ({ ...prev, type: e.target.value }))}
+                className="h-8 text-sm"
+              />
+              <Button onClick={handleAddFile} size="sm" className="h-8">
+                <Plus className="size-3.5" />
+              </Button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-auto">
+            {files.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No files added yet.</p>
+            ) : (
+              <ul>
+                {files.map((file) => (
+                  <li
+                    key={file.id}
+                    className="flex items-center gap-2 px-3 py-1.5 border-b border-border/40 last:border-b-0"
+                  >
+                    <File className="size-3.5 text-muted-foreground shrink-0" />
+                    <a
+                      href={file.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 text-sm hover:text-primary hover:underline truncate"
+                    >
+                      {file.name}
+                    </a>
+                    {file.type && (
+                      <span className="text-xs bg-muted px-1.5 py-0.5 rounded-sm uppercase">{file.type}</span>
+                    )}
+                    <Button variant="ghost" size="icon" className="size-5" onClick={() => deleteFile(file.id)}>
+                      <Trash className="size-3 text-muted-foreground" />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </TabsContent>
+
+        {/* Notes Tab */}
+        <TabsContent value="notes" className="flex-1 flex flex-col overflow-hidden mt-0">
+          <div className="px-3 py-2 border-b border-border/40">
+            <textarea
+              placeholder="Add a note..."
+              value={newNoteContent}
+              onChange={(e) => setNewNoteContent(e.target.value)}
+              className="w-full min-h-[60px] px-3 py-2 text-sm rounded-md border border-border/40 bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+            <div className="flex justify-end mt-2">
+              <Button onClick={handleAddNote} disabled={!newNoteContent.trim()} size="sm" className="h-8 text-xs">
+                <Plus className="size-3.5 mr-1" />
+                Add Note
+              </Button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-auto">
+            {notes.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">
+                No notes yet.
+              </p>
+            ) : (
+              <ul>
+                {notes.map((note) => (
+                  <li key={note.id} className="border-b border-border/40 last:border-b-0">
+                    {editingNoteId === note.id ? (
+                      <div className="px-3 py-2 space-y-2">
+                        <textarea
+                          value={editingNoteContent}
+                          onChange={(e) => setEditingNoteContent(e.target.value)}
+                          className="w-full min-h-[60px] px-3 py-2 text-sm rounded-md border border-border/40 bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
+                        />
+                        <div className="flex justify-end gap-1">
+                          <Button size="sm" variant="ghost" className="h-7" onClick={handleCancelEditNote}>
+                            <X className="size-3.5" />
+                          </Button>
+                          <Button size="sm" className="h-7" onClick={handleSaveNote}>
+                            <Check className="size-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="px-3 py-2">
+                        <div className="flex items-start gap-2">
+                          <Notepad className="size-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm whitespace-pre-wrap break-words">{note.content}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{formatDate(note.created_at)}</p>
+                          </div>
+                          <div className="flex gap-0.5 shrink-0">
+                            <Button variant="ghost" size="icon" className="size-5" onClick={() => handleEditNote(note.id, note.content)}>
+                              <PencilSimple className="size-3 text-muted-foreground" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="size-5" onClick={() => deleteNote(note.id)}>
+                              <Trash className="size-3 text-muted-foreground" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

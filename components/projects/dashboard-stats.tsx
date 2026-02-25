@@ -1,6 +1,6 @@
 "use client";
 
-import { Kanban, Users, Clock } from "@phosphor-icons/react";
+import { Separator } from "@/components/ui/separator";
 import { useProjects, useClients, useTimeEntries } from "./project-hooks";
 
 export function DashboardStats() {
@@ -14,39 +14,23 @@ export function DashboardStats() {
   );
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <div className="rounded-lg border border-border/60 bg-card/50 p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-muted-foreground">
-            Projects
-          </span>
-          <Kanban className="size-4 text-muted-foreground" />
-        </div>
-        <p className="text-2xl font-semibold">{activeProjects.length}</p>
-        <p className="text-xs text-muted-foreground">Active projects</p>
-      </div>
-
-      <div className="rounded-lg border border-border/60 bg-card/50 p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-muted-foreground">
-            Clients
-          </span>
-          <Users className="size-4 text-muted-foreground" />
-        </div>
-        <p className="text-2xl font-semibold">{clients.length}</p>
-        <p className="text-xs text-muted-foreground">Saved client accounts</p>
-      </div>
-
-      <div className="rounded-lg border border-border/60 bg-card/50 p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-muted-foreground">
-            Time Logged
-          </span>
-          <Clock className="size-4 text-muted-foreground" />
-        </div>
-        <p className="text-2xl font-semibold">{totalHours}h</p>
-        <p className="text-xs text-muted-foreground">Across all entries</p>
-      </div>
+    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+      <span>
+        <span className="font-medium text-foreground">
+          {activeProjects.length}
+        </span>{" "}
+        active
+      </span>
+      <Separator orientation="vertical" className="h-3" />
+      <span>
+        <span className="font-medium text-foreground">{clients.length}</span>{" "}
+        clients
+      </span>
+      <Separator orientation="vertical" className="h-3" />
+      <span>
+        <span className="font-medium text-foreground">{totalHours}h</span>{" "}
+        logged
+      </span>
     </div>
   );
 }

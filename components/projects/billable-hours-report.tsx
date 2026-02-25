@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Clock, Calendar, Export } from "@phosphor-icons/react";
+import { Calendar, Export } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useProjects, useClients, useTimeEntries } from "./project-hooks";
@@ -159,14 +159,11 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
   };
 
   return (
-    <div className={cn("rounded-lg border border-border/60 bg-card/50", className)}>
+    <div className={cn("rounded-md border border-border/40", className)}>
       {/* Header */}
-      <div className="p-4 border-b border-border/40">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Clock className="size-5 text-primary" />
-            <h2 className="text-lg font-semibold">Billable Hours Report</h2>
-          </div>
+      <div className="px-3 py-2 border-b border-border/40">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold">Billable Hours</h2>
           <Button variant="outline" size="sm" onClick={handleExportCSV}>
             <Export className="mr-1 size-4" />
             Export CSV
@@ -175,7 +172,7 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
       </div>
 
       {/* Filters */}
-      <div className="p-4 border-b border-border/40 bg-muted/10">
+      <div className="px-3 py-2 border-b border-border/40 bg-muted/10">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <Calendar className="size-4 text-muted-foreground" />
@@ -217,21 +214,21 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
         <table className="w-full">
           <thead>
             <tr className="border-b border-border/40">
-              <th className="text-left p-3 text-sm font-medium text-muted-foreground">
+              <th className="text-left px-3 py-2 text-xs font-medium text-muted-foreground">
                 {groupBy === "client" ? "Client" : "Project"}
               </th>
               {groupBy === "project" && (
-                <th className="text-left p-3 text-sm font-medium text-muted-foreground">
+                <th className="text-left px-3 py-2 text-xs font-medium text-muted-foreground">
                   Client
                 </th>
               )}
-              <th className="text-right p-3 text-sm font-medium text-muted-foreground">
+              <th className="text-right px-3 py-2 text-xs font-medium text-muted-foreground">
                 Hours
               </th>
-              <th className="text-right p-3 text-sm font-medium text-muted-foreground">
+              <th className="text-right px-3 py-2 text-xs font-medium text-muted-foreground">
                 Rate
               </th>
-              <th className="text-right p-3 text-sm font-medium text-muted-foreground">
+              <th className="text-right px-3 py-2 text-xs font-medium text-muted-foreground">
                 Billable
               </th>
             </tr>
@@ -253,21 +250,21 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
                     key={group.id}
                     className="border-b border-border/40 hover:bg-muted/30"
                   >
-                    <td className="p-3 text-sm">{group.name}</td>
+                    <td className="px-3 py-2 text-sm">{group.name}</td>
                     {groupBy === "project" && (
-                      <td className="p-3 text-sm text-muted-foreground">
+                      <td className="px-3 py-2 text-sm text-muted-foreground">
                         {group.clientName || "—"}
                       </td>
                     )}
-                    <td className="p-3 text-sm text-right font-mono">
+                    <td className="px-3 py-2 text-sm text-right font-mono">
                       {formatHours(group.totalMinutes)}
                     </td>
-                    <td className="p-3 text-sm text-right font-mono text-muted-foreground">
+                    <td className="px-3 py-2 text-sm text-right font-mono text-muted-foreground">
                       {groupBy === "project" && group.hourlyRate > 0
                         ? `$${group.hourlyRate}`
                         : "—"}
                     </td>
-                    <td className="p-3 text-sm text-right font-mono font-medium">
+                    <td className="px-3 py-2 text-sm text-right font-mono font-medium">
                       {group.billableAmount > 0
                         ? `$${group.billableAmount.toFixed(2)}`
                         : "—"}
@@ -276,13 +273,13 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
                 ))}
                 {/* Totals Row */}
                 <tr className="bg-muted/20 font-medium">
-                  <td className="p-3 text-sm">Total</td>
-                  {groupBy === "project" && <td className="p-3"></td>}
-                  <td className="p-3 text-sm text-right font-mono">
+                  <td className="px-3 py-2 text-sm">Total</td>
+                  {groupBy === "project" && <td className="px-3 py-2"></td>}
+                  <td className="px-3 py-2 text-sm text-right font-mono">
                     {formatHours(totals.minutes)}
                   </td>
-                  <td className="p-3"></td>
-                  <td className="p-3 text-sm text-right font-mono">
+                  <td className="px-3 py-2"></td>
+                  <td className="px-3 py-2 text-sm text-right font-mono">
                     ${totals.billable.toFixed(2)}
                   </td>
                 </tr>
@@ -292,21 +289,21 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
         </table>
       </div>
 
-      {/* Summary Cards */}
-      <div className="p-4 border-t border-border/40 bg-muted/10">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="text-center">
-            <p className="text-2xl font-semibold">{formatDuration(totals.minutes)}</p>
+      {/* Summary */}
+      <div className="px-3 py-2 border-t border-border/40 bg-muted/10">
+        <div className="flex items-center justify-around text-center">
+          <div>
+            <p className="text-lg font-semibold">{formatDuration(totals.minutes)}</p>
             <p className="text-xs text-muted-foreground">Total Time</p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-semibold">{groupedData.length}</p>
+          <div>
+            <p className="text-lg font-semibold">{groupedData.length}</p>
             <p className="text-xs text-muted-foreground">
               {groupBy === "client" ? "Clients" : "Projects"}
             </p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-semibold text-primary">
+          <div>
+            <p className="text-lg font-semibold text-primary">
               ${totals.billable.toFixed(2)}
             </p>
             <p className="text-xs text-muted-foreground">Total Billable</p>

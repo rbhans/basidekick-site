@@ -21,19 +21,19 @@ function TaskItem({
 
   return (
     <div
-      className={`flex items-center gap-3 p-2 border-b border-border/40 last:border-b-0 ${
+      className={`flex items-center gap-2 px-3 py-1.5 border-b border-border/40 last:border-b-0 ${
         isCompleted ? "bg-muted/30" : ""
       }`}
     >
       <button
         onClick={onToggle}
-        className={`size-5 flex items-center justify-center rounded-sm border ${
+        className={`size-4 flex items-center justify-center rounded-sm border ${
           isCompleted
             ? "bg-primary border-primary text-primary-foreground"
             : "border-muted-foreground hover:border-primary"
         }`}
       >
-        {isCompleted && <Check className="size-3" weight="bold" />}
+        {isCompleted && <Check className="size-2.5" weight="bold" />}
       </button>
       <span
         className={`flex-1 text-sm ${
@@ -45,10 +45,10 @@ function TaskItem({
       <Button
         variant="ghost"
         size="icon"
-        className="size-6 text-muted-foreground hover:text-destructive"
+        className="size-5 text-muted-foreground hover:text-destructive"
         onClick={onDelete}
       >
-        <Trash className="size-3.5" />
+        <Trash className="size-3" />
       </Button>
     </div>
   );
@@ -121,77 +121,70 @@ export function DailyTaskList() {
   };
 
   return (
-    <div className="rounded-lg border border-border/60 bg-card/50">
+    <div className="rounded-md border border-border/40">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border/40">
-        <div>
-          <h3 className="font-semibold">Daily Tasks</h3>
-          <p className="text-xs text-muted-foreground">
-            {completedCount}/{todayTasks.length + missedTasks.length} completed
-          </p>
-        </div>
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border/40">
+        <h3 className="text-sm font-semibold">Daily Tasks</h3>
+        <span className="text-xs text-muted-foreground">
+          {completedCount}/{todayTasks.length + missedTasks.length}
+        </span>
       </div>
 
       {/* Add Task */}
-      <div className="p-4 border-b border-border/40">
-        <div className="flex gap-2">
-          <Input
-            placeholder="Add a task..."
-            value={newTaskTitle}
-            onChange={(e) => setNewTaskTitle(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-          <Button onClick={handleAddTask} disabled={!newTaskTitle.trim()}>
-            <Plus className="size-4" />
-          </Button>
-        </div>
+      <div className="flex gap-2 px-3 py-2 border-b border-border/40">
+        <Input
+          placeholder="Add a task..."
+          value={newTaskTitle}
+          onChange={(e) => setNewTaskTitle(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="h-8 text-sm"
+        />
+        <Button onClick={handleAddTask} disabled={!newTaskTitle.trim()} size="sm" className="h-8">
+          <Plus className="size-3.5" />
+        </Button>
       </div>
 
       {/* Task Lists */}
-      <div className="p-4 space-y-4 max-h-[400px] overflow-y-auto">
+      <div className="max-h-[350px] overflow-y-auto">
         {/* Missed Tasks */}
         {missedTasks.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm font-medium text-amber-500">
-              <Warning className="size-4" />
+          <div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-amber-500">
+              <Warning className="size-3.5" />
               Missed ({missedTasks.length})
             </div>
-            <div className="space-y-1">
-              {missedTasks.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onToggle={() => toggleTaskComplete(task.id)}
-                  onDelete={() => deleteTask(task.id)}
-                />
-              ))}
-            </div>
+            {missedTasks.map((task) => (
+              <TaskItem
+                key={task.id}
+                task={task}
+                onToggle={() => toggleTaskComplete(task.id)}
+                onDelete={() => deleteTask(task.id)}
+              />
+            ))}
           </div>
         )}
 
         {/* Today's Tasks */}
-        <div className="space-y-2">
+        <div>
           {missedTasks.length > 0 && (
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <Circle className="size-4" />
+            <div className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium">
+              <Circle className="size-3.5" />
               Today
             </div>
           )}
           {todayTasks.length === 0 && missedTasks.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
+            <p className="text-sm text-muted-foreground text-center py-6">
               No tasks for today. Add one above!
             </p>
           ) : (
-            <div className="space-y-1">
-              {todayTasks.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onToggle={() => toggleTaskComplete(task.id)}
-                  onDelete={() => deleteTask(task.id)}
-                />
-              ))}
-            </div>
+            todayTasks.map((task) => (
+              <TaskItem
+                key={task.id}
+                task={task}
+                onToggle={() => toggleTaskComplete(task.id)}
+                onDelete={() => deleteTask(task.id)}
+              />
+            ))
           )}
         </div>
       </div>

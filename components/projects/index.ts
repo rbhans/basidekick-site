@@ -25,6 +25,9 @@ export {
 // API
 export * as projectApi from "./project-api";
 
+// Shared
+export { STATUS_DOT_COLOR } from "./status-colors";
+
 // Components
 export { DashboardStats } from "./dashboard-stats";
 export { KanbanBoard } from "./kanban-board";
