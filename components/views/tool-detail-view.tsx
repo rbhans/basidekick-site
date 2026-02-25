@@ -1,9 +1,8 @@
 "use client";
 
-import { SectionLabel } from "@/components/section-label";
+import { SiteBadge } from "@/components/site-badge";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CircuitBackground } from "@/components/circuit-background";
 import { Play, AppleLogo, GooglePlayLogo, CheckCircle, ShieldCheck } from "@phosphor-icons/react";
 import Link from "next/link";
 import { TOOL_DETAILS } from "@/lib/constants";
@@ -37,17 +36,19 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
   return (
     <div className="min-h-full">
       {/* Hero Section */}
-      <section className="relative py-12 md:py-16 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
+      <section className="relative py-16 md:py-20 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }} />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
           <div className="flex items-center gap-3 mb-4">
-            <SectionLabel variant="tools">{tool.id}</SectionLabel>
+            <SiteBadge label={tool.id.toUpperCase()} />
             <Badge variant="outline">
               Coming Soon
             </Badge>
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
             {tool.name}
           </h1>
           <p className="mt-3 text-lg text-muted-foreground max-w-xl">
@@ -78,7 +79,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {/* Demo Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <SectionLabel variant="tools">demo</SectionLabel>
+          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">demo</h3>
 
           <div className="mt-6 max-w-3xl">
             <div className="aspect-video bg-muted border border-border flex items-center justify-center">
@@ -96,7 +97,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {/* Features Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <SectionLabel variant="tools">features</SectionLabel>
+          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">features</h3>
 
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             {tool.detailedFeatures.map((feature) => (
@@ -118,7 +119,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {/* How It Works */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <SectionLabel variant="tools">how it works</SectionLabel>
+          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">how it works</h3>
 
           <div className="mt-6 max-w-lg">
             <div className="relative">
@@ -147,7 +148,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {/* Requirements */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <SectionLabel variant="tools">requirements</SectionLabel>
+          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">requirements</h3>
 
           <div className="mt-6 max-w-sm">
             <dl className="space-y-3">
@@ -166,7 +167,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {tool.useCases && tool.useCases.length > 0 && (
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <SectionLabel variant="tools">use cases</SectionLabel>
+            <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">use cases</h3>
 
             <div className="mt-6 max-w-lg space-y-3">
               {tool.useCases.map((useCase, index) => (
@@ -184,7 +185,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {tool.perfectFor && tool.perfectFor.length > 0 && (
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <SectionLabel variant="tools">perfect for</SectionLabel>
+            <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">perfect for</h3>
 
             <div className="mt-6 flex flex-wrap gap-2">
               {tool.perfectFor.map((persona, index) => (
@@ -201,7 +202,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {tool.pricing && tool.pricing.length > 0 && (
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <SectionLabel variant="tools">pricing</SectionLabel>
+            <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">pricing</h3>
             <p className="mt-2 text-sm text-muted-foreground">Free to scan and use. Upgrade for more equipment.</p>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-3xl">

@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
@@ -148,9 +147,11 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
 
   return (
     <div className="min-h-full">
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
+      <section className="relative py-16 md:py-20 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }} />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
           <Link
             href={ROUTES.WIKI}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
@@ -165,7 +166,7 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
             </Badge>
           )}
 
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-heading font-bold tracking-tight">
             {article.title}
           </h1>
 

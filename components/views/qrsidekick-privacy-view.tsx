@@ -1,7 +1,6 @@
 "use client";
 
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { QrCode, Camera, ShieldCheck, Database, Users, EnvelopeSimple } from "@phosphor-icons/react";
 
 function PolicySection({
@@ -32,12 +31,14 @@ export function QRSidekickPrivacyView() {
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="resources">legal</SectionLabel>
+      <section className="relative py-16 md:py-20 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }} />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
+          <SiteBadge label="LEGAL" />
 
-          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
             QR Sidekick Privacy Policy
           </h1>
           <p className="mt-3 text-muted-foreground max-w-xl">

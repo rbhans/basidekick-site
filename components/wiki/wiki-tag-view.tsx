@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { CircuitBackground } from "@/components/circuit-background";
 import { WikiArticleRow } from "@/components/wiki";
 import { WikiArticle, WikiTag } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
@@ -15,9 +14,11 @@ interface WikiTagViewProps {
 export function WikiTagView({ tag, articles }: WikiTagViewProps) {
   return (
     <div className="min-h-full">
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
+      <section className="relative py-16 md:py-20 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }} />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
           <Link
             href={ROUTES.WIKI}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
@@ -28,7 +29,7 @@ export function WikiTagView({ tag, articles }: WikiTagViewProps) {
 
           <div className="flex items-center gap-2 mt-6">
             <Tag className="size-6 text-primary" />
-            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
               {tag.name}
             </h1>
           </div>
