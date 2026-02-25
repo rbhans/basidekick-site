@@ -82,9 +82,9 @@ export function ProjectsList() {
   };
 
   return (
-    <div className="border border-border bg-card shadow-sm">
+    <div className="rounded-lg border border-border/60 bg-card/50">
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-border/40">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-semibold">Projects</h2>
           <div className="flex flex-wrap items-center gap-2">
@@ -152,7 +152,7 @@ export function ProjectsList() {
                 >
                   <div
                     className={cn(
-                      "flex items-center justify-between border border-border p-3 transition hover:bg-accent/50",
+                      "flex items-center justify-between border-b border-border/40 last:border-b-0 p-3 transition hover:bg-muted/30",
                       project.is_archived && "opacity-75"
                     )}
                   >
@@ -179,7 +179,7 @@ export function ProjectsList() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="bg-muted px-2 py-1 text-xs capitalize">
+                      <span className="bg-muted px-2 py-1 text-xs rounded-md capitalize">
                         {project.status.replace("-", " ")}
                       </span>
                       <Button

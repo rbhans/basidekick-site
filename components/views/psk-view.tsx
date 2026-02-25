@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
 import {
   useProjectStore,
@@ -38,14 +36,13 @@ export function PSKView() {
   if (authLoading) {
     return (
       <div className="min-h-full">
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel variant="tools">project sidekick</SectionLabel>
-            <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Project Sidekick</p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
               Project Manager
             </h1>
-            <p className="mt-2 text-muted-foreground max-w-xl">Loading...</p>
+            <p className="mt-1 text-muted-foreground max-w-xl">Loading...</p>
           </div>
         </section>
       </div>
@@ -56,23 +53,22 @@ export function PSKView() {
   if (!user) {
     return (
       <div className="min-h-full">
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel variant="tools">project sidekick</SectionLabel>
-            <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Project Sidekick</p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
               Project Manager
             </h1>
-            <p className="mt-2 text-muted-foreground max-w-xl">
+            <p className="mt-1 text-muted-foreground max-w-xl">
               Track projects, clients, tasks, time, and budgets all in one
               place.
             </p>
           </div>
         </section>
 
-        <section className="py-12">
+        <section className="py-8">
           <div className="container mx-auto px-4">
-            <div className="border border-dashed border-border p-12 text-center max-w-xl mx-auto">
+            <div className="rounded-lg border border-border/60 bg-card/50 p-12 text-center max-w-xl mx-auto">
               <SignIn className="size-12 text-muted-foreground mx-auto mb-4" />
               <h2 className="text-xl font-semibold mb-2">
                 Sign in to continue
@@ -98,14 +94,13 @@ export function PSKView() {
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="tools">project sidekick</SectionLabel>
-          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+      <section className="py-8">
+        <div className="container mx-auto px-4">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Project Sidekick</p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight">
             Project Manager
           </h1>
-          <p className="mt-2 text-muted-foreground max-w-xl">
+          <p className="mt-1 text-muted-foreground max-w-xl">
             Track projects, clients, tasks, time, and budgets all in one place.
           </p>
         </div>
@@ -124,7 +119,7 @@ export function PSKView() {
           {/* Loading State */}
           {isLoading ? (
             <div className="p-8 text-center">
-              <p className="text-muted-foreground font-mono">Loading...</p>
+              <p className="text-muted-foreground">Loading...</p>
             </div>
           ) : (
             <div className="space-y-8">
@@ -145,7 +140,7 @@ export function PSKView() {
                 <ProjectsList />
 
                 {/* Right: Clients */}
-                <div className="border border-border bg-card shadow-sm p-4">
+                <div className="rounded-lg border border-border/60 bg-card/50 p-4">
                   <h2 className="text-lg font-semibold mb-4">Clients</h2>
                   <ClientsList />
                 </div>

@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -73,11 +71,10 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
   if (authLoading || isLoading) {
     return (
       <div className="min-h-full">
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel>client</SectionLabel>
-            <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Client</p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
               Loading...
             </h1>
           </div>
@@ -89,14 +86,13 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
   if (!client) {
     return (
       <div className="min-h-full">
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel>client</SectionLabel>
-            <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Client</p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
               Client Not Found
             </h1>
-            <p className="mt-2 text-muted-foreground">
+            <p className="mt-1 text-muted-foreground">
               This client doesn&apos;t exist or you don&apos;t have access to
               it.
             </p>
@@ -115,9 +111,8 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
+      <section className="py-8">
+        <div className="container mx-auto px-4">
           <Link
             href={ROUTES.PSK}
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
@@ -127,12 +122,12 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
           </Link>
           <div className="flex items-start justify-between">
             <div>
-              <SectionLabel>client</SectionLabel>
-              <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Client</p>
+              <h1 className="text-2xl font-semibold tracking-tight">
                 {client.name}
               </h1>
               {client.notes && (
-                <p className="mt-2 text-muted-foreground max-w-xl">
+                <p className="mt-1 text-muted-foreground max-w-xl">
                   {client.notes}
                 </p>
               )}
@@ -154,8 +149,8 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
         <div className="container mx-auto px-4">
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Contacts */}
-            <div className="border border-border bg-card shadow-sm">
-              <div className="p-4 border-b border-border">
+            <div className="rounded-lg border border-border/60 bg-card/50">
+              <div className="p-4 border-b border-border/40">
                 <h2 className="font-semibold">Contacts</h2>
               </div>
               <div className="p-4">
@@ -164,11 +159,11 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
                     No contacts added yet.
                   </p>
                 ) : (
-                  <ul className="space-y-4">
+                  <ul>
                     {client.contacts.map((contact, index) => (
                       <li
                         key={index}
-                        className="flex flex-col gap-1 p-3 border border-border"
+                        className="flex flex-col gap-1 p-3 border-b border-border/40 last:border-b-0"
                       >
                         <div className="flex items-center gap-2 font-medium">
                           <User className="size-4 text-muted-foreground" />
@@ -204,8 +199,8 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
             </div>
 
             {/* Brand Colors */}
-            <div className="border border-border bg-card shadow-sm">
-              <div className="p-4 border-b border-border">
+            <div className="rounded-lg border border-border/60 bg-card/50">
+              <div className="p-4 border-b border-border/40">
                 <h2 className="font-semibold">Brand Colors</h2>
               </div>
               <div className="p-4">
@@ -223,16 +218,16 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
                         title={`Copy ${color}`}
                       >
                         <span
-                          className="size-12 border border-border relative"
+                          className="size-12 rounded-sm border border-border/60 relative"
                           style={{ backgroundColor: color }}
                         >
                           {copiedColor === color && (
-                            <span className="absolute inset-0 flex items-center justify-center bg-black/50">
+                            <span className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-sm">
                               <Check className="size-5 text-white" />
                             </span>
                           )}
                           {copiedColor !== color && (
-                            <span className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity">
                               <Copy className="size-4 text-white" />
                             </span>
                           )}
@@ -249,8 +244,8 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
           </div>
 
           {/* Projects */}
-          <div className="mt-6 border border-border bg-card shadow-sm">
-            <div className="p-4 border-b border-border">
+          <div className="mt-6 rounded-lg border border-border/60 bg-card/50">
+            <div className="p-4 border-b border-border/40">
               <h2 className="font-semibold">Projects ({projects.length})</h2>
             </div>
             <div className="p-4">
@@ -259,12 +254,12 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
                   No projects associated with this client yet.
                 </p>
               ) : (
-                <ul className="space-y-2">
+                <ul>
                   {projects.map((project) => (
                     <li key={project.id}>
                       <Link
                         href={ROUTES.PSK_PROJECT(project.id)}
-                        className="flex items-center gap-3 p-3 border border-border hover:bg-accent transition-colors"
+                        className="flex items-center gap-3 p-3 border-b border-border/40 last:border-b-0 hover:bg-muted/30 transition-colors"
                       >
                         <Folder className="size-5 text-muted-foreground" />
                         <div className="flex-1 min-w-0">
@@ -276,7 +271,7 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
                           )}
                         </div>
                         <span
-                          className={`text-xs px-2 py-0.5 capitalize ${
+                          className={`text-xs px-2 py-0.5 rounded-md capitalize ${
                             project.status === "completed"
                               ? "bg-green-500/20 text-green-500"
                               : project.status === "in-progress"

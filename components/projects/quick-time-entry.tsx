@@ -72,13 +72,13 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
 
   if (!isExpanded) {
     return (
-      <div className={cn("border border-border bg-card shadow-sm", className)}>
+      <div className={cn("rounded-lg border border-border/60 bg-card/50", className)}>
         <button
           onClick={() => setIsExpanded(true)}
           className="w-full p-4 flex items-center justify-between hover:bg-accent/50 transition"
         >
           <div className="flex items-center gap-3">
-            <div className="size-10 bg-primary/10 flex items-center justify-center">
+            <div className="size-10 rounded-md bg-muted flex items-center justify-center">
               <Timer className="size-5 text-primary" />
             </div>
             <div className="text-left">
@@ -95,9 +95,9 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
   }
 
   return (
-    <div className={cn("border border-border bg-card shadow-sm", className)}>
+    <div className={cn("rounded-lg border border-border/60 bg-card/50", className)}>
       {/* Header */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
+      <div className="p-4 border-b border-border/40 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Timer className="size-5 text-primary" />
           <h2 className="font-semibold">Quick Time Entry</h2>
@@ -122,7 +122,7 @@ export function QuickTimeEntry({ className }: QuickTimeEntryProps) {
             onChange={(e) =>
               setFormState((prev) => ({ ...prev, project_id: e.target.value }))
             }
-            className="w-full h-10 px-3 border border-border bg-background text-sm"
+            className="w-full h-10 px-3 rounded-md border border-border/60 bg-background text-sm"
           >
             <option value="">Select a project...</option>
             {activeProjects.map((project) => (
