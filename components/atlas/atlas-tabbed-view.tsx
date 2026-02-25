@@ -72,8 +72,8 @@ export function AtlasTabbedView() {
         <div className="container mx-auto px-4">
           <Tabs value={activeTab} onValueChange={onTabChange}>
             <TabsList>
-              <TabsTrigger value="points">Points</TabsTrigger>
-              <TabsTrigger value="equipment">Equipment</TabsTrigger>
+              <TabsTrigger value="points">Types</TabsTrigger>
+              <TabsTrigger value="equipment">Models</TabsTrigger>
             </TabsList>
             <TabsContent value="points">
               <BabelViewContent />
