@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +16,7 @@ import {
   useClient,
   useClientProjects,
   ClientForm,
+  STATUS_DOT_COLOR,
 } from "@/components/projects";
 import { useAuth } from "@/components/providers/auth-provider";
 import {
@@ -22,12 +24,13 @@ import {
   Envelope,
   Phone,
   User,
-  Folder,
   PencilSimple,
   Copy,
   Check,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
+import { cn } from "@/lib/utils";
+import type { PSKKanbanStatus } from "@/lib/types";
 
 interface PSKClientViewProps {
   clientId: string;
@@ -70,171 +73,200 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-full">
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Client</p>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-              Loading...
-            </h1>
-          </div>
-        </section>
+      <div className="flex items-center h-12 px-4 border-b border-border/40">
+        <Link href={ROUTES.PSK} className="text-sm text-muted-foreground hover:text-foreground">
+          Projects
+        </Link>
+        <span className="mx-1.5 text-muted-foreground">/</span>
+        <span className="text-sm text-muted-foreground">Loading...</span>
       </div>
     );
   }
 
   if (!client) {
     return (
-      <div className="min-h-full">
-        <section className="py-8">
-          <div className="container mx-auto px-4">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Client</p>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-              Client Not Found
-            </h1>
-            <p className="mt-1 text-muted-foreground">
-              This client doesn&apos;t exist or you don&apos;t have access to
-              it.
+      <div className="flex flex-col h-full">
+        <header className="flex items-center gap-3 h-12 px-4 border-b border-border/40 shrink-0">
+          <Link href={ROUTES.PSK} className="text-sm text-muted-foreground hover:text-foreground">
+            Projects
+          </Link>
+          <span className="text-muted-foreground">/</span>
+          <span className="text-sm font-medium">Not Found</span>
+        </header>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground mb-4">
+              This client doesn&apos;t exist or you don&apos;t have access.
             </p>
-            <Button asChild className="mt-4">
+            <Button asChild size="sm">
               <Link href={ROUTES.PSK}>
-                <ArrowLeft className="mr-2 size-4" />
+                <ArrowLeft className="mr-1.5 size-3.5" />
                 Back to Projects
               </Link>
             </Button>
           </div>
-        </section>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-full">
-      {/* Header */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <Link
-            href={ROUTES.PSK}
-            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
-          >
-            <ArrowLeft className="size-4" />
-            Back to Projects
+    <div className="flex flex-col h-full">
+      {/* Compact Breadcrumb Header */}
+      <header className="flex items-center gap-3 h-12 px-4 border-b border-border/40 shrink-0">
+        <div className="flex items-center gap-1.5 text-sm min-w-0">
+          <Link href={ROUTES.PSK} className="text-muted-foreground hover:text-foreground shrink-0">
+            Projects
           </Link>
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Client</p>
-              <h1 className="text-2xl font-semibold tracking-tight">
-                {client.name}
-              </h1>
-              {client.notes && (
-                <p className="mt-1 text-muted-foreground max-w-xl">
-                  {client.notes}
-                </p>
-              )}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowEditDialog(true)}
-            >
-              <PencilSimple className="mr-2 size-4" />
-              Edit
-            </Button>
-          </div>
+          <span className="text-muted-foreground">/</span>
+          <span className="font-medium truncate">{client.name}</span>
         </div>
-      </section>
 
-      {/* Content */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid gap-6 lg:grid-cols-2">
+        <Separator orientation="vertical" className="h-4" />
+
+        <span className="text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">{projects.length}</span>{" "}
+          project{projects.length !== 1 ? "s" : ""}
+        </span>
+
+        <div className="flex-1" />
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs"
+          onClick={() => setShowEditDialog(true)}
+        >
+          <PencilSimple className="size-3.5 mr-1" />
+          Edit
+        </Button>
+      </header>
+
+      {/* Content: Primary + Sidebar */}
+      <div className="flex-1 overflow-auto p-3">
+        {client.notes && (
+          <p className="text-sm text-muted-foreground mb-3">{client.notes}</p>
+        )}
+
+        <div className="grid gap-3 lg:grid-cols-[1fr_280px]">
+          {/* Primary: Projects */}
+          <div className="rounded-md border border-border/40">
+            <div className="px-3 py-2 border-b border-border/40">
+              <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Projects
+              </h2>
+            </div>
+            {projects.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">
+                No projects associated with this client yet.
+              </p>
+            ) : (
+              projects.map((project) => (
+                <Link
+                  key={project.id}
+                  href={ROUTES.PSK_PROJECT(project.id)}
+                  className="flex items-center gap-3 px-3 py-2 border-b border-border/40 last:border-b-0 hover:bg-muted/30 transition-colors"
+                >
+                  <span
+                    className={cn(
+                      "size-2 rounded-full shrink-0",
+                      STATUS_DOT_COLOR[project.status as PSKKanbanStatus] || "bg-muted-foreground"
+                    )}
+                  />
+                  <span className="flex-1 text-sm font-medium truncate">
+                    {project.name}
+                  </span>
+                  {project.description && (
+                    <span className="text-xs text-muted-foreground truncate max-w-[200px] hidden sm:inline">
+                      {project.description}
+                    </span>
+                  )}
+                </Link>
+              ))
+            )}
+          </div>
+
+          {/* Sidebar: Contacts + Brand Colors */}
+          <div className="space-y-3">
             {/* Contacts */}
-            <div className="rounded-lg border border-border/60 bg-card/50">
-              <div className="p-4 border-b border-border/40">
-                <h2 className="font-semibold">Contacts</h2>
+            <div className="rounded-md border border-border/40">
+              <div className="px-3 py-2 border-b border-border/40">
+                <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Contacts
+                </h2>
               </div>
-              <div className="p-4">
-                {client.contacts.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-4 text-center">
-                    No contacts added yet.
-                  </p>
-                ) : (
-                  <ul>
-                    {client.contacts.map((contact, index) => (
-                      <li
-                        key={index}
-                        className="flex flex-col gap-1 p-3 border-b border-border/40 last:border-b-0"
-                      >
-                        <div className="flex items-center gap-2 font-medium">
-                          <User className="size-4 text-muted-foreground" />
-                          {contact.name}
-                        </div>
-                        {contact.email && (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Envelope className="size-4" />
-                            <a
-                              href={`mailto:${contact.email}`}
-                              className="hover:text-foreground"
-                            >
-                              {contact.email}
-                            </a>
-                          </div>
-                        )}
-                        {contact.phone && (
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Phone className="size-4" />
-                            <a
-                              href={`tel:${contact.phone}`}
-                              className="hover:text-foreground"
-                            >
-                              {contact.phone}
-                            </a>
-                          </div>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              {client.contacts.length === 0 ? (
+                <p className="text-sm text-muted-foreground py-6 text-center">
+                  No contacts yet.
+                </p>
+              ) : (
+                client.contacts.map((contact, index) => (
+                  <div
+                    key={index}
+                    className="px-3 py-2 border-b border-border/40 last:border-b-0 space-y-0.5"
+                  >
+                    <div className="flex items-center gap-1.5 text-sm font-medium">
+                      <User className="size-3.5 text-muted-foreground" />
+                      {contact.name}
+                    </div>
+                    {contact.email && (
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Envelope className="size-3" />
+                        <a href={`mailto:${contact.email}`} className="hover:text-foreground">
+                          {contact.email}
+                        </a>
+                      </div>
+                    )}
+                    {contact.phone && (
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Phone className="size-3" />
+                        <a href={`tel:${contact.phone}`} className="hover:text-foreground">
+                          {contact.phone}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Brand Colors */}
-            <div className="rounded-lg border border-border/60 bg-card/50">
-              <div className="p-4 border-b border-border/40">
-                <h2 className="font-semibold">Brand Colors</h2>
+            <div className="rounded-md border border-border/40">
+              <div className="px-3 py-2 border-b border-border/40">
+                <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Brand Colors
+                </h2>
               </div>
-              <div className="p-4">
+              <div className="px-3 py-2">
                 {!client.color_palette || client.color_palette.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-4 text-center">
-                    No brand colors added yet.
+                  <p className="text-xs text-muted-foreground text-center py-4">
+                    No colors added.
                   </p>
                 ) : (
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-2">
                     {client.color_palette.map((color) => (
                       <button
                         key={color}
                         onClick={() => handleCopyColor(color)}
-                        className="group flex flex-col items-center gap-1"
+                        className="group flex flex-col items-center gap-0.5"
                         title={`Copy ${color}`}
                       >
                         <span
-                          className="size-12 rounded-sm border border-border/60 relative"
+                          className="size-8 rounded-sm border border-border/40 relative"
                           style={{ backgroundColor: color }}
                         >
                           {copiedColor === color && (
                             <span className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-sm">
-                              <Check className="size-5 text-white" />
+                              <Check className="size-3.5 text-white" />
                             </span>
                           )}
                           {copiedColor !== color && (
                             <span className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Copy className="size-4 text-white" />
+                              <Copy className="size-3 text-white" />
                             </span>
                           )}
                         </span>
-                        <code className="text-xs text-muted-foreground">
-                          {color}
-                        </code>
+                        <code className="text-[10px] text-muted-foreground">{color}</code>
                       </button>
                     ))}
                   </div>
@@ -242,56 +274,8 @@ export function PSKClientView({ clientId }: PSKClientViewProps) {
               </div>
             </div>
           </div>
-
-          {/* Projects */}
-          <div className="mt-6 rounded-lg border border-border/60 bg-card/50">
-            <div className="p-4 border-b border-border/40">
-              <h2 className="font-semibold">Projects ({projects.length})</h2>
-            </div>
-            <div className="p-4">
-              {projects.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-4 text-center">
-                  No projects associated with this client yet.
-                </p>
-              ) : (
-                <ul>
-                  {projects.map((project) => (
-                    <li key={project.id}>
-                      <Link
-                        href={ROUTES.PSK_PROJECT(project.id)}
-                        className="flex items-center gap-3 p-3 border-b border-border/40 last:border-b-0 hover:bg-muted/30 transition-colors"
-                      >
-                        <Folder className="size-5 text-muted-foreground" />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium truncate">{project.name}</p>
-                          {project.description && (
-                            <p className="text-sm text-muted-foreground truncate">
-                              {project.description}
-                            </p>
-                          )}
-                        </div>
-                        <span
-                          className={`text-xs px-2 py-0.5 rounded-md capitalize ${
-                            project.status === "completed"
-                              ? "bg-green-500/20 text-green-500"
-                              : project.status === "in-progress"
-                                ? "bg-yellow-500/20 text-yellow-500"
-                                : project.status === "review"
-                                  ? "bg-blue-500/20 text-blue-500"
-                                  : "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          {project.status.replace("-", " ")}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
         </div>
-      </section>
+      </div>
 
       {/* Edit Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
