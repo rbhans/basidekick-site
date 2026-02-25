@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { WikiTag } from "@/lib/types";
-import { MagnifyingGlass, SortAscending, Funnel, X, Check } from "@phosphor-icons/react";
+import { MagnifyingGlass, SortAscending, Funnel, X, Check, CaretDown } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 
 export type SortOption = "newest" | "oldest" | "popular" | "alphabetical";
@@ -74,37 +74,35 @@ export function WikiFilterBar({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 p-4 border border-border bg-card shadow-sm">
+    <div className="flex flex-col sm:flex-row gap-3">
       {/* Search Input */}
       <div className="relative flex-1">
-        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+        <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search articles..."
-          className="w-full pl-9 pr-4 py-2 bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm focus:outline-none focus:border-muted-foreground transition-colors"
         />
       </div>
 
       <div className="flex gap-2">
         {/* Sort Dropdown */}
         <div className="relative" ref={sortRef}>
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={() => setSortOpen(!sortOpen)}
-            className="flex items-center gap-2"
+            className="h-11 px-4 bg-card border border-border rounded-xl flex items-center gap-2 text-muted-foreground hover:border-muted-foreground transition-colors"
           >
-            <SortAscending className="size-4" />
-            <span className="hidden sm:inline">
+            <span className="text-[13px]">
               {sortOptions.find((o) => o.value === sortBy)?.label}
             </span>
-          </Button>
+            <CaretDown className="size-4" />
+          </button>
 
           {sortOpen && (
-            <div className="absolute right-0 top-full mt-1 z-50 min-w-[140px] border border-border bg-card shadow-lg">
+            <div className="absolute right-0 top-full mt-1 z-50 min-w-[140px] border border-border bg-card rounded-xl shadow-lg overflow-hidden">
               {sortOptions.map((option) => (
                 <button
                   key={option.value}
@@ -112,12 +110,12 @@ export function WikiFilterBar({
                     onSortChange(option.value);
                     setSortOpen(false);
                   }}
-                  className={`w-full px-3 py-2 text-left text-sm hover:bg-accent/50 flex items-center justify-between ${
-                    sortBy === option.value ? "bg-accent/30" : ""
+                  className={`w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between transition-colors ${
+                    sortBy === option.value ? "bg-muted/50" : ""
                   }`}
                 >
                   {option.label}
-                  {sortBy === option.value && <Check className="size-4" />}
+                  {sortBy === option.value && <Check className="size-4 text-primary" />}
                 </button>
               ))}
             </div>
@@ -126,23 +124,22 @@ export function WikiFilterBar({
 
         {/* Tag Filter Dropdown */}
         <div className="relative" ref={filterRef}>
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={() => setFilterOpen(!filterOpen)}
-            className="flex items-center gap-2"
+            className="h-11 px-4 bg-card border border-border rounded-xl flex items-center gap-2 text-muted-foreground hover:border-muted-foreground transition-colors"
           >
             <Funnel className="size-4" />
-            <span className="hidden sm:inline">Tags</span>
+            <span className="text-[13px]">Tags</span>
             {selectedTagIds.length > 0 && (
-              <span className="size-5 flex items-center justify-center bg-primary text-primary-foreground text-xs">
+              <span className="size-5 flex items-center justify-center bg-primary text-primary-foreground text-xs rounded-full font-bold">
                 {selectedTagIds.length}
               </span>
             )}
-          </Button>
+            <CaretDown className="size-4" />
+          </button>
 
           {filterOpen && (
-            <div className="absolute right-0 top-full mt-1 z-50 w-[220px] border border-border bg-card shadow-lg">
+            <div className="absolute right-0 top-full mt-1 z-50 w-[220px] border border-border bg-card rounded-xl shadow-lg overflow-hidden">
               <div className="p-2 border-b border-border flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">Filter by tags</span>
                 {selectedTagIds.length > 0 && (
@@ -160,10 +157,10 @@ export function WikiFilterBar({
                   <button
                     key={tag.id}
                     onClick={() => handleTagToggle(tag.id)}
-                    className="w-full px-3 py-2 text-left text-sm hover:bg-accent/50 flex items-center gap-2"
+                    className="w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center gap-2 transition-colors"
                   >
                     <div
-                      className={`size-4 border flex items-center justify-center ${
+                      className={`size-4 border rounded flex items-center justify-center ${
                         selectedTagIds.includes(tag.id)
                           ? "bg-primary border-primary"
                           : "border-border"
@@ -182,7 +179,7 @@ export function WikiFilterBar({
         </div>
 
         {/* Search Button */}
-        <Button size="sm" onClick={onSearch}>
+        <Button onClick={onSearch} className="h-11 px-5 rounded-xl font-semibold">
           Search
         </Button>
       </div>

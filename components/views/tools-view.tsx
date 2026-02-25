@@ -1,115 +1,187 @@
 "use client";
 
-import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
+import { SiteBadge } from "@/components/site-badge";
+import { FeatureCard } from "@/components/feature-card";
+import { StepCard } from "@/components/step-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CircuitBackground } from "@/components/circuit-background";
-import { ArrowRight, CheckCircle } from "@phosphor-icons/react";
-import { TOOLS_LIST, USE_CASES } from "@/lib/constants";
+import { Play, AppleLogo, GooglePlayLogo } from "@phosphor-icons/react";
+import { TOOL_DETAILS } from "@/lib/constants";
 import { getIcon } from "@/lib/icons";
-import { ROUTES } from "@/lib/routes";
 
 export function ToolsView() {
+  const ssk = TOOL_DETAILS["ssk"];
+  const qsk = TOOL_DETAILS["qsk"];
+
   return (
     <div className="min-h-full">
-      {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
-          <SectionLabel variant="tools">tools</SectionLabel>
-
-          <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
-            BAS Tools
+      {/* Hero */}
+      <section className="relative py-16 md:py-20 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04]"
+            style={{ background: "radial-gradient(circle, #C4F82A 0%, transparent 70%)" }}
+          />
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
+          <SiteBadge label="TOOLS" />
+          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
+            Built for BAS Professionals
           </h1>
           <p className="mt-3 text-muted-foreground max-w-xl">
-            Professional software for building automation professionals.
-            One-time purchase, no subscriptions.
+            Professional software for building automation. One-time purchase, no subscriptions.
           </p>
         </div>
       </section>
 
-      {/* Expanded Tool Cards */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {TOOLS_LIST.map((tool) => (
-              <div
-                key={tool.id}
-                className="flex flex-col p-6 border border-border bg-card shadow-sm hover:border-primary/50 transition-all"
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="text-primary">{getIcon(tool.iconName, "size-6")}</div>
-                    <span className="font-mono text-sm text-muted-foreground uppercase tracking-wide">
-                      {tool.shortName}
-                    </span>
-                  </div>
-                  <Badge variant="outline">
-                    Coming Soon
-                  </Badge>
+      {/* SimulatorSidekick Section */}
+      {ssk && (
+        <section className="py-16 border-t border-border" id="ssk">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Left: Description */}
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <h2 className="text-2xl md:text-3xl font-heading font-bold">{ssk.name}</h2>
+                  <Badge variant="outline" className="text-destructive border-destructive/30">Coming Soon</Badge>
                 </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  {ssk.tagline}. {ssk.description}
+                </p>
+                <div className="mt-6">
+                  <Button className="rounded-lg font-semibold">Get Notified</Button>
+                </div>
+              </div>
 
-                {/* Content */}
-                <h3 className="text-xl font-semibold">{tool.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{tool.tagline}</p>
+              {/* Right: Demo Placeholder */}
+              <div className="aspect-video bg-card border border-border rounded-xl flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <Play className="w-7 h-7 text-primary" weight="fill" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">{ssk.name} demo</p>
+                </div>
+              </div>
+            </div>
 
-                {/* Features */}
-                <ul className="mt-4 space-y-2 flex-grow">
-                  {tool.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-sm">
-                      <CheckCircle className="size-4 text-primary flex-shrink-0" weight="fill" />
-                      <span>{feature}</span>
-                    </li>
+            {/* Features / Steps / Requirements */}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div>
+                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Features</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {ssk.detailedFeatures.map((f) => (
+                    <FeatureCard
+                      key={f.title}
+                      title={f.title}
+                      description={f.description}
+                      icon={getIcon(f.iconName, "w-5 h-5 text-primary")}
+                    />
                   ))}
-                </ul>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">How It Works</h3>
+                <div className="space-y-4">
+                  {ssk.steps.map((s) => (
+                    <StepCard key={s.number} number={s.number} title={s.title} description={s.description} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Requirements</h3>
+                <div className="bg-card border border-border rounded-xl p-5">
+                  <dl className="space-y-3">
+                    {ssk.requirements.map((r) => (
+                      <div key={r.label} className="flex justify-between py-2 border-b border-border last:border-0">
+                        <dt className="text-sm text-muted-foreground">{r.label}</dt>
+                        <dd className="text-sm font-medium">{r.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
-                {/* Footer */}
-                <div className="flex items-center justify-end mt-6 pt-4 border-t border-border">
-                  <Button size="sm" asChild>
-                    <Link href={ROUTES.TOOL(tool.id)}>
-                      Get Notified
-                      <ArrowRight className="size-3 ml-1" />
-                    </Link>
+      {/* QR Sidekick Section */}
+      {qsk && (
+        <section className="py-16 bg-secondary border-t border-border" id="qsk">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Left: Description */}
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <h2 className="text-2xl md:text-3xl font-heading font-bold">{qsk.name}</h2>
+                  <Badge variant="outline" className="text-destructive border-destructive/30">Coming Soon</Badge>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  {qsk.tagline}. {qsk.description}
+                </p>
+                <div className="mt-6 flex gap-3">
+                  <Button disabled className="gap-2 rounded-lg font-semibold">
+                    <AppleLogo className="w-5 h-5" weight="fill" />
+                    App Store
+                  </Button>
+                  <Button variant="outline" disabled className="gap-2 rounded-lg font-semibold">
+                    <GooglePlayLogo className="w-5 h-5" weight="fill" />
+                    Google Play
                   </Button>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Use Cases */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <SectionLabel variant="tools">use cases</SectionLabel>
+              {/* Right: Demo Placeholder */}
+              <div className="aspect-video bg-card border border-border rounded-xl flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <Play className="w-7 h-7 text-primary" weight="fill" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">{qsk.name} demo</p>
+                </div>
+              </div>
+            </div>
 
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl">
-            {USE_CASES.map((useCase) => (
-              <div
-                key={useCase.title}
-                className="p-4 border border-border bg-card/50 shadow-sm"
-              >
-                <h4 className="font-medium">{useCase.title}</h4>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {useCase.description}
-                </p>
-                <div className="flex gap-2 mt-3">
-                  {useCase.tools.map((tool) => (
-                    <span
-                      key={tool}
-                      className="text-xs font-mono px-2 py-0.5 bg-primary/10 text-primary border border-primary/20"
-                    >
-                      {tool}
-                    </span>
+            {/* Features / Steps / Requirements */}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div>
+                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Features</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {qsk.detailedFeatures.map((f) => (
+                    <FeatureCard
+                      key={f.title}
+                      title={f.title}
+                      description={f.description}
+                      icon={getIcon(f.iconName, "w-5 h-5 text-primary")}
+                    />
                   ))}
                 </div>
               </div>
-            ))}
+              <div>
+                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">How It Works</h3>
+                <div className="space-y-4">
+                  {qsk.steps.map((s) => (
+                    <StepCard key={s.number} number={s.number} title={s.title} description={s.description} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Requirements</h3>
+                <div className="bg-card border border-border rounded-xl p-5">
+                  <dl className="space-y-3">
+                    {qsk.requirements.map((r) => (
+                      <div key={r.label} className="flex justify-between py-2 border-b border-border last:border-0">
+                        <dt className="text-sm text-muted-foreground">{r.label}</dt>
+                        <dd className="text-sm font-medium">{r.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

@@ -27,16 +27,16 @@ export function WikiSidebar({
       <div key={cat.id}>
         <button
           onClick={() => onCategorySelect(cat)}
-          className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 hover:bg-accent/50 transition-colors ${
-            isSelected ? "bg-accent text-primary" : ""
+          className={`w-full text-left px-4 py-2 rounded-lg text-[13px] flex items-center gap-2 transition-colors ${
+            isSelected ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
           }`}
-          style={{ paddingLeft: `${12 + depth * 16}px` }}
+          style={{ paddingLeft: `${16 + depth * 16}px` }}
         >
           <span className="size-4 flex items-center justify-center shrink-0">
             {cat.icon_name ? (
-              getIcon(cat.icon_name, "size-4")
+              getIcon(cat.icon_name, "size-3.5 text-muted-foreground")
             ) : (
-              <BookOpen className="size-4" />
+              <BookOpen className="size-3.5" />
             )}
           </span>
           <span className="flex-1 truncate">{cat.name}</span>
@@ -56,51 +56,45 @@ export function WikiSidebar({
 
   return (
     <aside className="w-full lg:w-[240px] shrink-0">
-      <div className="border border-border bg-card shadow-sm">
-        {/* Categories Section */}
-        <div className="p-3 border-b border-border">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Categories
-          </h3>
-        </div>
+      <div className="bg-card border border-border rounded-xl p-6">
+        {/* All Articles */}
+        <button
+          onClick={() => onCategorySelect(null)}
+          className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold mb-4 transition-colors ${
+            selectedCategoryId === null
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-muted"
+          }`}
+        >
+          All Articles
+        </button>
 
-        <div className="py-1">
-          {/* All Articles option */}
-          <button
-            onClick={() => onCategorySelect(null)}
-            className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 hover:bg-accent/50 transition-colors ${
-              selectedCategoryId === null ? "bg-accent text-primary" : ""
-            }`}
-          >
-            <House className="size-4" />
-            <span>All Articles</span>
-          </button>
-
-          {/* Category Tree */}
+        {/* Categories */}
+        <div className="mb-6">
+          <h4 className="font-mono text-[11px] font-bold text-muted-foreground tracking-[2px] uppercase px-4 mb-3">
+            CATEGORIES
+          </h4>
           {categories.map((cat) => renderCategory(cat))}
         </div>
 
-        {/* Popular Tags Section */}
+        {/* Popular Tags */}
         {popularTags.length > 0 && (
-          <>
-            <div className="p-3 border-t border-border">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Popular Tags
-              </h3>
-            </div>
-            <div className="p-3 pt-0 flex flex-wrap gap-1">
+          <div>
+            <h4 className="font-mono text-[11px] font-bold text-muted-foreground tracking-[2px] uppercase px-4 mb-3">
+              POPULAR TAGS
+            </h4>
+            <div className="flex flex-wrap gap-2 px-4">
               {popularTags.map((tag) => (
                 <Link
                   key={tag.id}
                   href={ROUTES.WIKI_TAG(tag.slug)}
-                  className="px-2 py-1 text-xs border border-border hover:bg-accent/50 transition-colors flex items-center gap-1"
+                  className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-muted-foreground hover:text-foreground transition-colors"
                 >
-                  <Tag className="size-3" />
                   {tag.name}
                 </Link>
               ))}
             </div>
-          </>
+          </div>
         )}
       </div>
     </aside>

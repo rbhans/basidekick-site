@@ -2,8 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
+import { SiteBadge } from "@/components/site-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getBabelIdsForAtlasType } from "@/lib/data/atlas-babel-map";
 import { useAtlasAll } from "./use-atlas-data";

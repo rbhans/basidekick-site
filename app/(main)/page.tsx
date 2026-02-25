@@ -42,12 +42,17 @@ async function getRecentContent() {
   const supabase = getSupabaseClient();
 
   if (!supabase) {
-    return { recentArticles: [], stats: { articleCount: 0, termCount: 500, modelCount: 0 } };
+    return {
+      carouselArticles: [],
+      stats: { articleCount: 0, termCount: 500, modelCount: 0 },
+      samplePoints: [],
+      sampleEquipment: [],
+    };
   }
 
-  // Fetch all data in parallel using foreign key joins
-  const [articlesResult, articleCountResult, termCount, modelCount] = await Promise.all([
-    // Wiki articles with category in single query
+  // Fetch all data in parallel
+  const [articlesResult, articleCountResult, termCount, modelCount, babelData] = await Promise.all([
+    // Wiki articles with category (fetch more for carousel)
     supabase
       .from("wiki_articles")
       .select(`
@@ -56,12 +61,14 @@ async function getRecentContent() {
       `)
       .eq("is_published", true)
       .order("created_at", { ascending: false })
-      .limit(5),
+      .limit(30),
     // Counts
     supabase.from("wiki_articles").select("id", { count: "exact", head: true }).eq("is_published", true),
     // Babel and Atlas counts
     getBabelTermCount(),
     getAtlasModelCount(),
+    // Babel data for sample cards
+    getBabelData(),
   ]);
 
   if (articlesResult.error) {
@@ -74,7 +81,7 @@ async function getRecentContent() {
     return Array.isArray(data) ? data[0] : data;
   };
 
-  const recentArticles = (articlesResult.data || []).map(article => ({
+  const carouselArticles = (articlesResult.data || []).map(article => ({
     id: article.id,
     title: article.title,
     slug: article.slug,
@@ -89,19 +96,27 @@ async function getRecentContent() {
     modelCount,
   };
 
+  // Sample entries for rotating cards
+  const samplePoints = babelData?.points?.slice(0, 20) || [];
+  const sampleEquipment = babelData?.equipment?.slice(0, 20) || [];
+
   return {
-    recentArticles,
+    carouselArticles,
     stats,
+    samplePoints,
+    sampleEquipment,
   };
 }
 
 export default async function HomePage() {
-  const { recentArticles, stats } = await getRecentContent();
+  const { carouselArticles, stats, samplePoints, sampleEquipment } = await getRecentContent();
 
   return (
     <HomeView
-      recentArticles={recentArticles}
+      carouselArticles={carouselArticles}
       stats={stats}
+      samplePoints={samplePoints}
+      sampleEquipment={sampleEquipment}
     />
   );
 }

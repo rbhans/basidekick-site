@@ -51,10 +51,10 @@ export default function PointStackLayout({
   return (
     <div className="min-h-full flex flex-col">
       {/* Sub-navigation */}
-      <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+      <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-[72px] z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center py-2">
-            {/* Main navigation — fade hints on mobile for scroll */}
+            {/* Main navigation */}
             <div className="relative flex-1 min-w-0">
               <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide justify-start sm:justify-center">
                 {NAV_ITEMS.map((item) => {
@@ -65,9 +65,9 @@ export default function PointStackLayout({
                       key={item.href}
                       href={item.href}
                       className={cn(
-                        "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-colors",
+                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg whitespace-nowrap transition-colors",
                         active
-                          ? "bg-primary text-primary-foreground"
+                          ? "text-primary bg-primary/10"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted"
                       )}
                     >
@@ -93,9 +93,9 @@ export default function PointStackLayout({
                       key={item.href}
                       href={item.href}
                       className={cn(
-                        "relative flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-colors",
+                        "relative flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg whitespace-nowrap transition-colors",
                         active
-                          ? "bg-primary text-primary-foreground"
+                          ? "text-primary bg-primary/10"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted"
                       )}
                       aria-label={item.label}
@@ -106,9 +106,7 @@ export default function PointStackLayout({
                         <span
                           className={cn(
                             "absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-bold leading-none px-1",
-                            active
-                              ? "bg-primary-foreground text-primary"
-                              : "bg-destructive text-destructive-foreground"
+                            "bg-destructive text-destructive-foreground"
                           )}
                         >
                           {count > 99 ? "99+" : count}
