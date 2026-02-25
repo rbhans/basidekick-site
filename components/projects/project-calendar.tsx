@@ -126,7 +126,7 @@ function ProjectChip({ project }: { project: PSKProject }) {
       {...listeners}
       {...attributes}
       className={cn(
-        "block text-xs px-1 py-0.5 truncate cursor-move",
+        "block text-xs px-1 py-0.5 truncate cursor-move rounded-sm",
         status === "overdue"
           ? "bg-red-500/20 text-red-500"
           : status === "soon"
@@ -149,7 +149,7 @@ function CalendarDayCell({ day }: { day: CalendarDay }) {
     <div
       ref={setNodeRef}
       className={cn(
-        "min-h-[80px] p-1 border border-border transition-colors",
+        "min-h-[80px] p-1 border border-border/30 rounded-sm transition-colors",
         day.isCurrentMonth ? "bg-background" : "bg-muted/30",
         day.isToday && "ring-2 ring-primary",
         isOver && "border-primary ring-1 ring-primary/50"
@@ -253,8 +253,8 @@ export function ProjectCalendar() {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="border border-border bg-card shadow-sm">
-        <div className="flex items-center justify-between p-4 border-b border-border">
+      <div className="rounded-lg border border-border/60 bg-card/50">
+        <div className="flex items-center justify-between p-4 border-b border-border/40">
           <h3 className="font-semibold">Project Calendar</h3>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={goToToday}>
@@ -293,15 +293,15 @@ export function ProjectCalendar() {
 
         <div className="flex items-center gap-4 px-4 pb-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
-            <span className="size-3 bg-emerald-500/20 border border-emerald-500/50" />
+            <span className="size-3 rounded-sm bg-emerald-500/20 border border-emerald-500/50" />
             On track
           </div>
           <div className="flex items-center gap-1">
-            <span className="size-3 bg-amber-500/20 border border-amber-500/50" />
+            <span className="size-3 rounded-sm bg-amber-500/20 border border-amber-500/50" />
             Due soon (≤3 days)
           </div>
           <div className="flex items-center gap-1">
-            <span className="size-3 bg-red-500/20 border border-red-500/50" />
+            <span className="size-3 rounded-sm bg-red-500/20 border border-red-500/50" />
             Overdue
           </div>
         </div>

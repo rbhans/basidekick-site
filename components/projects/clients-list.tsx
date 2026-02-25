@@ -50,10 +50,10 @@ function ClientCard({ client }: { client: PSKClient }) {
 
   return (
     <>
-      <div className="border border-border bg-card shadow-sm p-4 flex flex-col gap-3">
+      <div className="rounded-lg border border-border/60 bg-card/50 p-4 flex flex-col gap-3">
         <div className="flex items-start gap-3">
           {client.logo ? (
-            <div className="size-10 border border-border bg-muted flex-shrink-0 overflow-hidden">
+            <div className="size-10 rounded-md border border-border/60 bg-muted flex-shrink-0 overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={client.logo}
@@ -65,7 +65,7 @@ function ClientCard({ client }: { client: PSKClient }) {
               />
             </div>
           ) : (
-            <div className="size-10 border border-border bg-muted flex-shrink-0 flex items-center justify-center">
+            <div className="size-10 rounded-md border border-border/60 bg-muted flex-shrink-0 flex items-center justify-center">
               <User className="size-5 text-muted-foreground" />
             </div>
           )}
@@ -123,7 +123,7 @@ function ClientCard({ client }: { client: PSKClient }) {
             {client.color_palette.slice(0, 5).map((color) => (
               <span
                 key={color}
-                className="size-5 border border-border"
+                className="size-5 rounded-sm border border-border/60"
                 style={{ backgroundColor: color }}
               />
             ))}
@@ -229,7 +229,7 @@ export function ClientsList() {
 
       {/* Clients Grid */}
       {filteredClients.length === 0 ? (
-        <div className="border border-dashed border-border p-8 text-center">
+        <div className="rounded-lg border border-dashed border-border/60 p-8 text-center">
           <p className="text-muted-foreground">
             {search ? "No clients match your search." : "No clients yet."}
           </p>

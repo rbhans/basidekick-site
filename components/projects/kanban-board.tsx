@@ -52,8 +52,8 @@ function ProjectCard({ project, clientName, onOpen }: ProjectCardProps) {
       {...attributes}
       onClick={() => onOpen(project.id)}
       className={cn(
-        "cursor-move border border-border bg-card shadow-sm p-4 text-left transition",
-        "hover:bg-accent/50 hover:border-primary/50",
+        "cursor-move rounded-md border border-border/60 bg-card/50 p-4 text-left transition",
+        "hover:bg-muted/80 hover:border-border",
         isDragging && "opacity-50"
       )}
     >
@@ -120,7 +120,7 @@ function KanbanColumn({
     <section
       ref={setNodeRef}
       className={cn(
-        "border border-border bg-card/40 p-4 transition-colors",
+        "rounded-lg border border-border/40 bg-muted/20 p-4 transition-colors",
         isOver && "border-primary ring-1 ring-primary/40"
       )}
     >
@@ -128,7 +128,7 @@ function KanbanColumn({
         <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           {title}
         </h3>
-        <span className="bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           {count}
         </span>
       </header>
@@ -226,7 +226,7 @@ export function KanbanBoard() {
 
       <DragOverlay>
         {activeProject ? (
-          <div className="w-[260px] border border-border bg-card shadow-lg p-4">
+          <div className="w-[260px] rounded-md border border-border/60 bg-card shadow-lg p-4">
             <ProjectCardContent
               project={activeProject}
               clientName={getClientName(activeProject.client_id)}

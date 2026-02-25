@@ -21,13 +21,13 @@ function TaskItem({
 
   return (
     <div
-      className={`flex items-center gap-3 p-2 border border-border ${
+      className={`flex items-center gap-3 p-2 border-b border-border/40 last:border-b-0 ${
         isCompleted ? "bg-muted/30" : ""
       }`}
     >
       <button
         onClick={onToggle}
-        className={`size-5 flex items-center justify-center border ${
+        className={`size-5 flex items-center justify-center rounded-sm border ${
           isCompleted
             ? "bg-primary border-primary text-primary-foreground"
             : "border-muted-foreground hover:border-primary"
@@ -121,9 +121,9 @@ export function DailyTaskList() {
   };
 
   return (
-    <div className="border border-border bg-card shadow-sm">
+    <div className="rounded-lg border border-border/60 bg-card/50">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
+      <div className="flex items-center justify-between p-4 border-b border-border/40">
         <div>
           <h3 className="font-semibold">Daily Tasks</h3>
           <p className="text-xs text-muted-foreground">
@@ -133,7 +133,7 @@ export function DailyTaskList() {
       </div>
 
       {/* Add Task */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-border/40">
         <div className="flex gap-2">
           <Input
             placeholder="Add a task..."

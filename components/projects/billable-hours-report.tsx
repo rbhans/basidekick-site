@@ -159,9 +159,9 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
   };
 
   return (
-    <div className={cn("border border-border bg-card shadow-sm", className)}>
+    <div className={cn("rounded-lg border border-border/60 bg-card/50", className)}>
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-b border-border/40">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-2">
             <Clock className="size-5 text-primary" />
@@ -175,7 +175,7 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
       </div>
 
       {/* Filters */}
-      <div className="p-4 border-b border-border bg-muted/30">
+      <div className="p-4 border-b border-border/40 bg-muted/10">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <Calendar className="size-4 text-muted-foreground" />
@@ -216,7 +216,7 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-border">
+            <tr className="border-b border-border/40">
               <th className="text-left p-3 text-sm font-medium text-muted-foreground">
                 {groupBy === "client" ? "Client" : "Project"}
               </th>
@@ -251,7 +251,7 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
                 {groupedData.map((group) => (
                   <tr
                     key={group.id}
-                    className="border-b border-border hover:bg-muted/30"
+                    className="border-b border-border/40 hover:bg-muted/30"
                   >
                     <td className="p-3 text-sm">{group.name}</td>
                     {groupBy === "project" && (
@@ -275,7 +275,7 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
                   </tr>
                 ))}
                 {/* Totals Row */}
-                <tr className="bg-muted/50 font-medium">
+                <tr className="bg-muted/20 font-medium">
                   <td className="p-3 text-sm">Total</td>
                   {groupBy === "project" && <td className="p-3"></td>}
                   <td className="p-3 text-sm text-right font-mono">
@@ -293,7 +293,7 @@ export function BillableHoursReport({ className }: BillableHoursReportProps) {
       </div>
 
       {/* Summary Cards */}
-      <div className="p-4 border-t border-border bg-muted/30">
+      <div className="p-4 border-t border-border/40 bg-muted/10">
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="text-center">
             <p className="text-2xl font-semibold">{formatDuration(totals.minutes)}</p>

@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { SectionLabel } from "@/components/section-label";
-import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -131,11 +129,10 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
   if (authLoading || isLoading) {
     return (
       <div className="min-h-full">
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel>project</SectionLabel>
-            <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Project</p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
               Loading...
             </h1>
           </div>
@@ -147,14 +144,13 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
   if (!project) {
     return (
       <div className="min-h-full">
-        <section className="relative py-12 overflow-hidden">
-          <CircuitBackground opacity={0.15} colorGradient />
-          <div className="container mx-auto px-4 relative z-10">
-            <SectionLabel>project</SectionLabel>
-            <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Project</p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight">
               Project Not Found
             </h1>
-            <p className="mt-2 text-muted-foreground">
+            <p className="mt-1 text-muted-foreground">
               This project doesn&apos;t exist or you don&apos;t have access to
               it.
             </p>
@@ -383,9 +379,8 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
   return (
     <div className="min-h-full">
       {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <CircuitBackground opacity={0.15} colorGradient />
-        <div className="container mx-auto px-4 relative z-10">
+      <section className="py-8">
+        <div className="container mx-auto px-4">
           <div className="flex items-start justify-between">
             <div>
               <Link
@@ -395,8 +390,10 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                 <ArrowLeft className="size-4" />
                 Back to Projects
               </Link>
-              <SectionLabel>{project.status.replace("-", " ")}</SectionLabel>
-              <h1 className="mt-6 text-3xl md:text-4xl font-semibold tracking-tight">
+              <span className="rounded-full text-xs px-2.5 py-0.5 bg-muted text-muted-foreground capitalize inline-block mb-3">
+                {project.status.replace("-", " ")}
+              </span>
+              <h1 className="text-2xl font-semibold tracking-tight">
                 {project.name}
               </h1>
               {project.description && (
@@ -482,7 +479,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
       <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-            <div className="border border-border bg-card shadow-sm p-4">
+            <div className="rounded-lg border border-border/60 bg-card/50 p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-muted-foreground">
                   Tasks
@@ -495,7 +492,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               <p className="text-xs text-muted-foreground">Completed</p>
             </div>
 
-            <div className="border border-border bg-card shadow-sm p-4">
+            <div className="rounded-lg border border-border/60 bg-card/50 p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-muted-foreground">
                   Time Logged
@@ -510,7 +507,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               </p>
             </div>
 
-            <div className="border border-border bg-card shadow-sm p-4">
+            <div className="rounded-lg border border-border/60 bg-card/50 p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-muted-foreground">
                   Budget
@@ -523,7 +520,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               <p className="text-xs text-muted-foreground">Total budget</p>
             </div>
 
-            <div className="border border-border bg-card shadow-sm p-4">
+            <div className="rounded-lg border border-border/60 bg-card/50 p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-muted-foreground">
                   Spent
@@ -550,11 +547,11 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
             {/* Left Column */}
             <div className="space-y-6">
               {/* Tasks */}
-              <div className="border border-border bg-card shadow-sm">
-                <div className="p-4 border-b border-border flex items-center justify-between">
+              <div className="rounded-lg border border-border/60 bg-card/50">
+                <div className="p-4 border-b border-border/40 flex items-center justify-between">
                   <h2 className="font-semibold">Tasks</h2>
                 </div>
-                <div className="p-4 border-b border-border">
+                <div className="p-4 border-b border-border/40">
                   <div className="flex gap-2">
                     <Input
                       placeholder="Add a task..."
@@ -576,15 +573,15 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                       No tasks yet. Add one above!
                     </p>
                   ) : (
-                    <ul className="space-y-2">
+                    <ul>
                       {tasks.map((task) => (
                         <li
                           key={task.id}
-                          className="flex items-center gap-3 p-2 border border-border"
+                          className="flex items-center gap-3 p-2 border-b border-border/40 last:border-b-0"
                         >
                           <button
                             onClick={() => toggleTaskComplete(task.id)}
-                            className={`size-5 flex items-center justify-center border ${
+                            className={`size-5 flex items-center justify-center rounded-sm border ${
                               task.status === "completed"
                                 ? "bg-primary border-primary text-primary-foreground"
                                 : "border-muted-foreground hover:border-primary"
@@ -604,7 +601,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                             {task.title}
                           </span>
                           <span
-                            className={`text-xs px-2 py-0.5 ${
+                            className={`text-xs px-2 py-0.5 rounded-md ${
                               task.priority === "high"
                                 ? "bg-red-500/20 text-red-500"
                                 : task.priority === "medium"
@@ -630,11 +627,11 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               </div>
 
               {/* Time Entries */}
-              <div className="border border-border bg-card shadow-sm">
-                <div className="p-4 border-b border-border">
+              <div className="rounded-lg border border-border/60 bg-card/50">
+                <div className="p-4 border-b border-border/40">
                   <h2 className="font-semibold">Time Entries</h2>
                 </div>
-                <div className="p-4 border-b border-border">
+                <div className="p-4 border-b border-border/40">
                   <div className="grid gap-2 sm:grid-cols-2">
                     <Input
                       placeholder="Description..."
@@ -697,11 +694,11 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                       No time logged yet.
                     </p>
                   ) : (
-                    <ul className="space-y-2">
+                    <ul>
                       {timeEntries.map((entry) => (
                         <li
                           key={entry.id}
-                          className="border border-border"
+                          className="border-b border-border/40 last:border-b-0"
                         >
                           {editingTimeEntryId === entry.id ? (
                             <div className="p-2 space-y-2">
@@ -813,8 +810,8 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
             {/* Right Column */}
             <div className="space-y-6">
               {/* Budget Items */}
-              <div className="border border-border bg-card shadow-sm">
-                <div className="p-4 border-b border-border">
+              <div className="rounded-lg border border-border/60 bg-card/50">
+                <div className="p-4 border-b border-border/40">
                   <h2 className="font-semibold">Expenses</h2>
                   {project.hourly_rate ? (
                     <p className="text-xs text-muted-foreground mt-1">
@@ -823,7 +820,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                     </p>
                   ) : null}
                 </div>
-                <div className="p-4 border-b border-border">
+                <div className="p-4 border-b border-border/40">
                   <div className="grid gap-2 sm:grid-cols-2">
                     <Input
                       placeholder="Description..."
@@ -881,18 +878,18 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                       No expenses logged yet.
                     </p>
                   ) : (
-                    <ul className="space-y-2">
+                    <ul>
                       {budgetLineItems.map((item) => (
                         <li
                           key={item.id}
-                          className="flex items-center gap-3 p-2 border border-border"
+                          className="flex items-center gap-3 p-2 border-b border-border/40 last:border-b-0"
                         >
                           <CurrencyDollar className="size-4 text-muted-foreground" />
                           <span className="flex-1 text-sm">
                             {item.description}
                           </span>
                           {item.category && (
-                            <span className="text-xs bg-muted px-2 py-0.5">
+                            <span className="text-xs bg-muted px-2 py-0.5 rounded-md">
                               {item.category}
                             </span>
                           )}
@@ -927,11 +924,11 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               </div>
 
               {/* Files */}
-              <div className="border border-border bg-card shadow-sm">
-                <div className="p-4 border-b border-border">
+              <div className="rounded-lg border border-border/60 bg-card/50">
+                <div className="p-4 border-b border-border/40">
                   <h2 className="font-semibold">Files & Links</h2>
                 </div>
-                <div className="p-4 border-b border-border">
+                <div className="p-4 border-b border-border/40">
                   <div className="grid gap-2 sm:grid-cols-2">
                     <Input
                       placeholder="File name..."
@@ -976,11 +973,11 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                       No files added yet.
                     </p>
                   ) : (
-                    <ul className="space-y-2">
+                    <ul>
                       {files.map((file) => (
                         <li
                           key={file.id}
-                          className="flex items-center gap-3 p-2 border border-border"
+                          className="flex items-center gap-3 p-2 border-b border-border/40 last:border-b-0"
                         >
                           <File className="size-4 text-muted-foreground" />
                           <a
@@ -992,7 +989,7 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                             {file.name}
                           </a>
                           {file.type && (
-                            <span className="text-xs bg-muted px-2 py-0.5 uppercase">
+                            <span className="text-xs bg-muted px-2 py-0.5 rounded-md uppercase">
                               {file.type}
                             </span>
                           )}
@@ -1012,19 +1009,19 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
               </div>
 
               {/* Work Notes / Site Log */}
-              <div className="border border-border bg-card shadow-sm">
-                <div className="p-4 border-b border-border">
+              <div className="rounded-lg border border-border/60 bg-card/50">
+                <div className="p-4 border-b border-border/40">
                   <h2 className="font-semibold">Work Notes</h2>
                   <p className="text-xs text-muted-foreground mt-1">
                     Site log and project updates
                   </p>
                 </div>
-                <div className="p-4 border-b border-border">
+                <div className="p-4 border-b border-border/40">
                   <textarea
                     placeholder="Add a note..."
                     value={newNoteContent}
                     onChange={(e) => setNewNoteContent(e.target.value)}
-                    className="w-full min-h-[80px] px-3 py-2 text-sm border border-border bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
+                    className="w-full min-h-[80px] px-3 py-2 text-sm rounded-md border border-border/60 bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
                   />
                   <div className="flex justify-end mt-2">
                     <Button
@@ -1042,18 +1039,18 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
                       No notes yet. Add one to keep track of project updates.
                     </p>
                   ) : (
-                    <ul className="space-y-3">
+                    <ul>
                       {notes.map((note) => (
                         <li
                           key={note.id}
-                          className="border border-border"
+                          className="border-b border-border/40 last:border-b-0"
                         >
                           {editingNoteId === note.id ? (
                             <div className="p-3 space-y-2">
                               <textarea
                                 value={editingNoteContent}
                                 onChange={(e) => setEditingNoteContent(e.target.value)}
-                                className="w-full min-h-[80px] px-3 py-2 text-sm border border-border bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
+                                className="w-full min-h-[80px] px-3 py-2 text-sm rounded-md border border-border/60 bg-background resize-y focus:outline-none focus:ring-1 focus:ring-ring"
                               />
                               <div className="flex justify-end gap-1">
                                 <Button
@@ -1113,8 +1110,8 @@ export function PSKProjectView({ projectId }: PSKProjectViewProps) {
 
               {/* Project Notes (from project form) */}
               {project.notes && (
-                <div className="border border-border bg-card shadow-sm">
-                  <div className="p-4 border-b border-border">
+                <div className="rounded-lg border border-border/60 bg-card/50">
+                  <div className="p-4 border-b border-border/40">
                     <h2 className="font-semibold">Project Description</h2>
                   </div>
                   <div className="p-4">
