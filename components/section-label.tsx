@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type SectionVariant = "default" | "tools" | "wiki" | "pointstack" | "resources";
+type SectionVariant = "default" | "tools" | "wiki" | "pointstack" | "resources" | "atlas";
 
 interface SectionLabelProps {
   children: React.ReactNode;
@@ -13,6 +13,7 @@ const variantStyles: Record<SectionVariant, string> = {
   wiki: "text-blue-500 border-blue-500/30 dark:text-blue-400 dark:border-blue-400/30",
   pointstack: "text-emerald-500 border-emerald-500/30 dark:text-emerald-400 dark:border-emerald-400/30",
   resources: "text-violet-500 border-violet-500/30 dark:text-violet-400 dark:border-violet-400/30",
+  atlas: "text-amber-500 border-amber-500/30 dark:text-amber-400 dark:border-amber-400/30",
 };
 
 export function SectionLabel({ children, variant = "default" }: SectionLabelProps) {

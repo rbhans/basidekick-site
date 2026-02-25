@@ -19,6 +19,10 @@ import {
   ClockCounterClockwise,
   Wrench,
   Gauge,
+  GlobeHemisphereWest,
+  Database,
+  Broom,
+  Tag,
 } from "@phosphor-icons/react";
 import { getIcon } from "@/lib/icons";
 import { TOOLS_LIST, RESOURCES } from "@/lib/constants";
@@ -129,6 +133,92 @@ export function HomeView({
               <p className="text-xs md:text-sm text-muted-foreground font-mono uppercase tracking-wide">
                 Equipment Models
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Atlas Showcase Section */}
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center gap-3 mb-8">
+            <GlobeHemisphereWest className="size-6 text-amber-500 dark:text-amber-400" />
+            <SectionLabel variant="atlas">bas atlas</SectionLabel>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Left: Atlas pitch */}
+            <div className="space-y-4">
+              <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">
+                The unified reference for{" "}
+                <span className="gradient-text">BAS professionals</span>
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Browse standardized point definitions with Haystack and Brick mappings,
+                explore equipment from major manufacturers, and clean up messy point
+                names — all in one place.
+              </p>
+              <div className="flex flex-wrap gap-3 pt-2">
+                <Button size="sm" asChild>
+                  <Link href={ROUTES.ATLAS}>
+                    Explore Atlas
+                    <ArrowRight className="size-3 ml-2" />
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={ROUTES.ATLAS_EQUIPMENT}>
+                    Equipment Catalog
+                    <ArrowRight className="size-3 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Right: Feature cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="p-4 border border-border bg-card/80 space-y-2">
+                <div className="flex items-center gap-2 text-amber-500 dark:text-amber-400">
+                  <Translate className="size-4" />
+                  <span className="font-mono text-xs uppercase tracking-wide">Points</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {stats.termCount}+ standardized BAS point definitions with aliases,
+                  units, and typical ranges.
+                </p>
+              </div>
+              <div className="p-4 border border-border bg-card/80 space-y-2">
+                <div className="flex items-center gap-2 text-amber-500 dark:text-amber-400">
+                  <Database className="size-4" />
+                  <span className="font-mono text-xs uppercase tracking-wide">Equipment</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {stats.modelCount}+ equipment models across major manufacturers
+                  with protocol details.
+                </p>
+              </div>
+              <div className="p-4 border border-border bg-card/80 space-y-2">
+                <div className="flex items-center gap-2 text-amber-500 dark:text-amber-400">
+                  <Tag className="size-4" />
+                  <span className="font-mono text-xs uppercase tracking-wide">Standards</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Haystack and Brick mappings for every point — bridge naming
+                  conventions across standards.
+                </p>
+              </div>
+              <Link
+                href={ROUTES.ATLAS_CLEANER}
+                className="group p-4 border border-dashed border-amber-500/40 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500/60 transition-all space-y-2"
+              >
+                <div className="flex items-center gap-2 text-amber-500 dark:text-amber-400">
+                  <Broom className="size-4" />
+                  <span className="font-mono text-xs uppercase tracking-wide">Cleaner</span>
+                </div>
+                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  Got messy point names? Upload a file and match them to standardized
+                  definitions.
+                </p>
+              </Link>
             </div>
           </div>
         </div>
