@@ -210,7 +210,8 @@ export const TOOL_DETAILS: Record<string, ToolDetail> = {
     requirements: [
       { label: "Platform", value: "iOS & Android" },
       { label: "For live data", value: "Building network connection" },
-      { label: "Free tier", value: "5 equipment items" },
+      { label: "Scanning", value: "Free" },
+      { label: "Per station", value: "$8" },
     ],
     useCases: [
       "Scan a rooftop unit to check discharge temps and fan status",
@@ -226,10 +227,8 @@ export const TOOL_DETAILS: Record<string, ToolDetail> = {
       "Property managers",
     ],
     pricing: [
-      { name: "Free", limit: "5 items", price: "$0" },
-      { name: "Basic", limit: "50 items", price: "$3/month" },
-      { name: "Pro", limit: "100 items", price: "$5/month" },
-      { name: "Unlimited", limit: "Unlimited", price: "$10/month" },
+      { name: "Scan", limit: "Free to scan", price: "Free" },
+      { name: "Per Station", limit: "Full station management", price: "$8/station", highlighted: true },
     ],
   },
 };

@@ -202,7 +202,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
         <section className="py-12">
           <div className="container mx-auto px-4">
             <SectionLabel variant="tools">pricing</SectionLabel>
-            <p className="mt-2 text-sm text-muted-foreground">Free to scan and use. Upgrade for more equipment.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Free to scan. $8 per station for full management.</p>
 
             <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-3xl">
               {tool.pricing.map((tier) => (
