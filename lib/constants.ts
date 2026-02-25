@@ -24,7 +24,7 @@ export const VIEW_TITLES: Record<string, string> = {
   [VIEW_IDS.REFERENCES]: "References",
   [VIEW_IDS.WIKI]: "Wiki",
   [VIEW_IDS.POINTSTACK]: "PointStack",
-  [VIEW_IDS.PSK]: "ProjectSidekick",
+
   [VIEW_IDS.CALCULATORS]: "Calculators",
   [VIEW_IDS.ACCOUNT]: "Account",
   [VIEW_IDS.SIGNIN]: "Sign In",
@@ -44,7 +44,7 @@ export const VIEW_LOADING_TEXT: Record<string, string> = {
   [VIEW_IDS.REFERENCES]: "REFERENCES",
   [VIEW_IDS.WIKI]: "WIKI",
   [VIEW_IDS.POINTSTACK]: "POINTSTACK",
-  [VIEW_IDS.PSK]: "PROJECT_SIDEKICK",
+
   [VIEW_IDS.CALCULATORS]: "CALCULATORS",
   [VIEW_IDS.ACCOUNT]: "ACCOUNT",
   [VIEW_IDS.SIGNIN]: "SIGN_IN",
@@ -125,15 +125,7 @@ export const RESOURCES: Resource[] = [
     iconName: "Calculator",
     href: `/${VIEW_IDS.CALCULATORS}`,
   },
-  {
-    id: VIEW_IDS.PSK,
-    name: "ProjectSidekick",
-    shortName: "PSK",
-    tagline: "Project management for BAS",
-    description: "Track projects, clients, time, and budgets. Built for controls contractors.",
-    iconName: "Kanban",
-    href: `/${VIEW_IDS.PSK}`,
-  },
+
   {
     id: VIEW_IDS.REFERENCES,
     name: "References",
@@ -359,7 +351,7 @@ export const NAV_ITEMS: NavNode[] = [
       { id: VIEW_IDS.ATLAS, label: "BAS Atlas", iconName: "Gauge", colorVariant: "resources" },
       { id: "resources-rust", label: "Rust", iconName: "Cpu", colorVariant: "resources", href: ROUTES.RESOURCES_RUST },
       { id: VIEW_IDS.CALCULATORS, label: "Calculators", iconName: "Calculator", colorVariant: "resources" },
-      { id: VIEW_IDS.PSK, label: "ProjectSidekick", iconName: "Kanban", colorVariant: "resources" },
+
       { id: VIEW_IDS.REFERENCES, label: "References", iconName: "BookmarksSimple", colorVariant: "resources" },
       { id: VIEW_IDS.WIKI, label: "Wiki", iconName: "BookOpen", colorVariant: "wiki" },
     ],

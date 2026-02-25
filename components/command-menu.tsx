@@ -7,7 +7,7 @@ import {
   Wrench,
   BookOpen,
   Calculator,
-  Kanban,
+
   BookmarksSimple,
   User,
   Gauge,
@@ -39,7 +39,7 @@ const SEARCH_ITEMS: SearchItem[] = [
   { id: "atlas", title: "BAS Atlas", description: "Points and equipment reference", href: ROUTES.ATLAS, icon: <Gauge className="size-4" />, category: "Resources" },
   { id: "rust", title: "Rust", description: "Open source BAS crates", href: ROUTES.RESOURCES_RUST, icon: <Cpu className="size-4" />, category: "Resources" },
   { id: "calculators", title: "Calculators", description: "HVAC & electrical calculators", href: ROUTES.CALCULATORS, icon: <Calculator className="size-4" />, category: "Resources" },
-  { id: "psk", title: "ProjectSidekick", description: "Project management", href: ROUTES.PSK, icon: <Kanban className="size-4" />, category: "Resources" },
+
   { id: "references", title: "References", description: "Quick reference sheets", href: ROUTES.REFERENCES, icon: <BookmarksSimple className="size-4" />, category: "Resources" },
   { id: "account", title: "Account", description: "Manage your account", href: ROUTES.ACCOUNT, icon: <User className="size-4" />, category: "Account" },
 ];

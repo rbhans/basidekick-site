@@ -13,7 +13,6 @@ const toolsLinks = [
 const resourcesLinks = [
   { href: ROUTES.WIKI, label: "Wiki" },
   { href: ROUTES.RESOURCES_RUST, label: "Rust" },
-  { href: ROUTES.PSK, label: "PSK" },
 ];
 
 export function Footer() {
