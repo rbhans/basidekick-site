@@ -41,10 +41,6 @@ export const ROUTES = {
   SIGNUP: "/signup",
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/reset-password",
-  PSK: "/psk",
-  PSK_PROJECT: (id: string) => `/psk/projects/${encodeURIComponent(id)}`,
-  PSK_CLIENT: (id: string) => `/psk/clients/${encodeURIComponent(id)}`,
-  PSK_JOIN: (inviteCode: string) => `/psk/join/${encodeURIComponent(inviteCode)}`,
   // PointStack Community Platform
   POINTSTACK: "/pointstack",
   POINTSTACK_PROFILE: (username: string) => `/pointstack/people/@${encodeURIComponent(username)}`,
@@ -99,8 +95,6 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.SIGNIN;
     case VIEW_IDS.SIGNUP:
       return ROUTES.SIGNUP;
-    case VIEW_IDS.PSK:
-      return ROUTES.PSK;
     case VIEW_IDS.ADMIN:
       return ROUTES.ADMIN;
     default:
@@ -128,8 +122,6 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/account") return VIEW_IDS.ACCOUNT;
   if (pathname === "/signin") return VIEW_IDS.SIGNIN;
   if (pathname === "/signup") return VIEW_IDS.SIGNUP;
-  if (pathname === "/psk") return VIEW_IDS.PSK;
-  if (pathname.startsWith("/psk/")) return VIEW_IDS.PSK;
   if (pathname === "/admin") return VIEW_IDS.ADMIN;
 
   // Tool detail pages

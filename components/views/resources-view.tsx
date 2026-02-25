@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { SectionLabel } from "@/components/section-label";
 import { CircuitBackground } from "@/components/circuit-background";
-import { BookOpen, Kanban, ArrowRight, Gauge, Cpu } from "@phosphor-icons/react";
+import { BookOpen, ArrowRight, Gauge, Cpu } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 
 const resources = [
@@ -30,14 +30,6 @@ const resources = [
     icon: BookOpen,
     cta: "Browse Wiki",
     href: ROUTES.WIKI,
-  },
-  {
-    id: "psk",
-    title: "PSK",
-    description: "Free project management tool built for BAS projects. Track points, schedules, and commissioning progress.",
-    icon: Kanban,
-    cta: "Open PSK",
-    href: ROUTES.PSK,
   },
 ];
 
@@ -97,10 +89,6 @@ export function ResourcesView() {
             <div className="p-4 text-center">
               <p className="text-2xl font-mono font-semibold">1.2k</p>
               <p className="text-xs text-muted-foreground mt-1">PointStack Members</p>
-            </div>
-            <div className="p-4 text-center">
-              <p className="text-2xl font-mono font-semibold">50+</p>
-              <p className="text-xs text-muted-foreground mt-1">PSK Users</p>
             </div>
             <div className="p-4 text-center">
               <p className="text-2xl font-mono font-semibold">24hr</p>

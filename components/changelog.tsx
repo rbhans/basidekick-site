@@ -41,7 +41,6 @@ const CHANGELOG_ENTRIES: ChangelogEntry[] = [
     date: "Dec 2025",
     title: "Resources & Tools",
     items: [
-      "Added ProjectSidekick for project management",
       "Introduced BAS calculators and converters",
       "Added external resources section",
       "Improved site navigation",
