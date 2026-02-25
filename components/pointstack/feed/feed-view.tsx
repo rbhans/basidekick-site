@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { usePointStackStore } from "../pointstack-store";
@@ -8,9 +8,19 @@ import { FeedCard } from "./feed-card";
 import { FeedFilters } from "./feed-filters";
 import { CreatePostDialog } from "./create-post-dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
-import { PencilSimple, WarningCircle } from "@phosphor-icons/react";
+import {
+  PencilSimple,
+  WarningCircle,
+  MagnifyingGlass,
+  Chats,
+  Question,
+  Lightbulb,
+  Wrench,
+  UsersThree,
+} from "@phosphor-icons/react";
 
 export function PointStackFeedView() {
   const { user } = useAuth();
@@ -25,6 +35,7 @@ export function PointStackFeedView() {
     setFeedFilter,
   } = usePointStackStore();
 
+  const [searchQuery, setSearchQuery] = useState("");
   const { data: atlasData } = useAtlasData();
 
   const brandById = useMemo(() => new Map(atlasData?.brands.map((b) => [b.id, b]) || []), [atlasData]);
@@ -53,6 +64,30 @@ export function PointStackFeedView() {
     fetchFeed();
   }, [fetchFeed]);
 
+  const handleTagClick = useCallback(
+    (tag: string) => {
+      const currentTags = feedFilter.tags || [];
+      if (currentTags.includes(tag)) return;
+      setFeedFilter({
+        ...feedFilter,
+        tags: [...currentTags, tag],
+      });
+    },
+    [feedFilter, setFeedFilter]
+  );
+
+  // Client-side search filtering
+  const filteredPosts = useMemo(() => {
+    if (!searchQuery.trim()) return posts;
+    const q = searchQuery.toLowerCase();
+    return posts.filter(
+      (post) =>
+        post.title.toLowerCase().includes(q) ||
+        (post.content || "").toLowerCase().includes(q) ||
+        (post.tags || []).some((tag) => tag.toLowerCase().includes(q))
+    );
+  }, [posts, searchQuery]);
+
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6">
       {/* Create post prompt */}
@@ -60,16 +95,43 @@ export function PointStackFeedView() {
         <div className="mb-6">
           <CreatePostDialog
             trigger={
-              <button className="w-full flex items-center gap-3 p-4 border border-border rounded-lg bg-card hover:bg-muted/50 transition-colors text-left">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <button className="w-full flex items-center gap-3 p-4 border border-border rounded-lg bg-card hover:bg-muted/50 transition-colors text-left group">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
                   <PencilSimple className="w-5 h-5 text-primary" />
                 </div>
-                <span className="text-muted-foreground">Share something with the community...</span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-muted-foreground block">Share something with the community...</span>
+                  <div className="flex items-center gap-3 mt-1.5">
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60">
+                      <Chats className="w-3 h-3" /> Discussion
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60">
+                      <Question className="w-3 h-3" /> Question
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60">
+                      <Lightbulb className="w-3 h-3" /> Tip
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60 hidden sm:inline-flex">
+                      <Wrench className="w-3 h-3" /> Project
+                    </span>
+                  </div>
+                </div>
               </button>
             }
           />
         </div>
       )}
+
+      {/* Search */}
+      <div className="relative mb-4">
+        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search posts by title, content, or tag..."
+          className="pl-9 h-9"
+        />
+      </div>
 
       {/* Filters */}
       <FeedFilters
@@ -102,19 +164,20 @@ export function PointStackFeedView() {
       )}
 
       {/* Feed */}
-      {posts.length > 0 && (
+      {filteredPosts.length > 0 && (
         <div className="space-y-4">
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <FeedCard
               key={post.id}
               post={post}
               equipmentLinks={getEquipmentLinks(post.equipment_ids || [])}
+              onTagClick={handleTagClick}
             />
           ))}
 
           {/* Load more */}
           {hasMorePosts && (
-            <div className="flex justify-center pt-4">
+            <div className="flex flex-col items-center gap-2 pt-4">
               <Button
                 variant="outline"
                 onClick={loadMorePosts}
@@ -122,23 +185,63 @@ export function PointStackFeedView() {
               >
                 {feedLoading ? "Loading..." : "Load More"}
               </Button>
+              {searchQuery.trim() && (
+                <p className="text-xs text-muted-foreground">
+                  Search filters loaded posts only. Load more to expand results.
+                </p>
+              )}
             </div>
           )}
         </div>
       )}
 
-      {/* Empty state */}
-      {!feedLoading && posts.length === 0 && !feedError && (
+      {/* Search empty state */}
+      {!feedLoading && searchQuery.trim() && filteredPosts.length === 0 && posts.length > 0 && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">
-            No posts yet. Be the first to share something!
+          <MagnifyingGlass className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+          <p className="text-muted-foreground mb-2">
+            No matches for &ldquo;{searchQuery}&rdquo; in loaded posts
+          </p>
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSearchQuery("")}
+            >
+              Clear search
+            </Button>
+            {hasMorePosts && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadMorePosts}
+                disabled={feedLoading}
+              >
+                {feedLoading ? "Loading..." : "Load more posts"}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!feedLoading && posts.length === 0 && !feedError && !searchQuery.trim() && (
+        <div className="text-center py-16 px-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+            <UsersThree className="w-8 h-8 text-primary" />
+          </div>
+          <h3 className="text-lg font-semibold mb-2">Welcome to the Community</h3>
+          <p className="text-muted-foreground max-w-md mx-auto mb-6 leading-relaxed">
+            This is where BAS professionals share knowledge, ask questions,
+            showcase projects, and connect with each other. Start a conversation
+            to get things going.
           </p>
           {user && (
             <CreatePostDialog
               trigger={
-                <Button>
+                <Button size="lg">
                   <PencilSimple className="w-4 h-4 mr-2" />
-                  Create Post
+                  Create the first post
                 </Button>
               }
             />
