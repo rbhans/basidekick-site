@@ -5,7 +5,8 @@ import { SiteBadge } from "@/components/site-badge";
 import { ResourceCard } from "@/components/resource-card";
 import { WikiCarousel } from "@/components/wiki-carousel";
 import { RotatingAtlasCard } from "@/components/rotating-atlas-card";
-import { CircuitBackground } from "@/components/circuit-background";
+import { HeroBackground } from "@/components/hero-background";
+import { HeroMarks } from "@/components/hero-marks";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -52,9 +53,10 @@ export function HomeView({
 }: HomeViewProps) {
   return (
     <div className="min-h-full">
-      {/* Hero Section — dark bg with circuit animation */}
+      {/* Hero Section — cycling BAS images fading into black, circuit dots, and marks */}
       <section className="relative py-24 md:py-32 overflow-hidden">
-        <CircuitBackground opacity={0.08} />
+        <HeroBackground />
+        <HeroMarks count={50} seed={42} />
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
           <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
