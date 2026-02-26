@@ -17,7 +17,7 @@ export function ToolsView() {
   return (
     <div className="min-h-full">
       {/* Hero */}
-            <PageHero>
+            <PageHero imageSrc="/images/hero/tools.png">
           <SiteBadge label="TOOLS" />
           <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
             Built for BAS Professionals

@@ -818,7 +818,7 @@ export function CalculatorsView() {
   return (
     <div className="min-h-full">
       {/* Header */}
-            <PageHero>
+            <PageHero imageSrc="/images/hero/resources.png">
           <SiteBadge label="RESOURCES" />
           <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
             BAS Calculators

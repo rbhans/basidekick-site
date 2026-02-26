@@ -190,7 +190,7 @@ export function WikiView() {
   return (
       <div className="min-h-full">
         {/* Hero */}
-                <PageHero centered>
+                <PageHero centered imageSrc="/images/hero/wiki.png">
             <div className="flex justify-center">
               <SiteBadge label="WIKI" icon={BookOpen} />
             </div>
