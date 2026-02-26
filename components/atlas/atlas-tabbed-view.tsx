@@ -40,7 +40,7 @@ export function AtlasTabbedView() {
   return (
     <div className="min-h-full">
       {/* Hero */}
-      <PageHero centered>
+      <PageHero centered imageSrc="/images/hero/resources.png">
         <div className="flex justify-center">
           <SiteBadge label="RESOURCES" icon={BookOpen} />
         </div>

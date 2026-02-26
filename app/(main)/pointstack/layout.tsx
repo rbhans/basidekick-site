@@ -14,6 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
 import { usePointStackStore } from "@/components/pointstack/pointstack-store";
+import { PageHero } from "@/components/page-hero";
 
 const NAV_ITEMS = [
   { href: "/pointstack", label: "Feed", icon: House, exact: true },
@@ -50,12 +51,15 @@ export default function PointStackLayout({
 
   return (
     <div className="min-h-full flex flex-col">
-      {/* Header */}
-      <div className="py-10">
-        <h1 className="text-[42px] font-heading font-bold text-center">
+      {/* Hero */}
+      <PageHero centered imageSrc="/images/hero/pointstack.png">
+        <h1 className="text-3xl md:text-[42px] font-heading font-bold tracking-tight">
           PointStack
         </h1>
-      </div>
+        <p className="mt-3 text-muted-foreground max-w-[600px] mx-auto text-lg">
+          Connect with BAS professionals, share projects, find work, and grow your network.
+        </p>
+      </PageHero>
 
       {/* Horizontal Nav */}
       <nav className="border-b border-border sticky top-[64px] z-10 bg-background">
