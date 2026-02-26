@@ -45,12 +45,12 @@ export function PointStackCompaniesView() {
   }, [fetchCompanies]);
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6">
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold mb-2">Companies</h1>
-          <p className="text-muted-foreground">
-            Discover BAS companies and organizations in the community.
+          <h2 className="text-xl font-heading font-bold">Companies</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Discover BAS companies and organizations.
           </p>
         </div>
         {user && (
@@ -102,7 +102,7 @@ export function PointStackCompaniesView() {
             <Link
               key={company.id}
               href={ROUTES.POINTSTACK_COMPANY(company.slug)}
-              className="block p-4 border border-border rounded-lg hover:border-primary/30 transition-colors"
+              className="block p-4 border border-border/50 rounded-xl bg-card hover:border-primary/20 transition-colors"
             >
               <div className="flex items-start gap-3 mb-3">
                 {company.logo_url ? (

@@ -34,11 +34,11 @@ export function PointStackPeopleView() {
   }, [search]);
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6">
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">People</h1>
-        <p className="text-muted-foreground">
-          Discover and connect with BAS professionals in the community.
+        <h2 className="text-xl font-heading font-bold">People</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Discover and connect with BAS professionals.
         </p>
       </div>
 
@@ -87,7 +87,7 @@ function PersonCard({ profile }: { profile: PointStackProfile }) {
   return (
     <Link
       href={ROUTES.POINTSTACK_PROFILE(profile.display_name || profile.id)}
-      className="block p-4 border border-border rounded-lg hover:border-primary/30 transition-colors"
+      className="block p-4 border border-border/50 rounded-xl bg-card hover:border-primary/20 transition-colors"
     >
       <div className="flex items-start gap-3">
         <UserAvatar
@@ -141,7 +141,7 @@ function PersonCard({ profile }: { profile: PointStackProfile }) {
 
 function PersonCardSkeleton() {
   return (
-    <div className="p-4 border border-border rounded-lg">
+    <div className="p-4 border border-border/50 rounded-xl bg-card">
       <div className="flex items-start gap-3">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="flex-1">

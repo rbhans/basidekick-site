@@ -48,12 +48,12 @@ export function PointStackQuestionsView() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold mb-2">Questions & Answers</h1>
-          <p className="text-muted-foreground">
-            Ask questions and get answers from the BAS community.
+          <h2 className="text-xl font-heading font-bold">Questions & Answers</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Ask questions and get answers from the community.
           </p>
         </div>
         {user && (
@@ -131,7 +131,7 @@ export function PointStackQuestionsView() {
               <Link
                 key={question.id}
                 href={getPointStackPostRoute(question.post_type, question.slug)}
-                className="block p-5 border border-border rounded-lg hover:border-primary/30 transition-colors"
+                className="block p-5 border border-border/50 rounded-xl bg-card hover:border-primary/20 transition-colors"
               >
                 <div className="flex gap-4">
                   {/* Stats */}

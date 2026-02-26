@@ -13,17 +13,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import dynamic from "next/dynamic";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { NotificationBell } from "@/components/pointstack/notifications/notification-bell";
 import { HeaderSearch } from "./header-search";
 import { ROUTES } from "@/lib/routes";
-
-const MessengerTrigger = dynamic(
-  () => import("@/components/pointstack/messenger").then((mod) => mod.MessengerTrigger),
-  { ssr: false }
-);
 
 const NAV_LINKS = [
   { href: ROUTES.TOOLS, label: "Tools" },
@@ -73,43 +67,38 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 h-[72px] px-4 sm:px-6 lg:px-20 border-b border-border bg-background/95 backdrop-blur-sm flex items-center justify-between">
-        {/* Left: Logo + Nav */}
-        <div className="flex items-center gap-8">
-          <Link href="/" className="font-heading text-[20px] font-bold text-foreground hover:text-primary transition-colors">
+      <header className="sticky top-0 z-50 h-[64px] px-4 sm:px-6 lg:px-10 border-b border-border/50 bg-background/90 backdrop-blur-md flex items-center">
+        {/* Left: Logo */}
+        <div className="flex items-center shrink-0">
+          <Link href="/" className="font-heading text-[18px] font-bold text-foreground hover:text-primary transition-colors">
             [BASidekick]
           </Link>
-
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-[15px] font-semibold transition-colors ${
-                  isActive(link.href)
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
         </div>
 
+        {/* Center: Nav links */}
+        <nav className="hidden md:flex items-center justify-center gap-1 flex-1 mx-8">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`px-4 py-2 rounded-lg text-[14px] font-medium transition-colors ${
+                isActive(link.href)
+                  ? "text-primary bg-primary/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
         {/* Right: Search + Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0 ml-auto md:ml-0">
           <div className="hidden sm:block">
             <HeaderSearch />
           </div>
 
-          {user && (
-            <>
-              <MessengerTrigger />
-              <NotificationBell />
-            </>
-          )}
+          {user && <NotificationBell />}
 
           <Button
             variant="ghost"
@@ -184,7 +173,7 @@ export function Navbar() {
         <>
           <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setMobileOpen(false)} />
           <div className="fixed top-0 right-0 bottom-0 z-50 w-[280px] bg-background border-l border-border flex flex-col">
-            <div className="h-[72px] px-4 flex items-center justify-between border-b border-border">
+            <div className="h-[64px] px-4 flex items-center justify-between border-b border-border">
               <span className="font-heading text-lg font-bold">Menu</span>
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(false)} aria-label="Close menu">
                 <X className="w-5 h-5" />

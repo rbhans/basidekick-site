@@ -5,6 +5,7 @@ import { WikiCategory, WikiTag } from "@/lib/types";
 import { getIcon } from "@/lib/icons";
 import { ROUTES } from "@/lib/routes";
 import { BookOpen, Tag, CaretRight, House } from "@phosphor-icons/react";
+import { cn } from "@/lib/utils";
 
 interface WikiSidebarProps {
   categories: WikiCategory[];
@@ -27,14 +28,17 @@ export function WikiSidebar({
       <div key={cat.id}>
         <button
           onClick={() => onCategorySelect(cat)}
-          className={`w-full text-left px-4 py-2 rounded-lg text-[13px] flex items-center gap-2 transition-colors ${
-            isSelected ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground"
-          }`}
-          style={{ paddingLeft: `${16 + depth * 16}px` }}
+          className={cn(
+            "w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors",
+            isSelected
+              ? "bg-primary/10 text-primary"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          )}
+          style={{ paddingLeft: `${12 + depth * 16}px` }}
         >
           <span className="size-4 flex items-center justify-center shrink-0">
             {cat.icon_name ? (
-              getIcon(cat.icon_name, "size-3.5 text-muted-foreground")
+              getIcon(cat.icon_name, "size-3.5")
             ) : (
               <BookOpen className="size-3.5" />
             )}
@@ -55,40 +59,43 @@ export function WikiSidebar({
   };
 
   return (
-    <aside className="w-full lg:w-[240px] shrink-0">
-      <div className="bg-card border border-border rounded-xl p-6">
+    <aside className="w-full lg:w-56 shrink-0">
+      <div className="sticky top-20 space-y-6">
         {/* All Articles */}
         <button
           onClick={() => onCategorySelect(null)}
-          className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold mb-4 transition-colors ${
+          className={cn(
+            "w-full text-left px-3 py-2 text-sm font-medium rounded-lg transition-colors",
             selectedCategoryId === null
-              ? "bg-primary text-primary-foreground"
-              : "text-muted-foreground hover:bg-muted"
-          }`}
+              ? "bg-primary/10 text-primary"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          )}
         >
           All Articles
         </button>
 
         {/* Categories */}
-        <div className="mb-6">
-          <h4 className="font-mono text-[11px] font-bold text-muted-foreground tracking-[2px] uppercase px-4 mb-3">
-            CATEGORIES
-          </h4>
-          {categories.map((cat) => renderCategory(cat))}
+        <div>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-3">
+            Categories
+          </h3>
+          <div className="space-y-0.5">
+            {categories.map((cat) => renderCategory(cat))}
+          </div>
         </div>
 
         {/* Popular Tags */}
         {popularTags.length > 0 && (
           <div>
-            <h4 className="font-mono text-[11px] font-bold text-muted-foreground tracking-[2px] uppercase px-4 mb-3">
-              POPULAR TAGS
-            </h4>
-            <div className="flex flex-wrap gap-2 px-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-3">
+              Popular Tags
+            </h3>
+            <div className="flex flex-wrap gap-1.5 px-3">
               {popularTags.map((tag) => (
                 <Link
                   key={tag.id}
                   href={ROUTES.WIKI_TAG(tag.slug)}
-                  className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-muted-foreground hover:text-foreground transition-colors"
+                  className="px-2.5 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors"
                 >
                   {tag.name}
                 </Link>

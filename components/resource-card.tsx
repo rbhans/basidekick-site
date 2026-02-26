@@ -15,7 +15,7 @@ export function ResourceCard({ title, description, href, icon, className }: Reso
     <Link
       href={href}
       className={cn(
-        "group block bg-secondary border border-border rounded-xl p-6 hover:border-[#3F3F46] transition-all",
+        "group block bg-card border border-border rounded-xl p-6 hover:border-primary/30 transition-all",
         className
       )}
     >

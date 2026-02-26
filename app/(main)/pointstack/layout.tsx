@@ -50,40 +50,46 @@ export default function PointStackLayout({
 
   return (
     <div className="min-h-full flex flex-col">
+      {/* Hero Banner */}
+      <div className="border-b border-border/30 bg-card/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+          <h1 className="text-2xl md:text-3xl font-heading font-bold tracking-tight">
+            Point<span className="text-primary">Stack</span>
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Connect, share, and grow with the BAS community.
+          </p>
+        </div>
+      </div>
+
       {/* Sub-navigation */}
-      <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-[72px] z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center py-2">
-            {/* Main navigation */}
-            <div className="relative flex-1 min-w-0">
-              <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide justify-start sm:justify-center">
-                {NAV_ITEMS.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActive(item.href, item.exact);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg whitespace-nowrap transition-colors",
-                        active
-                          ? "text-primary bg-primary/10"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                      )}
-                    >
-                      <Icon className="w-4 h-4" weight={active ? "fill" : "regular"} />
-                      <span className="hidden sm:inline">{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-              {/* Fade gradient on right edge for mobile scroll hint */}
-              <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-card/50 to-transparent pointer-events-none sm:hidden" />
-            </div>
+      <nav className="border-b border-border/50 bg-background/90 backdrop-blur-md sticky top-[64px] z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center gap-1 py-1.5 overflow-x-auto scrollbar-hide">
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href, item.exact);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors",
+                    active
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  <Icon className="w-4 h-4" weight={active ? "fill" : "regular"} />
+                  <span className="hidden sm:inline">{item.label}</span>
+                </Link>
+              );
+            })}
 
             {/* User-specific navigation */}
             {user && (
-              <div className="flex items-center gap-1 border-l border-border pl-2 ml-2 shrink-0">
+              <>
+                <div className="w-px h-5 bg-border/50 mx-1 shrink-0" />
                 {USER_NAV_ITEMS.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.href);
@@ -93,29 +99,24 @@ export default function PointStackLayout({
                       key={item.href}
                       href={item.href}
                       className={cn(
-                        "relative flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg whitespace-nowrap transition-colors",
+                        "relative flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors",
                         active
                           ? "text-primary bg-primary/10"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                       )}
                       aria-label={item.label}
                     >
                       <Icon className="w-4 h-4" weight={active ? "fill" : "regular"} />
                       <span className="hidden md:inline">{item.label}</span>
                       {count > 0 && (
-                        <span
-                          className={cn(
-                            "absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-bold leading-none px-1",
-                            "bg-destructive text-destructive-foreground"
-                          )}
-                        >
+                        <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 text-[10px] font-bold bg-destructive text-white rounded-full flex items-center justify-center">
                           {count > 99 ? "99+" : count}
                         </span>
                       )}
                     </Link>
                   );
                 })}
-              </div>
+              </>
             )}
           </div>
         </div>

@@ -70,10 +70,10 @@ export function PointStackResourcesView() {
   }, [loadResources]);
 
   return (
-    <div className="max-w-5xl mx-auto p-4 md:p-6">
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold mb-2">Resource Library</h1>
+          <h2 className="text-xl font-heading font-bold">Resource Library</h2>
           <p className="text-muted-foreground">
             Download templates, scripts, and resources shared by the community.
           </p>
@@ -128,7 +128,7 @@ export function PointStackResourcesView() {
               <Link
                 key={resource.id}
                 href={ROUTES.POINTSTACK_RESOURCE(resource.slug)}
-                className="block p-5 border border-border rounded-lg hover:border-primary/30 transition-colors"
+                className="block p-5 border border-border/50 rounded-xl bg-card hover:border-primary/20 transition-colors"
               >
                 {/* Preview image or icon */}
                 {resource.preview_images && resource.preview_images.length > 0 ? (

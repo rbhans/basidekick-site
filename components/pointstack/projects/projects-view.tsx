@@ -62,12 +62,12 @@ export function PointStackProjectsView() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-6">
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold mb-2">Project Showcase</h1>
-          <p className="text-muted-foreground">
-            Explore BAS projects from professionals in the community.
+          <h2 className="text-xl font-heading font-bold">Project Showcase</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            Explore BAS projects from the community.
           </p>
         </div>
         {user && (
@@ -113,7 +113,7 @@ export function PointStackProjectsView() {
             <Link
               key={project.id}
               href={getPointStackPostRoute(project.post_type, project.slug)}
-              className="group block border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-colors"
+              className="group block border border-border/50 rounded-xl overflow-hidden bg-card hover:border-primary/20 transition-colors"
             >
               {/* Cover image */}
               <div className="aspect-video bg-muted relative overflow-hidden">
