@@ -198,7 +198,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
       {/* Profile header */}
-      <div className="border border-border/30 rounded-xl bg-card/90 p-6 mb-6">
+      <div className="border border-border rounded-xl bg-card p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Avatar */}
           <UserAvatar

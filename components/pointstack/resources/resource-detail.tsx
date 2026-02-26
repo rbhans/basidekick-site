@@ -102,7 +102,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         </div>
       )}
 
-      <div className="border border-border/30 rounded-xl bg-card/90 p-6">
+      <div className="border border-border rounded-xl bg-card p-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>

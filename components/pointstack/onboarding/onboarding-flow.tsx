@@ -185,7 +185,7 @@ export function PointStackOnboardingView() {
         })}
       </div>
 
-      <div className="rounded-xl border border-border/30 bg-card/90 p-6">
+      <div className="rounded-xl border border-border bg-card p-6">
         <Form {...form}>
           <form className="space-y-6" onSubmit={(event) => event.preventDefault()}>
             {currentStep === 1 && (

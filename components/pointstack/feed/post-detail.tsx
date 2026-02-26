@@ -127,7 +127,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
       </Link>
 
       {/* Post */}
-      <article className="border border-border/30 rounded-xl bg-card/90 p-6 mb-6">
+      <article className="border border-border rounded-xl bg-card p-6 mb-6">
         {/* Header */}
         <div className="flex items-start gap-3 mb-4">
           <VoteButton
@@ -228,7 +228,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
         )}
 
         {/* Stats */}
-        <div className="flex items-center gap-4 pt-4 mt-2 -mx-6 -mb-6 px-6 pb-5 rounded-b-xl bg-muted/15 border-t border-border/30 text-sm text-muted-foreground">
+        <div className="flex items-center gap-4 pt-4 mt-2 -mx-6 -mb-6 px-6 pb-5 rounded-b-xl border-t border-border text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Eye className="w-4 h-4" />
             <span>{post.view_count} views</span>
@@ -265,7 +265,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
               <div
                 key={comment.id}
                 className={cn(
-                  "border border-border/30 rounded-xl bg-card/80 p-4",
+                  "border border-border rounded-xl bg-card p-4",
                   comment.is_accepted && "border-green-500/50 bg-green-500/5"
                 )}
               >

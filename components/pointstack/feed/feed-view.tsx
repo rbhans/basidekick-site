@@ -95,9 +95,9 @@ export function PointStackFeedView() {
         <div className="mb-6">
           <CreatePostDialog
             trigger={
-              <button className="w-full flex items-center gap-3 p-4 border border-primary/20 rounded-xl bg-primary/5 hover:bg-primary/10 hover:border-primary/30 transition-all text-left group">
-                <div className="h-10 w-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/25 transition-colors">
-                  <PencilSimple className="w-5 h-5 text-primary" />
+              <button className="w-full flex items-center gap-3 p-4 border border-border rounded-xl bg-card hover:bg-muted/50 transition-colors text-left group">
+                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center shrink-0 group-hover:bg-muted/80 transition-colors">
+                  <PencilSimple className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <span className="text-muted-foreground block">Share something with the community...</span>
@@ -122,27 +122,27 @@ export function PointStackFeedView() {
         </div>
       )}
 
-      {/* Search */}
-      <div className="relative mb-4">
-        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search posts by title, content, or tag..."
-          className="pl-9 h-9"
-        />
-      </div>
-
       {/* Filters */}
       <FeedFilters
         currentFilter={feedFilter}
         onFilterChange={setFeedFilter}
-        className="mb-6"
+        className="mb-4"
       />
+
+      {/* Search */}
+      <div className="relative mb-6">
+        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search posts, topics, or tags..."
+          className="pl-9 h-9"
+        />
+      </div>
 
       {/* Error state */}
       {feedError && (
-        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/30 rounded-xl bg-card/90 text-center">
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-xl bg-card text-center">
           <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
             <p className="font-medium mb-1">Something went wrong</p>
@@ -254,7 +254,7 @@ export function PointStackFeedView() {
 
 function FeedCardSkeleton() {
   return (
-    <div className="p-5 border-l-2 border-l-muted/40 border border-border/30 rounded-xl bg-card/80">
+    <div className="p-5 border border-border rounded-xl bg-card">
       <div className="flex items-start gap-3 mb-3">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="flex-1">

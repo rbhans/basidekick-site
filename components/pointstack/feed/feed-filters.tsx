@@ -21,7 +21,6 @@ const TYPE_FILTERS: { value: PointStackPostType | undefined; label: string }[] =
 ];
 
 const SORT_FILTERS: { value: "recent" | "popular" | "unanswered" | undefined; label: string }[] = [
-  { value: "recent", label: "Recent" },
   { value: "popular", label: "Popular" },
   { value: "unanswered", label: "Unanswered" },
 ];
@@ -44,36 +43,29 @@ export function FeedFilters({ currentFilter, onFilterChange, className }: FeedFi
 
   return (
     <div className={cn("space-y-3", className)}>
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Type filters */}
-        <div className="flex items-center gap-1 mr-4">
-          {TYPE_FILTERS.map((filter) => (
-            <Button
-              key={filter.label}
-              variant={currentFilter.type === filter.value ? "default" : "ghost"}
-              size="sm"
-              onClick={() => onFilterChange({ ...currentFilter, type: filter.value })}
-              className="h-8"
-            >
-              {filter.label}
-            </Button>
-          ))}
-        </div>
-
-        {/* Sort filters */}
-        <div className="flex items-center gap-1 border-l border-border/50 pl-4">
-          {SORT_FILTERS.map((filter) => (
-            <Button
-              key={filter.label}
-              variant={currentFilter.sortBy === filter.value ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => onFilterChange({ ...currentFilter, sortBy: filter.value })}
-              className="h-8"
-            >
-              {filter.label}
-            </Button>
-          ))}
-        </div>
+      <div className="flex flex-wrap items-center gap-1">
+        {TYPE_FILTERS.map((filter) => (
+          <Button
+            key={filter.label}
+            variant={currentFilter.type === filter.value ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onFilterChange({ ...currentFilter, type: filter.value })}
+            className="h-8"
+          >
+            {filter.label}
+          </Button>
+        ))}
+        {SORT_FILTERS.map((filter) => (
+          <Button
+            key={filter.label}
+            variant={currentFilter.sortBy === filter.value ? "default" : "ghost"}
+            size="sm"
+            onClick={() => onFilterChange({ ...currentFilter, sortBy: filter.value })}
+            className="h-8"
+          >
+            {filter.label}
+          </Button>
+        ))}
       </div>
 
       {/* Active tag filters */}
