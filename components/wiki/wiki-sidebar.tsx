@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { WikiCategory, WikiTag } from "@/lib/types";
-import { getIcon } from "@/lib/icons";
 import { ROUTES } from "@/lib/routes";
-import { BookOpen, Tag, CaretRight, House } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+import { getWikiCategoryColor } from "@/lib/wiki-colors";
 
 interface WikiSidebarProps {
   categories: WikiCategory[];
@@ -20,44 +19,6 @@ export function WikiSidebar({
   selectedCategoryId,
   onCategorySelect,
 }: WikiSidebarProps) {
-  const renderCategory = (cat: WikiCategory, depth = 0) => {
-    const isSelected = selectedCategoryId === cat.id;
-    const hasChildren = cat.children && cat.children.length > 0;
-
-    return (
-      <div key={cat.id}>
-        <button
-          onClick={() => onCategorySelect(cat)}
-          className={cn(
-            "w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors",
-            isSelected
-              ? "bg-primary/10 text-primary"
-              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-          )}
-          style={{ paddingLeft: `${12 + depth * 16}px` }}
-        >
-          <span className="size-4 flex items-center justify-center shrink-0">
-            {cat.icon_name ? (
-              getIcon(cat.icon_name, "size-3.5")
-            ) : (
-              <BookOpen className="size-3.5" />
-            )}
-          </span>
-          <span className="flex-1 truncate">{cat.name}</span>
-          {hasChildren && <CaretRight className="size-3 text-muted-foreground" />}
-        </button>
-
-        {hasChildren && (
-          <div>
-            {cat.children!
-              .sort((a, b) => a.display_order - b.display_order)
-              .map((child) => renderCategory(child, depth + 1))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <aside className="w-full lg:w-56 shrink-0">
       <div className="sticky top-20 space-y-6">
@@ -80,7 +41,29 @@ export function WikiSidebar({
             Categories
           </h3>
           <div className="space-y-0.5">
-            {categories.map((cat) => renderCategory(cat))}
+            {categories.map((cat) => {
+              const isSelected = selectedCategoryId === cat.id;
+              const color = getWikiCategoryColor(cat.name);
+
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => onCategorySelect(cat)}
+                  className={cn(
+                    "w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors",
+                    isSelected
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  )}
+                >
+                  <span
+                    className="size-2 rounded-full shrink-0"
+                    style={{ backgroundColor: color }}
+                  />
+                  <span className="flex-1 truncate">{cat.name}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
