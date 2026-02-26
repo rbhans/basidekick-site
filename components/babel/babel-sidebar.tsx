@@ -58,12 +58,12 @@ export function BabelSidebar({
 
   return (
     <aside className="w-full lg:w-56 shrink-0">
-      <div className="sticky top-4 space-y-6">
+      <div className="sticky top-20 space-y-6">
         {/* All entries */}
         <button
           onClick={() => onCategorySelect(null)}
           className={cn(
-            "w-full text-left px-3 py-2 text-sm font-medium rounded transition-colors",
+            "w-full text-left px-3 py-2 text-sm font-medium rounded-lg transition-colors",
             selectedCategory === null
               ? "bg-primary/10 text-primary"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -86,7 +86,7 @@ export function BabelSidebar({
                     <button
                       onClick={() => onCategorySelect(category.id)}
                       className={cn(
-                        "w-full flex items-center gap-2 px-3 py-2 text-sm rounded transition-colors",
+                        "w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors",
                         selectedCategory === category.id
                           ? "bg-primary/10 text-primary"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -117,7 +117,7 @@ export function BabelSidebar({
                     <button
                       onClick={() => onCategorySelect(category.id)}
                       className={cn(
-                        "w-full flex items-center gap-2 px-3 py-2 text-sm rounded transition-colors",
+                        "w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors",
                         selectedCategory === category.id
                           ? "bg-primary/10 text-primary"
                           : "text-muted-foreground hover:text-foreground hover:bg-muted/50"

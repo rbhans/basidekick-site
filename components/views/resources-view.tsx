@@ -10,7 +10,6 @@ import {
   BookmarksSimple,
   UsersThree,
   Broom,
-  Wrench,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 import { PageHero } from "@/components/page-hero";
@@ -58,12 +57,6 @@ const resources = [
     href: ROUTES.ATLAS_CLEANER,
     icon: <Broom className="w-5 h-5 text-primary" />,
   },
-  {
-    title: "Tools",
-    description: "Professional software tools for building automation simulation and QR tracking.",
-    href: ROUTES.TOOLS,
-    icon: <Wrench className="w-5 h-5 text-primary" />,
-  },
 ];
 
 export function ResourcesView() {
@@ -76,7 +69,7 @@ export function ResourcesView() {
             Free Resources
           </h1>
           <p className="mt-3 text-muted-foreground max-w-xl">
-            Knowledge base, tools, and references to help BAS professionals succeed.
+            Knowledge base and references to help BAS professionals succeed.
           </p>
       </PageHero>
 
@@ -86,7 +79,7 @@ export function ResourcesView() {
           <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-6">
             ALL RESOURCES ({resources.length})
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {resources.map((resource) => (
               <ResourceCard
                 key={resource.title}

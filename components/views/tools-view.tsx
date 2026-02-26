@@ -100,7 +100,7 @@ export function ToolsView() {
 
       {/* QR Sidekick Section */}
       {qsk && (
-        <section className="py-16 bg-secondary border-t border-border" id="qsk">
+        <section className="py-16" id="qsk">
           <div className="container mx-auto px-4 sm:px-6 lg:px-20">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Left: Description */}

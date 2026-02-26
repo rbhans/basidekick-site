@@ -5,6 +5,7 @@ import { SiteBadge } from "@/components/site-badge";
 import { ResourceCard } from "@/components/resource-card";
 import { WikiCarousel } from "@/components/wiki-carousel";
 import { RotatingAtlasCard } from "@/components/rotating-atlas-card";
+import { CircuitBackground } from "@/components/circuit-background";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -51,13 +52,9 @@ export function HomeView({
 }: HomeViewProps) {
   return (
     <div className="min-h-full">
-      {/* Hero Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
-        {/* Gradient background overlays */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.05] gradient-glow" />
-          <div className="absolute bottom-[-150px] right-[-100px] w-[400px] h-[400px] rounded-full opacity-[0.03] gradient-glow" />
-        </div>
+      {/* Hero Section — dark bg with circuit animation */}
+      <section className="relative py-24 md:py-32 overflow-hidden">
+        <CircuitBackground opacity={0.08} />
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
           <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
@@ -65,11 +62,11 @@ export function HomeView({
               Tools, community, and{" "}
               <span className="gradient-text">knowledge</span>.
             </h1>
-            <p className="mt-4 text-lg md:text-[20px] text-muted-foreground max-w-2xl mx-auto">
+            <p className="mt-5 text-lg md:text-[20px] text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Assistive tools, shared knowledge, and a community for BAS
               professionals.
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8 rounded-lg">
                 <Link href={ROUTES.TOOLS}>
                   Get Started
@@ -86,7 +83,7 @@ export function HomeView({
 
           {/* Stats Bar */}
           <div className="mt-16 max-w-2xl mx-auto">
-            <div className="grid grid-cols-3 gap-4 p-6 bg-card/50 border border-border rounded-xl backdrop-blur-sm">
+            <div className="grid grid-cols-3 gap-4 p-6 bg-card/60 border border-border/50 rounded-xl backdrop-blur-sm">
               <div className="text-center">
                 <p className="text-2xl md:text-3xl font-heading font-bold text-foreground">
                   {stats.articleCount > 0 ? `${stats.articleCount}+` : "---"}
@@ -116,8 +113,8 @@ export function HomeView({
         </div>
       </section>
 
-      {/* BAS Atlas Featured Section */}
-      <section className="py-16 bg-secondary">
+      {/* Feature Section — lighter bg for Atlas + Wiki */}
+      <section className="py-16 bg-muted/40">
         <div className="container mx-auto px-4 sm:px-6 lg:px-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Left: Description */}
@@ -169,34 +166,32 @@ export function HomeView({
               </Link>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Wiki Carousel Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="flex items-center justify-between mb-8">
-            <SiteBadge label="WIKI" icon={BookOpen} />
-            <Button variant="outline" size="sm" asChild className="rounded-lg font-semibold">
-              <Link href={ROUTES.WIKI}>
-                Browse All
-                <ArrowRight className="w-3 h-3 ml-2" />
-              </Link>
-            </Button>
+          {/* Wiki Carousel — also in the lighter area */}
+          <div className="mt-20">
+            <div className="flex items-center justify-between mb-8">
+              <SiteBadge label="WIKI" icon={BookOpen} />
+              <Button variant="outline" size="sm" asChild className="rounded-lg font-semibold">
+                <Link href={ROUTES.WIKI}>
+                  Browse All
+                  <ArrowRight className="w-3 h-3 ml-2" />
+                </Link>
+              </Button>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold tracking-tight mb-2">
+              Latest from the Wiki
+            </h2>
+            <p className="text-muted-foreground mb-8">
+              Guides, tutorials, and reference documentation for BAS professionals.
+            </p>
+
+            <WikiCarousel articles={carouselArticles} />
           </div>
-          <h2 className="text-2xl md:text-3xl font-heading font-bold tracking-tight mb-2">
-            Latest from the Wiki
-          </h2>
-          <p className="text-muted-foreground mb-8">
-            Guides, tutorials, and reference documentation for BAS professionals.
-          </p>
-
-          <WikiCarousel articles={carouselArticles} />
         </div>
       </section>
 
-      {/* Tools Section */}
-      <section className="py-16 bg-secondary">
+      {/* Tools Section — back to dark bg */}
+      <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-20">
           <SiteBadge label="TOOLS" icon={Wrench} />
           <h2 className="mt-6 text-2xl md:text-3xl font-heading font-bold tracking-tight">
@@ -207,11 +202,11 @@ export function HomeView({
             {/* SSK Card */}
             <Link
               href={ROUTES.TOOLS}
-              className="group p-6 bg-card border border-border rounded-xl hover:border-[#3F3F46] transition-all"
+              className="group p-6 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                     <WaveTriangle className="w-5 h-5 text-primary" />
                   </div>
                   <span className="font-mono text-[12px] text-muted-foreground uppercase tracking-wider">SIM</span>
@@ -231,11 +226,11 @@ export function HomeView({
             {/* QSK Card */}
             <Link
               href={ROUTES.TOOLS}
-              className="group p-6 bg-card border border-border rounded-xl hover:border-[#3F3F46] transition-all"
+              className="group p-6 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                     <QrCode className="w-5 h-5 text-primary" />
                   </div>
                   <span className="font-mono text-[12px] text-muted-foreground uppercase tracking-wider">QSK</span>

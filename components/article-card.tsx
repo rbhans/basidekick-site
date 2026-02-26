@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
+import { getWikiCategoryColor } from "@/lib/wiki-colors";
 
 interface ArticleCardProps {
   slug: string;
@@ -17,24 +18,32 @@ export function ArticleCard({
   title,
   description,
   readTime,
-  accentColor = "#C4F82A",
+  accentColor,
   className,
 }: ArticleCardProps) {
+  const color = accentColor || getWikiCategoryColor(category);
+
   return (
     <Link
       href={ROUTES.WIKI_ARTICLE(slug)}
-      className={`group block bg-card border border-border rounded-xl p-5 hover:border-[#3F3F46] transition-all ${className || ""}`}
-      style={{ borderTopWidth: "3px", borderTopColor: accentColor }}
+      className={`group block bg-card border border-border rounded-xl p-5 hover:border-primary/30 transition-all ${className || ""}`}
+      style={{ borderLeftWidth: "3px", borderLeftColor: color }}
     >
       {category && (
-        <span
-          className="font-mono text-[11px] font-bold tracking-[2px] uppercase"
-          style={{ color: accentColor }}
-        >
-          {category}
-        </span>
+        <div className="flex items-center gap-2 mb-2">
+          <span
+            className="w-2 h-2 rounded-full shrink-0"
+            style={{ backgroundColor: color }}
+          />
+          <span
+            className="font-mono text-[11px] font-bold tracking-[1.5px] uppercase"
+            style={{ color }}
+          >
+            {category}
+          </span>
+        </div>
       )}
-      <h3 className="mt-2 font-heading text-[15px] font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+      <h3 className="font-heading text-[15px] font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
         {title}
       </h3>
       {description && (

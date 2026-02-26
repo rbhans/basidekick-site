@@ -50,11 +50,11 @@ export function PointStackJobsView() {
   }, [loadJobs]);
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold mb-2">Job Board</h1>
-          <p className="text-muted-foreground">
+          <h2 className="text-xl font-heading font-bold">Job Board</h2>
+          <p className="text-sm text-muted-foreground mt-1">
             Find BAS jobs and career opportunities.
           </p>
         </div>
@@ -128,7 +128,7 @@ export function PointStackJobsView() {
             <Link
               key={job.id}
               href={ROUTES.POINTSTACK_JOB(job.slug)}
-              className="block p-5 border border-border rounded-lg hover:border-primary/30 transition-colors"
+              className="block p-5 border border-border/50 rounded-xl bg-card hover:border-primary/20 transition-colors"
             >
               <div className="flex items-start gap-4">
                 {/* Company logo */}
