@@ -26,7 +26,7 @@ export function ArticleCard({
   return (
     <Link
       href={ROUTES.WIKI_ARTICLE(slug)}
-      className={`group block bg-card border border-border rounded-xl p-5 hover:border-primary/30 transition-all ${className || ""}`}
+      className={`group block bg-[#1E1E22] border border-[#333] rounded-xl p-5 hover:border-primary/30 transition-all ${className || ""}`}
       style={{ borderLeftWidth: "3px", borderLeftColor: color }}
     >
       {category && (

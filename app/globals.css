@@ -127,6 +127,12 @@
   }
 }
 
+/* Continuous marquee scroll for carousel */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
 /* Entrance Animations */
 @keyframes fade-in-up {
   from {
