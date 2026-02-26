@@ -358,7 +358,7 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
           <h2 className="text-xl font-semibold mb-4">Project Team</h2>
           <div className="grid gap-3 md:grid-cols-2">
             {project.credits.map((credit) => (
-              <div key={credit.id} className="flex items-center gap-3 p-3 border border-border/40 rounded-xl bg-card">
+              <div key={credit.id} className="flex items-center gap-3 p-3 border border-border/30 rounded-xl bg-card/80">
                 <UserAvatar
                   displayName={credit.display_name || credit.user?.display_name || null}
                   avatarUrl={credit.user?.avatar_url}

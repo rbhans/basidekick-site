@@ -51,16 +51,19 @@ export default function PointStackLayout({
   return (
     <div className="min-h-full flex flex-col">
       {/* Hero Banner */}
-      <div className="border-b border-border/40 bg-card/50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 text-center">
-          <h1 className="text-2xl md:text-3xl font-heading font-bold tracking-tight">
+      <div className="border-b border-border/50 bg-background/90 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
             Point<span className="text-primary">Stack</span>
           </h1>
+          <p className="text-sm md:text-base text-muted-foreground mt-2 max-w-md mx-auto">
+            The BAS community hub — share knowledge, find jobs, and connect with professionals.
+          </p>
         </div>
       </div>
 
       {/* Sub-navigation */}
-      <nav className="border-b border-border/40 bg-card/30 backdrop-blur-md sticky top-[64px] z-10">
+      <nav className="border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-[64px] z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-center gap-1 py-2 overflow-x-auto scrollbar-hide">
             {NAV_ITEMS.map((item) => {
@@ -73,8 +76,8 @@ export default function PointStackLayout({
                   className={cn(
                     "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors",
                     active
-                      ? "text-primary-foreground bg-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                      ? "text-primary-foreground bg-primary shadow-[0_0_12px_rgba(196,248,42,0.3)]"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   )}
                 >
                   <Icon className="w-4 h-4" weight={active ? "fill" : "regular"} />
@@ -86,7 +89,7 @@ export default function PointStackLayout({
             {/* User-specific navigation */}
             {user && (
               <>
-                <div className="w-px h-5 bg-border/40 mx-2 shrink-0" />
+                <div className="w-px h-5 bg-border/60 mx-3 shrink-0" />
                 {USER_NAV_ITEMS.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.href);
@@ -98,8 +101,8 @@ export default function PointStackLayout({
                       className={cn(
                         "relative flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors",
                         active
-                          ? "text-primary-foreground bg-primary"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                          ? "text-primary-foreground bg-primary shadow-[0_0_12px_rgba(196,248,42,0.3)]"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                       )}
                       aria-label={item.label}
                     >

@@ -198,7 +198,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
       {/* Profile header */}
-      <div className="border border-border/40 rounded-xl bg-card p-6 mb-6">
+      <div className="border border-border/30 rounded-xl bg-card/90 p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Avatar */}
           <UserAvatar
@@ -211,7 +211,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
           {/* Info */}
           <div className="flex-1 text-center md:text-left">
             <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-              <h1 className="text-2xl font-bold">{profile.display_name || "Anonymous"}</h1>
+              <h1 className="text-2xl font-heading font-bold">{profile.display_name || "Anonymous"}</h1>
               {profile.is_verified && (
                 <Badge className="gap-1 bg-blue-500/10 text-blue-600 border-blue-500/20 w-fit mx-auto md:mx-0">
                   <Check className="w-3 h-3" />

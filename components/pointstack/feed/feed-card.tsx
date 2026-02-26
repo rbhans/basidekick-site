@@ -59,27 +59,27 @@ const POST_TYPE_CONFIG: Record<
 > = {
   discussion: {
     label: "Discussion",
-    color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+    color: "bg-blue-500/15 text-blue-400 border-blue-500/30",
     icon: Chats,
   },
   question: {
     label: "Question",
-    color: "bg-purple-500/10 text-purple-600 border-purple-500/20",
+    color: "bg-purple-500/15 text-purple-400 border-purple-500/30",
     icon: Question,
   },
   project: {
     label: "Project",
-    color: "bg-green-500/10 text-green-600 border-green-500/20",
+    color: "bg-green-500/15 text-green-400 border-green-500/30",
     icon: Wrench,
   },
   job: {
     label: "Job",
-    color: "bg-orange-500/10 text-orange-600 border-orange-500/20",
+    color: "bg-orange-500/15 text-orange-400 border-orange-500/30",
     icon: Briefcase,
   },
   tip: {
     label: "Tip",
-    color: "bg-yellow-500/10 text-yellow-700 border-yellow-500/20",
+    color: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
     icon: Lightbulb,
   },
 };
@@ -133,7 +133,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
 
   return (
     <>
-      <article className="group/card p-5 border border-border/40 rounded-xl bg-card hover:border-primary/30 transition-all duration-200">
+      <article className="group/card p-5 border-l-2 border-l-primary/40 border border-border/30 rounded-xl bg-card/80 hover:border-primary/30 hover:bg-card hover:shadow-[0_0_20px_rgba(196,248,42,0.05)] transition-all duration-200">
         {/* Header */}
         <div className="flex items-start gap-3 mb-3">
           <Link href={profileLink} className="shrink-0">
@@ -209,7 +209,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
 
         {/* Content */}
         <Link href={postHref} className="block group/link">
-          <h3 className="text-lg font-semibold mb-2 group-hover/link:text-primary transition-colors leading-snug">
+          <h3 className="text-lg font-bold mb-2 group-hover/link:text-primary transition-colors leading-snug">
             {post.title}
           </h3>
           <p className="text-muted-foreground text-sm line-clamp-3 mb-3 leading-relaxed">
@@ -230,7 +230,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
                 <Badge
                   variant="secondary"
                   className={cn(
-                    "text-xs transition-colors",
+                    "text-xs bg-muted/80 border border-border/30 transition-colors",
                     onTagClick &&
                       "cursor-pointer hover:bg-primary/10 hover:text-primary hover:border-primary/20"
                   )}
@@ -265,7 +265,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-1 sm:gap-3 pt-3 border-t border-border/40">
+        <div className="flex items-center gap-1 sm:gap-3 pt-3 mt-1 -mx-5 -mb-5 px-5 pb-4 rounded-b-xl bg-muted/20 border-t border-border/30">
           <VoteButton
             count={post.upvote_count}
             userVote={post.user_vote}

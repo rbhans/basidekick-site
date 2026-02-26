@@ -144,7 +144,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
     <div className="space-y-4">
       {/* Atlas Terms Contributions */}
       {babelContributions.length > 0 && (
-        <div className="border border-border/40 rounded-xl bg-card">
+        <div className="border border-border/30 rounded-xl bg-card/90">
           {renderSectionHeader("babel", babelContributions.length)}
           {expandedSections.has("babel") && (
             <div className="p-3 pt-0 space-y-2">
@@ -154,7 +154,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
                 return (
                   <div
                     key={contribution.id}
-                    className="p-3 border border-border/40 rounded-xl bg-card bg-muted/20"
+                    className="p-3 border border-border/30 rounded-lg bg-muted/15"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
@@ -184,7 +184,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
 
       {/* Equipment Submissions */}
       {equipmentSubmissions.length > 0 && (
-        <div className="border border-border/40 rounded-xl bg-card">
+        <div className="border border-border/30 rounded-xl bg-card/90">
           {renderSectionHeader("equipment", equipmentSubmissions.length)}
           {expandedSections.has("equipment") && (
             <div className="p-3 pt-0 space-y-2">
@@ -194,7 +194,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
                 return (
                   <div
                     key={submission.id}
-                    className="p-3 border border-border/40 rounded-xl bg-card bg-muted/20"
+                    className="p-3 border border-border/30 rounded-lg bg-muted/15"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
@@ -228,7 +228,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
 
       {/* Wiki Articles */}
       {wikiArticles.length > 0 && (
-        <div className="border border-border/40 rounded-xl bg-card">
+        <div className="border border-border/30 rounded-xl bg-card/90">
           {renderSectionHeader("wiki", wikiArticles.length)}
           {expandedSections.has("wiki") && (
             <div className="p-3 pt-0 space-y-2">

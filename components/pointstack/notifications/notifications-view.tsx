@@ -68,7 +68,7 @@ export function PointStackNotificationsView() {
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Notifications</h1>
+        <h1 className="text-2xl font-heading font-bold">Notifications</h1>
         {unreadCount > 0 && (
           <Button variant="outline" size="sm" onClick={markAllNotificationsRead}>
             Mark all as read
@@ -94,7 +94,7 @@ export function PointStackNotificationsView() {
               <div
                 key={notification.id}
                 className={cn(
-                  "flex items-start gap-3 p-4 rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-colors",
+                  "flex items-start gap-3 p-4 rounded-xl border border-border/30 bg-card/80 hover:border-primary/30 hover:bg-card transition-all duration-200",
                   !notification.is_read && "bg-primary/5"
                 )}
                 onClick={() => {

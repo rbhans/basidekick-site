@@ -102,7 +102,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         </div>
       )}
 
-      <div className="border border-border/40 rounded-xl bg-card p-6">
+      <div className="border border-border/30 rounded-xl bg-card/90 p-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
@@ -135,7 +135,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         </div>
 
         {/* Author */}
-        <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg mb-6">
+        <div className="flex items-center gap-3 p-4 bg-muted/30 border border-border/20 rounded-lg mb-6">
           <Link href={ROUTES.POINTSTACK_PROFILE(resource.author?.display_name || "")}>
             <UserAvatar
               displayName={resource.author?.display_name || null}
