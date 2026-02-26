@@ -95,7 +95,7 @@ export function PointStackFeedView() {
         <div className="mb-6">
           <CreatePostDialog
             trigger={
-              <button className="w-full flex items-center gap-3 p-4 border border-border/50 rounded-xl bg-card hover:bg-muted/50 transition-colors text-left group">
+              <button className="w-full flex items-center gap-3 p-4 border border-border/40 rounded-xl bg-card hover:bg-card/80 hover:border-primary/20 transition-colors text-left group">
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
                   <PencilSimple className="w-5 h-5 text-primary" />
                 </div>
@@ -142,7 +142,7 @@ export function PointStackFeedView() {
 
       {/* Error state */}
       {feedError && (
-        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/50 rounded-xl bg-card text-center">
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/40 rounded-xl bg-card text-center">
           <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
             <p className="font-medium mb-1">Something went wrong</p>
@@ -254,7 +254,7 @@ export function PointStackFeedView() {
 
 function FeedCardSkeleton() {
   return (
-    <div className="p-5 border border-border/50 rounded-xl">
+    <div className="p-5 border border-border/40 rounded-xl bg-card">
       <div className="flex items-start gap-3 mb-3">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="flex-1">

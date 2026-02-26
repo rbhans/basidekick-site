@@ -94,7 +94,7 @@ export function PointStackNotificationsView() {
               <div
                 key={notification.id}
                 className={cn(
-                  "flex items-start gap-3 p-4 rounded-lg border border-border transition-colors",
+                  "flex items-start gap-3 p-4 rounded-xl border border-border/40 bg-card hover:border-primary/30 transition-colors",
                   !notification.is_read && "bg-primary/5"
                 )}
                 onClick={() => {

@@ -102,7 +102,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         </div>
       )}
 
-      <div className="border border-border rounded-lg p-6">
+      <div className="border border-border/40 rounded-xl bg-card p-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
@@ -166,7 +166,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         )}
 
         {/* Stats */}
-        <div className="flex items-center gap-4 pt-4 border-t border-border text-sm text-muted-foreground">
+        <div className="flex items-center gap-4 pt-4 border-t border-border/40 text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <DownloadSimple className="w-4 h-4" />
             <span>{resource.download_count} downloads</span>

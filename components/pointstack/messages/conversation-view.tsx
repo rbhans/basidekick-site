@@ -75,7 +75,7 @@ export function PointStackConversationView({ conversationId }: ConversationViewP
   return (
     <div className="max-w-2xl mx-auto flex flex-col h-[calc(100vh-180px)]">
       {/* Header */}
-      <div className="p-4 border-b border-border flex items-center gap-3">
+      <div className="p-4 border-b border-border/40 flex items-center gap-3">
         <Link
           href={ROUTES.POINTSTACK_MESSAGES}
           className="p-2 hover:bg-muted rounded-md"
@@ -140,7 +140,7 @@ export function PointStackConversationView({ conversationId }: ConversationViewP
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSend} className="p-4 border-t border-border">
+      <form onSubmit={handleSend} className="p-4 border-t border-border/40">
         <div className="flex gap-2">
           <Input
             value={newMessage}

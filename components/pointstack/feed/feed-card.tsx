@@ -133,7 +133,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
 
   return (
     <>
-      <article className="group/card p-5 border border-border/50 rounded-xl bg-card hover:border-primary/20 transition-all duration-200">
+      <article className="group/card p-5 border border-border/40 rounded-xl bg-card hover:border-primary/30 transition-all duration-200">
         {/* Header */}
         <div className="flex items-start gap-3 mb-3">
           <Link href={profileLink} className="shrink-0">
@@ -265,7 +265,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-1 sm:gap-3 pt-3 border-t border-border/60">
+        <div className="flex items-center gap-1 sm:gap-3 pt-3 border-t border-border/40">
           <VoteButton
             count={post.upvote_count}
             userVote={post.user_vote}

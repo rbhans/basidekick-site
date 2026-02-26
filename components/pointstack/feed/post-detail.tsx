@@ -127,7 +127,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
       </Link>
 
       {/* Post */}
-      <article className="border border-border rounded-lg bg-card p-6 mb-6">
+      <article className="border border-border/40 rounded-xl bg-card bg-card p-6 mb-6">
         {/* Header */}
         <div className="flex items-start gap-3 mb-4">
           <VoteButton
@@ -228,7 +228,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
         )}
 
         {/* Stats */}
-        <div className="flex items-center gap-4 pt-4 border-t border-border text-sm text-muted-foreground">
+        <div className="flex items-center gap-4 pt-4 border-t border-border/40 text-sm text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Eye className="w-4 h-4" />
             <span>{post.view_count} views</span>
@@ -265,7 +265,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
               <div
                 key={comment.id}
                 className={cn(
-                  "border border-border rounded-lg p-4",
+                  "border border-border/40 rounded-xl bg-card p-4",
                   comment.is_accepted && "border-green-500/50 bg-green-500/5"
                 )}
               >
@@ -344,7 +344,7 @@ function PostDetailSkeleton() {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <Skeleton className="h-4 w-24 mb-6" />
-      <div className="border border-border rounded-lg p-6">
+      <div className="border border-border/40 rounded-xl bg-card p-6">
         <div className="flex gap-3">
           <div className="flex flex-col items-center gap-1">
             <Skeleton className="h-8 w-8" />
