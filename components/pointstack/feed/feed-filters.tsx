@@ -61,7 +61,7 @@ export function FeedFilters({ currentFilter, onFilterChange, className }: FeedFi
         </div>
 
         {/* Sort filters */}
-        <div className="flex items-center gap-1 border-l border-border/40 pl-4">
+        <div className="flex items-center gap-1 border-l border-border/50 pl-4">
           {SORT_FILTERS.map((filter) => (
             <Button
               key={filter.label}

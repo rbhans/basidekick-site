@@ -53,7 +53,7 @@ export function PointStackJobsView() {
     <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-heading font-bold">Job Board</h2>
+          <h2 className="text-2xl font-heading font-bold">Job Board</h2>
           <p className="text-sm text-muted-foreground mt-1">
             Find BAS jobs and career opportunities.
           </p>
@@ -100,7 +100,7 @@ export function PointStackJobsView() {
 
       {/* Error */}
       {error && !loading && (
-        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/40 rounded-xl bg-card text-center">
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/30 rounded-xl bg-card/90 text-center">
           <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
             <p className="font-medium mb-1">Something went wrong</p>
@@ -128,7 +128,7 @@ export function PointStackJobsView() {
             <Link
               key={job.id}
               href={ROUTES.POINTSTACK_JOB(job.slug)}
-              className="block p-5 border border-border/40 rounded-xl bg-card hover:border-primary/30 transition-colors"
+              className="block p-5 border-l-2 border-l-primary/30 border border-border/30 rounded-xl bg-card/80 hover:border-primary/30 hover:bg-card hover:shadow-[0_0_20px_rgba(196,248,42,0.05)] transition-all duration-200"
             >
               <div className="flex items-start gap-4">
                 {/* Company logo */}

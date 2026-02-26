@@ -65,7 +65,7 @@ export function FloatingMessenger() {
       {!messengerOpen && (
         <button
           onClick={toggleMessenger}
-          className="fixed bottom-5 right-5 z-40 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/25 flex items-center justify-center hover:bg-primary/90 transition-all hover:scale-105 active:scale-95"
+          className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center hover:bg-primary/90 transition-all hover:scale-110 active:scale-95"
           aria-label="Open messages"
         >
           <ChatCircle className="w-5 h-5" weight="fill" />
@@ -88,7 +88,7 @@ export function FloatingMessenger() {
       {/* Messenger panel */}
       <div
         className={cn(
-          "fixed z-40 bg-card border border-border/40 shadow-xl flex flex-col",
+          "fixed z-40 bg-card border border-border/30 shadow-2xl shadow-black/50 flex flex-col",
           // Mobile: full screen
           "inset-0 md:inset-auto",
           // Desktop: bottom-right corner

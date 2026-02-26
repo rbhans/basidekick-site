@@ -48,7 +48,7 @@ export function PointStackCompaniesView() {
     <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-heading font-bold">Companies</h2>
+          <h2 className="text-2xl font-heading font-bold">Companies</h2>
           <p className="text-sm text-muted-foreground mt-1">
             Discover BAS companies and organizations.
           </p>
@@ -74,7 +74,7 @@ export function PointStackCompaniesView() {
 
       {/* Error */}
       {error && !loading && (
-        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/40 rounded-xl bg-card text-center">
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/30 rounded-xl bg-card/90 text-center">
           <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
             <p className="font-medium mb-1">Something went wrong</p>
@@ -102,7 +102,7 @@ export function PointStackCompaniesView() {
             <Link
               key={company.id}
               href={ROUTES.POINTSTACK_COMPANY(company.slug)}
-              className="block p-4 border border-border/40 rounded-xl bg-card hover:border-primary/30 transition-colors"
+              className="block p-4 border border-border/30 rounded-xl bg-card/80 hover:border-primary/30 hover:bg-card hover:shadow-[0_0_20px_rgba(196,248,42,0.05)] transition-all duration-200"
             >
               <div className="flex items-start gap-3 mb-3">
                 {company.logo_url ? (
