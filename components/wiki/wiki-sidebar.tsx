@@ -43,7 +43,7 @@ export function WikiSidebar({
           <div className="space-y-0.5">
             {categories.map((cat) => {
               const isSelected = selectedCategoryId === cat.id;
-              const color = getWikiCategoryColor(cat.name);
+              const color = getWikiCategoryColor(cat.name, cat.slug);
 
               return (
                 <button
