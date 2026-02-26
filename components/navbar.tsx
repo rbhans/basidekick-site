@@ -67,7 +67,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 h-[64px] px-4 sm:px-6 lg:px-10 border-b border-border/50 bg-background/90 backdrop-blur-md flex items-center">
+      <header className="sticky top-0 z-50 h-[64px] px-4 sm:px-6 lg:px-10 border-b border-border/50 bg-background/90 backdrop-blur-md flex items-center relative">
         {/* Left: Logo */}
         <div className="flex items-center shrink-0">
           <Link href="/" className="font-heading text-[18px] font-bold text-foreground hover:text-primary transition-colors">
@@ -75,8 +75,8 @@ export function Navbar() {
           </Link>
         </div>
 
-        {/* Center: Nav links */}
-        <nav className="hidden md:flex items-center justify-center gap-1 flex-1 mx-8">
+        {/* Center: Nav links — absolutely positioned for true centering */}
+        <nav className="hidden md:flex items-center justify-center gap-1 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -93,7 +93,7 @@ export function Navbar() {
         </nav>
 
         {/* Right: Search + Actions */}
-        <div className="flex items-center gap-2 shrink-0 ml-auto md:ml-0">
+        <div className="flex items-center gap-2 shrink-0 ml-auto">
           <div className="hidden sm:block">
             <HeaderSearch />
           </div>

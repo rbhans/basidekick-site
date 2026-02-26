@@ -130,13 +130,13 @@ export function HomeView({
                 names — all in one place.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button asChild className="rounded-lg font-semibold">
+                <Button size="lg" asChild className="rounded-lg font-semibold px-8">
                   <Link href={ROUTES.ATLAS}>
                     Explore Atlas
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
                 </Button>
-                <Button variant="outline" asChild className="rounded-lg font-semibold">
+                <Button size="lg" variant="outline" asChild className="rounded-lg font-semibold px-8">
                   <Link href={ROUTES.ATLAS_EQUIPMENT}>
                     Equipment Catalog
                   </Link>
