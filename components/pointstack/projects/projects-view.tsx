@@ -85,7 +85,7 @@ export function PointStackProjectsView() {
 
       {/* Error state */}
       {error && (
-        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-lg bg-card text-center">
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/40 rounded-xl bg-card text-center">
           <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
             <p className="font-medium mb-1">Something went wrong</p>
@@ -113,7 +113,7 @@ export function PointStackProjectsView() {
             <Link
               key={project.id}
               href={getPointStackPostRoute(project.post_type, project.slug)}
-              className="group block border border-border/50 rounded-xl overflow-hidden bg-card hover:border-primary/20 transition-colors"
+              className="group block border border-border/40 rounded-xl overflow-hidden bg-card hover:border-primary/20 transition-colors"
             >
               {/* Cover image */}
               <div className="aspect-video bg-muted relative overflow-hidden">

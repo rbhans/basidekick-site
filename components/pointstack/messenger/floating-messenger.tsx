@@ -88,7 +88,7 @@ export function FloatingMessenger() {
       {/* Messenger panel */}
       <div
         className={cn(
-          "fixed z-40 bg-card border border-border shadow-xl flex flex-col",
+          "fixed z-40 bg-card border border-border/40 shadow-xl flex flex-col",
           // Mobile: full screen
           "inset-0 md:inset-auto",
           // Desktop: bottom-right corner

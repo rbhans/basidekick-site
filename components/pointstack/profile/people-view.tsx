@@ -87,7 +87,7 @@ function PersonCard({ profile }: { profile: PointStackProfile }) {
   return (
     <Link
       href={ROUTES.POINTSTACK_PROFILE(profile.display_name || profile.id)}
-      className="block p-4 border border-border/50 rounded-xl bg-card hover:border-primary/20 transition-colors"
+      className="block p-4 border border-border/40 rounded-xl bg-card hover:border-primary/30 transition-colors"
     >
       <div className="flex items-start gap-3">
         <UserAvatar
@@ -141,7 +141,7 @@ function PersonCard({ profile }: { profile: PointStackProfile }) {
 
 function PersonCardSkeleton() {
   return (
-    <div className="p-4 border border-border/50 rounded-xl bg-card">
+    <div className="p-4 border border-border/40 rounded-xl bg-card">
       <div className="flex items-start gap-3">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="flex-1">
