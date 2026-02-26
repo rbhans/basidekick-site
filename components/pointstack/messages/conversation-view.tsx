@@ -140,7 +140,7 @@ export function PointStackConversationView({ conversationId }: ConversationViewP
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSend} className="p-4 border-t border-border/40">
+      <form onSubmit={handleSend} className="p-4 border-t border-border">
         <div className="flex gap-2">
           <Input
             value={newMessage}

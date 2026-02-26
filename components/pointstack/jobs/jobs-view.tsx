@@ -128,7 +128,7 @@ export function PointStackJobsView() {
             <Link
               key={job.id}
               href={ROUTES.POINTSTACK_JOB(job.slug)}
-              className="block p-5 border border-border rounded-xl bg-card hover:border-foreground/20 transition-colors duration-200"
+              className="block p-5 border border-border rounded-xl bg-card hover:border-[#3F3F46] transition-colors"
             >
               <div className="flex items-start gap-4">
                 {/* Company logo */}

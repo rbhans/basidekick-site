@@ -21,12 +21,12 @@ interface PostDetailProps {
   slug: string;
 }
 
-const POST_TYPE_LABELS: Record<PointStackPostType, { label: string; color: string }> = {
-  discussion: { label: "Discussion", color: "bg-blue-500/15 text-blue-400 border-blue-500/30" },
-  question: { label: "Question", color: "bg-purple-500/15 text-purple-400 border-purple-500/30" },
-  project: { label: "Project", color: "bg-green-500/15 text-green-400 border-green-500/30" },
-  job: { label: "Job", color: "bg-orange-500/15 text-orange-400 border-orange-500/30" },
-  tip: { label: "Tip", color: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30" },
+const POST_TYPE_LABELS: Record<PointStackPostType, { label: string }> = {
+  discussion: { label: "Discussion" },
+  question: { label: "Question" },
+  project: { label: "Project" },
+  job: { label: "Job" },
+  tip: { label: "Tip" },
 };
 
 export function PointStackPostDetail({ slug }: PostDetailProps) {
@@ -140,22 +140,20 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
 
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline" className={cn("text-xs", typeInfo.color)}>
+              <span className="px-2 py-0.5 rounded-full bg-[#27272A] text-[11px] font-mono text-muted-foreground">
                 {typeInfo.label}
-              </Badge>
+              </span>
               {post.tags.map((tag) => (
-                <Badge key={tag} variant="secondary" className="text-xs">
+                <span key={tag} className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground">
                   {tag}
-                </Badge>
+                </span>
               ))}
             </div>
             {equipmentLinks.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
                 {equipmentLinks.map((item) => (
-                  <Link key={item.id} href={item.href}>
-                    <Badge variant="secondary" className="text-xs">
-                      {item.name}
-                    </Badge>
+                  <Link key={item.id} href={item.href} className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-[#3F3F46] transition-colors">
+                    {item.name}
                   </Link>
                 ))}
               </div>
@@ -227,25 +225,23 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
           </div>
         )}
 
-        {/* Stats */}
-        <div className="flex items-center gap-4 pt-4 mt-2 -mx-6 -mb-6 px-6 pb-5 rounded-b-xl border-t border-border text-sm text-muted-foreground">
-          <div className="flex items-center gap-1.5">
+        {/* Engagement */}
+        <div className="flex items-center gap-6 pt-4 mt-2 border-t border-border">
+          <div className="flex items-center gap-2 text-muted-foreground">
             <Eye className="w-4 h-4" />
-            <span>{post.view_count} views</span>
+            <span className="text-[13px]">{post.view_count}</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2 text-muted-foreground">
             <ChatCircle className="w-4 h-4" />
-            <span>{post.comment_count} comments</span>
+            <span className="text-[13px]">{post.comment_count}</span>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="ml-auto h-8 px-2"
+          <button
             onClick={handleShare}
+            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors ml-auto"
           >
-            <Share className="w-4 h-4 mr-1.5" />
-            Share
-          </Button>
+            <Share className="w-4 h-4" />
+            <span className="text-[13px]">Share</span>
+          </button>
         </div>
       </article>
 
@@ -344,7 +340,7 @@ function PostDetailSkeleton() {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <Skeleton className="h-4 w-24 mb-6" />
-      <div className="border border-border/40 rounded-xl bg-card p-6">
+      <div className="border border-border rounded-xl bg-card p-6">
         <div className="flex gap-3">
           <div className="flex flex-col items-center gap-1">
             <Skeleton className="h-8 w-8" />

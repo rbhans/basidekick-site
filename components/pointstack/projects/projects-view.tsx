@@ -113,7 +113,7 @@ export function PointStackProjectsView() {
             <Link
               key={project.id}
               href={getPointStackPostRoute(project.post_type, project.slug)}
-              className="group block border border-border rounded-xl overflow-hidden bg-card hover:border-foreground/20 transition-colors duration-200"
+              className="group block border border-border rounded-xl overflow-hidden bg-card hover:border-[#3F3F46] transition-colors"
             >
               {/* Cover image */}
               <div className="aspect-video bg-muted relative overflow-hidden">

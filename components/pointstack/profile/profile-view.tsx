@@ -331,7 +331,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
 
         {/* Skills */}
         {profile.skills && profile.skills.length > 0 && (
-          <div className="mt-6 pt-6 border-t border-border/40">
+          <div className="mt-6 pt-6 border-t border-border">
             <h3 className="text-sm font-medium mb-2">Skills</h3>
             <div className="flex flex-wrap gap-2">
               {profile.skills.map((skill) => (
@@ -449,7 +449,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
 function ProfileSkeleton() {
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="border border-border/40 rounded-xl bg-card p-6">
+      <div className="border border-border rounded-xl bg-card p-6">
         <div className="flex flex-col md:flex-row gap-6">
           <Skeleton className="h-16 w-16 rounded-full mx-auto md:mx-0" />
           <div className="flex-1">

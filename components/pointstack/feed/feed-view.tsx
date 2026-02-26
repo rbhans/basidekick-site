@@ -8,17 +8,12 @@ import { FeedCard } from "./feed-card";
 import { FeedFilters } from "./feed-filters";
 import { CreatePostDialog } from "./create-post-dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
 import {
   PencilSimple,
   WarningCircle,
   MagnifyingGlass,
-  Chats,
-  Question,
-  Lightbulb,
-  Wrench,
   UsersThree,
 } from "@phosphor-icons/react";
 
@@ -90,55 +85,58 @@ export function PointStackFeedView() {
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6">
-      {/* Create post prompt */}
+      {/* Compose Box */}
       {user && (
-        <div className="mb-6">
-          <CreatePostDialog
-            trigger={
-              <button className="w-full flex items-center gap-3 p-4 border border-border rounded-xl bg-card hover:bg-muted/50 transition-colors text-left group">
-                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center shrink-0 group-hover:bg-muted/80 transition-colors">
-                  <PencilSimple className="w-5 h-5 text-muted-foreground" />
+        <CreatePostDialog
+          trigger={
+            <div className="bg-card border border-border rounded-xl p-5 mb-4 cursor-pointer hover:border-[#3F3F46] transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-[#27272A] flex items-center justify-center shrink-0">
+                  <UsersThree className="w-5 h-5 text-muted-foreground" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-muted-foreground block">Share something with the community...</span>
-                  <div className="flex items-center gap-3 mt-1.5">
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60">
-                      <Chats className="w-3 h-3" /> Discussion
+                <div className="flex-1">
+                  <p className="text-[15px] text-muted-foreground/50 pt-2">
+                    Share something with the community...
+                  </p>
+                  <div className="flex items-center gap-2 mt-3">
+                    <span className="px-3 py-1 rounded-full border border-border text-[12px] text-muted-foreground">
+                      Discussion
                     </span>
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60">
-                      <Question className="w-3 h-3" /> Question
+                    <span className="px-3 py-1 rounded-full border border-border text-[12px] text-muted-foreground">
+                      Question
                     </span>
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60">
-                      <Lightbulb className="w-3 h-3" /> Tip
+                    <span className="px-3 py-1 rounded-full border border-border text-[12px] text-muted-foreground">
+                      Tip
                     </span>
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60 hidden sm:inline-flex">
-                      <Wrench className="w-3 h-3" /> Project
+                    <span className="px-3 py-1 rounded-full border border-border text-[12px] text-muted-foreground hidden sm:inline">
+                      Project
                     </span>
                   </div>
                 </div>
-              </button>
-            }
-          />
-        </div>
+              </div>
+            </div>
+          }
+        />
       )}
-
-      {/* Filters */}
-      <FeedFilters
-        currentFilter={feedFilter}
-        onFilterChange={setFeedFilter}
-        className="mb-4"
-      />
 
       {/* Search */}
       <div className="relative mb-6">
-        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
+        <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <input
+          type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search posts, topics, or tags..."
-          className="pl-9 h-9"
+          placeholder="Search posts by title, content, or tag..."
+          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-[#3F3F46] transition-colors"
         />
       </div>
+
+      {/* Filter Tabs */}
+      <FeedFilters
+        currentFilter={feedFilter}
+        onFilterChange={setFeedFilter}
+        className="mb-8"
+      />
 
       {/* Error state */}
       {feedError && (

@@ -171,7 +171,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
         )}
 
         {/* Apply */}
-        <div className="pt-6 border-t border-border/40">
+        <div className="pt-6 border-t border-border">
           <h2 className="text-lg font-semibold mb-3">How to Apply</h2>
           <div className="flex flex-wrap gap-3">
             {job.application_url && (
@@ -194,7 +194,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
         </div>
 
         {/* Meta */}
-        <div className="mt-6 pt-6 border-t border-border/40 text-sm text-muted-foreground">
+        <div className="mt-6 pt-6 border-t border-border text-sm text-muted-foreground">
           <p>Posted {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</p>
           <p>{job.view_count} views &middot; {job.application_count} applications</p>
         </div>

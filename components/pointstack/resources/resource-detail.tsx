@@ -135,7 +135,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         </div>
 
         {/* Author */}
-        <div className="flex items-center gap-3 p-4 bg-muted/30 border border-border/20 rounded-lg mb-6">
+        <div className="flex items-center gap-3 p-4 bg-card border border-border rounded-xl mb-6">
           <Link href={ROUTES.POINTSTACK_PROFILE(resource.author?.display_name || "")}>
             <UserAvatar
               displayName={resource.author?.display_name || null}
@@ -166,7 +166,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         )}
 
         {/* Stats */}
-        <div className="flex items-center gap-4 pt-4 border-t border-border/40 text-sm text-muted-foreground">
+        <div className="flex items-center gap-4 pt-4 border-t border-border text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <DownloadSimple className="w-4 h-4" />
             <span>{resource.download_count} downloads</span>
