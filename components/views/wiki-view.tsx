@@ -37,25 +37,9 @@ export function WikiView() {
 
   const [loading, setLoading] = useState(true);
 
-  // Build category tree from flat list
-  const buildCategoryTree = (cats: WikiCategory[]): WikiCategory[] => {
-    const map = new Map<string, WikiCategory>();
-    const roots: WikiCategory[] = [];
-
-    cats.forEach((cat) => {
-      map.set(cat.id, { ...cat, children: [] });
-    });
-
-    cats.forEach((cat) => {
-      const node = map.get(cat.id)!;
-      if (cat.parent_id && map.has(cat.parent_id)) {
-        map.get(cat.parent_id)!.children!.push(node);
-      } else {
-        roots.push(node);
-      }
-    });
-
-    return roots.sort((a, b) => a.display_order - b.display_order);
+  // Sort categories by display order (flat list, no tree needed)
+  const sortCategories = (cats: WikiCategory[]): WikiCategory[] => {
+    return [...cats].sort((a, b) => a.display_order - b.display_order);
   };
 
   // Get sort order for Supabase query
@@ -85,8 +69,7 @@ export function WikiView() {
       ]);
 
       if (catsRes.data) {
-        const tree = buildCategoryTree(catsRes.data as WikiCategory[]);
-        setCategories(tree);
+        setCategories(sortCategories(catsRes.data as WikiCategory[]));
       }
 
       if (tagsRes.data) {
@@ -124,20 +107,7 @@ export function WikiView() {
 
     // Filter by category if selected
     if (selectedCategoryId) {
-      // Get category and its children
-      const { data: allCats } = await supabase
-        .from("wiki_categories")
-        .select("id, parent_id");
-
-      const categoryIds = [selectedCategoryId];
-      if (allCats) {
-        allCats.forEach((cat: { id: string; parent_id: string | null }) => {
-          if (cat.parent_id === selectedCategoryId) {
-            categoryIds.push(cat.id);
-          }
-        });
-      }
-      query = query.in("category_id", categoryIds);
+      query = query.eq("category_id", selectedCategoryId);
     }
 
     // Filter by tags if selected
