@@ -331,10 +331,14 @@ export function WikiView() {
                           category={
                             (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.name
                           }
+                          categorySlug={
+                            (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.slug
+                          }
                           title={article.title}
                           description={article.summary || ""}
                           accentColor={getWikiCategoryColor(
-                            (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.name
+                            (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.name,
+                            (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.slug
                           )}
                         />
                       ))}

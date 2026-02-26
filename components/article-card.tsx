@@ -5,6 +5,7 @@ import { getWikiCategoryColor } from "@/lib/wiki-colors";
 interface ArticleCardProps {
   slug: string;
   category?: string | null;
+  categorySlug?: string | null;
   title: string;
   description?: string | null;
   readTime?: string;
@@ -15,13 +16,14 @@ interface ArticleCardProps {
 export function ArticleCard({
   slug,
   category,
+  categorySlug,
   title,
   description,
   readTime,
   accentColor,
   className,
 }: ArticleCardProps) {
-  const color = accentColor || getWikiCategoryColor(category);
+  const color = accentColor || getWikiCategoryColor(category, categorySlug);
 
   return (
     <Link

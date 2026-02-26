@@ -63,9 +63,10 @@ export function WikiCarousel({ articles }: WikiCarouselProps) {
             <ArticleCard
               slug={article.slug}
               category={article.category?.name}
+              categorySlug={article.category?.slug}
               title={article.title}
               description={article.summary}
-              accentColor={getWikiCategoryColor(article.category?.name)}
+              accentColor={getWikiCategoryColor(article.category?.name, article.category?.slug)}
             />
           </div>
         ))}
