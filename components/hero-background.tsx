@@ -14,62 +14,37 @@ const FADE_DURATION = 2000;
 
 export function HeroBackground() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [nextIndex, setNextIndex] = useState<number | null>(null);
-  const [fading, setFading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setNextIndex((activeIndex + 1) % HERO_IMAGES.length);
-      setFading(true);
-
-      setTimeout(() => {
-        setActiveIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-        setNextIndex(null);
-        setFading(false);
-      }, FADE_DURATION);
+      setActiveIndex((prev) => (prev + 1) % HERO_IMAGES.length);
     }, CYCLE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [activeIndex]);
+  }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-      {/* Active image */}
-      <div
-        className="absolute inset-0 transition-opacity"
-        style={{
-          opacity: fading ? 0 : 1,
-          transitionDuration: `${FADE_DURATION}ms`,
-        }}
-      >
-        <Image
-          src={HERO_IMAGES[activeIndex]}
-          alt=""
-          fill
-          className="object-cover object-center"
-          priority={activeIndex === 0}
-          sizes="100vw"
-        />
-      </div>
-
-      {/* Next image (crossfade in) */}
-      {nextIndex !== null && (
+      {/* All images stacked — only the active one is visible */}
+      {HERO_IMAGES.map((src, i) => (
         <div
-          className="absolute inset-0 transition-opacity"
+          key={src}
+          className="absolute inset-0"
           style={{
-            opacity: fading ? 1 : 0,
-            transitionDuration: `${FADE_DURATION}ms`,
+            opacity: i === activeIndex ? 1 : 0,
+            transition: `opacity ${FADE_DURATION}ms ease-in-out`,
           }}
         >
           <Image
-            src={HERO_IMAGES[nextIndex]}
+            src={src}
             alt=""
             fill
             className="object-cover object-center"
+            priority={i === 0}
             sizes="100vw"
           />
         </div>
-      )}
+      ))}
 
       {/* Heavy dark overlay — images are very faint, fading into black */}
       <div className="absolute inset-0 bg-background/80" />
