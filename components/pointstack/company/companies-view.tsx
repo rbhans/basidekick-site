@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MagnifyingGlass, MapPin, Users, Plus, WarningCircle } from "@phosphor-icons/react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,18 +62,19 @@ export function PointStackCompaniesView() {
 
       {/* Search */}
       <div className="relative mb-6">
-        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
+        <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <input
+          type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search companies..."
-          className="pl-9"
+          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-[#3F3F46] transition-colors"
         />
       </div>
 
       {/* Error */}
       {error && !loading && (
-        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/30 rounded-xl bg-card/90 text-center">
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-xl bg-card text-center">
           <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
             <p className="font-medium mb-1">Something went wrong</p>
@@ -102,7 +102,7 @@ export function PointStackCompaniesView() {
             <Link
               key={company.id}
               href={ROUTES.POINTSTACK_COMPANY(company.slug)}
-              className="block p-4 border border-border/30 rounded-xl bg-card/80 hover:border-primary/30 hover:bg-card hover:shadow-[0_0_20px_rgba(196,248,42,0.05)] transition-all duration-200"
+              className="block p-4 border border-border rounded-xl bg-card hover:border-[#3F3F46] transition-colors"
             >
               <div className="flex items-start gap-3 mb-3">
                 {company.logo_url ? (

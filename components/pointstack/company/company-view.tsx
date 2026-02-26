@@ -280,7 +280,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
       </Link>
 
       {/* Company header */}
-      <div className="border border-border/30 rounded-xl bg-card/90 p-6 mb-6">
+      <div className="border border-border rounded-xl bg-card p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-6">
           {company.logo_url ? (
             <img
@@ -350,13 +350,13 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
         </div>
 
         {company.description && (
-          <div className="mt-6 pt-6 border-t border-border/40">
+          <div className="mt-6 pt-6 border-t border-border">
             <p className="text-muted-foreground">{company.description}</p>
           </div>
         )}
 
         {showJoinActions && (
-          <div className="mt-6 pt-6 border-t border-border/40">
+          <div className="mt-6 pt-6 border-t border-border">
             <div className="flex flex-wrap items-center gap-2">
               {joinRequest?.status === "pending" && (
                 <>
@@ -428,7 +428,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                     <Link
                       key={member.id}
                       href={ROUTES.POINTSTACK_PROFILE(member.profile.display_name)}
-                      className="flex items-center gap-3 p-3 border border-border/30 rounded-xl bg-card/80 hover:border-primary/30 hover:bg-card transition-all duration-200"
+                      className="flex items-center gap-3 p-3 border border-border rounded-xl bg-card hover:border-[#3F3F46] transition-colors"
                     >
                       {memberContent}
                     </Link>
@@ -438,7 +438,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                 return (
                   <div
                     key={member.id}
-                    className="flex items-center gap-3 p-3 border border-border/40 rounded-xl bg-card"
+                    className="flex items-center gap-3 p-3 border border-border rounded-xl bg-card"
                   >
                     {memberContent}
                   </div>
@@ -477,7 +477,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                 <Link
                   key={project.id}
                   href={getPointStackPostRoute(project.post_type, project.slug)}
-                  className="block rounded-xl border border-border/30 bg-card/80 hover:border-primary/30 hover:bg-card transition-all duration-200 p-4"
+                  className="block rounded-xl border border-border bg-card hover:border-[#3F3F46] transition-colors p-4"
                 >
                   <div className="flex gap-4">
                     {(project.cover_image_url || project.images?.[0]) ? (
@@ -533,7 +533,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                 <Link
                   key={job.id}
                   href={ROUTES.POINTSTACK_JOB(job.slug)}
-                  className="block rounded-xl border border-border/30 bg-card/80 hover:border-primary/30 hover:bg-card transition-all duration-200 p-4"
+                  className="block rounded-xl border border-border bg-card hover:border-[#3F3F46] transition-colors p-4"
                 >
                   <div className="flex items-start gap-3">
                     {job.company?.logo_url ? (
@@ -623,7 +623,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                   return (
                     <div
                       key={request.id}
-                      className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 p-4 border border-border/40 rounded-xl bg-card"
+                      className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 p-4 border border-border rounded-xl bg-card"
                     >
                       <div className="flex items-start gap-3 min-w-0">
                         <Link href={profileHref}>

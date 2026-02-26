@@ -65,10 +65,10 @@ export function FloatingMessenger() {
       {!messengerOpen && (
         <button
           onClick={toggleMessenger}
-          className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center hover:bg-primary/90 transition-all hover:scale-110 active:scale-95"
+          className="fixed bottom-6 right-6 z-40 w-[52px] h-[52px] rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 flex items-center justify-center hover:brightness-110 transition-colors"
           aria-label="Open messages"
         >
-          <ChatCircle className="w-5 h-5" weight="fill" />
+          <ChatCircle className="w-6 h-6" weight="fill" />
           {displayCount > 0 && (
             <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-destructive text-white rounded-full flex items-center justify-center">
               {displayCount > 99 ? "99+" : displayCount}
@@ -88,11 +88,11 @@ export function FloatingMessenger() {
       {/* Messenger panel */}
       <div
         className={cn(
-          "fixed z-40 bg-card border border-border/30 shadow-2xl shadow-black/50 flex flex-col",
+          "fixed z-40 bg-card border border-border shadow-2xl flex flex-col",
           // Mobile: full screen
           "inset-0 md:inset-auto",
           // Desktop: bottom-right corner
-          "md:bottom-5 md:right-5 md:w-[360px] md:h-[500px] md:rounded-xl",
+          "md:bottom-6 md:right-6 md:w-[380px] md:h-[400px] md:rounded-2xl",
           // Animation
           "transition-all duration-200 ease-out",
           messengerOpen
@@ -101,16 +101,28 @@ export function FloatingMessenger() {
         )}
       >
         {/* Header */}
-        <div className="px-4 py-3 border-b border-border flex items-center justify-between shrink-0">
-          <h2 className="font-semibold text-sm">Messages</h2>
-          <Button
-            variant="ghost"
-            size="icon-sm"
+        <div className="h-[56px] bg-[#27272A] flex items-center justify-between px-4 shrink-0 md:rounded-t-2xl">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+              <ChatCircle className="w-4 h-4 text-primary-foreground" weight="fill" />
+            </div>
+            <div>
+              <p className="font-heading text-[14px] font-bold text-foreground leading-tight">
+                Messages
+              </p>
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <span className="text-[11px] text-muted-foreground">Online</span>
+              </div>
+            </div>
+          </div>
+          <button
             onClick={closeMessenger}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#3F3F46] transition-colors"
             aria-label="Close messages"
           >
-            <X className="w-4 h-4" />
-          </Button>
+            <X className="w-4 h-4 text-muted-foreground" />
+          </button>
         </div>
 
         {/* Content */}

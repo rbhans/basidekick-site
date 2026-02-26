@@ -2,7 +2,6 @@
 
 import { PointStackFeedFilter, PointStackPostType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { X, Funnel } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
@@ -12,23 +11,39 @@ interface FeedFiltersProps {
   className?: string;
 }
 
-const TYPE_FILTERS: { value: PointStackPostType | undefined; label: string }[] = [
-  { value: undefined, label: "All" },
-  { value: "discussion", label: "Discussions" },
-  { value: "question", label: "Questions" },
-  { value: "tip", label: "Tips" },
-  { value: "project", label: "Projects" },
-];
+type TabItem =
+  | { kind: "type"; value: PointStackPostType | undefined; label: string }
+  | { kind: "sort"; value: "recent" | "popular" | "unanswered"; label: string };
 
-const SORT_FILTERS: { value: "recent" | "popular" | "unanswered" | undefined; label: string }[] = [
-  { value: "recent", label: "Recent" },
-  { value: "popular", label: "Popular" },
-  { value: "unanswered", label: "Unanswered" },
+const TAB_ITEMS: TabItem[] = [
+  { kind: "type", value: undefined, label: "All" },
+  { kind: "type", value: "discussion", label: "Discussions" },
+  { kind: "type", value: "question", label: "Questions" },
+  { kind: "type", value: "tip", label: "Tips" },
+  { kind: "type", value: "project", label: "Projects" },
+  { kind: "sort", value: "recent", label: "Recent" },
+  { kind: "sort", value: "popular", label: "Popular" },
+  { kind: "sort", value: "unanswered", label: "Unanswered" },
 ];
 
 export function FeedFilters({ currentFilter, onFilterChange, className }: FeedFiltersProps) {
   const activeTags = currentFilter.tags || [];
   const hasActiveFilters = activeTags.length > 0 || currentFilter.type;
+
+  const isTabActive = (tab: TabItem) => {
+    if (tab.kind === "type") {
+      return currentFilter.type === tab.value && !currentFilter.sortBy;
+    }
+    return currentFilter.sortBy === tab.value;
+  };
+
+  const handleTabClick = (tab: TabItem) => {
+    if (tab.kind === "type") {
+      onFilterChange({ ...currentFilter, type: tab.value, sortBy: undefined });
+    } else {
+      onFilterChange({ ...currentFilter, sortBy: tab.value, type: undefined });
+    }
+  };
 
   const removeTag = (tag: string) => {
     const newTags = activeTags.filter((t) => t !== tag);
@@ -44,36 +59,21 @@ export function FeedFilters({ currentFilter, onFilterChange, className }: FeedFi
 
   return (
     <div className={cn("space-y-3", className)}>
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Type filters */}
-        <div className="flex items-center gap-1 mr-4">
-          {TYPE_FILTERS.map((filter) => (
-            <Button
-              key={filter.label}
-              variant={currentFilter.type === filter.value ? "default" : "ghost"}
-              size="sm"
-              onClick={() => onFilterChange({ ...currentFilter, type: filter.value })}
-              className="h-8"
-            >
-              {filter.label}
-            </Button>
-          ))}
-        </div>
-
-        {/* Sort filters */}
-        <div className="flex items-center gap-1 border-l border-border/50 pl-4">
-          {SORT_FILTERS.map((filter) => (
-            <Button
-              key={filter.label}
-              variant={currentFilter.sortBy === filter.value ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => onFilterChange({ ...currentFilter, sortBy: filter.value })}
-              className="h-8"
-            >
-              {filter.label}
-            </Button>
-          ))}
-        </div>
+      <div className="flex items-center gap-2 flex-wrap">
+        {TAB_ITEMS.map((tab) => (
+          <button
+            key={tab.label}
+            onClick={() => handleTabClick(tab)}
+            className={cn(
+              "px-4 py-2 rounded-lg text-[13px] font-semibold transition-colors",
+              isTabActive(tab)
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground/70 hover:bg-muted/50"
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* Active tag filters */}
@@ -81,10 +81,9 @@ export function FeedFilters({ currentFilter, onFilterChange, className }: FeedFi
         <div className="flex flex-wrap items-center gap-2">
           <Funnel className="w-3.5 h-3.5 text-muted-foreground" />
           {activeTags.map((tag) => (
-            <Badge
+            <span
               key={tag}
-              variant="secondary"
-              className="gap-1 pr-1 text-xs hover:bg-destructive/10 transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground"
             >
               #{tag}
               <button
@@ -94,7 +93,7 @@ export function FeedFilters({ currentFilter, onFilterChange, className }: FeedFi
               >
                 <X className="w-3 h-3" />
               </button>
-            </Badge>
+            </span>
           ))}
           {hasActiveFilters && (
             <Button

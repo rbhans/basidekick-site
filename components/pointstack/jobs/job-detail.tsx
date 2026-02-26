@@ -79,7 +79,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
         Back to Jobs
       </Link>
 
-      <div className="border border-border/30 rounded-xl bg-card/90 p-6">
+      <div className="border border-border rounded-xl bg-card p-6">
         {/* Header */}
         <div className="flex items-start gap-4 mb-6">
           {job.company?.logo_url ? (
@@ -135,7 +135,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
 
         {/* Salary */}
         {(job.salary_min || job.salary_max) && (
-          <div className="flex items-center gap-2 mb-6 p-4 bg-primary/5 border border-primary/10 rounded-lg">
+          <div className="flex items-center gap-2 mb-6 p-4 bg-muted/50 border border-border rounded-lg">
             <CurrencyDollar className="w-5 h-5 text-primary" />
             <span className="font-semibold">
               {job.salary_min && job.salary_max
@@ -171,7 +171,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
         )}
 
         {/* Apply */}
-        <div className="pt-6 border-t border-border/40">
+        <div className="pt-6 border-t border-border">
           <h2 className="text-lg font-semibold mb-3">How to Apply</h2>
           <div className="flex flex-wrap gap-3">
             {job.application_url && (
@@ -194,7 +194,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
         </div>
 
         {/* Meta */}
-        <div className="mt-6 pt-6 border-t border-border/40 text-sm text-muted-foreground">
+        <div className="mt-6 pt-6 border-t border-border text-sm text-muted-foreground">
           <p>Posted {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}</p>
           <p>{job.view_count} views &middot; {job.application_count} applications</p>
         </div>

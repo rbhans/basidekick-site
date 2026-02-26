@@ -8,17 +8,12 @@ import { FeedCard } from "./feed-card";
 import { FeedFilters } from "./feed-filters";
 import { CreatePostDialog } from "./create-post-dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
 import {
   PencilSimple,
   WarningCircle,
   MagnifyingGlass,
-  Chats,
-  Question,
-  Lightbulb,
-  Wrench,
   UsersThree,
 } from "@phosphor-icons/react";
 
@@ -90,59 +85,62 @@ export function PointStackFeedView() {
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6">
-      {/* Create post prompt */}
+      {/* Compose Box */}
       {user && (
-        <div className="mb-6">
-          <CreatePostDialog
-            trigger={
-              <button className="w-full flex items-center gap-3 p-4 border border-primary/20 rounded-xl bg-primary/5 hover:bg-primary/10 hover:border-primary/30 transition-all text-left group">
-                <div className="h-10 w-10 rounded-full bg-primary/15 flex items-center justify-center shrink-0 group-hover:bg-primary/25 transition-colors">
-                  <PencilSimple className="w-5 h-5 text-primary" />
+        <CreatePostDialog
+          trigger={
+            <div className="bg-card border border-border rounded-xl p-5 mb-4 cursor-pointer hover:border-[#3F3F46] transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-[#27272A] flex items-center justify-center shrink-0">
+                  <UsersThree className="w-5 h-5 text-muted-foreground" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-muted-foreground block">Share something with the community...</span>
-                  <div className="flex items-center gap-3 mt-1.5">
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60">
-                      <Chats className="w-3 h-3" /> Discussion
+                <div className="flex-1">
+                  <p className="text-[15px] text-muted-foreground/50 pt-2">
+                    Share something with the community...
+                  </p>
+                  <div className="flex items-center gap-2 mt-3">
+                    <span className="px-3 py-1 rounded-full border border-border text-[12px] text-muted-foreground">
+                      Discussion
                     </span>
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60">
-                      <Question className="w-3 h-3" /> Question
+                    <span className="px-3 py-1 rounded-full border border-border text-[12px] text-muted-foreground">
+                      Question
                     </span>
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60">
-                      <Lightbulb className="w-3 h-3" /> Tip
+                    <span className="px-3 py-1 rounded-full border border-border text-[12px] text-muted-foreground">
+                      Tip
                     </span>
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground/60 hidden sm:inline-flex">
-                      <Wrench className="w-3 h-3" /> Project
+                    <span className="px-3 py-1 rounded-full border border-border text-[12px] text-muted-foreground hidden sm:inline">
+                      Project
                     </span>
                   </div>
                 </div>
-              </button>
-            }
-          />
-        </div>
+              </div>
+            </div>
+          }
+        />
       )}
 
       {/* Search */}
-      <div className="relative mb-4">
-        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
+      <div className="relative mb-6">
+        <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <input
+          type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search posts by title, content, or tag..."
-          className="pl-9 h-9"
+          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-[#3F3F46] transition-colors"
         />
       </div>
 
-      {/* Filters */}
+      {/* Filter Tabs */}
       <FeedFilters
         currentFilter={feedFilter}
         onFilterChange={setFeedFilter}
-        className="mb-6"
+        className="mb-8"
       />
 
       {/* Error state */}
       {feedError && (
-        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border/30 rounded-xl bg-card/90 text-center">
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-xl bg-card text-center">
           <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
             <p className="font-medium mb-1">Something went wrong</p>
@@ -254,7 +252,7 @@ export function PointStackFeedView() {
 
 function FeedCardSkeleton() {
   return (
-    <div className="p-5 border-l-2 border-l-muted/40 border border-border/30 rounded-xl bg-card/80">
+    <div className="p-5 border border-border rounded-xl bg-card">
       <div className="flex items-start gap-3 mb-3">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="flex-1">

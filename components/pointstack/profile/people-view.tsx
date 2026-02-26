@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { MagnifyingGlass, MapPin, Briefcase } from "@phosphor-icons/react";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "../shared/user-avatar";
@@ -44,12 +43,13 @@ export function PointStackPeopleView() {
 
       {/* Search */}
       <div className="relative mb-6">
-        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
+        <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <input
+          type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name..."
-          className="pl-9"
+          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-[#3F3F46] transition-colors"
         />
       </div>
 
@@ -87,7 +87,7 @@ function PersonCard({ profile }: { profile: PointStackProfile }) {
   return (
     <Link
       href={ROUTES.POINTSTACK_PROFILE(profile.display_name || profile.id)}
-      className="block p-4 border border-border/30 rounded-xl bg-card/80 hover:border-primary/30 hover:bg-card hover:shadow-[0_0_20px_rgba(196,248,42,0.05)] transition-all duration-200"
+      className="block p-4 border border-border rounded-xl bg-card hover:border-[#3F3F46] transition-colors"
     >
       <div className="flex items-start gap-3">
         <UserAvatar
@@ -141,7 +141,7 @@ function PersonCard({ profile }: { profile: PointStackProfile }) {
 
 function PersonCardSkeleton() {
   return (
-    <div className="p-4 border border-border/40 rounded-xl bg-card">
+    <div className="p-4 border border-border rounded-xl bg-card">
       <div className="flex items-start gap-3">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="flex-1">
