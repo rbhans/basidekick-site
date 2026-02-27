@@ -21,15 +21,11 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
   const supabase = useMemo(() => createClient(), []);
+  const [loading, setLoading] = useState(!!supabase);
 
   useEffect(() => {
-    // Skip if Supabase isn't configured
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
+    if (!supabase) return;
 
     // Get initial session
     const getSession = async () => {

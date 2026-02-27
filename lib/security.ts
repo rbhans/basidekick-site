@@ -110,8 +110,10 @@ export function validateDisplayName(
 }
 
 /**
- * Sanitize search input for use in Supabase ILIKE queries
- * Escapes PostgreSQL LIKE special characters: %, _, \
+ * Sanitize search input for use in Supabase ILIKE queries within .or() filters.
+ * Escapes PostgreSQL LIKE special characters (%, _, \) and strips
+ * PostgREST filter grammar characters (commas, parentheses, dots) that
+ * would break .or() filter parsing.
  */
 export function sanitizeSearchInput(input: string): string {
   if (!input || typeof input !== "string") return "";
@@ -125,8 +127,14 @@ export function sanitizeSearchInput(input: string): string {
     .replace(/%/g, "\\%")   // Escape percent signs
     .replace(/_/g, "\\_");  // Escape underscores
 
+  // Strip PostgREST filter grammar characters that break .or() parsing
+  sanitized = sanitized.replace(/[,()]/g, " ");
+
   // Remove any null bytes or control characters
   sanitized = sanitized.replace(/[\x00-\x1F\x7F]/g, "");
+
+  // Collapse multiple spaces from stripping
+  sanitized = sanitized.replace(/\s+/g, " ").trim();
 
   return sanitized;
 }

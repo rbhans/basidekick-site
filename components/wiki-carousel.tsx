@@ -18,11 +18,12 @@ interface WikiCarouselProps {
 }
 
 export function WikiCarousel({ articles }: WikiCarouselProps) {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
 
   useEffect(() => {
     const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mql.matches);
     const onChange = (e: MediaQueryListEvent) =>
       setPrefersReducedMotion(e.matches);
     mql.addEventListener("change", onChange);

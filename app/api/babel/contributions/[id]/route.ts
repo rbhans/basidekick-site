@@ -215,9 +215,31 @@ export async function POST(
       );
     }
 
+    // Atomically claim the row to prevent concurrent approvals
+    const newStatus = action === "approve" ? "approved" : "rejected";
+    const { data: claimed, error: claimError } = await supabase
+      .from("babel_contributions")
+      .update({
+        status: newStatus,
+        reviewed_by: reviewer_id,
+        reviewed_at: new Date().toISOString(),
+        reviewer_notes: reviewer_notes || null,
+      })
+      .eq("id", id)
+      .eq("status", "pending")
+      .select("id")
+      .single();
+
+    if (claimError || !claimed) {
+      return NextResponse.json(
+        { error: "Contribution was already processed by another reviewer" },
+        { status: 409 }
+      );
+    }
+
     let github_issue_url: string | null = null;
 
-    // If approving, create GitHub issue
+    // If approving, create GitHub issue after claiming
     if (action === "approve") {
       try {
         // Get submitter info
@@ -244,33 +266,17 @@ export async function POST(
           submitter_name: submitter?.display_name || undefined,
           submitter_email: userData?.user?.email || undefined,
         });
+
+        // Store the GitHub issue URL
+        await supabase
+          .from("babel_contributions")
+          .update({ github_issue_url })
+          .eq("id", id);
       } catch (githubError) {
         console.error("GitHub issue creation failed:", githubError);
-        return NextResponse.json(
-          { error: "Failed to create GitHub issue" },
-          { status: 500 }
-        );
+        // Row is already marked approved; log but don't revert
+        // The issue can be created manually later
       }
-    }
-
-    // Update the contribution status
-    const { error: updateError } = await supabase
-      .from("babel_contributions")
-      .update({
-        status: action === "approve" ? "approved" : "rejected",
-        reviewed_by: reviewer_id,
-        reviewed_at: new Date().toISOString(),
-        reviewer_notes: reviewer_notes || null,
-        github_issue_url,
-      })
-      .eq("id", id);
-
-    if (updateError) {
-      console.error("Update error:", updateError);
-      return NextResponse.json(
-        { error: "Failed to update contribution" },
-        { status: 500 }
-      );
     }
 
     return NextResponse.json({

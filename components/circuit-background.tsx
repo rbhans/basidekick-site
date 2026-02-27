@@ -38,12 +38,11 @@ function lerpColor(c1: number[], c2: number[], t: number): number[] {
 export function CircuitBackground({ className = "", opacity = 0.15, colorGradient = false }: CircuitBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(
+    () => typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+  );
 
   useEffect(() => {
-    // Check initial theme
-    setIsDark(document.documentElement.classList.contains("dark"));
-
     // Watch for theme changes
     const observer = new MutationObserver(() => {
       setIsDark(document.documentElement.classList.contains("dark"));

@@ -18,19 +18,22 @@ export interface Bookmark {
 }
 
 export function useBookmarks() {
-  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Load bookmarks from localStorage on mount
-  useEffect(() => {
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setBookmarks(JSON.parse(stored));
-      }
+      return stored ? JSON.parse(stored) : [];
     } catch (error) {
       console.error("Failed to load bookmarks:", error);
+      return [];
     }
+  });
+  const [isLoaded, setIsLoaded] = useState(
+    () => typeof window !== "undefined"
+  );
+
+  // Mark loaded on mount for SSR
+  useEffect(() => {
     setIsLoaded(true);
   }, []);
 
