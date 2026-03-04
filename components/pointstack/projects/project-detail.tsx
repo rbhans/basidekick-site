@@ -235,7 +235,7 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
             {isAuthor && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Project options">
                     <DotsThree className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>

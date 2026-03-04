@@ -28,14 +28,9 @@ export function useBookmarks() {
       return [];
     }
   });
-  const [isLoaded, setIsLoaded] = useState(
+  const [isLoaded] = useState(
     () => typeof window !== "undefined"
   );
-
-  // Mark loaded on mount for SSR
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
 
   // Save bookmarks to localStorage whenever they change
   useEffect(() => {

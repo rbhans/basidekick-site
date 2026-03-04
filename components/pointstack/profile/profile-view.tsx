@@ -244,6 +244,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 hover:bg-muted rounded-md"
+                  aria-label="Visit website"
                 >
                   <Globe className="w-5 h-5" />
                 </a>
@@ -254,6 +255,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 hover:bg-muted rounded-md"
+                  aria-label="LinkedIn profile"
                 >
                   <LinkedinLogo className="w-5 h-5" />
                 </a>
@@ -264,6 +266,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 hover:bg-muted rounded-md"
+                  aria-label="GitHub profile"
                 >
                   <GithubLogo className="w-5 h-5" />
                 </a>

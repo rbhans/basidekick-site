@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { SiteBadge } from "@/components/site-badge";
 import { ArticleCard } from "@/components/article-card";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import { WikiFilterBar, WikiSidebar, SortOption } from "@/components/wiki";
 import { createClient } from "@/lib/supabase/client";
-import { WikiCategory, WikiArticle, WikiTag } from "@/lib/types";
-import { ROUTES } from "@/lib/routes";
+import { WikiCategory, WikiArticle } from "@/lib/types";
 import { sanitizeSearchInput } from "@/lib/security";
 import { getWikiCategoryColor } from "@/lib/wiki-colors";
 import { PageHero } from "@/components/page-hero";
@@ -17,6 +16,7 @@ import {
   BookOpen,
   ArrowLeft,
   List,
+  X,
 } from "@phosphor-icons/react";
 
 const ARTICLES_PER_PAGE = 20;
@@ -26,7 +26,6 @@ export function WikiView() {
   const [categories, setCategories] = useState<WikiCategory[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [articles, setArticles] = useState<WikiArticle[]>([]);
-  const [articleTags, setArticleTags] = useState<Map<string, WikiTag[]>>(new Map());
   const [totalArticles, setTotalArticles] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
@@ -36,6 +35,7 @@ export function WikiView() {
   const [activeSearch, setActiveSearch] = useState("");
 
   const [loading, setLoading] = useState(true);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Sort categories by display order (flat list, no tree needed)
   const sortCategories = (cats: WikiCategory[]): WikiCategory[] => {
@@ -81,99 +81,80 @@ export function WikiView() {
   }, []);
 
   // Fetch articles for browse view
-  const fetchArticles = useCallback(async () => {
-    setLoading(true);
-    const supabase = createClient();
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-
-    const { column, ascending } = getSortConfig(sortBy);
-    const offset = (currentPage - 1) * ARTICLES_PER_PAGE;
-
-    // Build the query
-    let query = supabase
-      .from("wiki_articles")
-      .select(
-        `
-        *,
-        author:profiles!wiki_articles_author_id_fkey(display_name),
-        category:wiki_categories!wiki_articles_category_id_fkey(name, slug)
-      `,
-        { count: "exact" }
-      )
-      .eq("is_published", true);
-
-    // Filter by category if selected
-    if (selectedCategoryId) {
-      query = query.eq("category_id", selectedCategoryId);
-    }
-
-    // Filter by tags if selected
-    if (selectedTagIds.length > 0) {
-      const { data: articleTagsData } = await supabase
-        .from("wiki_article_tags")
-        .select("article_id")
-        .in("tag_id", selectedTagIds);
-
-      if (articleTagsData && articleTagsData.length > 0) {
-        const articleIds = [...new Set(articleTagsData.map((at: { article_id: string }) => at.article_id))];
-        query = query.in("id", articleIds);
-      } else {
-        // No articles match the tags
-        setArticles([]);
-        setTotalArticles(0);
+  useEffect(() => {
+    async function fetchArticles() {
+      setLoading(true);
+      const supabase = createClient();
+      if (!supabase) {
         setLoading(false);
         return;
       }
-    }
 
-    // Apply search (sanitized to prevent SQL injection)
-    if (activeSearch) {
-      const sanitized = sanitizeSearchInput(activeSearch);
-      if (sanitized) {
-        query = query.or(
-          `title.ilike.%${sanitized}%,content.ilike.%${sanitized}%,summary.ilike.%${sanitized}%`
-        );
+      const { column, ascending } = getSortConfig(sortBy);
+      const offset = (currentPage - 1) * ARTICLES_PER_PAGE;
+
+      // Build the query
+      let query = supabase
+        .from("wiki_articles")
+        .select(
+          `
+          *,
+          author:profiles!wiki_articles_author_id_fkey(display_name),
+          category:wiki_categories!wiki_articles_category_id_fkey(name, slug)
+        `,
+          { count: "exact" }
+        )
+        .eq("is_published", true);
+
+      // Filter by category if selected
+      if (selectedCategoryId) {
+        query = query.eq("category_id", selectedCategoryId);
       }
-    }
 
-    // Apply sorting and pagination
-    query = query.order(column, { ascending }).range(offset, offset + ARTICLES_PER_PAGE - 1);
-
-    const { data, count, error } = await query;
-
-    if (data && !error) {
-      setArticles(data as WikiArticle[]);
-      setTotalArticles(count || 0);
-
-      // Fetch tags for these articles
-      const articleIds = data.map((a: WikiArticle) => a.id);
-      if (articleIds.length > 0) {
-        const { data: tagsData } = await supabase
+      // Filter by tags if selected
+      if (selectedTagIds.length > 0) {
+        const { data: articleTagsData } = await supabase
           .from("wiki_article_tags")
-          .select("article_id, wiki_tags(*)")
-          .in("article_id", articleIds);
+          .select("article_id")
+          .in("tag_id", selectedTagIds);
 
-        if (tagsData) {
-          const tagMap = new Map<string, WikiTag[]>();
-          tagsData.forEach((item: { article_id: string; wiki_tags: WikiTag }) => {
-            const existing = tagMap.get(item.article_id) || [];
-            existing.push(item.wiki_tags);
-            tagMap.set(item.article_id, existing);
-          });
-          setArticleTags(tagMap);
+        if (articleTagsData && articleTagsData.length > 0) {
+          const articleIds = [...new Set(articleTagsData.map((at: { article_id: string }) => at.article_id))];
+          query = query.in("id", articleIds);
+        } else {
+          // No articles match the tags
+          setArticles([]);
+          setTotalArticles(0);
+          setLoading(false);
+          return;
         }
       }
+
+      // Apply search (sanitized to prevent SQL injection)
+      if (activeSearch) {
+        const sanitized = sanitizeSearchInput(activeSearch);
+        if (sanitized) {
+          query = query.or(
+            `title.ilike.%${sanitized}%,content.ilike.%${sanitized}%,summary.ilike.%${sanitized}%`
+          );
+        }
+      }
+
+      // Apply sorting and pagination
+      query = query.order(column, { ascending }).range(offset, offset + ARTICLES_PER_PAGE - 1);
+
+      const { data, count, error } = await query;
+
+      if (data && !error) {
+        setArticles(data as WikiArticle[]);
+        setTotalArticles(count || 0);
+      }
+
+      setLoading(false);
     }
 
-    setLoading(false);
-  }, [selectedCategoryId, selectedTagIds, activeSearch, sortBy, currentPage]);
-
-  useEffect(() => {
     fetchArticles();
-  }, [fetchArticles]);
+  }, [selectedCategoryId, selectedTagIds, activeSearch, sortBy, currentPage]);
 
   const handleSearch = () => {
     setActiveSearch(searchQuery);
@@ -369,14 +350,47 @@ export function WikiView() {
           <Button
             size="lg"
             className="shadow-lg rounded-xl"
-            onClick={() => {
-              // Could implement a mobile drawer here
-            }}
+            onClick={() => setIsMobileOpen(true)}
           >
             <BookOpen className="size-5 mr-2" />
             Categories
           </Button>
         </div>
+
+        {/* Mobile Categories Drawer */}
+        {isMobileOpen && (
+          <div className="lg:hidden">
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-40 bg-black/50"
+              onClick={() => setIsMobileOpen(false)}
+            />
+            {/* Panel */}
+            <div className="fixed right-0 top-0 h-full w-80 z-50 bg-background border-l border-border overflow-y-auto">
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <h2 className="font-semibold">Categories</h2>
+                <button
+                  onClick={() => setIsMobileOpen(false)}
+                  className="p-1 hover:bg-muted rounded-md"
+                  aria-label="Close categories"
+                >
+                  <X className="size-5" />
+                </button>
+              </div>
+              <div className="p-4">
+                <WikiSidebar
+                  categories={categories}
+                  popularTags={availableTags.slice(0, 15)}
+                  selectedCategoryId={selectedCategoryId}
+                  onCategorySelect={(category) => {
+                    handleCategorySelect(category);
+                    setIsMobileOpen(false);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
   );
 }
