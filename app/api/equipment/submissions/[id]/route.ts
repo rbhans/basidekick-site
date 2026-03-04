@@ -190,11 +190,11 @@ export async function POST(
 
     const { data: reviewerProfile, error: profileError } = await supabase
       .from("profiles")
-      .select("is_admin")
+      .select("role")
       .eq("id", reviewer_id)
       .single();
 
-    if (profileError || !reviewerProfile?.is_admin) {
+    if (profileError || reviewerProfile?.role !== "admin") {
       return NextResponse.json({ error: "Unauthorized: Admin access required" }, { status: 403 });
     }
 
@@ -315,12 +315,12 @@ export async function GET(
 
     const { data: userProfile } = await supabase
       .from("profiles")
-      .select("is_admin")
+      .select("role")
       .eq("id", user.id)
       .single();
 
     const isOwner = submission.user_id === user.id;
-    const isAdmin = userProfile?.is_admin === true;
+    const isAdmin = userProfile?.role === "admin";
 
     if (!isOwner && !isAdmin) {
       return NextResponse.json({ error: "Unauthorized: You can only view your own submissions" }, { status: 403 });

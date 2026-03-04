@@ -142,7 +142,7 @@ export interface Profile {
     };
   } | null;
   post_count: number;
-  is_admin: boolean;
+  role: "member" | "moderator" | "admin";
   created_at: string;
   updated_at: string;
 }

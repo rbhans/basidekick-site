@@ -20,11 +20,11 @@ export default async function AdminPage() {
   // Check if user is admin
   const { data: profile } = await supabase
     .from("profiles")
-    .select("is_admin")
+    .select("role")
     .eq("id", user.id)
     .single();
 
-  if (!profile?.is_admin) {
+  if (profile?.role !== "admin") {
     redirect(ROUTES.HOME);
   }
 
@@ -40,7 +40,7 @@ export default async function AdminPage() {
     // Users with profiles
     supabase
       .from("profiles")
-      .select("id, display_name, avatar_url, company, is_admin, created_at")
+      .select("id, display_name, avatar_url, company, role, created_at")
       .order("created_at", { ascending: false })
       .limit(50),
     // Wiki articles

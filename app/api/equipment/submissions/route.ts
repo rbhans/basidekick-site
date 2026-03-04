@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const createSubmissionSchema = z.object({
   type: z.enum(["error", "edit", "new_entry"]),
@@ -67,6 +68,15 @@ export async function POST(request: Request) {
     const user = await getAuthenticatedUser(request);
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Server-side rate limit: 5 submissions per 10 minutes per user
+    const { success: rateLimitOk } = await checkRateLimit(`submission:${user.id}`);
+    if (!rateLimitOk) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded. Please wait before submitting again." },
+        { status: 429 }
+      );
     }
 
     const supabase = getServiceClient();

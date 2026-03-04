@@ -178,11 +178,11 @@ export async function POST(
     // Verify reviewer is an admin
     const { data: reviewerProfile, error: profileError } = await supabase
       .from("profiles")
-      .select("is_admin")
+      .select("role")
       .eq("id", reviewer_id)
       .single();
 
-    if (profileError || !reviewerProfile?.is_admin) {
+    if (profileError || reviewerProfile?.role !== "admin") {
       return NextResponse.json(
         { error: "Unauthorized: Admin access required" },
         { status: 403 }
@@ -332,12 +332,12 @@ export async function GET(
     // Verify user is either the owner or an admin
     const { data: userProfile } = await supabase
       .from("profiles")
-      .select("is_admin")
+      .select("role")
       .eq("id", user.id)
       .single();
 
     const isOwner = contribution.user_id === user.id;
-    const isAdmin = userProfile?.is_admin === true;
+    const isAdmin = userProfile?.role === "admin";
 
     if (!isOwner && !isAdmin) {
       return NextResponse.json(

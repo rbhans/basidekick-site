@@ -43,10 +43,10 @@ export function Navbar() {
       const supabase = createClient();
       const { data: profile } = await supabase
         .from("profiles")
-        .select("is_admin")
+        .select("role")
         .eq("id", user.id)
         .single();
-      setIsAdmin(profile?.is_admin || false);
+      setIsAdmin(profile?.role === "admin");
     };
     checkAdmin();
   }, [user]);

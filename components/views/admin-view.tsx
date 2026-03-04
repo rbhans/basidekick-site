@@ -35,7 +35,7 @@ interface AdminUser {
   display_name: string | null;
   avatar_url: string | null;
   company: string | null;
-  is_admin: boolean;
+  role: "member" | "moderator" | "admin";
   created_at: string;
 }
 
@@ -146,19 +146,20 @@ export function AdminView({
   };
 
   // User actions
-  const toggleAdmin = async (userId: string, currentStatus: boolean) => {
+  const toggleAdmin = async (userId: string, currentRole: "member" | "moderator" | "admin") => {
     setLoading(`admin-${userId}`);
     const supabase = createClient();
     if (!supabase) return;
 
+    const newRole = currentRole === "admin" ? "member" : "admin";
     const { error } = await supabase
       .from("profiles")
-      .update({ is_admin: !currentStatus })
+      .update({ role: newRole })
       .eq("id", userId);
 
     if (!error) {
       setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, is_admin: !currentStatus } : u))
+        prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
       );
     }
     setLoading(null);
@@ -476,7 +477,7 @@ export function AdminView({
                             </p>
                           </div>
                         </div>
-                        {user.is_admin && (
+                        {user.role === "admin" && (
                           <span className="text-xs bg-primary/10 text-primary px-2 py-0.5">
                             Admin
                           </span>
@@ -553,7 +554,7 @@ export function AdminView({
                           {formatDate(user.created_at)}
                         </td>
                         <td className="p-4">
-                          {user.is_admin ? (
+                          {user.role === "admin" ? (
                             <span className="text-xs bg-primary/10 text-primary px-2 py-0.5">
                               Yes
                             </span>
@@ -565,10 +566,10 @@ export function AdminView({
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => toggleAdmin(user.id, user.is_admin)}
+                            onClick={() => toggleAdmin(user.id, user.role)}
                             disabled={loading === `admin-${user.id}`}
                           >
-                            {user.is_admin ? (
+                            {user.role === "admin" ? (
                               <ShieldSlash className="size-4" />
                             ) : (
                               <ShieldCheck className="size-4" />
