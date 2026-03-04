@@ -15,8 +15,8 @@ const createSubmissionSchema = z.object({
   protocols: z.array(z.string()).nullable().optional(),
   model_status: z.enum(["current", "discontinued"]).nullable().optional(),
   description: z.string().nullable().optional(),
-  manufacturer_url: z.string().nullable().optional(),
-  image_url: z.string().nullable().optional(),
+  manufacturer_url: z.string().url().nullable().optional(),
+  image_url: z.string().url().nullable().optional(),
   suggested_changes: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
@@ -77,7 +77,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const parseResult = createSubmissionSchema.safeParse(body);
     if (!parseResult.success) {
-      return NextResponse.json({ error: "Invalid input", details: parseResult.error.flatten() }, { status: 400 });
+      console.error("Validation error:", parseResult.error.flatten());
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
 
     const data = parseResult.data;

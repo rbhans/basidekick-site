@@ -121,6 +121,12 @@ const markdownComponents: Components = {
       return <span>{children}</span>;
     }
 
+    // Block unsafe URL schemes (javascript:, data:, vbscript:, etc.)
+    const scheme = href.split(":")[0].toLowerCase();
+    if (!["http", "https", "mailto", ""].includes(scheme) && !href.startsWith("/")) {
+      return <span>{children}</span>;
+    }
+
     const videoId = getYouTubeVideoId(href);
     if (videoId) {
       const title = typeof children === "string" ? children :

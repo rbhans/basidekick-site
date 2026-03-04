@@ -84,8 +84,9 @@ export async function POST(request: Request) {
     // Validate input
     const parseResult = createContributionSchema.safeParse(body);
     if (!parseResult.success) {
+      console.error("Validation error:", parseResult.error.flatten());
       return NextResponse.json(
-        { error: "Invalid input", details: parseResult.error.flatten() },
+        { error: "Invalid input" },
         { status: 400 }
       );
     }

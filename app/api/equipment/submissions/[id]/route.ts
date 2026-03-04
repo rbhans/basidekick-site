@@ -247,8 +247,6 @@ export async function POST(
           .eq("id", submission.user_id)
           .single();
 
-        const { data: userData } = await supabase.auth.admin.getUserById(submission.user_id);
-
         github_issue_url = await createGitHubIssue({
           id: submission.id,
           type: submission.type,
@@ -264,7 +262,6 @@ export async function POST(
           image_url: submission.image_url,
           suggested_changes: submission.suggested_changes,
           submitter_name: submitter?.display_name || undefined,
-          submitter_email: userData?.user?.email || undefined,
         });
 
         // Store the GitHub issue URL

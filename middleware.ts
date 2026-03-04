@@ -60,7 +60,11 @@ export async function middleware(request: NextRequest) {
   // Redirect unauthenticated users from protected routes
   if (isProtectedRoute && !user) {
     const signInUrl = new URL("/signin", request.url);
-    signInUrl.searchParams.set("redirect", pathname);
+    // Only set redirect if path is a known protected route (prevents open redirect)
+    const isSafeRedirect = PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
+    if (isSafeRedirect) {
+      signInUrl.searchParams.set("redirect", pathname);
+    }
     return NextResponse.redirect(signInUrl);
   }
 
