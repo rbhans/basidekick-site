@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import { WikiFilterBar, WikiSidebar, SortOption } from "@/components/wiki";
 import { createClient } from "@/lib/supabase/client";
-import { WikiCategory, WikiArticle } from "@/lib/types";
+import { WikiCategory, WikiArticle, WikiTag } from "@/lib/types";
 import { sanitizeSearchInput } from "@/lib/security";
 import { getWikiCategoryColor } from "@/lib/wiki-colors";
 import { PageHero } from "@/components/page-hero";
