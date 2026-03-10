@@ -18,12 +18,14 @@ interface RelatedArticlesProps {
   currentArticleId: string;
   categoryId: string | null;
   tagIds: string[];
+  facetIds?: string[];
 }
 
 export function RelatedArticles({
   currentArticleId,
   categoryId,
   tagIds,
+  facetIds = [],
 }: RelatedArticlesProps) {
   const [articles, setArticles] = useState<RelatedArticle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,18 +40,23 @@ export function RelatedArticles({
 
       let relatedArticles: RelatedArticle[] = [];
 
-      // Strategy 1: Find articles with shared tags
-      if (tagIds.length > 0) {
-        const { data: taggedArticleIds } = await supabase
-          .from("wiki_article_tags")
+      // Strategy 1: Find articles with shared facets (preferred) or tags (fallback)
+      const useFacets = facetIds.length > 0;
+      const lookupIds = useFacets ? facetIds : tagIds;
+      const junctionTable = useFacets ? "wiki_article_facets" : "wiki_article_tags";
+      const junctionColumn = useFacets ? "facet_id" : "tag_id";
+
+      if (lookupIds.length > 0) {
+        const { data: relatedArticleIds } = await supabase
+          .from(junctionTable)
           .select("article_id")
-          .in("tag_id", tagIds)
+          .in(junctionColumn, lookupIds)
           .neq("article_id", currentArticleId);
 
-        if (taggedArticleIds && taggedArticleIds.length > 0) {
-          // Count occurrences to rank by most shared tags
+        if (relatedArticleIds && relatedArticleIds.length > 0) {
+          // Count occurrences to rank by most shared facets/tags
           const articleIdCounts: Record<string, number> = {};
-          for (const { article_id } of taggedArticleIds) {
+          for (const { article_id } of relatedArticleIds) {
             articleIdCounts[article_id] = (articleIdCounts[article_id] || 0) + 1;
           }
 
@@ -60,7 +67,7 @@ export function RelatedArticles({
             .map(([id]) => id);
 
           if (sortedIds.length > 0) {
-            const { data: tagRelated } = await supabase
+            const { data: facetRelated } = await supabase
               .from("wiki_articles")
               .select(
                 "id, title, slug, summary, category:wiki_categories!wiki_articles_category_id_fkey(name)"
@@ -68,10 +75,9 @@ export function RelatedArticles({
               .in("id", sortedIds)
               .eq("is_published", true);
 
-            if (tagRelated) {
-              // Sort results to match our ranked order
+            if (facetRelated) {
               relatedArticles = sortedIds
-                .map((id) => tagRelated.find((a: RelatedArticle) => a.id === id))
+                .map((id) => facetRelated.find((a: RelatedArticle) => a.id === id))
                 .filter(Boolean) as RelatedArticle[];
             }
           }
@@ -130,7 +136,7 @@ export function RelatedArticles({
     }
 
     fetchRelatedArticles();
-  }, [currentArticleId, categoryId, tagIds]);
+  }, [currentArticleId, categoryId, tagIds, facetIds]);
 
   if (loading) {
     return (

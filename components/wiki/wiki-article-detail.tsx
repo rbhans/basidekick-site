@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
-import { WikiArticle, WikiTag, WikiComment } from "@/lib/types";
+import { WikiArticle, WikiTag, WikiFacet, WikiComment } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import { validateContent, MAX_LENGTHS, checkRateLimit, getRateLimitReset } from "@/lib/security";
 import {
@@ -22,12 +22,22 @@ import { RelatedArticles } from "@/components/wiki/related-articles";
 import { BookmarkButton } from "@/components/bookmark-button";
 import { PageHero } from "@/components/page-hero";
 
+// Map facet group slugs to URL route prefixes
+const GROUP_ROUTE_MAP: Record<string, string> = {
+  platform_vendor: "platform",
+  protocol: "protocol",
+  system_domain: "topic",
+  topic: "topic",
+  content_format: "topic",
+};
+
 interface WikiArticleDetailProps {
   article: WikiArticle;
   tags: WikiTag[];
+  facets?: WikiFacet[];
 }
 
-export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
+export function WikiArticleDetail({ article, tags, facets = [] }: WikiArticleDetailProps) {
   const { user } = useAuth();
   const [comments, setComments] = useState<WikiComment[]>([]);
   const [commentContent, setCommentContent] = useState("");
@@ -194,7 +204,23 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
             />
           </div>
 
-          {tags.length > 0 && (
+          {facets.length > 0 ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {facets.map((facet) => {
+                const groupSlug = facet.group?.slug || "";
+                const routePrefix = GROUP_ROUTE_MAP[groupSlug] || "topic";
+                return (
+                  <Link
+                    key={facet.id}
+                    href={ROUTES.WIKI_FACET(routePrefix, facet.slug)}
+                    className="px-2 py-0.5 text-xs border border-border hover:bg-accent transition-colors rounded"
+                  >
+                    {facet.name}
+                  </Link>
+                );
+              })}
+            </div>
+          ) : tags.length > 0 ? (
             <div className="mt-4 flex flex-wrap gap-2">
               {tags.map((tag) => (
                 <Link
@@ -206,7 +232,7 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
                 </Link>
               ))}
             </div>
-          )}
+          ) : null}
       </PageHero>
 
       {/* Article Content */}
@@ -302,6 +328,7 @@ export function WikiArticleDetail({ article, tags }: WikiArticleDetailProps) {
         currentArticleId={article.id}
         categoryId={article.category_id}
         tagIds={tags.map((t) => t.id)}
+        facetIds={facets.map((f) => f.id)}
       />
     </div>
   );

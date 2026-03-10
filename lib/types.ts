@@ -156,12 +156,54 @@ export interface WikiCategory {
   description: string | null;
   icon_name: string | null;
   display_order: number;
+  color?: string | null;
   created_at: string;
   // Computed/joined
   children?: WikiCategory[];
   article_count?: number;
 }
 
+export interface WikiFacetGroup {
+  id: string;
+  name: string;
+  slug: string;
+  display_order: number;
+  created_at: string;
+  // Joined
+  facets?: WikiFacet[];
+}
+
+export interface WikiFacet {
+  id: string;
+  group_id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  icon_name: string | null;
+  article_count: number;
+  display_order: number;
+  created_at: string;
+  // Joined
+  group?: WikiFacetGroup;
+}
+
+export interface WikiCollection {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  cover_icon: string | null;
+  is_featured: boolean;
+  display_order: number;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined
+  articles?: WikiArticle[];
+  article_count?: number;
+}
+
+/** @deprecated Use WikiFacet instead. Retained for legacy tag page fallback. */
 export interface WikiTag {
   id: string;
   name: string;
@@ -185,6 +227,7 @@ export interface WikiArticle {
   author?: { display_name: string | null };
   category?: { name: string; slug: string };
   tags?: WikiTag[];
+  facets?: WikiFacet[];
 }
 
 export interface WikiComment {

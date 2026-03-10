@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { WikiArticleDetail } from "@/components/wiki/wiki-article-detail";
-import { WikiTag } from "@/lib/types";
+import { WikiFacet } from "@/lib/types";
 import { escapeJsonLd } from "@/lib/security";
 
 // ISR: Revalidate daily — articles rarely change
@@ -139,16 +139,19 @@ export default async function WikiArticlePage({ params }: WikiArticlePageProps) 
     notFound();
   }
 
-  // Fetch tags for this article
-  const { data: tagData } = await supabase
-    .from("wiki_article_tags")
-    .select("tag_id, wiki_tags(*)")
+  // Fetch facets for this article (replaces legacy wiki_article_tags)
+  const { data: facetData } = await supabase
+    .from("wiki_article_facets")
+    .select("facet_id, wiki_facets(*, group:wiki_facet_groups!wiki_facets_group_id_fkey(slug, name))")
     .eq("article_id", article.id);
 
-  // Handle wiki_tags which may be an object or array from the join
-  const tags = (tagData || []).map((t: { wiki_tags: unknown }) => {
-    const wikiTag = Array.isArray(t.wiki_tags) ? t.wiki_tags[0] : t.wiki_tags;
-    return wikiTag as WikiTag;
+  const facets = (facetData || []).map((f: { wiki_facets: unknown }) => {
+    const wikiFacet = Array.isArray(f.wiki_facets) ? f.wiki_facets[0] : f.wiki_facets;
+    if (wikiFacet && typeof wikiFacet === "object" && "group" in wikiFacet) {
+      const group = Array.isArray(wikiFacet.group) ? wikiFacet.group[0] : wikiFacet.group;
+      return { ...wikiFacet, group } as WikiFacet;
+    }
+    return wikiFacet as WikiFacet;
   }).filter(Boolean);
 
   const jsonLd = generateArticleJsonLd(article);
@@ -187,7 +190,7 @@ export default async function WikiArticlePage({ params }: WikiArticlePageProps) 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: escapeJsonLd(breadcrumbJsonLd) }}
       />
-      <WikiArticleDetail article={article} tags={tags} />
+      <WikiArticleDetail article={article} tags={[]} facets={facets} />
     </>
   );
 }

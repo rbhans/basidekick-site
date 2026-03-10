@@ -1,18 +1,45 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import { WikiTagView } from "@/components/wiki/wiki-tag-view";
-import { WikiArticle } from "@/lib/types";
 
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return null;
-  }
-
+  if (!supabaseUrl || !supabaseAnonKey) return null;
   return createClient(supabaseUrl, supabaseAnonKey);
+}
+
+// Map facet group slugs to URL route prefixes
+const GROUP_ROUTE_MAP: Record<string, string> = {
+  platform_vendor: "platform",
+  protocol: "protocol",
+  system_domain: "topic",
+  topic: "topic",
+  content_format: "topic",
+};
+
+async function findFacetRoute(supabase: NonNullable<ReturnType<typeof getSupabaseClient>>, slug: string) {
+  // Fetch all facets matching this slug (could be in different groups)
+  const { data: facets } = await supabase
+    .from("wiki_facets")
+    .select("name, group_id")
+    .eq("slug", slug);
+
+  if (!facets || facets.length === 0) return null;
+
+  const firstFacet = facets[0] as { name: string; group_id: string };
+
+  // Resolve group slug for the first match
+  const { data: group } = await supabase
+    .from("wiki_facet_groups")
+    .select("slug")
+    .eq("id", firstFacet.group_id)
+    .single();
+
+  if (!group) return null;
+
+  const routePrefix = GROUP_ROUTE_MAP[(group as { slug: string }).slug] || "topic";
+  return { name: firstFacet.name, routePrefix };
 }
 
 interface WikiTagPageProps {
@@ -22,84 +49,24 @@ interface WikiTagPageProps {
 export async function generateMetadata({ params }: WikiTagPageProps): Promise<Metadata> {
   const { tagSlug } = await params;
   const supabase = getSupabaseClient();
+  if (!supabase) return { title: "Tag Not Found | BASidekick Wiki" };
 
-  if (!supabase) {
-    return {
-      title: "Tag Not Found | BASidekick Wiki",
-    };
-  }
-
-  const { data: tag } = await supabase
-    .from("wiki_tags")
-    .select("name")
-    .eq("slug", tagSlug)
-    .single();
-
-  if (!tag) {
-    return {
-      title: "Tag Not Found | BASidekick Wiki",
-    };
-  }
-
-  const description = `Browse all BAS knowledge articles tagged with ${tag.name}`;
+  const result = await findFacetRoute(supabase, tagSlug);
+  if (!result) return { title: "Tag Not Found | BASidekick Wiki" };
 
   return {
-    title: `${tag.name} Articles | BASidekick Wiki`,
-    description,
-    openGraph: {
-      title: `${tag.name} - BASidekick Wiki`,
-      description,
-      type: "website",
-      siteName: "BASidekick",
-      url: `https://basidekick.com/wiki/tags/${tagSlug}`,
-    },
-    alternates: {
-      canonical: `https://basidekick.com/wiki/tags/${tagSlug}`,
-    },
+    title: `${result.name} Articles | BASidekick Wiki`,
+    alternates: { canonical: `https://basidekick.com/wiki/${result.routePrefix}/${tagSlug}` },
   };
 }
 
 export default async function WikiTagPage({ params }: WikiTagPageProps) {
   const { tagSlug } = await params;
   const supabase = getSupabaseClient();
+  if (!supabase) notFound();
 
-  if (!supabase) {
-    notFound();
-  }
+  const result = await findFacetRoute(supabase, tagSlug);
+  if (!result) notFound();
 
-  const { data: tag } = await supabase
-    .from("wiki_tags")
-    .select("*")
-    .eq("slug", tagSlug)
-    .single();
-
-  if (!tag) {
-    notFound();
-  }
-
-  // Fetch articles with this tag
-  const { data: articleTagsData } = await supabase
-    .from("wiki_article_tags")
-    .select("article_id")
-    .eq("tag_id", tag.id);
-
-  const articleIds = articleTagsData?.map((at: { article_id: string }) => at.article_id) || [];
-
-  let articles: WikiArticle[] = [];
-  if (articleIds.length > 0) {
-    const { data } = await supabase
-      .from("wiki_articles")
-      .select(`
-        *,
-        author:profiles!wiki_articles_author_id_fkey(display_name),
-        category:wiki_categories!wiki_articles_category_id_fkey(name, slug)
-      `)
-      .in("id", articleIds)
-      .eq("is_published", true)
-      .order("created_at", { ascending: false });
-
-    articles = (data || []) as WikiArticle[];
-  }
-
-  return <WikiTagView tag={tag} articles={articles} />;
+  redirect(`/wiki/${result.routePrefix}/${tagSlug}`);
 }

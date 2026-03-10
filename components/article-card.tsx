@@ -2,6 +2,11 @@ import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 import { getWikiCategoryColor } from "@/lib/wiki-colors";
 
+interface FacetPill {
+  name: string;
+  slug: string;
+}
+
 interface ArticleCardProps {
   slug: string;
   category?: string | null;
@@ -11,6 +16,9 @@ interface ArticleCardProps {
   readTime?: string;
   accentColor?: string;
   className?: string;
+  facets?: FacetPill[];
+  updatedAt?: string;
+  viewCount?: number;
 }
 
 export function ArticleCard({
@@ -22,13 +30,18 @@ export function ArticleCard({
   readTime,
   accentColor,
   className,
+  facets,
+  updatedAt,
+  viewCount,
 }: ArticleCardProps) {
   const color = accentColor || getWikiCategoryColor(category, categorySlug);
+  // Show up to 2 facet pills
+  const displayFacets = facets?.slice(0, 2);
 
   return (
     <Link
       href={ROUTES.WIKI_ARTICLE(slug)}
-      className={`group block bg-[#1E1E22] border border-[#333] rounded-xl p-5 hover:border-primary/30 transition-all ${className || ""}`}
+      className={`group block bg-card border border-border rounded-xl p-5 hover:border-primary/30 transition-all ${className || ""}`}
       style={{ borderLeftWidth: "3px", borderLeftColor: color }}
     >
       {category && (
@@ -53,10 +66,33 @@ export function ArticleCard({
           {description}
         </p>
       )}
-      {readTime && (
-        <span className="mt-3 block text-[11px] text-muted-foreground/70">
-          {readTime}
-        </span>
+      {displayFacets && displayFacets.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {displayFacets.map((facet) => (
+            <span
+              key={facet.slug}
+              className="px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground bg-muted/50 rounded"
+            >
+              {facet.name}
+            </span>
+          ))}
+        </div>
+      )}
+      {(readTime || updatedAt || viewCount != null) && (
+        <div className="mt-3 flex items-center gap-3 text-[11px] text-muted-foreground/70">
+          {readTime && <span>{readTime}</span>}
+          {updatedAt && (
+            <span>
+              {new Date(updatedAt).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          )}
+          {viewCount != null && viewCount > 0 && (
+            <span>{viewCount} views</span>
+          )}
+        </div>
       )}
     </Link>
   );

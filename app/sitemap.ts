@@ -190,17 +190,41 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Fetch wiki tags for tag pages
-  const { data: wikiTags } = await supabase
-    .from("wiki_tags")
-    .select("slug")
-    .order("name");
+  // Fetch wiki facets for facet landing pages
+  const { data: wikiFacets } = await supabase
+    .from("wiki_facets")
+    .select("slug, group:wiki_facet_groups!wiki_facets_group_id_fkey(slug)")
+    .gt("article_count", 0);
 
-  const wikiTagPages: MetadataRoute.Sitemap = (wikiTags || []).map((tag) => ({
-    url: `${BASE_URL}/wiki/tags/${tag.slug}`,
+  const facetGroupRouteMap: Record<string, string> = {
+    platform_vendor: "platform",
+    protocol: "protocol",
+    system_domain: "topic",
+    topic: "topic",
+    content_format: "topic",
+  };
+
+  const wikiFacetPages: MetadataRoute.Sitemap = (wikiFacets || []).map((facet) => {
+    const group = Array.isArray(facet.group) ? facet.group[0] : facet.group;
+    const routePrefix = facetGroupRouteMap[(group as { slug: string })?.slug || ""] || "topic";
+    return {
+      url: `${BASE_URL}/wiki/${routePrefix}/${facet.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    };
+  });
+
+  // Fetch wiki collections
+  const { data: wikiCollections } = await supabase
+    .from("wiki_collections")
+    .select("slug");
+
+  const wikiCollectionPages: MetadataRoute.Sitemap = (wikiCollections || []).map((col) => ({
+    url: `${BASE_URL}/wiki/collections/${col.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
-    priority: 0.5,
+    priority: 0.6,
   }));
 
   return [
@@ -210,6 +234,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...atlasTypePages,
     ...atlasModelPages,
     ...wikiPages,
-    ...wikiTagPages,
+    ...wikiFacetPages,
+    ...wikiCollectionPages,
   ];
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { WikiTag } from "@/lib/types";
+import { WikiFacetGroup } from "@/lib/types";
 import { MagnifyingGlass, SortAscending, Funnel, X, Check, CaretDown } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 
@@ -12,10 +12,12 @@ interface WikiFilterBarProps {
   onSearchChange: (query: string) => void;
   sortBy: SortOption;
   onSortChange: (sort: SortOption) => void;
-  availableTags: WikiTag[];
-  selectedTagIds: string[];
-  onTagsChange: (tagIds: string[]) => void;
+  facetGroups: WikiFacetGroup[];
+  selectedFacets: Record<string, string[]>;
+  onFacetToggle: (paramName: string, slug: string) => void;
+  onClearFacets: () => void;
   onSearch: () => void;
+  activeFilterCount: number;
 }
 
 const sortOptions: { value: SortOption; label: string }[] = [
@@ -25,15 +27,25 @@ const sortOptions: { value: SortOption; label: string }[] = [
   { value: "alphabetical", label: "A-Z" },
 ];
 
+const GROUP_SLUG_TO_PARAM: Record<string, string> = {
+  platform_vendor: "platform",
+  protocol: "protocol",
+  system_domain: "domain",
+  topic: "topic",
+  content_format: "format",
+};
+
 export function WikiFilterBar({
   searchQuery,
   onSearchChange,
   sortBy,
   onSortChange,
-  availableTags,
-  selectedTagIds,
-  onTagsChange,
+  facetGroups,
+  selectedFacets,
+  onFacetToggle,
+  onClearFacets,
   onSearch,
+  activeFilterCount,
 }: WikiFilterBarProps) {
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -54,18 +66,6 @@ export function WikiFilterBar({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const handleTagToggle = (tagId: string) => {
-    if (selectedTagIds.includes(tagId)) {
-      onTagsChange(selectedTagIds.filter((id) => id !== tagId));
-    } else {
-      onTagsChange([...selectedTagIds, tagId]);
-    }
-  };
-
-  const clearTags = () => {
-    onTagsChange([]);
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -122,29 +122,29 @@ export function WikiFilterBar({
           )}
         </div>
 
-        {/* Tag Filter Dropdown */}
+        {/* Filters Popover */}
         <div className="relative" ref={filterRef}>
           <button
             onClick={() => setFilterOpen(!filterOpen)}
             className="h-11 px-4 bg-card border border-border rounded-xl flex items-center gap-2 text-muted-foreground hover:border-muted-foreground transition-colors"
           >
             <Funnel className="size-4" />
-            <span className="text-[13px]">Tags</span>
-            {selectedTagIds.length > 0 && (
+            <span className="text-[13px]">Filters</span>
+            {activeFilterCount > 0 && (
               <span className="size-5 flex items-center justify-center bg-primary text-primary-foreground text-xs rounded-full font-bold">
-                {selectedTagIds.length}
+                {activeFilterCount}
               </span>
             )}
             <CaretDown className="size-4" />
           </button>
 
           {filterOpen && (
-            <div className="absolute right-0 top-full mt-1 z-50 w-[220px] border border-border bg-card rounded-xl shadow-lg overflow-hidden">
+            <div className="absolute right-0 top-full mt-1 z-50 w-[280px] border border-border bg-card rounded-xl shadow-lg overflow-hidden">
               <div className="p-2 border-b border-border flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Filter by tags</span>
-                {selectedTagIds.length > 0 && (
+                <span className="text-xs text-muted-foreground">Filter by facets</span>
+                {activeFilterCount > 0 && (
                   <button
-                    onClick={clearTags}
+                    onClick={onClearFacets}
                     className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
                   >
                     <X className="size-3" />
@@ -152,27 +152,46 @@ export function WikiFilterBar({
                   </button>
                 )}
               </div>
-              <div className="max-h-[200px] overflow-y-auto">
-                {availableTags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    onClick={() => handleTagToggle(tag.id)}
-                    className="w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center gap-2 transition-colors"
-                  >
-                    <div
-                      className={`size-4 border rounded flex items-center justify-center ${
-                        selectedTagIds.includes(tag.id)
-                          ? "bg-primary border-primary"
-                          : "border-border"
-                      }`}
-                    >
-                      {selectedTagIds.includes(tag.id) && (
-                        <Check className="size-3 text-primary-foreground" />
-                      )}
+              <div className="max-h-[320px] overflow-y-auto">
+                {facetGroups.map((group) => {
+                  const paramName = GROUP_SLUG_TO_PARAM[group.slug];
+                  if (!paramName) return null;
+                  const facets = group.facets || [];
+                  if (facets.length === 0) return null;
+                  const selected = selectedFacets[paramName] || [];
+
+                  return (
+                    <div key={group.id}>
+                      <div className="px-3 py-1.5 bg-muted/30">
+                        <span className="font-mono text-[10px] font-bold text-muted-foreground tracking-[1.5px] uppercase">
+                          {group.name}
+                        </span>
+                      </div>
+                      {facets.map((facet) => {
+                        const isChecked = selected.includes(facet.slug);
+                        return (
+                          <button
+                            key={facet.id}
+                            onClick={() => onFacetToggle(paramName, facet.slug)}
+                            className="w-full px-3 py-1.5 text-left text-sm hover:bg-muted flex items-center gap-2 transition-colors"
+                          >
+                            <div
+                              className={`size-3.5 border rounded flex items-center justify-center shrink-0 ${
+                                isChecked ? "bg-primary border-primary" : "border-border"
+                              }`}
+                            >
+                              {isChecked && <Check className="size-2.5 text-primary-foreground" />}
+                            </div>
+                            <span className="flex-1 truncate text-[13px]">{facet.name}</span>
+                            {facet.article_count > 0 && (
+                              <span className="text-[11px] text-muted-foreground/60">({facet.article_count})</span>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
-                    {tag.name}
-                  </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

@@ -1,29 +1,36 @@
-// Top-level category colors
-const PARENT_COLORS = {
-  issuesSolutions: "#F59E0B",
-  howToGuides: "#3B82F6",
+// Category colors — current names + backward-compat for old names
+const CATEGORY_COLORS = {
+  troubleshooting: "#F59E0B",
+  howTo: "#3B82F6",
   bestPractices: "#10B981",
   documentation: "#8B5CF6",
+  reference: "#06B6D4",
 } as const;
 
-// Maps category slugs (prefix) to parent colors — handles both parent and
-// subcategory slugs so colors work before and after the flatten migration.
+// Maps category slugs (prefix) to colors — handles renamed + legacy slugs.
 const SLUG_PREFIX_COLORS: [string, string][] = [
-  ["issues-solutions", PARENT_COLORS.issuesSolutions],
-  ["how-to", PARENT_COLORS.howToGuides],
-  ["best-practices", PARENT_COLORS.bestPractices],
-  ["basidekick-docs", PARENT_COLORS.documentation],
-  ["documentation", PARENT_COLORS.documentation],
-  ["docs-", PARENT_COLORS.documentation],
+  ["troubleshooting", CATEGORY_COLORS.troubleshooting],
+  ["issues-solutions", CATEGORY_COLORS.troubleshooting], // legacy
+  ["how-to", CATEGORY_COLORS.howTo],
+  ["best-practices", CATEGORY_COLORS.bestPractices],
+  ["reference", CATEGORY_COLORS.reference],
+  ["basidekick-docs", CATEGORY_COLORS.documentation],
+  ["documentation", CATEGORY_COLORS.documentation],
+  ["docs-", CATEGORY_COLORS.documentation],
 ];
 
 // Maps every known category name to its accent color
 export const WIKI_CATEGORY_COLORS: Record<string, string> = {
-  "Issues & Solutions": PARENT_COLORS.issuesSolutions,
-  "How-To Guides": PARENT_COLORS.howToGuides,
-  "Best Practices": PARENT_COLORS.bestPractices,
-  "Documentation": PARENT_COLORS.documentation,
-  "BASidekick Documentation": PARENT_COLORS.documentation,
+  // Current names
+  "Troubleshooting": CATEGORY_COLORS.troubleshooting,
+  "How-To": CATEGORY_COLORS.howTo,
+  "Best Practices": CATEGORY_COLORS.bestPractices,
+  "Documentation": CATEGORY_COLORS.documentation,
+  "Reference": CATEGORY_COLORS.reference,
+  // Legacy names (backward-compat)
+  "Issues & Solutions": CATEGORY_COLORS.troubleshooting,
+  "How-To Guides": CATEGORY_COLORS.howTo,
+  "BASidekick Documentation": CATEGORY_COLORS.documentation,
 };
 
 export function getWikiCategoryColor(
