@@ -105,12 +105,12 @@ function LandingPage() {
               <Badge label="BAS ATLAS" icon={Globe} />
             </div>
             <h2 className="font-grotesk text-[36px] font-bold mb-4 leading-tight">
-              <span className="text-white">The unified reference for </span>
+              <span className="text-white">An open source, community-driven reference for </span>
               <span className="text-[#C4F82A]">BAS professionals</span>
             </h2>
             <p className="font-manrope text-[16px] text-[#A1A1AA] leading-relaxed mb-8">
               Explore standardized point definitions, equipment catalogs, and naming conventions all in one place.
-              Built on Haystack and Brick standards for maximum interoperability.
+              Built on Haystack and Brick standards — open source and actively growing with community contributions.
             </p>
             <div className="flex items-center gap-3">
               <Link
@@ -150,7 +150,7 @@ function LandingPage() {
                 Equipment
               </p>
               <p className="font-manrope text-[12px] text-[#A1A1AA]">
-                Complete equipment catalog with specs and documentation
+                Community-driven equipment catalog, growing with contributions
               </p>
             </div>
             <div className="bg-[#0A0A0A] border border-[#27272A] rounded-xl p-5 hover:border-[#3F3F46] transition-colors">
@@ -355,7 +355,7 @@ function LandingPage() {
             icon={Map}
             iconLabel="BAS Atlas"
             title="BAS Atlas"
-            description="Unified reference for point definitions, equipment catalogs, and naming conventions built on industry standards."
+            description="Open source, community-driven reference for point definitions, equipment catalogs, and naming conventions. Actively growing."
             linkTo="/atlas"
           />
           <ResourceCard

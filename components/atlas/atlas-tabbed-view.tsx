@@ -48,8 +48,8 @@ export function AtlasTabbedView() {
           BAS Atlas
         </h1>
         <p className="mt-3 text-muted-foreground max-w-[600px] mx-auto text-lg">
-          The unified reference for point definitions, equipment catalogs, and naming conventions.
-          Built on Haystack and Brick standards.
+          An open source, community-driven reference for point definitions, equipment catalogs, and naming conventions.
+          Built on Haystack and Brick standards — actively growing with your contributions.
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">

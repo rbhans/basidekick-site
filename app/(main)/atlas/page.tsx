@@ -5,11 +5,11 @@ import { AtlasTabbedView } from "@/components/atlas/atlas-tabbed-view";
 export const metadata: Metadata = {
   title: "BAS Atlas - Points & Equipment | BASidekick",
   description:
-    "Unified BAS Atlas experience for point naming standards and equipment catalog browsing.",
+    "Open source, community-driven BAS Atlas for point naming standards and equipment catalog browsing. Actively growing with contributions.",
   openGraph: {
     title: "BAS Atlas - Points & Equipment",
     description:
-      "Unified BAS Atlas experience for point naming standards and equipment catalog browsing.",
+      "Open source, community-driven BAS Atlas for point naming standards and equipment catalog browsing. Actively growing with contributions.",
     type: "website",
     siteName: "BASidekick",
     url: "https://basidekick.com/atlas",

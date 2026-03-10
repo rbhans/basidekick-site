@@ -123,13 +123,14 @@ export function HomeView({
             <div>
               <SiteBadge label="BAS ATLAS" icon={GlobeHemisphereWest} />
               <h2 className="mt-6 text-2xl md:text-3xl font-heading font-bold tracking-tight">
-                The unified reference for{" "}
+                An open source, community-driven reference for{" "}
                 <span className="gradient-text">BAS professionals</span>
               </h2>
               <p className="mt-4 text-muted-foreground leading-relaxed">
                 Browse standardized point definitions with Haystack and Brick mappings,
                 explore equipment from major manufacturers, and clean up messy point
-                names — all in one place.
+                names — all in one place. BAS Atlas is open source and actively growing
+                with community contributions.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button size="lg" asChild className="rounded-lg font-semibold px-8">

@@ -23,7 +23,7 @@ const resources = [
   },
   {
     title: "BAS Atlas",
-    description: "Unified BAS reference for point naming standards and equipment catalog.",
+    description: "Open source, community-driven reference for point naming standards and equipment catalog. Actively growing.",
     href: ROUTES.ATLAS,
     icon: <Gauge className="w-5 h-5 text-primary" />,
   },

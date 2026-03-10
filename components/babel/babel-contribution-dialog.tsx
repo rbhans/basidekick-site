@@ -238,7 +238,7 @@ export function BabelContributionDialog({
                 Help improve the entry for <span className="font-medium text-foreground">{entryName}</span>
               </>
             ) : (
-              "Share your knowledge to help improve BAS Atlas"
+              "Share your knowledge to help grow this open source, community-driven resource"
             )}
           </DialogDescription>
         </DialogHeader>
