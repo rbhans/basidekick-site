@@ -136,30 +136,30 @@ CREATE POLICY "Public can view article facets" ON wiki_article_facets FOR SELECT
 CREATE POLICY "Public can view collections" ON wiki_collections FOR SELECT USING (true);
 CREATE POLICY "Public can view collection articles" ON wiki_collection_articles FOR SELECT USING (true);
 
--- Admin write access (matching existing profiles.role = 'admin' pattern)
+-- Admin write access (matching existing profiles.is_admin = true pattern)
 CREATE POLICY "Admins can manage facet groups" ON wiki_facet_groups
   FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.is_admin = true)
   );
 
 CREATE POLICY "Admins can manage facets" ON wiki_facets
   FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.is_admin = true)
   );
 
 CREATE POLICY "Admins can manage article facets" ON wiki_article_facets
   FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.is_admin = true)
   );
 
 CREATE POLICY "Admins can manage collections" ON wiki_collections
   FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.is_admin = true)
   );
 
 CREATE POLICY "Admins can manage collection articles" ON wiki_collection_articles
   FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.is_admin = true)
   );
 
 -- ============================================================
