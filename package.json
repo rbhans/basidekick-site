@@ -5,7 +5,9 @@
   "packageManager": "pnpm@10.29.2",
   "scripts": {
     "dev": "next dev",
+    "prebuild": "bash scripts/fetch-atlas-db.sh",
     "build": "next build",
+    "dev:fetch-db": "bash scripts/fetch-atlas-db.sh",
     "start": "next start",
     "validate:atlas-brand-logos": "node scripts/validate-atlas-brand-logos.mjs",
     "lint": "pnpm validate:atlas-brand-logos && eslint",
@@ -23,6 +25,8 @@
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.36.3",
     "@vercel/analytics": "^1.6.1",
+    "@xyflow/react": "^12.10.1",
+    "better-sqlite3": "^12.6.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -58,6 +62,7 @@
   "devDependencies": {
     "@next/bundle-analyzer": "^16.1.1",
     "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
