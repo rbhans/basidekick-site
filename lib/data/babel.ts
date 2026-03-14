@@ -63,7 +63,7 @@ export const getBabelData = cache(async (): Promise<BabelData | null> => {
       brick: e.brick as string | undefined,
       aliases: buildAliases("equipment_aliases", "equipment_id", e.id as string),
       subtypes: dbAll<{ id: string; name: string; description: string | null }>(
-        "SELECT id, name, description FROM equipment_subtypes WHERE equipment_id = ?",
+        "SELECT subtype_id as id, subtype_name as name, description FROM equipment_subtypes WHERE equipment_id = ?",
         e.id
       ).map((s) => ({
         id: s.id,

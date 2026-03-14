@@ -26,11 +26,11 @@ export async function GET(
   );
 
   const subtypes = dbAll<{
-    id: string;
-    name: string;
+    subtype_id: string;
+    subtype_name: string;
     description: string | null;
   }>(
-    "SELECT id, name, description FROM equipment_subtypes WHERE equipment_id = ?",
+    "SELECT subtype_id as id, subtype_name as name, description FROM equipment_subtypes WHERE equipment_id = ?",
     id
   );
 
