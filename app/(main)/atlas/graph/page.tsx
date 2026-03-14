@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { AtlasGraph } from "@/components/atlas/atlas-graph";
 
 export const metadata: Metadata = {
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
 export default function GraphPage() {
   return (
     <div className="h-[calc(100vh-4rem)] w-full">
-      <AtlasGraph />
+      <Suspense fallback={<div className="flex h-full items-center justify-center">Loading graph...</div>}>
+        <AtlasGraph />
+      </Suspense>
     </div>
   );
 }
