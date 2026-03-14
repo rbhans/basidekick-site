@@ -14,7 +14,6 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useSearchParams, useRouter } from "next/navigation";
-import Dagre from "@dagrejs/dagre";
 import { EquipmentNode } from "./graph-equipment-node";
 import { PointNode } from "./graph-point-node";
 import { GraphSidebar } from "./graph-sidebar";
@@ -37,60 +36,71 @@ const nodeTypes = {
   point: PointNode,
 };
 
-function layoutWithDagre(
-  graphData: GraphData,
-  root?: string | null,
-): { nodes: Node[]; edges: Edge[] } {
-  const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
-  g.setGraph({
-    rankdir: "LR",
-    nodesep: 20,
-    ranksep: 80,
-    edgesep: 10,
-    marginx: 40,
-    marginy: 40,
-  });
+// Category color map for visual clustering
+const CATEGORY_COLORS: Record<string, string> = {
+  temperatures: "#EF4444",
+  pressures: "#F59E0B",
+  flows: "#3B82F6",
+  humidity: "#8B5CF6",
+  electrical: "#F97316",
+  commands: "#10B981",
+  statuses: "#06B6D4",
+  setpoints: "#EC4899",
+  "air-quality": "#84CC16",
+  occupancy: "#A855F7",
+  lighting: "#FBBF24",
+  energy: "#F472B6",
+  hvac: "#10B981",
+  "water-systems": "#3B82F6",
+  "air-distribution": "#06B6D4",
+  meters: "#F59E0B",
+  actuators: "#EF4444",
+  default: "#6B7280",
+};
 
-  // Count connections per point for sizing
-  const pointConnectionCount = new Map<string, number>();
+function getCategoryColor(category: string): string {
+  return CATEGORY_COLORS[category] || CATEGORY_COLORS.default;
+}
+
+/**
+ * Force-directed layout: equipment in a ring, points gravitate toward
+ * the equipment they connect to, creating organic clusters.
+ */
+function forceLayout(graphData: GraphData, root?: string | null) {
+  const equipNodes = graphData.nodes.filter((n) => n.type === "equipment");
+  const pointNodes = graphData.nodes.filter((n) => n.type === "point");
+
+  // Build adjacency
+  const equipForPoint = new Map<string, string[]>(); // point → [equipment]
+  const pointsForEquip = new Map<string, string[]>(); // equipment → [points]
   for (const e of graphData.edges) {
-    pointConnectionCount.set(e.target, (pointConnectionCount.get(e.target) || 0) + 1);
+    if (!equipForPoint.has(e.target)) equipForPoint.set(e.target, []);
+    equipForPoint.get(e.target)!.push(e.source);
+    if (!pointsForEquip.has(e.source)) pointsForEquip.set(e.source, []);
+    pointsForEquip.get(e.source)!.push(e.target);
   }
 
-  // Count points per equipment
-  const equipPointCount = new Map<string, number>();
-  for (const e of graphData.edges) {
-    equipPointCount.set(e.source, (equipPointCount.get(e.source) || 0) + 1);
-  }
+  const positions = new Map<string, { x: number; y: number }>();
 
-  for (const n of graphData.nodes) {
-    const isEquip = n.type === "equipment";
-    g.setNode(n.id, {
-      width: isEquip ? 160 : 150,
-      height: isEquip ? 44 : 32,
-    });
+  if (root) {
+    // Radial layout centered on root
+    layoutRadial(graphData, root, equipForPoint, pointsForEquip, positions);
+  } else {
+    // Full graph: equipment in a large ring, points cluster around them
+    layoutFullGraph(equipNodes, pointNodes, equipForPoint, pointsForEquip, positions);
   }
-
-  for (const e of graphData.edges) {
-    g.setEdge(e.source, e.target);
-  }
-
-  Dagre.layout(g);
 
   const nodes: Node[] = graphData.nodes.map((n) => {
-    const pos = g.node(n.id);
+    const pos = positions.get(n.id) || { x: 0, y: 0 };
     const isEquip = n.type === "equipment";
     return {
       id: n.id,
       type: n.type,
-      position: {
-        x: pos.x - (isEquip ? 80 : 75),
-        y: pos.y - (isEquip ? 22 : 16),
-      },
+      position: pos,
       data: {
         label: n.label,
         category: n.category,
-        pointCount: isEquip ? equipPointCount.get(n.id) || 0 : undefined,
+        pointCount: isEquip ? (pointsForEquip.get(n.id)?.length || 0) : undefined,
         isRoot: n.id === root,
       },
     };
@@ -100,15 +110,165 @@ function layoutWithDagre(
     id: `e-${i}`,
     source: e.source,
     target: e.target,
-    animated: false,
     style: {
       stroke: "hsl(var(--border))",
       strokeWidth: 1,
-      opacity: 0.6,
+      opacity: 0.4,
     },
   }));
 
   return { nodes, edges };
+}
+
+function layoutRadial(
+  graphData: GraphData,
+  rootId: string,
+  equipForPoint: Map<string, string[]>,
+  pointsForEquip: Map<string, string[]>,
+  positions: Map<string, { x: number; y: number }>,
+) {
+  const rootNode = graphData.nodes.find((n) => n.id === rootId);
+  if (!rootNode) return;
+
+  // Root at center
+  positions.set(rootId, { x: 0, y: 0 });
+
+  const isRootEquip = rootNode.type === "equipment";
+  const directConnections: GraphNodeData[] = [];
+  const secondaryConnections: GraphNodeData[] = [];
+
+  if (isRootEquip) {
+    // Direct: points connected to this equipment
+    const pointIds = new Set(pointsForEquip.get(rootId) || []);
+    for (const n of graphData.nodes) {
+      if (n.id === rootId) continue;
+      if (pointIds.has(n.id)) directConnections.push(n);
+      else secondaryConnections.push(n);
+    }
+  } else {
+    // Direct: equipment connected to this point
+    const equipIds = new Set(equipForPoint.get(rootId) || []);
+    for (const n of graphData.nodes) {
+      if (n.id === rootId) continue;
+      if (equipIds.has(n.id)) directConnections.push(n);
+      else secondaryConnections.push(n);
+    }
+  }
+
+  // Inner ring: direct connections
+  const innerRadius = Math.max(200, directConnections.length * 25);
+  directConnections.forEach((n, i) => {
+    const angle = (2 * Math.PI * i) / directConnections.length - Math.PI / 2;
+    positions.set(n.id, {
+      x: Math.cos(angle) * innerRadius,
+      y: Math.sin(angle) * innerRadius,
+    });
+  });
+
+  // Outer ring: secondary connections (equipment that shares points, or points of connected equipment)
+  if (secondaryConnections.length > 0) {
+    const outerRadius = innerRadius + 180;
+    secondaryConnections.forEach((n, i) => {
+      const angle = (2 * Math.PI * i) / secondaryConnections.length - Math.PI / 2;
+      positions.set(n.id, {
+        x: Math.cos(angle) * outerRadius,
+        y: Math.sin(angle) * outerRadius,
+      });
+    });
+  }
+}
+
+function layoutFullGraph(
+  equipNodes: GraphNodeData[],
+  pointNodes: GraphNodeData[],
+  equipForPoint: Map<string, string[]>,
+  pointsForEquip: Map<string, string[]>,
+  positions: Map<string, { x: number; y: number }>,
+) {
+  // Sort equipment by number of points (most connected in center)
+  const sortedEquip = [...equipNodes].sort((a, b) => {
+    return (pointsForEquip.get(b.id)?.length || 0) - (pointsForEquip.get(a.id)?.length || 0);
+  });
+
+  // Place equipment in a spiral for organic feel
+  const equipCount = sortedEquip.length;
+  const spiralSpacing = 280;
+
+  sortedEquip.forEach((n, i) => {
+    // Golden angle spiral
+    const angle = i * 2.399963; // golden angle in radians
+    const radius = spiralSpacing * Math.sqrt(i + 1);
+    positions.set(n.id, {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius,
+    });
+  });
+
+  // Place points: average position of connected equipment + jitter
+  const seededRandom = (seed: number) => {
+    const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+    return x - Math.floor(x);
+  };
+
+  pointNodes.forEach((n, idx) => {
+    const connectedEquip = equipForPoint.get(n.id) || [];
+    if (connectedEquip.length === 0) {
+      positions.set(n.id, { x: 0, y: 0 });
+      return;
+    }
+
+    // Average position of connected equipment
+    let avgX = 0;
+    let avgY = 0;
+    let count = 0;
+    for (const eqId of connectedEquip) {
+      const pos = positions.get(eqId);
+      if (pos) {
+        avgX += pos.x;
+        avgY += pos.y;
+        count++;
+      }
+    }
+    if (count > 0) {
+      avgX /= count;
+      avgY /= count;
+    }
+
+    // Add jitter based on index for spread, biased away from center
+    const jitterAngle = seededRandom(idx) * 2 * Math.PI;
+    const jitterRadius = 40 + seededRandom(idx + 1000) * 80;
+
+    // If connected to multiple equipment, position between them
+    // If connected to one, position near that equipment
+    const pullFactor = connectedEquip.length > 1 ? 0.5 : 0.85;
+
+    positions.set(n.id, {
+      x: avgX * pullFactor + Math.cos(jitterAngle) * jitterRadius,
+      y: avgY * pullFactor + Math.sin(jitterAngle) * jitterRadius,
+    });
+  });
+
+  // Simple repulsion pass to reduce overlap
+  const allIds = [...equipNodes, ...pointNodes].map((n) => n.id);
+  for (let iter = 0; iter < 30; iter++) {
+    for (let i = 0; i < allIds.length; i++) {
+      for (let j = i + 1; j < allIds.length; j++) {
+        const a = positions.get(allIds[i])!;
+        const b = positions.get(allIds[j])!;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const minDist = 60;
+        if (dist < minDist && dist > 0) {
+          const force = (minDist - dist) / dist * 0.3;
+          a.x -= dx * force;
+          a.y -= dy * force;
+          b.x += dx * force;
+          b.y += dy * force;
+        }
+      }
+    }
+  }
 }
 
 export function AtlasGraph() {
@@ -136,7 +296,7 @@ export function AtlasGraph() {
 
   const { layoutNodes, layoutEdges } = useMemo(() => {
     if (!graphData) return { layoutNodes: [], layoutEdges: [] };
-    const { nodes, edges } = layoutWithDagre(graphData, root);
+    const { nodes, edges } = forceLayout(graphData, root);
     return { layoutNodes: nodes, layoutEdges: edges };
   }, [graphData, root]);
 
@@ -166,6 +326,10 @@ export function AtlasGraph() {
     [router]
   );
 
+  const onPaneClick = useCallback(() => {
+    setSelectedNode(null);
+  }, []);
+
   const selectedGraphNode = graphData?.nodes.find((n) => n.id === selectedNode) ?? null;
   const connectedNodes = useMemo(() => {
     if (!graphData || !selectedNode) return [];
@@ -188,7 +352,7 @@ export function AtlasGraph() {
         style: {
           stroke: isConnected ? "hsl(var(--primary))" : "hsl(var(--border))",
           strokeWidth: isConnected ? 2 : 1,
-          opacity: isConnected ? 1 : 0.3,
+          opacity: isConnected ? 1 : 0.15,
         },
       };
     });
@@ -238,7 +402,7 @@ export function AtlasGraph() {
       </div>
 
       {/* Stats badge */}
-      <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
+      <div className="absolute right-4 top-4 z-10">
         <div className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground">
           <span className="text-primary font-medium">{equipCount}</span> equipment
           {" · "}
@@ -255,10 +419,11 @@ export function AtlasGraph() {
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
         onNodeDoubleClick={onNodeDoubleClick}
+        onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         fitView
-        fitViewOptions={{ padding: 0.2 }}
-        minZoom={0.05}
+        fitViewOptions={{ padding: 0.15 }}
+        minZoom={0.02}
         maxZoom={2}
         proOptions={{ hideAttribution: true }}
         style={{ background: "hsl(var(--background))" }}
@@ -268,14 +433,18 @@ export function AtlasGraph() {
         />
         <Background
           variant={BackgroundVariant.Dots}
-          gap={20}
+          gap={24}
           size={1}
           color="hsl(var(--border))"
         />
         <MiniMap
           className="!bg-card !border-border !rounded-lg"
-          nodeStrokeColor={() => "hsl(var(--border))"}
-          nodeColor={(n) => (n.type === "equipment" ? "hsl(var(--primary))" : "hsl(var(--muted))")}
+          nodeStrokeColor={() => "transparent"}
+          nodeColor={(n) =>
+            n.type === "equipment"
+              ? "hsl(var(--primary))"
+              : getCategoryColor((n.data as { category?: string })?.category || "default")
+          }
           maskColor="hsl(var(--background) / 0.8)"
         />
       </ReactFlow>
