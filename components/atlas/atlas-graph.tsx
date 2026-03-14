@@ -36,239 +36,207 @@ const nodeTypes = {
   point: PointNode,
 };
 
-// Category color map for visual clustering
-const CATEGORY_COLORS: Record<string, string> = {
-  temperatures: "#EF4444",
-  pressures: "#F59E0B",
-  flows: "#3B82F6",
-  humidity: "#8B5CF6",
-  electrical: "#F97316",
-  commands: "#10B981",
-  statuses: "#06B6D4",
-  setpoints: "#EC4899",
-  "air-quality": "#84CC16",
-  occupancy: "#A855F7",
-  lighting: "#FBBF24",
-  energy: "#F472B6",
-  hvac: "#10B981",
-  "water-systems": "#3B82F6",
-  "air-distribution": "#06B6D4",
-  meters: "#F59E0B",
-  actuators: "#EF4444",
-  default: "#6B7280",
-};
-
-function getCategoryColor(category: string): string {
-  return CATEGORY_COLORS[category] || CATEGORY_COLORS.default;
-}
-
 /**
- * Force-directed layout: equipment in a ring, points gravitate toward
- * the equipment they connect to, creating organic clusters.
+ * Focused radial layout: root in center, direct connections in a ring.
  */
-function forceLayout(graphData: GraphData, root?: string | null) {
-  const equipNodes = graphData.nodes.filter((n) => n.type === "equipment");
-  const pointNodes = graphData.nodes.filter((n) => n.type === "point");
+function layoutFocused(graphData: GraphData, rootId: string) {
+  const rootNode = graphData.nodes.find((n) => n.id === rootId);
+  if (!rootNode) return { nodes: [] as Node[], edges: [] as Edge[] };
 
   // Build adjacency
-  const equipForPoint = new Map<string, string[]>(); // point → [equipment]
-  const pointsForEquip = new Map<string, string[]>(); // equipment → [points]
+  const connections = new Map<string, Set<string>>();
   for (const e of graphData.edges) {
-    if (!equipForPoint.has(e.target)) equipForPoint.set(e.target, []);
-    equipForPoint.get(e.target)!.push(e.source);
-    if (!pointsForEquip.has(e.source)) pointsForEquip.set(e.source, []);
-    pointsForEquip.get(e.source)!.push(e.target);
+    if (!connections.has(e.source)) connections.set(e.source, new Set());
+    if (!connections.has(e.target)) connections.set(e.target, new Set());
+    connections.get(e.source)!.add(e.target);
+    connections.get(e.target)!.add(e.source);
   }
 
-  const positions = new Map<string, { x: number; y: number }>();
+  const directIds = connections.get(rootId) || new Set<string>();
+  const directNodes = graphData.nodes.filter((n) => directIds.has(n.id));
 
-  if (root) {
-    // Radial layout centered on root
-    layoutRadial(graphData, root, equipForPoint, pointsForEquip, positions);
-  } else {
-    // Full graph: equipment in a large ring, points cluster around them
-    layoutFullGraph(equipNodes, pointNodes, equipForPoint, pointsForEquip, positions);
-  }
+  // Separate direct connections by type
+  const directEquip = directNodes.filter((n) => n.type === "equipment");
+  const directPoints = directNodes.filter((n) => n.type === "point");
 
-  const nodes: Node[] = graphData.nodes.map((n) => {
-    const pos = positions.get(n.id) || { x: 0, y: 0 };
-    const isEquip = n.type === "equipment";
-    return {
-      id: n.id,
-      type: n.type,
-      position: pos,
-      data: {
-        label: n.label,
-        category: n.category,
-        pointCount: isEquip ? (pointsForEquip.get(n.id)?.length || 0) : undefined,
-        isRoot: n.id === root,
-      },
-    };
+  const nodes: Node[] = [];
+
+  // Root at center
+  nodes.push({
+    id: rootId,
+    type: rootNode.type,
+    position: { x: 0, y: 0 },
+    data: {
+      label: rootNode.label,
+      category: rootNode.category,
+      pointCount: rootNode.type === "equipment" ? directPoints.length : undefined,
+      isRoot: true,
+    },
   });
 
-  const edges: Edge[] = graphData.edges.map((e, i) => ({
-    id: `e-${i}`,
-    source: e.source,
-    target: e.target,
-    style: {
-      stroke: "hsl(var(--border))",
-      strokeWidth: 1,
-      opacity: 0.4,
-    },
-  }));
+  // Points in inner ring
+  const innerRadius = Math.max(250, directPoints.length * 30);
+  directPoints.forEach((n, i) => {
+    const angle = (2 * Math.PI * i) / directPoints.length - Math.PI / 2;
+    nodes.push({
+      id: n.id,
+      type: "point",
+      position: {
+        x: Math.cos(angle) * innerRadius,
+        y: Math.sin(angle) * innerRadius,
+      },
+      data: { label: n.label, category: n.category },
+    });
+  });
+
+  // Equipment in outer ring
+  if (directEquip.length > 0) {
+    const outerRadius = innerRadius + 200;
+    directEquip.forEach((n, i) => {
+      const angle = (2 * Math.PI * i) / directEquip.length - Math.PI / 2;
+      nodes.push({
+        id: n.id,
+        type: "equipment",
+        position: {
+          x: Math.cos(angle) * outerRadius,
+          y: Math.sin(angle) * outerRadius,
+        },
+        data: {
+          label: n.label,
+          category: n.category,
+          pointCount: 0,
+          isRoot: false,
+        },
+      });
+    });
+  }
+
+  // Only include edges that connect visible nodes
+  const visibleIds = new Set(nodes.map((n) => n.id));
+  const edges: Edge[] = graphData.edges
+    .filter((e) => visibleIds.has(e.source) && visibleIds.has(e.target))
+    .map((e, i) => ({
+      id: `e-${i}`,
+      source: e.source,
+      target: e.target,
+      style: {
+        stroke: "#C4F82A",
+        strokeWidth: 1.5,
+        opacity: 0.5,
+      },
+    }));
 
   return { nodes, edges };
 }
 
-function layoutRadial(
+/**
+ * Equipment-only overview layout: equipment nodes grouped by category
+ * in a clean grid. No points shown until you click.
+ */
+function layoutEquipmentOverview(
   graphData: GraphData,
-  rootId: string,
-  equipForPoint: Map<string, string[]>,
-  pointsForEquip: Map<string, string[]>,
-  positions: Map<string, { x: number; y: number }>,
+  expandedEquipId: string | null,
 ) {
-  const rootNode = graphData.nodes.find((n) => n.id === rootId);
-  if (!rootNode) return;
+  const equipNodes = graphData.nodes.filter((n) => n.type === "equipment");
 
-  // Root at center
-  positions.set(rootId, { x: 0, y: 0 });
-
-  const isRootEquip = rootNode.type === "equipment";
-  const directConnections: GraphNodeData[] = [];
-  const secondaryConnections: GraphNodeData[] = [];
-
-  if (isRootEquip) {
-    // Direct: points connected to this equipment
-    const pointIds = new Set(pointsForEquip.get(rootId) || []);
-    for (const n of graphData.nodes) {
-      if (n.id === rootId) continue;
-      if (pointIds.has(n.id)) directConnections.push(n);
-      else secondaryConnections.push(n);
-    }
-  } else {
-    // Direct: equipment connected to this point
-    const equipIds = new Set(equipForPoint.get(rootId) || []);
-    for (const n of graphData.nodes) {
-      if (n.id === rootId) continue;
-      if (equipIds.has(n.id)) directConnections.push(n);
-      else secondaryConnections.push(n);
-    }
+  // Build point counts
+  const pointsForEquip = new Map<string, string[]>();
+  for (const e of graphData.edges) {
+    if (!pointsForEquip.has(e.source)) pointsForEquip.set(e.source, []);
+    pointsForEquip.get(e.source)!.push(e.target);
   }
 
-  // Inner ring: direct connections
-  const innerRadius = Math.max(200, directConnections.length * 25);
-  directConnections.forEach((n, i) => {
-    const angle = (2 * Math.PI * i) / directConnections.length - Math.PI / 2;
-    positions.set(n.id, {
-      x: Math.cos(angle) * innerRadius,
-      y: Math.sin(angle) * innerRadius,
-    });
-  });
+  // Group equipment by category
+  const categories = new Map<string, GraphNodeData[]>();
+  for (const n of equipNodes) {
+    const cat = n.category || "other";
+    if (!categories.has(cat)) categories.set(cat, []);
+    categories.get(cat)!.push(n);
+  }
 
-  // Outer ring: secondary connections (equipment that shares points, or points of connected equipment)
-  if (secondaryConnections.length > 0) {
-    const outerRadius = innerRadius + 180;
-    secondaryConnections.forEach((n, i) => {
-      const angle = (2 * Math.PI * i) / secondaryConnections.length - Math.PI / 2;
-      positions.set(n.id, {
-        x: Math.cos(angle) * outerRadius,
-        y: Math.sin(angle) * outerRadius,
+  const nodes: Node[] = [];
+  const nodeWidth = 170;
+  const nodeHeight = 55;
+  const colGap = 30;
+  const rowGap = 20;
+  const categoryGap = 60;
+  const maxCols = 4;
+
+  let currentY = 0;
+
+  for (const [, catNodes] of categories) {
+    // Sort by point count descending
+    catNodes.sort((a, b) =>
+      (pointsForEquip.get(b.id)?.length || 0) - (pointsForEquip.get(a.id)?.length || 0)
+    );
+
+    const rows = Math.ceil(catNodes.length / maxCols);
+    const cols = Math.min(catNodes.length, maxCols);
+    const blockWidth = cols * (nodeWidth + colGap);
+    const startX = -blockWidth / 2;
+
+    catNodes.forEach((n, i) => {
+      const col = i % maxCols;
+      const row = Math.floor(i / maxCols);
+      nodes.push({
+        id: n.id,
+        type: "equipment",
+        position: {
+          x: startX + col * (nodeWidth + colGap),
+          y: currentY + row * (nodeHeight + rowGap),
+        },
+        data: {
+          label: n.label,
+          category: n.category,
+          pointCount: pointsForEquip.get(n.id)?.length || 0,
+          isRoot: n.id === expandedEquipId,
+        },
       });
     });
+
+    currentY += rows * (nodeHeight + rowGap) + categoryGap;
   }
-}
 
-function layoutFullGraph(
-  equipNodes: GraphNodeData[],
-  pointNodes: GraphNodeData[],
-  equipForPoint: Map<string, string[]>,
-  pointsForEquip: Map<string, string[]>,
-  positions: Map<string, { x: number; y: number }>,
-) {
-  // Sort equipment by number of points (most connected in center)
-  const sortedEquip = [...equipNodes].sort((a, b) => {
-    return (pointsForEquip.get(b.id)?.length || 0) - (pointsForEquip.get(a.id)?.length || 0);
-  });
+  // If an equipment is expanded, show its points radiating from it
+  const visibleEdges: Edge[] = [];
 
-  // Place equipment in a spiral for organic feel
-  const equipCount = sortedEquip.length;
-  const spiralSpacing = 280;
+  if (expandedEquipId) {
+    const equipNode = nodes.find((n) => n.id === expandedEquipId);
+    const pointIds = pointsForEquip.get(expandedEquipId) || [];
+    const pointDataNodes = graphData.nodes.filter((n) => pointIds.includes(n.id));
 
-  sortedEquip.forEach((n, i) => {
-    // Golden angle spiral
-    const angle = i * 2.399963; // golden angle in radians
-    const radius = spiralSpacing * Math.sqrt(i + 1);
-    positions.set(n.id, {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius,
-    });
-  });
+    if (equipNode && pointDataNodes.length > 0) {
+      const cx = equipNode.position.x + nodeWidth / 2;
+      const cy = equipNode.position.y + nodeHeight / 2;
+      const radius = Math.max(200, pointDataNodes.length * 22);
 
-  // Place points: average position of connected equipment + jitter
-  const seededRandom = (seed: number) => {
-    const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
-    return x - Math.floor(x);
-  };
+      pointDataNodes.forEach((p, i) => {
+        const angle = (2 * Math.PI * i) / pointDataNodes.length - Math.PI / 2;
+        nodes.push({
+          id: p.id,
+          type: "point",
+          position: {
+            x: cx + Math.cos(angle) * radius - 75,
+            y: cy + Math.sin(angle) * radius - 16,
+          },
+          data: { label: p.label, category: p.category },
+        });
 
-  pointNodes.forEach((n, idx) => {
-    const connectedEquip = equipForPoint.get(n.id) || [];
-    if (connectedEquip.length === 0) {
-      positions.set(n.id, { x: 0, y: 0 });
-      return;
-    }
-
-    // Average position of connected equipment
-    let avgX = 0;
-    let avgY = 0;
-    let count = 0;
-    for (const eqId of connectedEquip) {
-      const pos = positions.get(eqId);
-      if (pos) {
-        avgX += pos.x;
-        avgY += pos.y;
-        count++;
-      }
-    }
-    if (count > 0) {
-      avgX /= count;
-      avgY /= count;
-    }
-
-    // Add jitter based on index for spread, biased away from center
-    const jitterAngle = seededRandom(idx) * 2 * Math.PI;
-    const jitterRadius = 40 + seededRandom(idx + 1000) * 80;
-
-    // If connected to multiple equipment, position between them
-    // If connected to one, position near that equipment
-    const pullFactor = connectedEquip.length > 1 ? 0.5 : 0.85;
-
-    positions.set(n.id, {
-      x: avgX * pullFactor + Math.cos(jitterAngle) * jitterRadius,
-      y: avgY * pullFactor + Math.sin(jitterAngle) * jitterRadius,
-    });
-  });
-
-  // Simple repulsion pass to reduce overlap
-  const allIds = [...equipNodes, ...pointNodes].map((n) => n.id);
-  for (let iter = 0; iter < 30; iter++) {
-    for (let i = 0; i < allIds.length; i++) {
-      for (let j = i + 1; j < allIds.length; j++) {
-        const a = positions.get(allIds[i])!;
-        const b = positions.get(allIds[j])!;
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const minDist = 60;
-        if (dist < minDist && dist > 0) {
-          const force = (minDist - dist) / dist * 0.3;
-          a.x -= dx * force;
-          a.y -= dy * force;
-          b.x += dx * force;
-          b.y += dy * force;
-        }
-      }
+        visibleEdges.push({
+          id: `e-${expandedEquipId}-${p.id}`,
+          source: expandedEquipId,
+          target: p.id,
+          style: {
+            stroke: "#C4F82A",
+            strokeWidth: 1.5,
+            opacity: 0.6,
+          },
+        });
+      });
     }
   }
+
+  return { nodes, edges: visibleEdges };
 }
 
 export function AtlasGraph() {
@@ -277,10 +245,12 @@ export function AtlasGraph() {
   const root = searchParams.get("root");
 
   const [graphData, setGraphData] = useState<GraphData | null>(null);
+  const [expandedEquip, setExpandedEquip] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Always fetch full graph for overview; focused fetch for root view
     const url = root
       ? `/api/atlas/graph?root=${encodeURIComponent(root)}&depth=1`
       : "/api/atlas/graph";
@@ -294,11 +264,23 @@ export function AtlasGraph() {
       .catch(() => setLoading(false));
   }, [root]);
 
+  // Reset expanded when root changes
+  useEffect(() => {
+    setExpandedEquip(null);
+    setSelectedNode(null);
+  }, [root]);
+
   const { layoutNodes, layoutEdges } = useMemo(() => {
     if (!graphData) return { layoutNodes: [], layoutEdges: [] };
-    const { nodes, edges } = forceLayout(graphData, root);
+
+    if (root) {
+      const { nodes, edges } = layoutFocused(graphData, root);
+      return { layoutNodes: nodes, layoutEdges: edges };
+    }
+
+    const { nodes, edges } = layoutEquipmentOverview(graphData, expandedEquip);
     return { layoutNodes: nodes, layoutEdges: edges };
-  }, [graphData, root]);
+  }, [graphData, root, expandedEquip]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(layoutNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutEdges);
@@ -308,9 +290,17 @@ export function AtlasGraph() {
     setEdges(layoutEdges);
   }, [layoutNodes, layoutEdges, setNodes, setEdges]);
 
-  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
-    setSelectedNode(node.id);
-  }, []);
+  const onNodeClick = useCallback(
+    (_: React.MouseEvent, node: Node) => {
+      setSelectedNode(node.id);
+
+      // In overview mode, clicking equipment expands/collapses its points
+      if (!root && node.type === "equipment") {
+        setExpandedEquip((prev) => (prev === node.id ? null : node.id));
+      }
+    },
+    [root]
+  );
 
   const onNodeDoubleClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
@@ -328,7 +318,8 @@ export function AtlasGraph() {
 
   const onPaneClick = useCallback(() => {
     setSelectedNode(null);
-  }, []);
+    if (!root) setExpandedEquip(null);
+  }, [root]);
 
   const selectedGraphNode = graphData?.nodes.find((n) => n.id === selectedNode) ?? null;
   const connectedNodes = useMemo(() => {
@@ -341,7 +332,7 @@ export function AtlasGraph() {
     return graphData.nodes.filter((n) => connected.has(n.id));
   }, [graphData, selectedNode]);
 
-  // Highlight edges connected to selected node
+  // Highlight edges for selected node
   const styledEdges = useMemo(() => {
     if (!selectedNode) return edges;
     return edges.map((e) => {
@@ -350,9 +341,9 @@ export function AtlasGraph() {
         ...e,
         animated: isConnected,
         style: {
-          stroke: isConnected ? "hsl(var(--primary))" : "hsl(var(--border))",
-          strokeWidth: isConnected ? 2 : 1,
-          opacity: isConnected ? 1 : 0.15,
+          stroke: isConnected ? "#C4F82A" : (e.style?.stroke ?? "#C4F82A"),
+          strokeWidth: isConnected ? 2.5 : (e.style?.strokeWidth ?? 1.5),
+          opacity: isConnected ? 0.9 : 0.2,
         },
       };
     });
@@ -369,10 +360,9 @@ export function AtlasGraph() {
     );
   }
 
-  const nodeCount = graphData?.nodes.length ?? 0;
-  const edgeCount = graphData?.edges.length ?? 0;
   const equipCount = graphData?.nodes.filter((n) => n.type === "equipment").length ?? 0;
-  const pointCount = nodeCount - equipCount;
+  const totalPoints = graphData?.nodes.filter((n) => n.type === "point").length ?? 0;
+  const totalEdges = graphData?.edges.length ?? 0;
 
   return (
     <div className="relative h-full w-full">
@@ -406,9 +396,9 @@ export function AtlasGraph() {
         <div className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground">
           <span className="text-primary font-medium">{equipCount}</span> equipment
           {" · "}
-          <span className="text-foreground font-medium">{pointCount}</span> points
+          <span className="text-foreground font-medium">{totalPoints}</span> points
           {" · "}
-          <span className="text-muted-foreground">{edgeCount} links</span>
+          <span className="text-muted-foreground">{totalEdges} links</span>
         </div>
       </div>
 
@@ -441,11 +431,9 @@ export function AtlasGraph() {
           className="!bg-card !border-border !rounded-lg"
           nodeStrokeColor={() => "transparent"}
           nodeColor={(n) =>
-            n.type === "equipment"
-              ? "hsl(var(--primary))"
-              : getCategoryColor((n.data as { category?: string })?.category || "default")
+            n.type === "equipment" ? "#C4F82A" : "#3f3f46"
           }
-          maskColor="hsl(var(--background) / 0.8)"
+          maskColor="hsla(0, 0%, 4%, 0.8)"
         />
       </ReactFlow>
 
@@ -458,7 +446,10 @@ export function AtlasGraph() {
 
       {/* Help text */}
       <div className="absolute bottom-4 left-4 z-10 text-[10px] text-muted-foreground">
-        Click to inspect · Double-click to focus · Drag to rearrange
+        {root
+          ? "Click to inspect · Double-click to refocus · Drag to rearrange"
+          : "Click equipment to show points · Double-click to focus · Drag to rearrange"
+        }
       </div>
     </div>
   );
