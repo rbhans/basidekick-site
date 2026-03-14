@@ -1,73 +1,74 @@
 import { cache } from "react";
-import path from "path";
-import { readFile } from "fs/promises";
+import { dbAll, dbGet } from "@/lib/data/atlas-db";
 import type { AtlasBrand, AtlasData, AtlasModel, AtlasType } from "@/lib/types";
 
-const REMOTE_ATLAS_DATA_URLS = [
-  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/index.json",
-  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/catalog/index.json",
-];
-const LOCAL_ATLAS_DATA_PATH = path.join(
-  process.cwd(),
-  "public",
-  "data",
-  "atlas",
-  "index.json"
-);
-
-async function loadLocalAtlasData(): Promise<AtlasData | null> {
+export const getAtlasData = cache(async (): Promise<AtlasData | null> => {
   try {
-    const raw = await readFile(LOCAL_ATLAS_DATA_PATH, "utf8");
-    return JSON.parse(raw) as AtlasData;
+    const brands = dbAll<AtlasBrand>(
+      "SELECT id, name, slug, logo_url, website, description FROM brands ORDER BY name"
+    );
+    const types = dbAll<AtlasType>(
+      "SELECT id, name, slug, description FROM types ORDER BY name"
+    );
+
+    const modelRows = dbAll<AtlasModel & { brand_id: string; type_id: string }>(
+      `SELECT m.id, m.brand_id as brand, m.type_id as type, m.name, m.slug,
+              m.description, m.status, m.manufacturer_url, m.image_url, m.added_at
+       FROM models m ORDER BY m.name`
+    );
+
+    const models: AtlasModel[] = modelRows.map((m) => ({
+      ...m,
+      model_numbers: dbAll<{ model_number: string }>(
+        "SELECT model_number FROM model_numbers WHERE model_id = ?",
+        m.id
+      ).map((r) => r.model_number),
+      protocols: dbAll<{ protocol: string }>(
+        "SELECT protocol FROM model_protocols WHERE model_id = ?",
+        m.id
+      ).map((r) => r.protocol),
+    }));
+
+    const meta = dbGet<{ value: string }>(
+      "SELECT value FROM meta WHERE key = 'lastUpdated'"
+    );
+
+    return {
+      version: "1.0.0",
+      lastUpdated: meta?.value ?? new Date().toISOString(),
+      totalBrands: brands.length,
+      totalTypes: types.length,
+      totalModels: models.length,
+      brands,
+      types,
+      models,
+    };
   } catch {
     return null;
   }
-}
-
-async function fetchRemoteAtlasData(): Promise<AtlasData | null> {
-  for (const remoteUrl of REMOTE_ATLAS_DATA_URLS) {
-    try {
-      const response = await fetch(remoteUrl, {
-        next: { revalidate: 86400 },
-      });
-      if (!response.ok) continue;
-      return (await response.json()) as AtlasData;
-    } catch {
-      continue;
-    }
-  }
-
-  return null;
-}
-
-export const getAtlasData = cache(async (): Promise<AtlasData | null> => {
-  const local = await loadLocalAtlasData();
-  if (local) return local;
-
-  return fetchRemoteAtlasData();
 });
 
-function getBrandBySlug(data: AtlasData, slug: string): AtlasBrand | undefined {
-  return data.brands.find((brand) => brand.slug === slug || brand.id === slug);
-}
-
-function getTypeBySlug(data: AtlasData, slug: string): AtlasType | undefined {
-  return data.types.find((type) => type.slug === slug || type.id === slug);
-}
-
 export async function getAtlasBrand(slug: string): Promise<AtlasBrand | null> {
-  const data = await getAtlasData();
-  if (!data) return null;
-  return getBrandBySlug(data, slug) || null;
+  return (
+    dbGet<AtlasBrand>(
+      "SELECT id, name, slug, logo_url, website, description FROM brands WHERE slug = ? OR id = ?",
+      slug,
+      slug
+    ) ?? null
+  );
 }
 
 export async function getAtlasType(
   _brandSlug: string,
   typeSlug: string
 ): Promise<AtlasType | null> {
-  const data = await getAtlasData();
-  if (!data) return null;
-  return getTypeBySlug(data, typeSlug) || null;
+  return (
+    dbGet<AtlasType>(
+      "SELECT id, name, slug, description FROM types WHERE slug = ? OR id = ?",
+      typeSlug,
+      typeSlug
+    ) ?? null
+  );
 }
 
 export async function getAtlasModel(
@@ -75,73 +76,59 @@ export async function getAtlasModel(
   typeSlug: string,
   modelSlug: string
 ): Promise<AtlasModel | null> {
-  const data = await getAtlasData();
-  if (!data) return null;
-
-  const brand = getBrandBySlug(data, brandSlug);
-  const type = getTypeBySlug(data, typeSlug);
-  if (!brand || !type) return null;
-
-  return (
-    data.models.find(
-      (model) =>
-        model.brand === brand.id &&
-        model.type === type.id &&
-        (model.slug === modelSlug || model.id === modelSlug)
-    ) || null
+  const model = dbGet<AtlasModel & { brand_id: string; type_id: string }>(
+    `SELECT m.id, m.brand_id as brand, m.type_id as type, m.name, m.slug,
+            m.description, m.status, m.manufacturer_url, m.image_url, m.added_at
+     FROM models m
+     JOIN brands b ON b.id = m.brand_id
+     JOIN types t ON t.id = m.type_id
+     WHERE (b.slug = ? OR b.id = ?) AND (t.slug = ? OR t.id = ?) AND (m.slug = ? OR m.id = ?)`,
+    brandSlug,
+    brandSlug,
+    typeSlug,
+    typeSlug,
+    modelSlug,
+    modelSlug
   );
+  if (!model) return null;
+
+  return {
+    ...model,
+    model_numbers: dbAll<{ model_number: string }>(
+      "SELECT model_number FROM model_numbers WHERE model_id = ?",
+      model.id
+    ).map((r) => r.model_number),
+    protocols: dbAll<{ protocol: string }>(
+      "SELECT protocol FROM model_protocols WHERE model_id = ?",
+      model.id
+    ).map((r) => r.protocol),
+  };
 }
 
 export async function getAllBrandSlugs(): Promise<string[]> {
-  const data = await getAtlasData();
-  if (!data) return [];
-  return data.brands.map((brand) => brand.slug || brand.id);
+  return dbAll<{ slug: string }>("SELECT slug FROM brands ORDER BY name").map(
+    (r) => r.slug
+  );
 }
 
-export async function getAllTypeSlugs(): Promise<Array<{ brand: string; type: string }>> {
-  const data = await getAtlasData();
-  if (!data) return [];
-
-  const brandById = new Map(data.brands.map((brand) => [brand.id, brand]));
-  const typeById = new Map(data.types.map((type) => [type.id, type]));
-  const pairs = new Map<string, { brand: string; type: string }>();
-
-  for (const model of data.models) {
-    const brand = brandById.get(model.brand);
-    const type = typeById.get(model.type);
-    if (!brand || !type) continue;
-
-    const brandSlug = brand.slug || brand.id;
-    const typeSlug = type.slug || type.id;
-    const key = `${brandSlug}::${typeSlug}`;
-    if (!pairs.has(key)) {
-      pairs.set(key, { brand: brandSlug, type: typeSlug });
-    }
-  }
-
-  return Array.from(pairs.values());
+export async function getAllTypeSlugs(): Promise<
+  Array<{ brand: string; type: string }>
+> {
+  return dbAll<{ brand: string; type: string }>(
+    `SELECT DISTINCT b.slug as brand, t.slug as type
+     FROM models m
+     JOIN brands b ON b.id = m.brand_id
+     JOIN types t ON t.id = m.type_id`
+  );
 }
 
 export async function getAllModelSlugs(): Promise<
   Array<{ brand: string; type: string; model: string }>
 > {
-  const data = await getAtlasData();
-  if (!data) return [];
-
-  const brandById = new Map(data.brands.map((brand) => [brand.id, brand]));
-  const typeById = new Map(data.types.map((type) => [type.id, type]));
-
-  return data.models
-    .map((model) => {
-      const brand = brandById.get(model.brand);
-      const type = typeById.get(model.type);
-      if (!brand || !type) return null;
-
-      return {
-        brand: brand.slug || brand.id,
-        type: type.slug || type.id,
-        model: model.slug || model.id,
-      };
-    })
-    .filter((entry): entry is { brand: string; type: string; model: string } => Boolean(entry));
+  return dbAll<{ brand: string; type: string; model: string }>(
+    `SELECT b.slug as brand, t.slug as type, m.slug as model
+     FROM models m
+     JOIN brands b ON b.id = m.brand_id
+     JOIN types t ON t.id = m.type_id`
+  );
 }
