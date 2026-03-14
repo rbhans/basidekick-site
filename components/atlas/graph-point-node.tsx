@@ -2,25 +2,24 @@
 
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 
-interface PointNodeData {
-  label: string;
-  category: string;
-}
-
 export function PointNode({ data, selected }: NodeProps) {
-  const d = data as unknown as PointNodeData;
+  const d = data as unknown as {
+    label: string;
+    category: string;
+  };
+
   return (
     <div
-      className={`rounded-md border px-2 py-1 shadow-sm transition-all ${
+      className={`rounded-md border px-2.5 py-1.5 transition-all cursor-pointer ${
         selected
-          ? "border-emerald-500 bg-emerald-50 shadow-md"
-          : "border-emerald-200 bg-white hover:border-emerald-300"
+          ? "border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.08)] shadow-sm shadow-[hsl(var(--primary)/0.15)]"
+          : "border-[hsl(var(--border))] bg-[hsl(var(--muted))] hover:border-[hsl(var(--primary)/0.3)]"
       }`}
     >
-      <Handle type="source" position={Position.Right} className="!bg-emerald-400" />
-      <Handle type="target" position={Position.Left} className="!bg-emerald-400" />
-      <div className="text-xs font-medium text-emerald-900">{d.label}</div>
-      <div className="text-[10px] text-emerald-500">{d.category}</div>
+      <Handle type="source" position={Position.Right} className="!bg-[hsl(var(--muted-foreground))] !border-none !w-1.5 !h-1.5" />
+      <Handle type="target" position={Position.Left} className="!bg-[hsl(var(--muted-foreground))] !border-none !w-1.5 !h-1.5" />
+      <div className="text-xs font-medium text-[hsl(var(--foreground))]">{d.label}</div>
+      <div className="text-[10px] text-[hsl(var(--muted-foreground))]">{d.category}</div>
     </div>
   );
 }
