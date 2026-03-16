@@ -1,23 +1,24 @@
 import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
+import { execSync } from "child_process";
+
+const DB_FILENAME = "bas-atlas.db";
+const REMOTE_URL =
+  "https://github.com/rbhans/bas-atlas/raw/main/dist/bas-atlas.db";
 
 let db: Database.Database | null = null;
 
 function findDbPath(): string {
+  // 1. Check local/bundled locations first (works in dev + if Vercel tracing works)
   const candidates = [
-    // Standard: works in local dev and when Vercel tracing works correctly
-    path.join(process.cwd(), "data", "bas-atlas.db"),
-    // Postbuild copy location (belt-and-suspenders for Vercel)
-    path.join(process.cwd(), ".next", "server", "data", "bas-atlas.db"),
+    path.join(process.cwd(), "data", DB_FILENAME),
+    path.join(process.cwd(), ".next", "server", "data", DB_FILENAME),
   ];
 
-  // Also walk up from __dirname (where the compiled route handler lives)
-  // .nft.json traces are relative to the route file, so this finds the DB
-  // even if process.cwd() doesn't match the bundle root
   let dir = __dirname;
   for (let i = 0; i < 10; i++) {
-    candidates.push(path.join(dir, "data", "bas-atlas.db"));
+    candidates.push(path.join(dir, "data", DB_FILENAME));
     const parent = path.dirname(dir);
     if (parent === dir) break;
     dir = parent;
@@ -27,9 +28,24 @@ function findDbPath(): string {
     if (fs.existsSync(p)) return p;
   }
 
-  throw new Error(
-    `[atlas-db] DB not found. cwd=${process.cwd()}, __dirname=${__dirname}, candidates=${candidates.join(", ")}`
-  );
+  // 2. On Vercel (or any env where bundling failed), download to /tmp
+  const tmpPath = path.join("/tmp", DB_FILENAME);
+  if (fs.existsSync(tmpPath)) return tmpPath;
+
+  console.log(`[atlas-db] DB not found locally, downloading to ${tmpPath}...`);
+  execSync(`curl -L -f -o "${tmpPath}" "${REMOTE_URL}"`, {
+    timeout: 15000,
+  });
+
+  if (!fs.existsSync(tmpPath)) {
+    throw new Error(
+      `[atlas-db] Failed to download DB. cwd=${process.cwd()}, __dirname=${__dirname}`
+    );
+  }
+
+  const size = fs.statSync(tmpPath).size;
+  console.log(`[atlas-db] Downloaded ${size} bytes to ${tmpPath}`);
+  return tmpPath;
 }
 
 export function getAtlasDb(): Database.Database {
