@@ -34,6 +34,9 @@ const cspDirectives = [
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["better-sqlite3"],
+  outputFileTracingIncludes: {
+    "/api/atlas/*": ["./data/bas-atlas.db"],
+  },
   images: {
     remotePatterns: [
       {
