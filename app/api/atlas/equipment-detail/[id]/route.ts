@@ -53,11 +53,34 @@ export async function GET(
     id
   );
 
+  // Models that work with this equipment
+  const models = dbAll<{
+    id: string;
+    name: string;
+    slug: string | null;
+    brand_name: string;
+    brand_slug: string | null;
+    type_name: string;
+    description: string | null;
+    status: string | null;
+  }>(
+    `SELECT m.id, m.name, m.slug, b.name as brand_name, b.slug as brand_slug,
+            t.name as type_name, m.description, m.status
+     FROM model_equipment me
+     JOIN models m ON m.id = me.model_id
+     JOIN brands b ON b.id = m.brand_id
+     JOIN types t ON t.id = m.type_id
+     WHERE me.equipment_id = ?
+     ORDER BY b.name, m.name`,
+    id
+  );
+
   return NextResponse.json({
     ...equip,
     aliases,
     tags,
     subtypes,
     typical_points: typicalPoints,
+    models,
   });
 }

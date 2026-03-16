@@ -30,5 +30,14 @@ export async function GET(
     model.id
   ).map((r) => r.protocol);
 
-  return NextResponse.json({ ...model, model_numbers, protocols });
+  const equipment = dbAll<{ id: string; name: string; category: string }>(
+    `SELECT e.id, e.name, e.category
+     FROM model_equipment me
+     JOIN equipment e ON e.id = me.equipment_id
+     WHERE me.model_id = ?
+     ORDER BY e.category, e.name`,
+    model.id
+  );
+
+  return NextResponse.json({ ...model, model_numbers, protocols, equipment });
 }
