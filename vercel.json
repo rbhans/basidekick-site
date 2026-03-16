@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "app/api/atlas/**/*.ts": {
+      "includeFiles": "data/bas-atlas.db"
+    }
+  }
+}
