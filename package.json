@@ -7,6 +7,7 @@
     "dev": "next dev",
     "prebuild": "bash scripts/fetch-atlas-db.sh",
     "build": "next build",
+    "postbuild": "bash scripts/postbuild-copy-db.sh",
     "dev:fetch-db": "bash scripts/fetch-atlas-db.sh",
     "start": "next start",
     "validate:atlas-brand-logos": "node scripts/validate-atlas-brand-logos.mjs",
