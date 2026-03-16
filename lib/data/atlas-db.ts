@@ -9,13 +9,17 @@ const REMOTE_URL =
 
 let db: Database.Database | null = null;
 
-function findDbPath(): string {
-  // 1. Check local/bundled locations first (works in dev + if Vercel tracing works)
+function getDbPath(): string {
+  const tmpPath = path.join("/tmp", DB_FILENAME);
+
+  // Warm Lambda — already in /tmp from a previous invocation
+  if (fs.existsSync(tmpPath)) return tmpPath;
+
+  // Find a bundled/local copy
   const candidates = [
     path.join(process.cwd(), "data", DB_FILENAME),
     path.join(process.cwd(), ".next", "server", "data", DB_FILENAME),
   ];
-
   let dir = __dirname;
   for (let i = 0; i < 10; i++) {
     candidates.push(path.join(dir, "data", DB_FILENAME));
@@ -24,33 +28,33 @@ function findDbPath(): string {
     dir = parent;
   }
 
-  for (const p of candidates) {
-    if (fs.existsSync(p)) return p;
+  for (const src of candidates) {
+    if (fs.existsSync(src)) {
+      // Local dev: use directly (writable filesystem)
+      if (!process.env.VERCEL) return src;
+      // Vercel: copy to /tmp (Lambda bundle dir is read-only)
+      fs.copyFileSync(src, tmpPath);
+      console.log(`[atlas-db] Copied ${src} -> ${tmpPath} (${fs.statSync(tmpPath).size} bytes)`);
+      return tmpPath;
+    }
   }
 
-  // 2. On Vercel (or any env where bundling failed), download to /tmp
-  const tmpPath = path.join("/tmp", DB_FILENAME);
-  if (fs.existsSync(tmpPath)) return tmpPath;
-
-  console.log(`[atlas-db] DB not found locally, downloading to ${tmpPath}...`);
-  execSync(`curl -L -f -o "${tmpPath}" "${REMOTE_URL}"`, {
-    timeout: 15000,
-  });
+  // Nothing bundled — download from GitHub to /tmp
+  console.log(`[atlas-db] DB not bundled, downloading to ${tmpPath}...`);
+  execSync(`curl -L -f -o "${tmpPath}" "${REMOTE_URL}"`, { timeout: 15000 });
 
   if (!fs.existsSync(tmpPath)) {
     throw new Error(
-      `[atlas-db] Failed to download DB. cwd=${process.cwd()}, __dirname=${__dirname}`
+      `[atlas-db] DB not found. cwd=${process.cwd()}, __dirname=${__dirname}`
     );
   }
-
-  const size = fs.statSync(tmpPath).size;
-  console.log(`[atlas-db] Downloaded ${size} bytes to ${tmpPath}`);
+  console.log(`[atlas-db] Downloaded ${fs.statSync(tmpPath).size} bytes -> ${tmpPath}`);
   return tmpPath;
 }
 
 export function getAtlasDb(): Database.Database {
   if (!db) {
-    const dbPath = findDbPath();
+    const dbPath = getDbPath();
     db = new Database(dbPath, { readonly: true });
     db.pragma("journal_mode = WAL");
     db.pragma("foreign_keys = ON");
@@ -58,7 +62,6 @@ export function getAtlasDb(): Database.Database {
   return db;
 }
 
-// Typed query helpers
 export function dbAll<T>(sql: string, ...params: unknown[]): T[] {
   return getAtlasDb().prepare(sql).all(...params) as T[];
 }
