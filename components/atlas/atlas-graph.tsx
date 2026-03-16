@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ReactFlow,
   useNodesState,
@@ -13,6 +13,17 @@ import {
   type Edge,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import {
+  forceSimulation,
+  forceLink,
+  forceManyBody,
+  forceCenter,
+  forceCollide,
+  forceX,
+  forceY,
+  type SimulationNodeDatum,
+  type SimulationLinkDatum,
+} from "d3-force";
 import { useSearchParams, useRouter } from "next/navigation";
 import { EquipmentNode } from "./graph-equipment-node";
 import { PointNode } from "./graph-point-node";
@@ -36,84 +47,185 @@ const nodeTypes = {
   point: PointNode,
 };
 
+interface SimNode extends SimulationNodeDatum {
+  id: string;
+  nodeData: GraphNodeData;
+}
+
 /**
- * Focused radial layout: root in center, direct connections in a ring.
+ * Run d3-force simulation to compute organic positions.
+ * Equipment nodes repel strongly and cluster by category.
+ * Points cluster near their parent equipment.
  */
-function layoutFocused(graphData: GraphData, rootId: string) {
-  const rootNode = graphData.nodes.find((n) => n.id === rootId);
-  if (!rootNode) return { nodes: [] as Node[], edges: [] as Edge[] };
+function runForceLayout(graphData: GraphData, rootId: string | null) {
+  const nodeMap = new Map(graphData.nodes.map((n) => [n.id, n]));
 
-  // Build adjacency
-  const connections = new Map<string, Set<string>>();
+  // Build adjacency for point counts
+  const pointsForEquip = new Map<string, string[]>();
   for (const e of graphData.edges) {
-    if (!connections.has(e.source)) connections.set(e.source, new Set());
-    if (!connections.has(e.target)) connections.set(e.target, new Set());
-    connections.get(e.source)!.add(e.target);
-    connections.get(e.target)!.add(e.source);
+    if (!pointsForEquip.has(e.source)) pointsForEquip.set(e.source, []);
+    pointsForEquip.get(e.source)!.push(e.target);
   }
 
-  const directIds = connections.get(rootId) || new Set<string>();
-  const directNodes = graphData.nodes.filter((n) => directIds.has(n.id));
+  // For root view: only show root + direct connections
+  let visibleNodes: GraphNodeData[];
+  let visibleEdgeData: Array<{ source: string; target: string }>;
 
-  // Separate direct connections by type
-  const directEquip = directNodes.filter((n) => n.type === "equipment");
-  const directPoints = directNodes.filter((n) => n.type === "point");
+  if (rootId) {
+    const rootNode = nodeMap.get(rootId);
+    if (!rootNode) return { nodes: [] as Node[], edges: [] as Edge[] };
 
-  const nodes: Node[] = [];
+    const connectedIds = new Set<string>();
+    for (const e of graphData.edges) {
+      if (e.source === rootId) connectedIds.add(e.target);
+      if (e.target === rootId) connectedIds.add(e.source);
+    }
 
-  // Root at center
-  nodes.push({
-    id: rootId,
-    type: rootNode.type,
-    position: { x: 0, y: 0 },
+    visibleNodes = [rootNode, ...graphData.nodes.filter((n) => connectedIds.has(n.id))];
+    const visibleSet = new Set(visibleNodes.map((n) => n.id));
+    visibleEdgeData = graphData.edges.filter(
+      (e) => visibleSet.has(e.source) && visibleSet.has(e.target)
+    );
+  } else {
+    visibleNodes = graphData.nodes;
+    visibleEdgeData = graphData.edges;
+  }
+
+  // Create simulation nodes
+  const simNodes: SimNode[] = visibleNodes.map((n) => ({
+    id: n.id,
+    nodeData: n,
+    x: undefined,
+    y: undefined,
+  }));
+
+  const nodeById = new Map(simNodes.map((n) => [n.id, n]));
+
+  // Create simulation links
+  const simLinks: SimulationLinkDatum<SimNode>[] = visibleEdgeData
+    .filter((e) => nodeById.has(e.source) && nodeById.has(e.target))
+    .map((e) => ({
+      source: nodeById.get(e.source)!,
+      target: nodeById.get(e.target)!,
+    }));
+
+  // Category clustering — assign category centers for equipment
+  const categories = [...new Set(visibleNodes.filter((n) => n.type === "equipment").map((n) => n.category))];
+  const catAngle = new Map<string, number>();
+  categories.forEach((cat, i) => {
+    catAngle.set(cat, (2 * Math.PI * i) / categories.length);
+  });
+
+  const equipCount = visibleNodes.filter((n) => n.type === "equipment").length;
+  const totalCount = visibleNodes.length;
+
+  // Scale forces based on node count
+  const chargeStrength = rootId
+    ? -400
+    : totalCount > 200
+      ? -250
+      : -350;
+
+  const linkDistance = rootId
+    ? 180
+    : totalCount > 200
+      ? 120
+      : 150;
+
+  const clusterRadius = rootId ? 0 : Math.max(300, equipCount * 15);
+
+  // Initialize positions — equipment spread by category angle, points near their equipment
+  for (const sn of simNodes) {
+    if (rootId && sn.id === rootId) {
+      sn.x = 0;
+      sn.y = 0;
+      sn.fx = 0;
+      sn.fy = 0;
+    } else if (sn.nodeData.type === "equipment") {
+      const angle = catAngle.get(sn.nodeData.category) ?? 0;
+      const jitter = (Math.random() - 0.5) * clusterRadius * 0.6;
+      sn.x = Math.cos(angle) * clusterRadius + jitter;
+      sn.y = Math.sin(angle) * clusterRadius + jitter;
+    } else {
+      // Point — initialize near its parent equipment
+      let parentEquipId: string | null = null;
+      for (const e of visibleEdgeData) {
+        if (e.target === sn.id) { parentEquipId = e.source; break; }
+        if (e.source === sn.id) { parentEquipId = e.target; break; }
+      }
+      const parent = parentEquipId ? nodeById.get(parentEquipId) : null;
+      if (parent) {
+        sn.x = (parent.x ?? 0) + (Math.random() - 0.5) * 100;
+        sn.y = (parent.y ?? 0) + (Math.random() - 0.5) * 100;
+      } else {
+        sn.x = (Math.random() - 0.5) * 600;
+        sn.y = (Math.random() - 0.5) * 600;
+      }
+    }
+  }
+
+  // Run simulation
+  const simulation = forceSimulation(simNodes)
+    .force(
+      "link",
+      forceLink<SimNode, SimulationLinkDatum<SimNode>>(simLinks)
+        .id((d) => d.id)
+        .distance(linkDistance)
+        .strength(0.7)
+    )
+    .force("charge", forceManyBody<SimNode>().strength(chargeStrength))
+    .force("center", forceCenter(0, 0).strength(0.05))
+    .force(
+      "collide",
+      forceCollide<SimNode>().radius((d) =>
+        d.nodeData.type === "equipment" ? 80 : 50
+      ).strength(0.8)
+    );
+
+  // Category clustering force (only in overview mode)
+  if (!rootId && clusterRadius > 0) {
+    simulation
+      .force(
+        "x",
+        forceX<SimNode>((d) => {
+          if (d.nodeData.type !== "equipment") return 0;
+          const angle = catAngle.get(d.nodeData.category) ?? 0;
+          return Math.cos(angle) * clusterRadius;
+        }).strength((d) => (d.nodeData.type === "equipment" ? 0.15 : 0.02))
+      )
+      .force(
+        "y",
+        forceY<SimNode>((d) => {
+          if (d.nodeData.type !== "equipment") return 0;
+          const angle = catAngle.get(d.nodeData.category) ?? 0;
+          return Math.sin(angle) * clusterRadius;
+        }).strength((d) => (d.nodeData.type === "equipment" ? 0.15 : 0.02))
+      );
+  }
+
+  // Tick to completion
+  simulation.stop();
+  for (let i = 0; i < 300; i++) simulation.tick();
+
+  // Convert to React Flow nodes
+  const rfNodes: Node[] = simNodes.map((sn) => ({
+    id: sn.id,
+    type: sn.nodeData.type,
+    position: { x: sn.x ?? 0, y: sn.y ?? 0 },
     data: {
-      label: rootNode.label,
-      category: rootNode.category,
-      pointCount: rootNode.type === "equipment" ? directPoints.length : undefined,
-      isRoot: true,
+      label: sn.nodeData.label,
+      category: sn.nodeData.category,
+      ...(sn.nodeData.type === "equipment"
+        ? {
+            pointCount: pointsForEquip.get(sn.id)?.length ?? 0,
+            isRoot: sn.id === rootId,
+          }
+        : {}),
     },
-  });
+  }));
 
-  // Points in inner ring
-  const innerRadius = Math.max(250, directPoints.length * 30);
-  directPoints.forEach((n, i) => {
-    const angle = (2 * Math.PI * i) / directPoints.length - Math.PI / 2;
-    nodes.push({
-      id: n.id,
-      type: "point",
-      position: {
-        x: Math.cos(angle) * innerRadius,
-        y: Math.sin(angle) * innerRadius,
-      },
-      data: { label: n.label, category: n.category },
-    });
-  });
-
-  // Equipment in outer ring
-  if (directEquip.length > 0) {
-    const outerRadius = innerRadius + 200;
-    directEquip.forEach((n, i) => {
-      const angle = (2 * Math.PI * i) / directEquip.length - Math.PI / 2;
-      nodes.push({
-        id: n.id,
-        type: "equipment",
-        position: {
-          x: Math.cos(angle) * outerRadius,
-          y: Math.sin(angle) * outerRadius,
-        },
-        data: {
-          label: n.label,
-          category: n.category,
-          pointCount: 0,
-          isRoot: false,
-        },
-      });
-    });
-  }
-
-  // Only include edges that connect visible nodes
-  const visibleIds = new Set(nodes.map((n) => n.id));
-  const edges: Edge[] = graphData.edges
+  const visibleIds = new Set(rfNodes.map((n) => n.id));
+  const rfEdges: Edge[] = visibleEdgeData
     .filter((e) => visibleIds.has(e.source) && visibleIds.has(e.target))
     .map((e, i) => ({
       id: `e-${i}`,
@@ -122,135 +234,24 @@ function layoutFocused(graphData: GraphData, rootId: string) {
       style: {
         stroke: "#C4F82A",
         strokeWidth: 1.5,
-        opacity: 0.5,
+        opacity: 0.7,
       },
     }));
 
-  return { nodes, edges };
-}
-
-/**
- * Equipment-only overview layout: equipment nodes grouped by category
- * in a clean grid. No points shown until you click.
- */
-function layoutEquipmentOverview(
-  graphData: GraphData,
-  expandedEquipId: string | null,
-) {
-  const equipNodes = graphData.nodes.filter((n) => n.type === "equipment");
-
-  // Build point counts
-  const pointsForEquip = new Map<string, string[]>();
-  for (const e of graphData.edges) {
-    if (!pointsForEquip.has(e.source)) pointsForEquip.set(e.source, []);
-    pointsForEquip.get(e.source)!.push(e.target);
-  }
-
-  // Group equipment by category
-  const categories = new Map<string, GraphNodeData[]>();
-  for (const n of equipNodes) {
-    const cat = n.category || "other";
-    if (!categories.has(cat)) categories.set(cat, []);
-    categories.get(cat)!.push(n);
-  }
-
-  const nodes: Node[] = [];
-  const nodeWidth = 170;
-  const nodeHeight = 55;
-  const colGap = 30;
-  const rowGap = 20;
-  const categoryGap = 60;
-  const maxCols = 4;
-
-  let currentY = 0;
-
-  for (const [, catNodes] of categories) {
-    // Sort by point count descending
-    catNodes.sort((a, b) =>
-      (pointsForEquip.get(b.id)?.length || 0) - (pointsForEquip.get(a.id)?.length || 0)
-    );
-
-    const rows = Math.ceil(catNodes.length / maxCols);
-    const cols = Math.min(catNodes.length, maxCols);
-    const blockWidth = cols * (nodeWidth + colGap);
-    const startX = -blockWidth / 2;
-
-    catNodes.forEach((n, i) => {
-      const col = i % maxCols;
-      const row = Math.floor(i / maxCols);
-      nodes.push({
-        id: n.id,
-        type: "equipment",
-        position: {
-          x: startX + col * (nodeWidth + colGap),
-          y: currentY + row * (nodeHeight + rowGap),
-        },
-        data: {
-          label: n.label,
-          category: n.category,
-          pointCount: pointsForEquip.get(n.id)?.length || 0,
-          isRoot: n.id === expandedEquipId,
-        },
-      });
-    });
-
-    currentY += rows * (nodeHeight + rowGap) + categoryGap;
-  }
-
-  // If an equipment is expanded, show its points radiating from it
-  const visibleEdges: Edge[] = [];
-
-  if (expandedEquipId) {
-    const equipNode = nodes.find((n) => n.id === expandedEquipId);
-    const pointIds = pointsForEquip.get(expandedEquipId) || [];
-    const pointDataNodes = graphData.nodes.filter((n) => pointIds.includes(n.id));
-
-    if (equipNode && pointDataNodes.length > 0) {
-      const cx = equipNode.position.x + nodeWidth / 2;
-      const cy = equipNode.position.y + nodeHeight / 2;
-      const radius = Math.max(200, pointDataNodes.length * 22);
-
-      pointDataNodes.forEach((p, i) => {
-        const angle = (2 * Math.PI * i) / pointDataNodes.length - Math.PI / 2;
-        nodes.push({
-          id: p.id,
-          type: "point",
-          position: {
-            x: cx + Math.cos(angle) * radius - 75,
-            y: cy + Math.sin(angle) * radius - 16,
-          },
-          data: { label: p.label, category: p.category },
-        });
-
-        visibleEdges.push({
-          id: `e-${expandedEquipId}-${p.id}`,
-          source: expandedEquipId,
-          target: p.id,
-          style: {
-            stroke: "#C4F82A",
-            strokeWidth: 1.5,
-            opacity: 0.6,
-          },
-        });
-      });
-    }
-  }
-
-  return { nodes, edges: visibleEdges };
+  return { nodes: rfNodes, edges: rfEdges };
 }
 
 export function AtlasGraph() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const root = searchParams.get("root");
+  const layoutRef = useRef(false);
 
   const [graphData, setGraphData] = useState<GraphData | null>(null);
-  const [expandedEquip, setExpandedEquip] = useState<string | null>(null);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Always fetch full graph for overview; focused fetch for root view
     const url = root
       ? `/api/atlas/graph?root=${encodeURIComponent(root)}&depth=1`
       : "/api/atlas/graph";
@@ -260,27 +261,21 @@ export function AtlasGraph() {
       .then((data: GraphData) => {
         setGraphData(data);
         setLoading(false);
+        layoutRef.current = false;
       })
       .catch(() => setLoading(false));
   }, [root]);
 
-  // Reset expanded when root changes
   useEffect(() => {
-    setExpandedEquip(null);
     setSelectedNode(null);
+    layoutRef.current = false;
   }, [root]);
 
   const { layoutNodes, layoutEdges } = useMemo(() => {
     if (!graphData) return { layoutNodes: [], layoutEdges: [] };
-
-    if (root) {
-      const { nodes, edges } = layoutFocused(graphData, root);
-      return { layoutNodes: nodes, layoutEdges: edges };
-    }
-
-    const { nodes, edges } = layoutEquipmentOverview(graphData, expandedEquip);
+    const { nodes, edges } = runForceLayout(graphData, root);
     return { layoutNodes: nodes, layoutEdges: edges };
-  }, [graphData, root, expandedEquip]);
+  }, [graphData, root]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(layoutNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(layoutEdges);
@@ -293,13 +288,8 @@ export function AtlasGraph() {
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
       setSelectedNode(node.id);
-
-      // In overview mode, clicking equipment expands/collapses its points
-      if (!root && node.type === "equipment") {
-        setExpandedEquip((prev) => (prev === node.id ? null : node.id));
-      }
     },
-    [root]
+    []
   );
 
   const onNodeDoubleClick = useCallback(
@@ -318,8 +308,7 @@ export function AtlasGraph() {
 
   const onPaneClick = useCallback(() => {
     setSelectedNode(null);
-    if (!root) setExpandedEquip(null);
-  }, [root]);
+  }, []);
 
   const selectedGraphNode = graphData?.nodes.find((n) => n.id === selectedNode) ?? null;
   const connectedNodes = useMemo(() => {
@@ -341,9 +330,9 @@ export function AtlasGraph() {
         ...e,
         animated: isConnected,
         style: {
-          stroke: isConnected ? "#C4F82A" : (e.style?.stroke ?? "#C4F82A"),
-          strokeWidth: isConnected ? 2.5 : (e.style?.strokeWidth ?? 1.5),
-          opacity: isConnected ? 0.9 : 0.2,
+          stroke: isConnected ? "#C4F82A" : "#C4F82A",
+          strokeWidth: isConnected ? 2.5 : 1,
+          opacity: isConnected ? 1 : 0.15,
         },
       };
     });
@@ -448,7 +437,7 @@ export function AtlasGraph() {
       <div className="absolute bottom-4 left-4 z-10 text-[10px] text-muted-foreground">
         {root
           ? "Click to inspect · Double-click to refocus · Drag to rearrange"
-          : "Click equipment to show points · Double-click to focus · Drag to rearrange"
+          : "Click to inspect · Double-click to focus · Drag to rearrange"
         }
       </div>
     </div>

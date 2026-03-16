@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Broom, Plus, BookOpen } from "@phosphor-icons/react";
 import { SiteBadge } from "@/components/site-badge";
 import { PageHero } from "@/components/page-hero";
+import { HeroGraph } from "@/components/hero-graph";
 import { BabelViewContent } from "@/components/babel/babel-view";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ROUTES } from "@/lib/routes";
@@ -40,7 +41,7 @@ export function AtlasTabbedView() {
   return (
     <div className="min-h-full">
       {/* Hero */}
-      <PageHero centered imageSrc="/images/hero/resources.png">
+      <PageHero centered backgroundElement={<HeroGraph />}>
         <div className="flex justify-center">
           <SiteBadge label="RESOURCES" icon={BookOpen} />
         </div>

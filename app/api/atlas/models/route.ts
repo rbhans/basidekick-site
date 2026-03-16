@@ -29,6 +29,8 @@ export async function GET(request: NextRequest) {
   // Attach model_numbers and protocols
   const enriched = models.map((m: Record<string, unknown>) => ({
     ...m,
+    brand: m.brand_id,
+    type: m.type_id,
     model_numbers: dbAll<{ model_number: string }>(
       "SELECT model_number FROM model_numbers WHERE model_id = ?",
       m.id

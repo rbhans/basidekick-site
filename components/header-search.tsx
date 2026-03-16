@@ -9,23 +9,8 @@ import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/lib/routes";
 import type { BabelData, AtlasData } from "@/lib/types";
 
-const ATLAS_TERMS_DATA_URLS = [
-  "/data/atlas-terms/index.json",
-  "/data/babel/index.json",
-  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/atlas/index.json",
-  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/atlas/index.json",
-];
-
-// Cache points data to avoid refetching on every search
+// Cache data to avoid refetching on every search
 let babelDataCache: BabelData | null = null;
-
-const ATLAS_CATALOG_DATA_URLS = [
-  "/data/atlas/index.json",
-  "https://raw.githubusercontent.com/rbhans/bas-atlas/main/dist/catalog/index.json",
-  "https://raw.githubusercontent.com/rbhans/bas-babel/main/dist/catalog/index.json",
-];
-
-// Cache atlas data to avoid refetching on every search
 let atlasDataCache: AtlasData | null = null;
 
 interface SearchResult {
@@ -36,17 +21,14 @@ interface SearchResult {
   subtitle?: string;
 }
 
-async function fetchJsonWithFallback<T>(urls: string[]): Promise<T | null> {
-  for (const url of urls) {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) continue;
-      return (await response.json()) as T;
-    } catch {
-      continue;
-    }
+async function fetchJson<T>(url: string): Promise<T | null> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    return (await response.json()) as T;
+  } catch {
+    return null;
   }
-  return null;
 }
 
 export function HeaderSearch() {
@@ -82,10 +64,10 @@ export function HeaderSearch() {
       let hasError = false;
 
       try {
-        // Search Atlas points entries (from external JSON)
+        // Search Atlas points entries
         if (!babelDataCache) {
           try {
-            babelDataCache = await fetchJsonWithFallback<BabelData>(ATLAS_TERMS_DATA_URLS);
+            babelDataCache = await fetchJson<BabelData>("/api/atlas/babel");
           } catch (e) {
             console.error("[Search] Failed to fetch Atlas points data:", e);
           }
@@ -140,7 +122,26 @@ export function HeaderSearch() {
         // Search Atlas entries (equipment database)
         if (!atlasDataCache) {
           try {
-            atlasDataCache = await fetchJsonWithFallback<AtlasData>(ATLAS_CATALOG_DATA_URLS);
+            const [brandsRes, typesRes, modelsRes] = await Promise.all([
+              fetch("/api/atlas/brands"),
+              fetch("/api/atlas/types"),
+              fetch("/api/atlas/models"),
+            ]);
+            const [brandsData, typesData, modelsData] = await Promise.all([
+              brandsRes.json(),
+              typesRes.json(),
+              modelsRes.json(),
+            ]);
+            atlasDataCache = {
+              version: "1.0.0",
+              lastUpdated: new Date().toISOString(),
+              totalBrands: brandsData.brands.length,
+              totalTypes: typesData.types.length,
+              totalModels: modelsData.models.length,
+              brands: brandsData.brands,
+              types: typesData.types,
+              models: modelsData.models,
+            };
           } catch (e) {
             console.error("[Search] Failed to fetch Atlas data:", e);
           }

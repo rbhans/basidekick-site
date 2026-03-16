@@ -7,17 +7,22 @@ interface PageHeroProps {
   centered?: boolean;
   /** Optional static background image path (e.g., "/images/hero/tools.png") */
   imageSrc?: string;
+  /** Optional custom background component (replaces imageSrc) */
+  backgroundElement?: ReactNode;
 }
 
 /**
  * Shared hero section with gradient glow overlay.
  * Replaces the duplicated gradient-overlay + container pattern across pages.
  */
-export function PageHero({ children, centered = false, imageSrc }: PageHeroProps) {
+export function PageHero({ children, centered = false, imageSrc, backgroundElement }: PageHeroProps) {
   return (
     <section className="relative py-16 md:py-20 overflow-hidden">
-      {/* Static background image (when provided) */}
-      {imageSrc && (
+      {/* Custom background element (takes priority over imageSrc) */}
+      {backgroundElement}
+
+      {/* Static background image (when provided and no custom background) */}
+      {imageSrc && !backgroundElement && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
           <Image
             src={imageSrc}

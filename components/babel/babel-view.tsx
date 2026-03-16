@@ -26,18 +26,18 @@ function BabelViewShell({ showHeader }: BabelViewShellProps) {
   const apiEndpoints = [
     {
       name: "Full Dataset",
-      url: "https://basidekick.com/data/atlas-terms/index.json",
+      url: "https://basidekick.com/api/atlas/babel",
       description: "Complete point and equipment definitions",
     },
     {
       name: "Categories",
-      url: "https://basidekick.com/data/atlas-terms/categories.json",
+      url: "https://basidekick.com/api/atlas/babel/categories",
       description: "Category tree with counts",
     },
     {
-      name: "Search Index",
-      url: "https://basidekick.com/data/atlas-terms/search-index.json",
-      description: "Pre-tokenized search data",
+      name: "Search",
+      url: "https://basidekick.com/api/atlas/search?q=temperature",
+      description: "Full-text search across all entries",
     },
   ];
 
@@ -181,7 +181,7 @@ function BabelViewShell({ showHeader }: BabelViewShellProps) {
                 <div className="mt-4 pt-4 border-t">
                   <p className="text-xs text-muted-foreground mb-2">Example usage:</p>
                   <pre className="text-xs bg-background p-3 rounded border overflow-x-auto">
-{`fetch("https://basidekick.com/data/atlas-terms/index.json")
+{`fetch("https://basidekick.com/api/atlas/babel")
   .then(res => res.json())
   .then(data => console.log(data));`}
                   </pre>
