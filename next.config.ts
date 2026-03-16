@@ -35,7 +35,19 @@ const cspDirectives = [
 const nextConfig: NextConfig = {
   serverExternalPackages: ["better-sqlite3"],
   outputFileTracingIncludes: {
-    "/api/atlas/*": ["./data/bas-atlas.db"],
+    "/api/atlas/stats": ["./data/bas-atlas.db"],
+    "/api/atlas/points": ["./data/bas-atlas.db"],
+    "/api/atlas/points/[id]": ["./data/bas-atlas.db"],
+    "/api/atlas/equipment": ["./data/bas-atlas.db"],
+    "/api/atlas/equipment-detail/[id]": ["./data/bas-atlas.db"],
+    "/api/atlas/brands": ["./data/bas-atlas.db"],
+    "/api/atlas/types": ["./data/bas-atlas.db"],
+    "/api/atlas/models": ["./data/bas-atlas.db"],
+    "/api/atlas/models/[id]": ["./data/bas-atlas.db"],
+    "/api/atlas/search": ["./data/bas-atlas.db"],
+    "/api/atlas/graph": ["./data/bas-atlas.db"],
+    "/api/atlas/babel": ["./data/bas-atlas.db"],
+    "/api/atlas/babel/categories": ["./data/bas-atlas.db"],
   },
   images: {
     remotePatterns: [
