@@ -16,7 +16,6 @@ export const ROUTES = {
   // Atlas unified routes
   ATLAS: "/atlas",
   ATLAS_ENTRY: (id: string) => `/atlas/${encodeURIComponent(id)}`,
-  ATLAS_CLEANER: "/atlas/cleaner",
   ATLAS_EQUIPMENT: "/atlas?tab=equipment",
   ATLAS_EQUIPMENT_ADD: "/atlas/equipment/add",
   ATLAS_EQUIPMENT_BRAND: (brand: string) => `/atlas/equipment/${encodeURIComponent(brand)}`,

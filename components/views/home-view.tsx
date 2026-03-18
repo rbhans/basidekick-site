@@ -14,7 +14,6 @@ import {
   BookOpen,
   Wrench,
   GlobeHemisphereWest,
-  Broom,
   WaveTriangle,
   QrCode,
   Cpu,
@@ -158,15 +157,6 @@ export function HomeView({
                 )}
               </div>
 
-              {/* Prominent Cleaner Button */}
-              <Link
-                href={ROUTES.ATLAS_CLEANER}
-                className="flex items-center justify-center gap-3 w-full py-4 px-6 bg-primary text-primary-foreground rounded-xl font-semibold text-[15px] hover:bg-[#d4ff5a] transition-colors shadow-lg shadow-primary/20"
-              >
-                <Broom className="w-5 h-5" />
-                Clean Your Point Names
-                <ArrowRight className="w-4 h-4" />
-              </Link>
             </div>
           </div>
 

@@ -30,6 +30,6 @@ export async function GET() {
       "GET /api/atlas/graph": "Equipment-point relationship graph. Optional: root=:id, depth=1-3",
     },
     cors: "All /api/atlas/* endpoints support CORS (Access-Control-Allow-Origin: *)",
-    source: "https://github.com/basidekick/bas-atlas",
+    source: "https://github.com/rbhans/bas-atlas",
   });
 }

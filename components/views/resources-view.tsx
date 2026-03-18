@@ -9,7 +9,6 @@ import {
   Calculator,
   BookmarksSimple,
   UsersThree,
-  Broom,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 import { PageHero } from "@/components/page-hero";
@@ -50,12 +49,6 @@ const resources = [
     description: "Community platform for BAS professionals to share knowledge and connect.",
     href: ROUTES.POINTSTACK,
     icon: <UsersThree className="w-5 h-5 text-primary" />,
-  },
-  {
-    title: "Point Name Cleaner",
-    description: "Clean up messy point names using standardized naming conventions.",
-    href: ROUTES.ATLAS_CLEANER,
-    icon: <Broom className="w-5 h-5 text-primary" />,
   },
 ];
 

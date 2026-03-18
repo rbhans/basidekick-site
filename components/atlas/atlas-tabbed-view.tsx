@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Broom, Plus, BookOpen } from "@phosphor-icons/react";
+import { Plus, BookOpen } from "@phosphor-icons/react";
 import { SiteBadge } from "@/components/site-badge";
 import { PageHero } from "@/components/page-hero";
 import { HeroGraph } from "@/components/hero-graph";
@@ -54,13 +54,6 @@ export function AtlasTabbedView() {
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href={ROUTES.ATLAS_CLEANER}
-            className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold bg-primary text-primary-foreground rounded-lg hover:bg-[#d4ff5a] transition-colors"
-          >
-            <Broom className="size-4" weight="bold" />
-            Point Name Cleaner
-          </Link>
           <Link
             href={ROUTES.ATLAS_EQUIPMENT_ADD}
             className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold border border-border rounded-lg hover:border-muted-foreground transition-colors"
