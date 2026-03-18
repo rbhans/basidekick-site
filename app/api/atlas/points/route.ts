@@ -38,8 +38,9 @@ export async function GET(request: NextRequest) {
     params.push(pointFunction);
   }
   if (q) {
-    sql += " AND (name LIKE ? OR id LIKE ?)";
-    params.push(`%${q}%`, `%${q}%`);
+    sql += ` AND (name LIKE ? OR id LIKE ?
+      OR id IN (SELECT point_id FROM point_aliases WHERE alias LIKE ?))`;
+    params.push(`%${q}%`, `%${q}%`, `%${q}%`);
   }
 
   const total = dbGet<{ c: number }>(

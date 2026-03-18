@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   sql += " ORDER BY m.name";
   const models = dbAll<Record<string, unknown>>(sql, ...params);
 
-  // Attach model_numbers and protocols
+  // Attach model_numbers, protocols, and equipment links
   const enriched = models.map((m: Record<string, unknown>) => ({
     ...m,
     brand: m.brand_id,
@@ -39,6 +39,12 @@ export async function GET(request: NextRequest) {
       "SELECT protocol FROM model_protocols WHERE model_id = ?",
       m.id
     ).map((r) => r.protocol),
+    equipment: dbAll<{ id: string; name: string; category: string }>(
+      `SELECT e.id, e.name, e.category FROM model_equipment me
+       JOIN equipment e ON e.id = me.equipment_id
+       WHERE me.model_id = ? ORDER BY e.name`,
+      m.id
+    ),
   }));
 
   return NextResponse.json({ models: enriched });

@@ -28,8 +28,9 @@ export async function GET(request: NextRequest) {
     params.push(category);
   }
   if (q) {
-    sql += " AND (name LIKE ? OR id LIKE ? OR abbreviation LIKE ?)";
-    params.push(`%${q}%`, `%${q}%`, `%${q}%`);
+    sql += ` AND (name LIKE ? OR id LIKE ? OR abbreviation LIKE ?
+      OR id IN (SELECT equipment_id FROM equipment_aliases WHERE alias LIKE ?))`;
+    params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`);
   }
 
   const total = dbGet<{ c: number }>(
@@ -42,11 +43,19 @@ export async function GET(request: NextRequest) {
 
   const equipment = dbAll<EquipRow>(sql, ...params);
 
-  // Add point count for each
+  // Add counts for each
   const withCounts = equipment.map((e) => ({
     ...e,
     typical_point_count: dbGet<{ c: number }>(
       "SELECT COUNT(*) as c FROM equipment_typical_points WHERE equipment_id = ?",
+      e.id
+    )?.c ?? 0,
+    subtype_count: dbGet<{ c: number }>(
+      "SELECT COUNT(*) as c FROM equipment_subtypes WHERE equipment_id = ?",
+      e.id
+    )?.c ?? 0,
+    model_count: dbGet<{ c: number }>(
+      "SELECT COUNT(*) as c FROM model_equipment WHERE equipment_id = ?",
       e.id
     )?.c ?? 0,
   }));
