@@ -35,6 +35,7 @@ const cspDirectives = [
 const nextConfig: NextConfig = {
   serverExternalPackages: ["better-sqlite3"],
   outputFileTracingIncludes: {
+    "/api/atlas": ["./data/bas-atlas.db"],
     "/api/atlas/stats": ["./data/bas-atlas.db"],
     "/api/atlas/points": ["./data/bas-atlas.db"],
     "/api/atlas/points/[id]": ["./data/bas-atlas.db"],
@@ -127,6 +128,16 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      {
+        // CORS for public Atlas API
+        source: "/api/atlas/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
+          { key: "Access-Control-Allow-Headers", value: "Content-Type" },
+          { key: "Access-Control-Max-Age", value: "86400" },
+        ],
+      },
       {
         // Apply security headers to all routes
         source: "/:path*",
