@@ -2,7 +2,7 @@ import type { BabelPointConcept } from "@/lib/types";
 
 export type BabelPointKind = "Number" | "Bool";
 
-const BOOL_POINT_FUNCTIONS = new Set(["alarm", "status", "enable", "schedule"]);
+const BOOL_POINT_FUNCTIONS = new Set(["alarm", "status", "enable", "command", "schedule"]);
 
 function hasUnits(unit: BabelPointConcept["unit"]): boolean {
   if (Array.isArray(unit)) return unit.length > 0;
