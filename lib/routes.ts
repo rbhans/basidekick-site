@@ -55,6 +55,9 @@ export const ROUTES = {
   POINTSTACK_CONVERSATION: (id: string) => `/pointstack/messages/${encodeURIComponent(id)}`,
   POINTSTACK_NOTIFICATIONS: "/pointstack/notifications",
   POINTSTACK_ONBOARDING: "/pointstack/onboarding",
+  // News
+  NEWS: "/news",
+  NEWS_ARTICLE: (slug: string) => `/news/${encodeURIComponent(slug)}`,
   ADMIN: "/admin",
 } as const;
 
@@ -96,6 +99,8 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.SIGNIN;
     case VIEW_IDS.SIGNUP:
       return ROUTES.SIGNUP;
+    case VIEW_IDS.NEWS:
+      return ROUTES.NEWS;
     case VIEW_IDS.ADMIN:
       return ROUTES.ADMIN;
     default:
@@ -110,6 +115,7 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/tools") return VIEW_IDS.TOOLS;
   if (pathname === "/wiki") return VIEW_IDS.WIKI;
   if (pathname === "/pointstack") return VIEW_IDS.POINTSTACK;
+  if (pathname === "/news") return VIEW_IDS.NEWS;
   if (pathname === "/resources") return VIEW_IDS.RESOURCES;
   if (pathname.startsWith("/resources/")) return VIEW_IDS.RESOURCES;
   if (pathname === "/atlas") return VIEW_IDS.ATLAS;
@@ -141,6 +147,11 @@ export function getViewIdFromPath(pathname: string): string {
   // PointStack sub-pages
   if (pathname.startsWith("/pointstack/")) {
     return VIEW_IDS.POINTSTACK;
+  }
+
+  // News sub-pages
+  if (pathname.startsWith("/news/")) {
+    return VIEW_IDS.NEWS;
   }
 
   // References sub-pages

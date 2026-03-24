@@ -74,7 +74,7 @@ export interface Resource {
 }
 
 // Color variants for navigation sections
-export type NavColorVariant = "default" | "tools" | "resources" | "wiki" | "pointstack";
+export type NavColorVariant = "default" | "tools" | "resources" | "wiki" | "pointstack" | "news";
 
 // Navigation tree node
 export interface NavNode {
@@ -105,6 +105,7 @@ export const VIEW_IDS = {
   REFERENCES: "references",
   WIKI: "wiki",
   POINTSTACK: "pointstack",
+  NEWS: "news",
 
   CALCULATORS: "calculators",
   ACCOUNT: "account",
@@ -961,4 +962,73 @@ export interface EquipmentNote {
   updated_at: string;
   // Joined data
   author?: { display_name: string | null; avatar_url: string | null };
+}
+
+// ============================================================
+// News (HN-style Article Aggregator)
+// ============================================================
+
+export interface NewsArticle {
+  id: string;
+  title: string;
+  url: string;
+  slug: string;
+  source_domain: string;
+  summary: string | null;
+  submitted_by: string | null;
+  is_ai_submitted: boolean;
+  tags: string[];
+  upvote_count: number;
+  comment_count: number;
+  view_count: number;
+  is_published: boolean;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  submitter?: { display_name: string | null; avatar_url: string | null } | null;
+  user_vote?: number | null;
+}
+
+export interface NewsArticleComment {
+  id: string;
+  article_id: string;
+  author_id: string;
+  parent_id: string | null;
+  content: string;
+  upvote_count: number;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  author?: { display_name: string | null; avatar_url: string | null };
+  replies?: NewsArticleComment[];
+  user_vote?: number | null;
+}
+
+export interface NewsArticleVote {
+  user_id: string;
+  article_id: string;
+  vote_type: 1 | -1;
+  created_at: string;
+}
+
+export interface NewsArticleCommentVote {
+  user_id: string;
+  comment_id: string;
+  vote_type: 1 | -1;
+  created_at: string;
+}
+
+export type NewsSortBy = "recent" | "top" | "commented";
+
+export interface NewsFeedFilter {
+  tags?: string[];
+  sortBy?: NewsSortBy;
+  timeRange?: "day" | "week" | "month" | "all";
+}
+
+export interface CreateNewsCommentInput {
+  article_id: string;
+  content: string;
+  parent_id?: string;
 }

@@ -21,6 +21,7 @@ import { ROUTES } from "@/lib/routes";
 
 const NAV_LINKS = [
   { href: ROUTES.TOOLS, label: "Tools" },
+  { href: ROUTES.NEWS, label: "News" },
   { href: ROUTES.POINTSTACK, label: "PointStack" },
   { href: ROUTES.RESOURCES, label: "Resources" },
   { href: ROUTES.WIKI, label: "Wiki" },
