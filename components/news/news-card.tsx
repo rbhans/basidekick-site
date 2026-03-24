@@ -57,14 +57,9 @@ export function NewsCard({ article }: NewsCardProps) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <a
-              href={article.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[14px] font-semibold text-foreground hover:underline truncate"
-            >
+            <span className="text-[14px] font-semibold text-foreground truncate">
               {article.source_domain}
-            </a>
+            </span>
             <span className="px-2 py-0.5 rounded-full bg-[#27272A] text-[11px] font-mono text-muted-foreground">
               {article.is_ai_submitted ? "AI Curated" : "Submitted"}
             </span>
@@ -87,18 +82,12 @@ export function NewsCard({ article }: NewsCardProps) {
         </div>
       </div>
 
-      {/* Title */}
-      <a
-        href={article.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block group/link"
-      >
+      {/* Title — links to detail/comments page */}
+      <Link href={detailHref} className="block group/link">
         <h3 className="font-heading text-[16px] font-bold text-foreground group-hover/link:text-primary transition-colors leading-snug">
           {article.title}
-          <ArrowSquareOut className="w-3.5 h-3.5 inline ml-2 opacity-30 group-hover/link:opacity-60 transition-opacity" />
         </h3>
-      </a>
+      </Link>
 
       {/* Summary */}
       {article.summary && (
@@ -108,6 +97,17 @@ export function NewsCard({ article }: NewsCardProps) {
           </p>
         </Link>
       )}
+
+      {/* External link */}
+      <a
+        href={article.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 mt-3 text-[13px] text-primary/70 hover:text-primary transition-colors"
+      >
+        Read at {article.source_domain}
+        <ArrowSquareOut className="w-3 h-3" />
+      </a>
 
       {/* Tags */}
       {article.tags.length > 0 && (
