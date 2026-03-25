@@ -7,7 +7,7 @@ export default function NewsLayout({
 }) {
   return (
     <div className="min-h-full flex flex-col">
-      <PageHero centered>
+      <PageHero centered imageSrc="/images/hero/news.png">
         <h1 className="text-3xl md:text-[42px] font-heading font-bold tracking-tight">
           News
         </h1>

@@ -7,6 +7,7 @@ const HERO_IMAGES = [
   "/images/hero/hero-1.png",
   "/images/hero/hero-2.png",
   "/images/hero/hero-3.png",
+  "/images/hero/hero-main.png",
 ];
 
 const CYCLE_INTERVAL = 8000;
