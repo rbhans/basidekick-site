@@ -1,20 +1,40 @@
+// Maps Atlas catalog type IDs → Babel equipment IDs.
+// Keys must match actual type IDs in the Atlas DB types table.
 const ATLAS_TO_BABEL_MAP: Record<string, string[]> = {
-  ahus: ["air-handling-unit"],
-  rtus: ["rooftop-unit"],
-  fcus: ["fan-coil-unit"],
-  "vav-boxes": ["variable-air-volume-box"],
-  chillers: ["chiller"],
-  boilers: ["boiler"],
-  pumps: ["pump"],
-  "cooling-towers": ["cooling-tower"],
-  "heat-pumps": ["air-source-heat-pump", "water-source-heat-pump", "packaged-terminal-heat-pump"],
-  "vfds-drives": ["variable-frequency-drive"],
+  "unitary-controllers": [
+    "air-handling-unit",
+    "rooftop-unit",
+    "makeup-air-unit",
+    "dedicated-outdoor-air-system",
+    "computer-room-air-conditioner",
+    "computer-room-air-handler",
+    "energy-recovery-ventilator",
+    "heat-recovery-ventilator",
+  ],
+  "vav-controllers": [
+    "variable-air-volume-box",
+    "constant-air-volume-box",
+    "parallel-fan-powered-box",
+    "series-fan-powered-box",
+  ],
+  "zone-controllers": [
+    "fan-coil-unit",
+    "unit-ventilator",
+    "chilled-beam",
+    "radiant-panel",
+    "baseboard-heater",
+  ],
+  thermostats: [
+    "packaged-terminal-air-conditioner",
+    "packaged-terminal-heat-pump",
+    "water-source-heat-pump",
+    "ductless-mini-split",
+    "air-source-heat-pump",
+  ],
+  "vfds-drives": ["variable-frequency-drive", "pump", "cooling-tower", "exhaust-fan"],
   meters: ["electric-meter", "natural-gas-meter", "water-meter", "steam-meter", "btu-meter"],
-  "crac-units": ["computer-room-air-conditioner", "computer-room-air-handler"],
-  "erv-hrv": ["energy-recovery-ventilator", "heat-recovery-ventilator"],
-  "vrf-systems": ["vrf-outdoor-unit", "vrf-indoor-unit", "vrf-branch-selector-box"],
-  // Intentionally omitted for now: exhaust-fans, split-systems, humidifiers
-  // because BAS Babel does not currently expose matching equipment IDs.
+  "supervisory-controllers": ["chiller", "boiler"],
+  "occupancy-sensors": ["vrf-indoor-unit", "vrf-outdoor-unit", "vrf-branch-selector-box"],
 };
 
 const MAPPED_BABEL_IDS = new Set(Object.values(ATLAS_TO_BABEL_MAP).flat());
