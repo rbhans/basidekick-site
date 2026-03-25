@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { formatDistanceToNow, format } from "date-fns";
 import {
   ArrowSquareOut,
@@ -11,7 +12,6 @@ import {
   ChatCircle,
   Share,
   CheckCircle,
-  Robot,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 import { useNewsStore } from "./news-store";
@@ -19,6 +19,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { CommentSection } from "./comment-section";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+function getFaviconUrl(domain: string, size = 64) {
+  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=${size}`;
+}
 
 interface NewsDetailProps {
   slug: string;
@@ -34,6 +38,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
     clearCurrentArticle,
   } = useNewsStore();
   const [shareSuccess, setShareSuccess] = useState(false);
+  const [faviconError, setFaviconError] = useState(false);
 
   useEffect(() => {
     fetchArticleBySlug(slug);
@@ -62,6 +67,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
   const createdDate = new Date(article.created_at);
   const fullTimestamp = format(createdDate, "MMM d, yyyy 'at' h:mm a");
   const relativeTime = formatDistanceToNow(createdDate, { addSuffix: true });
+  const faviconSrc = getFaviconUrl(article.source_domain);
 
   const handleShare = async () => {
     const url = window.location.href;
@@ -91,37 +97,55 @@ export function NewsDetail({ slug }: NewsDetailProps) {
       </Link>
 
       {/* Article card */}
-      <div className="bg-card border border-border rounded-xl p-6">
+      <div className="relative bg-card border border-border rounded-xl p-6 overflow-hidden">
+        {/* Faint favicon watermark */}
+        {!faviconError && (
+          <div className="absolute top-6 right-6 w-24 h-24 opacity-[0.04] pointer-events-none">
+            <Image
+              src={faviconSrc}
+              alt=""
+              width={96}
+              height={96}
+              className="w-full h-full object-contain"
+              onError={() => setFaviconError(true)}
+              unoptimized
+            />
+          </div>
+        )}
+
         {/* Source row */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-[#27272A] flex items-center justify-center shrink-0">
-            <ArrowSquareOut className="w-5 h-5 text-muted-foreground" />
+        <div className="flex items-center gap-3 mb-4 relative">
+          <div className="w-10 h-10 rounded-full bg-[#27272A] flex items-center justify-center shrink-0 overflow-hidden">
+            {!faviconError ? (
+              <Image
+                src={faviconSrc}
+                alt={article.source_domain}
+                width={24}
+                height={24}
+                className="w-6 h-6"
+                onError={() => setFaviconError(true)}
+                unoptimized
+              />
+            ) : (
+              <ArrowSquareOut className="w-5 h-5 text-muted-foreground" />
+            )}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <a
-                href={article.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[14px] font-semibold text-foreground hover:underline truncate"
-              >
-                {article.source_domain}
-              </a>
-              <span className="px-2 py-0.5 rounded-full bg-[#27272A] text-[11px] font-mono text-muted-foreground">
-                {article.is_ai_submitted ? "AI Curated" : "Submitted"}
-              </span>
-            </div>
+            <a
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[14px] font-semibold text-foreground hover:underline truncate block"
+            >
+              {article.source_domain}
+            </a>
             <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground/60">
               {article.submitter?.display_name && (
-                <span>by {article.submitter.display_name}</span>
+                <>
+                  <span>by {article.submitter.display_name}</span>
+                  <span>·</span>
+                </>
               )}
-              {article.is_ai_submitted && (
-                <span className="inline-flex items-center gap-1">
-                  <Robot className="w-3 h-3" />
-                  AI
-                </span>
-              )}
-              <span>·</span>
               <time dateTime={article.created_at} title={fullTimestamp}>
                 About {relativeTime}
               </time>
@@ -134,7 +158,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
           href={article.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block group/link"
+          className="block group/link relative"
         >
           <h1 className="font-heading text-xl font-bold text-foreground group-hover/link:text-primary transition-colors leading-snug">
             {article.title}
@@ -144,7 +168,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
 
         {/* Summary */}
         {article.summary && (
-          <p className="text-[14px] text-muted-foreground leading-relaxed mt-3">
+          <p className="text-[14px] text-muted-foreground leading-relaxed mt-3 relative">
             {article.summary}
           </p>
         )}
@@ -154,7 +178,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
           href={article.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 mt-4 px-4 py-2 text-sm font-medium bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
+          className="relative inline-flex items-center gap-2 mt-4 px-4 py-2 text-sm font-medium bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors"
         >
           Read Full Article
           <ArrowSquareOut className="w-3.5 h-3.5" />
@@ -162,7 +186,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
 
         {/* Tags */}
         {article.tags.length > 0 && (
-          <div className="flex items-center gap-2 mt-4 flex-wrap">
+          <div className="flex items-center gap-2 mt-4 flex-wrap relative">
             {article.tags.map((tag) => (
               <span
                 key={tag}
@@ -175,7 +199,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
         )}
 
         {/* Engagement */}
-        <div className="flex items-center gap-6 pt-4 mt-4 border-t border-border">
+        <div className="flex items-center gap-6 pt-4 mt-4 border-t border-border relative">
           <button
             onClick={() => user && voteArticle(article.id, article.user_vote === 1 ? -1 : 1)}
             disabled={!user}
