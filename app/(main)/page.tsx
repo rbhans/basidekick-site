@@ -47,11 +47,12 @@ async function getRecentContent() {
       stats: { articleCount: 0, termCount: 500, modelCount: 0 },
       samplePoints: [],
       sampleEquipment: [],
+      recentNews: [],
     };
   }
 
   // Fetch all data in parallel
-  const [articlesResult, articleCountResult, termCount, modelCount, babelData] = await Promise.all([
+  const [articlesResult, articleCountResult, termCount, modelCount, babelData, newsResult] = await Promise.all([
     // Wiki articles with category (fetch more for carousel)
     supabase
       .from("wiki_articles")
@@ -69,6 +70,13 @@ async function getRecentContent() {
     getAtlasModelCount(),
     // Babel data for sample cards
     getBabelData(),
+    // Recent news articles for home page
+    supabase
+      .from("news_articles")
+      .select("id, title, slug, source_domain, summary, created_at, tags")
+      .eq("is_published", true)
+      .order("created_at", { ascending: false })
+      .limit(4),
   ]);
 
   if (articlesResult.error) {
@@ -100,16 +108,28 @@ async function getRecentContent() {
   const samplePoints = babelData?.points?.slice(0, 20) || [];
   const sampleEquipment = babelData?.equipment?.slice(0, 20) || [];
 
+  // Recent news
+  const recentNews = (newsResult.data || []).map((article: Record<string, unknown>) => ({
+    id: article.id as string,
+    title: article.title as string,
+    slug: article.slug as string,
+    source_domain: article.source_domain as string,
+    summary: article.summary as string | null,
+    created_at: article.created_at as string,
+    tags: (article.tags || []) as string[],
+  }));
+
   return {
     carouselArticles,
     stats,
     samplePoints,
     sampleEquipment,
+    recentNews,
   };
 }
 
 export default async function HomePage() {
-  const { carouselArticles, stats, samplePoints, sampleEquipment } = await getRecentContent();
+  const { carouselArticles, stats, samplePoints, sampleEquipment, recentNews } = await getRecentContent();
 
   return (
     <HomeView
@@ -117,6 +137,7 @@ export default async function HomePage() {
       stats={stats}
       samplePoints={samplePoints}
       sampleEquipment={sampleEquipment}
+      recentNews={recentNews}
     />
   );
 }

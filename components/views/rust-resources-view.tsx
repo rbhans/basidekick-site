@@ -39,11 +39,11 @@ export function RustResourcesView() {
           </p>
 
           <Link
-            href={ROUTES.RESOURCES}
+            href={ROUTES.OPEN_SOURCE}
             className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline underline-offset-4"
           >
             <ArrowLeft className="size-3" />
-            Back to Resources
+            Back to Open Source
           </Link>
       </PageHero>
 

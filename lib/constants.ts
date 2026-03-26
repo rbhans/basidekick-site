@@ -24,6 +24,7 @@ export const VIEW_TITLES: Record<string, string> = {
   [VIEW_IDS.REFERENCES]: "References",
   [VIEW_IDS.WIKI]: "Wiki",
   [VIEW_IDS.POINTSTACK]: "PointStack",
+  [VIEW_IDS.OPEN_SOURCE]: "Open Source",
 
   [VIEW_IDS.CALCULATORS]: "Calculators",
   [VIEW_IDS.ACCOUNT]: "Account",
@@ -44,6 +45,7 @@ export const VIEW_LOADING_TEXT: Record<string, string> = {
   [VIEW_IDS.REFERENCES]: "REFERENCES",
   [VIEW_IDS.WIKI]: "WIKI",
   [VIEW_IDS.POINTSTACK]: "POINTSTACK",
+  [VIEW_IDS.OPEN_SOURCE]: "OPEN_SOURCE",
 
   [VIEW_IDS.CALCULATORS]: "CALCULATORS",
   [VIEW_IDS.ACCOUNT]: "ACCOUNT",
@@ -342,19 +344,23 @@ export const NAV_ITEMS: NavNode[] = [
     ],
   },
   {
-    id: VIEW_IDS.RESOURCES,
-    label: "RESOURCES",
-    iconName: "Book",
+    id: VIEW_IDS.ATLAS,
+    label: "BAS ATLAS",
+    iconName: "Gauge",
     colorVariant: "resources",
-    defaultExpanded: true,
-    children: [
-      { id: VIEW_IDS.ATLAS, label: "BAS Atlas", iconName: "Gauge", colorVariant: "resources" },
-      { id: "resources-rust", label: "Rust", iconName: "Cpu", colorVariant: "resources", href: ROUTES.RESOURCES_RUST },
-      { id: VIEW_IDS.CALCULATORS, label: "Calculators", iconName: "Calculator", colorVariant: "resources" },
-
-      { id: VIEW_IDS.REFERENCES, label: "References", iconName: "BookmarksSimple", colorVariant: "resources" },
-      { id: VIEW_IDS.WIKI, label: "Wiki", iconName: "BookOpen", colorVariant: "wiki" },
-    ],
+  },
+  {
+    id: VIEW_IDS.OPEN_SOURCE,
+    label: "OPEN SOURCE",
+    iconName: "Cpu",
+    colorVariant: "resources",
+    href: ROUTES.OPEN_SOURCE,
+  },
+  {
+    id: VIEW_IDS.WIKI,
+    label: "WIKI",
+    iconName: "BookOpen",
+    colorVariant: "wiki",
   },
 ];
 

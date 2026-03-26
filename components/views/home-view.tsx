@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { SiteBadge } from "@/components/site-badge";
-import { ResourceCard } from "@/components/resource-card";
 import { WikiCarousel } from "@/components/wiki-carousel";
 import { RotatingAtlasCard } from "@/components/rotating-atlas-card";
 import { HeroBackground } from "@/components/hero-background";
@@ -17,12 +16,13 @@ import {
   WaveTriangle,
   QrCode,
   Cpu,
-  Gauge,
-  Calculator,
-  BookmarksSimple,
+  Newspaper,
+  GithubLogo,
+  ArrowSquareOut,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
+import { formatDistanceToNow } from "date-fns";
 
 interface CarouselArticle {
   id: string;
@@ -31,6 +31,16 @@ interface CarouselArticle {
   summary: string | null;
   created_at: string;
   category: { name: string; slug: string } | null;
+}
+
+interface RecentNewsItem {
+  id: string;
+  title: string;
+  slug: string;
+  source_domain: string;
+  summary: string | null;
+  created_at: string;
+  tags: string[];
 }
 
 interface HomeViewProps {
@@ -42,17 +52,36 @@ interface HomeViewProps {
   };
   samplePoints?: BabelPointEntry[];
   sampleEquipment?: BabelEquipmentEntry[];
+  recentNews?: RecentNewsItem[];
 }
+
+const rustCrates = [
+  {
+    id: "rustbac",
+    name: "rustbac",
+    protocol: "BACnet",
+    description: "Rust crate for BACnet communication in BAS applications.",
+    githubUrl: "https://github.com/rbhans/rust-bac",
+  },
+  {
+    id: "rustmod",
+    name: "rustmod",
+    protocol: "Modbus",
+    description: "Rust crate for Modbus communication in BAS applications.",
+    githubUrl: "https://github.com/rbhans/rust-mod",
+  },
+];
 
 export function HomeView({
   carouselArticles = [],
   stats = { articleCount: 0, termCount: 0, modelCount: 0 },
   samplePoints = [],
   sampleEquipment = [],
+  recentNews = [],
 }: HomeViewProps) {
   return (
     <div className="min-h-full">
-      {/* Hero Section — cycling BAS images fading into black, circuit dots, and marks */}
+      {/* Hero Section */}
       <section className="relative py-24 md:py-32 overflow-hidden">
         <HeroBackground />
         <HeroMarks count={50} seed={42} />
@@ -69,8 +98,8 @@ export function HomeView({
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8 rounded-lg">
-                <Link href={ROUTES.TOOLS}>
-                  Get Started
+                <Link href={ROUTES.ATLAS}>
+                  Explore Atlas
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
@@ -114,7 +143,7 @@ export function HomeView({
         </div>
       </section>
 
-      {/* Feature Section — lighter bg for Atlas + Wiki */}
+      {/* Atlas Section — prominent feature area */}
       <section className="py-16 bg-muted/40">
         <div className="container mx-auto px-4 sm:px-6 lg:px-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
@@ -146,7 +175,7 @@ export function HomeView({
               </div>
             </div>
 
-            {/* Right: Rotating example cards + Cleaner CTA */}
+            {/* Right: Rotating example cards */}
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {samplePoints.length > 0 && (
@@ -156,11 +185,10 @@ export function HomeView({
                   <RotatingAtlasCard entries={sampleEquipment} type="equipment" intervalMs={7000} />
                 )}
               </div>
-
             </div>
           </div>
 
-          {/* Wiki Carousel — also in the lighter area */}
+          {/* Wiki Carousel */}
           <div className="mt-20">
             <div className="flex items-center justify-between mb-8">
               <SiteBadge label="WIKI" icon={BookOpen} />
@@ -183,7 +211,119 @@ export function HomeView({
         </div>
       </section>
 
-      {/* Tools Section — back to dark bg */}
+      {/* News + Open Source — side by side on large screens */}
+      <section className="py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* News */}
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <SiteBadge label="NEWS" icon={Newspaper} />
+                <Button variant="outline" size="sm" asChild className="rounded-lg font-semibold">
+                  <Link href={ROUTES.NEWS}>
+                    All News
+                    <ArrowRight className="w-3 h-3 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-heading font-bold tracking-tight mb-2">
+                Industry News
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                The latest in building automation, curated by AI and the community.
+              </p>
+
+              {recentNews.length > 0 ? (
+                <div className="space-y-3">
+                  {recentNews.map((article) => (
+                    <Link
+                      key={article.id}
+                      href={ROUTES.NEWS_ARTICLE(article.slug)}
+                      className="group block p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[11px] font-mono text-muted-foreground/60 px-2 py-0.5 rounded border border-border bg-muted/40">
+                          {article.source_domain}
+                        </span>
+                        <span className="text-[11px] text-muted-foreground/40">
+                          {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
+                        </span>
+                      </div>
+                      <h3 className="font-heading text-[15px] font-bold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                        {article.title}
+                      </h3>
+                      {article.summary && (
+                        <p className="mt-1.5 text-[13px] text-muted-foreground line-clamp-2 leading-relaxed">
+                          {article.summary}
+                        </p>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-6 bg-card border border-border rounded-xl text-center">
+                  <p className="text-sm text-muted-foreground">No news articles yet.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Open Source */}
+            <div>
+              <div className="flex items-center justify-between mb-6">
+                <SiteBadge label="OPEN SOURCE" icon={Cpu} />
+                <Button variant="outline" size="sm" asChild className="rounded-lg font-semibold">
+                  <Link href={ROUTES.OPEN_SOURCE}>
+                    View All
+                    <ArrowRight className="w-3 h-3 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-heading font-bold tracking-tight mb-2">
+                Rust Crates for BAS
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Protocol-first crates for open source BAS software development.
+              </p>
+
+              <div className="space-y-3">
+                {rustCrates.map((crate) => (
+                  <a
+                    key={crate.id}
+                    href={crate.githubUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group block p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Cpu className="w-4 h-4 text-primary" />
+                        </div>
+                        <span className="font-heading text-[15px] font-bold group-hover:text-primary transition-colors">
+                          {crate.name}
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-border bg-muted/40 text-muted-foreground">
+                        {crate.protocol}
+                      </span>
+                    </div>
+                    <p className="text-[13px] text-muted-foreground leading-relaxed">
+                      {crate.description}
+                    </p>
+                    <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary group-hover:underline underline-offset-4">
+                      <GithubLogo className="w-3.5 h-3.5" />
+                      View on GitHub
+                      <ArrowSquareOut className="w-3 h-3" />
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Tools Section */}
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-20">
           <SiteBadge label="TOOLS" icon={Wrench} />
@@ -239,48 +379,6 @@ export function HomeView({
                 The simplest way for field technicians to manage building equipment using QR codes.
               </p>
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Resources Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="flex items-center justify-between mb-8">
-            <SiteBadge label="RESOURCES" />
-            <Button variant="outline" size="sm" asChild className="rounded-lg font-semibold">
-              <Link href={ROUTES.RESOURCES}>
-                View All
-                <ArrowRight className="w-3 h-3 ml-2" />
-              </Link>
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <ResourceCard
-              title="Rust BAS Tools"
-              description="Open source Rust crates for BAS protocols, starting with rustbac for BACnet."
-              href={ROUTES.RESOURCES_RUST}
-              icon={<Cpu className="w-5 h-5 text-primary" />}
-            />
-            <ResourceCard
-              title="BAS Atlas"
-              description="Unified BAS reference for point naming standards and equipment catalog."
-              href={ROUTES.ATLAS}
-              icon={<Gauge className="w-5 h-5 text-primary" />}
-            />
-            <ResourceCard
-              title="Calculators"
-              description="CFM, BTU, duct sizing, and other common calculations for BAS professionals."
-              href="/calculators"
-              icon={<Calculator className="w-5 h-5 text-primary" />}
-            />
-            <ResourceCard
-              title="References"
-              description="Protocol specs, wiring diagrams, and cheat sheets for common BAS tasks."
-              href="/references"
-              icon={<BookmarksSimple className="w-5 h-5 text-primary" />}
-            />
           </div>
         </div>
       </section>

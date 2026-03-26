@@ -12,6 +12,7 @@ export const ROUTES = {
   WIKI_FACET: (group: string, slug: string) => `/wiki/${encodeURIComponent(group)}/${encodeURIComponent(slug)}`,
   RESOURCES: "/resources",
   RESOURCES_RUST: "/resources/rust",
+  OPEN_SOURCE: "/open-source",
 
   // Atlas unified routes
   ATLAS: "/atlas",
@@ -101,6 +102,8 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.SIGNUP;
     case VIEW_IDS.NEWS:
       return ROUTES.NEWS;
+    case VIEW_IDS.OPEN_SOURCE:
+      return ROUTES.OPEN_SOURCE;
     case VIEW_IDS.ADMIN:
       return ROUTES.ADMIN;
     default:
@@ -118,6 +121,8 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/news") return VIEW_IDS.NEWS;
   if (pathname === "/resources") return VIEW_IDS.RESOURCES;
   if (pathname.startsWith("/resources/")) return VIEW_IDS.RESOURCES;
+  if (pathname === "/open-source") return VIEW_IDS.OPEN_SOURCE;
+  if (pathname.startsWith("/open-source/")) return VIEW_IDS.OPEN_SOURCE;
   if (pathname === "/atlas") return VIEW_IDS.ATLAS;
   if (pathname.startsWith("/atlas/")) return VIEW_IDS.ATLAS;
   if (pathname === "/babel") return VIEW_IDS.ATLAS;

@@ -106,6 +106,7 @@ export const VIEW_IDS = {
   WIKI: "wiki",
   POINTSTACK: "pointstack",
   NEWS: "news",
+  OPEN_SOURCE: "open-source",
 
   CALCULATORS: "calculators",
   ACCOUNT: "account",
