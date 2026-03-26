@@ -22,6 +22,7 @@ interface BabelEntryDetailProps {
   entry: BabelPointEntry | BabelEquipmentEntry;
   type: "point" | "equipment";
   isAuthenticated?: boolean;
+  hideBackLink?: boolean;
 }
 
 function EmptyState({ text = "-" }: { text?: string }) {
@@ -135,7 +136,7 @@ function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
   );
 }
 
-export function BabelEntryDetail({ entry, type, isAuthenticated = false }: BabelEntryDetailProps) {
+export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBackLink = false }: BabelEntryDetailProps) {
   const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
   const [contributionType, setContributionType] = useState<BabelContributionType>("edit");
 
@@ -181,13 +182,15 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false }: Babel
   return (
     <div className="max-w-3xl mx-auto">
       {/* Back link */}
-      <Link
-        href={ROUTES.ATLAS}
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
-      >
-        <ArrowLeft className="size-4" />
-        Back to BAS Atlas
-      </Link>
+      {!hideBackLink && (
+        <Link
+          href={ROUTES.ATLAS}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+        >
+          <ArrowLeft className="size-4" />
+          Back to BAS Atlas
+        </Link>
+      )}
 
       {/* Header */}
       <div className="mb-8">

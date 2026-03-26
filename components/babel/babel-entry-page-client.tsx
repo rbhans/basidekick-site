@@ -9,9 +9,10 @@ import type { BabelEquipmentEntry, BabelPointEntry } from "@/lib/types";
 interface BabelEntryPageClientProps {
   entry: BabelPointEntry | BabelEquipmentEntry;
   type: "point" | "equipment";
+  hideBackLink?: boolean;
 }
 
-export function BabelEntryPageClient({ entry, type }: BabelEntryPageClientProps) {
+export function BabelEntryPageClient({ entry, type, hideBackLink }: BabelEntryPageClientProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -34,5 +35,5 @@ export function BabelEntryPageClient({ entry, type }: BabelEntryPageClientProps)
     return () => subscription.unsubscribe();
   }, []);
 
-  return <BabelEntryDetail entry={entry} type={type} isAuthenticated={isAuthenticated} />;
+  return <BabelEntryDetail entry={entry} type={type} isAuthenticated={isAuthenticated} hideBackLink={hideBackLink} />;
 }
