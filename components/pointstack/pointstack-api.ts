@@ -139,6 +139,46 @@ function isNotFoundError(error: { code?: string } | null): boolean {
   return error?.code === "PGRST116";
 }
 
+/** Enrich posts with the current user's vote from pointstack_post_votes */
+async function enrichPostsWithUserVotes(posts: PointStackPost[]): Promise<PointStackPost[]> {
+  if (posts.length === 0) return posts;
+  const supabase = getClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return posts;
+
+  const ids = posts.map((p) => p.id);
+  const { data: votes } = await supabase
+    .from("pointstack_post_votes")
+    .select("post_id, vote_type")
+    .eq("user_id", user.id)
+    .in("post_id", ids);
+
+  if (!votes || votes.length === 0) return posts;
+
+  const voteMap = new Map<string, number>(votes.map((v: { post_id: string; vote_type: number }) => [v.post_id, v.vote_type]));
+  return posts.map((p) => ({ ...p, user_vote: voteMap.get(p.id) ?? null }));
+}
+
+/** Enrich comments with the current user's vote from pointstack_comment_votes */
+async function enrichCommentsWithUserVotes(comments: PointStackPostComment[]): Promise<PointStackPostComment[]> {
+  if (comments.length === 0) return comments;
+  const supabase = getClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return comments;
+
+  const ids = comments.map((c) => c.id);
+  const { data: votes } = await supabase
+    .from("pointstack_comment_votes")
+    .select("comment_id, vote_type")
+    .eq("user_id", user.id)
+    .in("comment_id", ids);
+
+  if (!votes || votes.length === 0) return comments;
+
+  const voteMap = new Map<string, number>(votes.map((v: { comment_id: string; vote_type: number }) => [v.comment_id, v.vote_type]));
+  return comments.map((c) => ({ ...c, user_vote: voteMap.get(c.id) ?? null }));
+}
+
 interface CreateNotificationInput {
   userId: string;
   actorId: string;
@@ -285,7 +325,7 @@ export async function fetchPosts(
 
   const { data, error } = await query;
   if (error) throw error;
-  return normalizePosts(data as RawPointStackPost[] | null);
+  return enrichPostsWithUserVotes(normalizePosts(data as RawPointStackPost[] | null));
 }
 
 export async function fetchPostBySlug(slug: string): Promise<PointStackPost | null> {
@@ -303,7 +343,10 @@ export async function fetchPostBySlug(slug: string): Promise<PointStackPost | nu
     if (error.code === "PGRST116") return null;
     throw error;
   }
-  return data ? normalizePost(data as RawPointStackPost) : null;
+  if (!data) return null;
+  const post = normalizePost(data as RawPointStackPost);
+  const [enriched] = await enrichPostsWithUserVotes([post]);
+  return enriched;
 }
 
 export async function createPost(input: CreatePointStackPostInput): Promise<PointStackPost> {
@@ -454,7 +497,7 @@ export async function incrementPostViewCount(postId: string): Promise<void> {
 // COMMENTS API
 // ============================================================
 
-export async function fetchComments(postId: string): Promise<PointStackPostComment[]> {
+export async function fetchComments(postId: string, limit = 200): Promise<PointStackPostComment[]> {
   const supabase = getClient();
   const { data, error } = await supabase
     .from("pointstack_post_comments")
@@ -463,10 +506,11 @@ export async function fetchComments(postId: string): Promise<PointStackPostComme
       author:profiles!author_id(display_name, avatar_url)
     `)
     .eq("post_id", postId)
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .limit(limit);
 
   if (error) throw error;
-  return data || [];
+  return enrichCommentsWithUserVotes(data || []);
 }
 
 export async function createComment(input: CreatePointStackCommentInput): Promise<PointStackPostComment> {
@@ -1526,7 +1570,14 @@ export async function createResource(input: CreatePointStackResourceInput): Prom
 
 export async function incrementResourceDownloadCount(resourceId: string): Promise<void> {
   const supabase = getClient();
-  // Fetch current count and increment
+  // Try atomic RPC increment first, fallback to read-then-write
+  const { error: rpcError } = await supabase.rpc("increment_resource_download_count", {
+    resource_id: resourceId,
+  });
+
+  if (!rpcError) return;
+
+  // Fallback: read-then-write (not atomic under concurrency)
   const { data } = await supabase
     .from("pointstack_resource_listings")
     .select("download_count")
@@ -1666,6 +1717,10 @@ export async function fetchMessages(conversationId: string): Promise<PointStackM
 }
 
 export async function sendMessage(conversationId: string, content: string): Promise<PointStackMessage> {
+  const trimmed = content.trim();
+  if (!trimmed) throw new Error("Message cannot be empty");
+  if (trimmed.length > 5000) throw new Error("Message is too long (max 5,000 characters)");
+
   const supabase = getClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Your session has expired. Please sign in again.");
@@ -1675,7 +1730,7 @@ export async function sendMessage(conversationId: string, content: string): Prom
     .insert({
       conversation_id: conversationId,
       sender_id: user.id,
-      content,
+      content: trimmed,
     })
     .select(`
       *,
@@ -1688,6 +1743,10 @@ export async function sendMessage(conversationId: string, content: string): Prom
 }
 
 export async function startConversation(otherUserId: string, initialMessage: string): Promise<PointStackConversation> {
+  const trimmedMessage = initialMessage.trim();
+  if (!trimmedMessage) throw new Error("Message cannot be empty");
+  if (trimmedMessage.length > 5000) throw new Error("Message is too long (max 5,000 characters)");
+
   const user = await requireAuth();
 
   // Validate target user exists
@@ -1705,6 +1764,48 @@ export async function startConversation(otherUserId: string, initialMessage: str
   // Prevent messaging yourself
   if (otherUserId === user.id) {
     throw new Error("Cannot start a conversation with yourself");
+  }
+
+  // Check for existing conversation between these two users
+  const { data: myConvs } = await supabase
+    .from("pointstack_conversation_participants")
+    .select("conversation_id")
+    .eq("user_id", user.id);
+
+  if (myConvs && myConvs.length > 0) {
+    const convIds = myConvs.map((c: { conversation_id: string }) => c.conversation_id);
+    const { data: match } = await supabase
+      .from("pointstack_conversation_participants")
+      .select("conversation_id")
+      .eq("user_id", otherUserId)
+      .in("conversation_id", convIds)
+      .limit(1)
+      .maybeSingle();
+
+    if (match) {
+      // Return existing conversation with participants
+      const { data: existing } = await supabase
+        .from("pointstack_conversations")
+        .select(`
+          *,
+          participants:pointstack_conversation_participants(
+            *,
+            profile:profiles!user_id(display_name, avatar_url)
+          )
+        `)
+        .eq("id", match.conversation_id)
+        .single();
+
+      if (existing) {
+        // Send the message into the existing conversation
+        await supabase.from("pointstack_messages").insert({
+          conversation_id: existing.id,
+          sender_id: user.id,
+          content: trimmedMessage,
+        });
+        return existing;
+      }
+    }
   }
 
   // Create conversation
@@ -1734,7 +1835,7 @@ export async function startConversation(otherUserId: string, initialMessage: str
   await supabase.from("pointstack_messages").insert({
     conversation_id: conversation.id,
     sender_id: user.id,
-    content: initialMessage,
+    content: trimmedMessage,
   });
 
   return conversation;

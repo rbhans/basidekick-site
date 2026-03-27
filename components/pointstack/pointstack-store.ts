@@ -441,6 +441,11 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
   markConversationRead: async (conversationId) => {
     try {
       await api.markConversationRead(conversationId);
+      set((state) => ({
+        conversations: state.conversations.map((c) =>
+          c.id === conversationId ? { ...c, unread_count: 0 } : c
+        ),
+      }));
     } catch (error) {
       // Silent fail for read receipts - not critical
       console.error("Error marking conversation read:", error);
