@@ -88,6 +88,7 @@ interface PointStackState {
   closeMessenger: () => void;
   openMessengerConversation: (conversationId: string) => void;
   backToMessengerInbox: () => void;
+  messageUser: (userId: string) => Promise<void>;
 
   // Profile actions
   fetchCurrentUserProfile: () => Promise<void>;
@@ -393,7 +394,11 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
     set({ messagesLoading: true, messagesError: null });
     try {
       const conversations = await api.fetchConversations();
-      set({ conversations, messagesLoading: false });
+      const unreadMessageCount = conversations.reduce(
+        (sum, conv) => sum + (conv.unread_count || 0),
+        0
+      );
+      set({ conversations, messagesLoading: false, unreadMessageCount });
     } catch (error) {
       console.error("Error fetching conversations:", error);
       set({ messagesLoading: false, messagesError: "Failed to load conversations" });
@@ -482,6 +487,23 @@ export const usePointStackStore = create<PointStackState>((set, get) => ({
       currentMessages: [],
       currentConversation: null,
     });
+  },
+
+  messageUser: async (userId) => {
+    try {
+      const conversation = await api.findOrCreateConversation(userId);
+      // Add to conversations list if not already present
+      set((state) => ({
+        conversations: state.conversations.some((c) => c.id === conversation.id)
+          ? state.conversations
+          : [conversation, ...state.conversations],
+      }));
+      // Open the messenger to this conversation
+      get().openMessengerConversation(conversation.id);
+      set({ messengerOpen: true });
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   },
 
   // Profile actions

@@ -61,15 +61,10 @@ export function FollowersDialog({
         const data = await api.fetchFollowers(userId);
         setFollowers(data);
 
-        // Check if current user follows each follower
+        // Batch check if current user follows each follower
         if (user) {
-          const states: Record<string, boolean> = {};
-          for (const follower of data) {
-            if (follower.id !== user.id) {
-              const isFollowing = await api.isFollowing(follower.id);
-              states[follower.id] = isFollowing;
-            }
-          }
+          const ids = data.map((f) => f.id).filter((id) => id !== user.id);
+          const states = await api.isFollowingBatch(ids);
           setFollowingState((prev) => ({ ...prev, ...states }));
         }
       } catch (error) {
@@ -92,15 +87,10 @@ export function FollowersDialog({
         const data = await api.fetchFollowing(userId);
         setFollowing(data);
 
-        // Check if current user follows each profile
+        // Batch check if current user follows each profile
         if (user) {
-          const states: Record<string, boolean> = {};
-          for (const profile of data) {
-            if (profile.id !== user.id) {
-              const isFollowing = await api.isFollowing(profile.id);
-              states[profile.id] = isFollowing;
-            }
-          }
+          const ids = data.map((p) => p.id).filter((id) => id !== user.id);
+          const states = await api.isFollowingBatch(ids);
           setFollowingState((prev) => ({ ...prev, ...states }));
         }
       } catch (error) {

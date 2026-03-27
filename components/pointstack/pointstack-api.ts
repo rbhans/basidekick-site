@@ -493,6 +493,24 @@ export async function incrementPostViewCount(postId: string): Promise<void> {
   });
 }
 
+/** Fetch posts authored by a specific user */
+export async function fetchUserPosts(userId: string, limit = 20, offset = 0): Promise<PointStackPost[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("pointstack_posts")
+    .select(`
+      *,
+      author:profiles!author_id(display_name, avatar_url)
+    `)
+    .eq("author_id", userId)
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) throw error;
+  return enrichPostsWithUserVotes(normalizePosts(data as RawPointStackPost[] | null));
+}
+
 // ============================================================
 // COMMENTS API
 // ============================================================
@@ -716,7 +734,7 @@ export async function fetchProfiles(
 
   if (search) {
     const sanitizedSearch = sanitizeSearchInput(search);
-    query = query.ilike("display_name", `%${sanitizedSearch}%`);
+    query = query.or(`display_name.ilike.%${sanitizedSearch}%,headline.ilike.%${sanitizedSearch}%`);
   }
 
   if (skills && skills.length > 0) {
@@ -849,6 +867,31 @@ export async function isFollowing(userId: string): Promise<boolean> {
 
   if (error) return false;
   return !!data;
+}
+
+/** Batch check if current user follows multiple users in one query */
+export async function isFollowingBatch(userIds: string[]): Promise<Record<string, boolean>> {
+  const supabase = getClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user || userIds.length === 0) return {};
+
+  const idsToCheck = userIds.filter((id) => id !== user.id);
+  if (idsToCheck.length === 0) return {};
+
+  const { data, error } = await supabase
+    .from("pointstack_user_follows")
+    .select("following_id")
+    .eq("follower_id", user.id)
+    .in("following_id", idsToCheck);
+
+  if (error) return {};
+
+  const followingSet = new Set((data || []).map((r: { following_id: string }) => r.following_id));
+  const result: Record<string, boolean> = {};
+  for (const id of idsToCheck) {
+    result[id] = followingSet.has(id);
+  }
+  return result;
 }
 
 export async function getFollowerCount(userId: string): Promise<number> {
@@ -1740,6 +1783,80 @@ export async function sendMessage(conversationId: string, content: string): Prom
 
   if (error) throw error;
   return data;
+}
+
+/** Find an existing conversation with a user, or create an empty one */
+export async function findOrCreateConversation(otherUserId: string): Promise<PointStackConversation> {
+  const user = await requireAuth();
+  if (otherUserId === user.id) throw new Error("Cannot message yourself");
+
+  const supabase = getClient();
+
+  // Check for existing conversation
+  const { data: myConvs } = await supabase
+    .from("pointstack_conversation_participants")
+    .select("conversation_id")
+    .eq("user_id", user.id);
+
+  if (myConvs && myConvs.length > 0) {
+    const convIds = myConvs.map((c: { conversation_id: string }) => c.conversation_id);
+    const { data: match } = await supabase
+      .from("pointstack_conversation_participants")
+      .select("conversation_id")
+      .eq("user_id", otherUserId)
+      .in("conversation_id", convIds)
+      .limit(1)
+      .maybeSingle();
+
+    if (match) {
+      const { data: existing } = await supabase
+        .from("pointstack_conversations")
+        .select(`
+          *,
+          participants:pointstack_conversation_participants(
+            *,
+            profile:profiles!user_id(display_name, avatar_url)
+          )
+        `)
+        .eq("id", match.conversation_id)
+        .single();
+      if (existing) return existing;
+    }
+  }
+
+  // Create new empty conversation
+  const { data: conversation, error: convError } = await supabase
+    .from("pointstack_conversations")
+    .insert({})
+    .select("*")
+    .single();
+  if (convError) throw convError;
+
+  const { error: participantError } = await supabase
+    .from("pointstack_conversation_participants")
+    .insert([
+      { conversation_id: conversation.id, user_id: user.id },
+      { conversation_id: conversation.id, user_id: otherUserId },
+    ]);
+  if (participantError) {
+    await supabase.from("pointstack_conversations").delete().eq("id", conversation.id);
+    throw participantError;
+  }
+
+  // Re-fetch with participants joined
+  const { data: full } = await supabase
+    .from("pointstack_conversations")
+    .select(`
+      *,
+      participants:pointstack_conversation_participants(
+        *,
+        profile:profiles!user_id(display_name, avatar_url)
+      )
+    `)
+    .eq("id", conversation.id)
+    .single();
+
+  return full || conversation;
 }
 
 export async function startConversation(otherUserId: string, initialMessage: string): Promise<PointStackConversation> {

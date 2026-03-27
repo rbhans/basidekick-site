@@ -26,6 +26,7 @@ import { ActivityFeed } from "./activity-feed";
 import { ContributionsTab } from "./contributions-tab";
 import { PointStackProfile, PointStackPost } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
+import { usePointStackStore } from "../pointstack-store";
 import * as api from "../pointstack-api";
 import { toast } from "sonner";
 
@@ -35,6 +36,7 @@ interface ProfileViewProps {
 
 export function PointStackProfileView({ username }: ProfileViewProps) {
   const { user } = useAuth();
+  const { messageUser } = usePointStackStore();
   const [profile, setProfile] = useState<PointStackProfile | null>(null);
   const [posts, setPosts] = useState<PointStackPost[]>([]);
   const [showcaseProjects, setShowcaseProjects] = useState<PointStackPost[]>([]);
@@ -127,8 +129,8 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
           }
 
           // Fetch user's posts
-          const userPosts = await api.fetchPosts({ following: false }, 20, 0);
-          setPosts(userPosts.filter((p) => p.author_id === profileData.id));
+          const userPosts = await api.fetchUserPosts(profileData.id);
+          setPosts(userPosts);
 
           // Fetch showcase projects
           const projects = await api.fetchUserShowcaseProjects(profileData.id);
@@ -324,8 +326,8 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
                     </>
                   )}
                 </Button>
-                <Button variant="outline" asChild>
-                  <Link href={ROUTES.POINTSTACK_MESSAGES}>Message</Link>
+                <Button variant="outline" onClick={() => profile && messageUser(profile.id)}>
+                  Message
                 </Button>
               </>
             ) : null}
