@@ -128,7 +128,7 @@ export function PointStackResourcesView() {
               <Link
                 key={resource.id}
                 href={ROUTES.POINTSTACK_RESOURCE(resource.slug)}
-                className="block p-5 border border-border rounded-xl bg-card hover:border-[#3F3F46] transition-colors"
+                className="block p-5 border border-border rounded-xl bg-card hover:border-primary/30 transition-colors"
               >
                 {/* Preview image or icon */}
                 {resource.preview_images && resource.preview_images.length > 0 ? (

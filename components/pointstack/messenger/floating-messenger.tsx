@@ -101,7 +101,7 @@ export function FloatingMessenger() {
         )}
       >
         {/* Header */}
-        <div className="h-[56px] bg-[#27272A] flex items-center justify-between px-4 shrink-0 md:rounded-t-2xl">
+        <div className="h-[56px] bg-muted flex items-center justify-between px-4 shrink-0 md:rounded-t-2xl">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
               <ChatCircle className="w-4 h-4 text-primary-foreground" weight="fill" />
@@ -118,7 +118,7 @@ export function FloatingMessenger() {
           </div>
           <button
             onClick={closeMessenger}
-            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#3F3F46] transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors"
             aria-label="Close messages"
           >
             <X className="w-4 h-4 text-muted-foreground" />

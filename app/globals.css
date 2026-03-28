@@ -45,37 +45,37 @@
 :root {
   --background: #ffffff;
   --foreground: #18181b;
-  --card: #f4f4f5;
+  --card: #f8f8f8;
   --card-foreground: #18181b;
   --popover: #ffffff;
   --popover-foreground: #18181b;
-  --primary: #9AC820;
+  --primary: #4d7a0f;
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;
+  --secondary: #f0f0f2;
   --secondary-foreground: #18181b;
   --muted: #e4e4e7;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
+  --muted-foreground: #52525b;
+  --accent: #f0f0f2;
   --accent-foreground: #18181b;
-  --destructive: #FA541C;
+  --destructive: #dc3a09;
   --border: #d4d4d8;
   --input: #d4d4d8;
-  --ring: #9AC820;
-  --chart-1: #C4F82A;
-  --chart-2: #9AC820;
-  --chart-3: #7BA318;
-  --chart-4: #5C7D10;
-  --chart-5: #3D5708;
+  --ring: #4d7a0f;
+  --chart-1: #4d7a0f;
+  --chart-2: #5c8f12;
+  --chart-3: #3d6208;
+  --chart-4: #2e4a06;
+  --chart-5: #1f3204;
   --radius: 0.5rem;
 
-  /* Wiki category colors */
-  --wiki-networking: #C4F82A;
-  --wiki-programming: #3B82F6;
-  --wiki-standards: #F59E0B;
-  --wiki-commissioning: #8B5CF6;
-  --wiki-cybersecurity: #EF4444;
-  --wiki-troubleshooting: #10B981;
-  --wiki-best-practices: #F97316;
+  /* Wiki category colors — darker for light bg contrast */
+  --wiki-networking: #3d6208;
+  --wiki-programming: #2563EB;
+  --wiki-standards: #d97706;
+  --wiki-commissioning: #7c3aed;
+  --wiki-cybersecurity: #dc2626;
+  --wiki-troubleshooting: #059669;
+  --wiki-best-practices: #ea580c;
 }
 
 /* Dark Mode (Default) */
@@ -191,6 +191,13 @@
 
 /* Gradient text */
 .gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, #7ba318 50%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+:is(.dark) .gradient-text {
   background: linear-gradient(135deg, var(--primary) 0%, #d4ff5a 50%, var(--primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -57,7 +57,7 @@ export function RotatingAtlasCard({
   return (
     <Link
       href={ROUTES.ATLAS_ENTRY(id)}
-      className={`group block p-5 bg-[#1E1E22] border border-[#333] rounded-xl hover:border-[#3F3F46] transition-all ${
+      className={`group block p-5 bg-card border border-border rounded-xl hover:border-primary/30 transition-all ${
         visible ? "opacity-100" : "opacity-0"
       } transition-opacity duration-300`}
     >

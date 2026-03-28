@@ -56,7 +56,7 @@ export function NewsCard({ article }: NewsCardProps) {
   };
 
   return (
-    <article className="relative bg-card border border-border rounded-xl p-6 hover:border-[#3F3F46] transition-colors group/card overflow-hidden">
+    <article className="relative bg-card border border-border rounded-xl p-6 hover:border-primary/30 transition-colors group/card overflow-hidden">
       {/* Faint favicon watermark in top-right corner */}
       {!faviconError && (
         <div className="absolute top-4 right-4 w-20 h-20 opacity-[0.04] pointer-events-none">
@@ -74,7 +74,7 @@ export function NewsCard({ article }: NewsCardProps) {
 
       {/* Source row */}
       <div className="flex items-center gap-3 mb-4 relative">
-        <div className="w-10 h-10 rounded-full bg-[#27272A] flex items-center justify-center shrink-0 overflow-hidden">
+        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 overflow-hidden">
           {!faviconError ? (
             <Image
               src={faviconSrc}

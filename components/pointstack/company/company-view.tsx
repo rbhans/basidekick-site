@@ -428,7 +428,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                     <Link
                       key={member.id}
                       href={ROUTES.POINTSTACK_PROFILE(member.profile.display_name)}
-                      className="flex items-center gap-3 p-3 border border-border rounded-xl bg-card hover:border-[#3F3F46] transition-colors"
+                      className="flex items-center gap-3 p-3 border border-border rounded-xl bg-card hover:border-primary/30 transition-colors"
                     >
                       {memberContent}
                     </Link>
@@ -477,7 +477,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                 <Link
                   key={project.id}
                   href={getPointStackPostRoute(project.post_type, project.slug)}
-                  className="block rounded-xl border border-border bg-card hover:border-[#3F3F46] transition-colors p-4"
+                  className="block rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-4"
                 >
                   <div className="flex gap-4">
                     {(project.cover_image_url || project.images?.[0]) ? (
@@ -533,7 +533,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                 <Link
                   key={job.id}
                   href={ROUTES.POINTSTACK_JOB(job.slug)}
-                  className="block rounded-xl border border-border bg-card hover:border-[#3F3F46] transition-colors p-4"
+                  className="block rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-4"
                 >
                   <div className="flex items-start gap-3">
                     {job.company?.logo_url ? (

@@ -103,7 +103,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
 
   return (
     <>
-      <article className="bg-card border border-border rounded-xl p-6 hover:border-[#3F3F46] transition-colors group/card">
+      <article className="bg-card border border-border rounded-xl p-6 hover:border-primary/30 transition-colors group/card">
         {/* Author Row */}
         <div className="flex items-center gap-3 mb-4">
           <Link href={profileLink} className="shrink-0">
@@ -121,7 +121,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
               >
                 {post.author?.display_name || "Anonymous"}
               </Link>
-              <span className="px-2 py-0.5 rounded-full bg-[#27272A] text-[11px] font-mono text-muted-foreground">
+              <span className="px-2 py-0.5 rounded-full bg-muted text-[11px] font-mono text-muted-foreground">
                 {typeConfig.label}
               </span>
             </div>
@@ -187,7 +187,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
               <button
                 key={tag}
                 onClick={() => onTagClick?.(tag)}
-                className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-[#3F3F46] transition-colors cursor-pointer"
+                className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-primary/30 transition-colors cursor-pointer"
               >
                 {tag}
               </button>
@@ -207,7 +207,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
               <Link
                 key={item.id}
                 href={item.href}
-                className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-[#3F3F46] transition-colors"
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-primary/30 transition-colors"
               >
                 <LinkSimple className="w-3 h-3" />
                 {item.name}

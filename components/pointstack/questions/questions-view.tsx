@@ -131,7 +131,7 @@ export function PointStackQuestionsView() {
               <Link
                 key={question.id}
                 href={getPointStackPostRoute(question.post_type, question.slug)}
-                className="block p-5 border border-border rounded-xl bg-card hover:border-[#3F3F46] transition-colors"
+                className="block p-5 border border-border rounded-xl bg-card hover:border-primary/30 transition-colors"
               >
                 <div className="flex gap-4">
                   {/* Stats */}

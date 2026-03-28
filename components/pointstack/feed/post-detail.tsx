@@ -140,7 +140,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
 
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="px-2 py-0.5 rounded-full bg-[#27272A] text-[11px] font-mono text-muted-foreground">
+              <span className="px-2 py-0.5 rounded-full bg-muted text-[11px] font-mono text-muted-foreground">
                 {typeInfo.label}
               </span>
               {post.tags.map((tag) => (
@@ -152,7 +152,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
             {equipmentLinks.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-2">
                 {equipmentLinks.map((item) => (
-                  <Link key={item.id} href={item.href} className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-[#3F3F46] transition-colors">
+                  <Link key={item.id} href={item.href} className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-primary/30 transition-colors">
                     {item.name}
                   </Link>
                 ))}

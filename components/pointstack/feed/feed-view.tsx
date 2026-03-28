@@ -89,9 +89,9 @@ export function PointStackFeedView() {
       {user && (
         <CreatePostDialog
           trigger={
-            <div className="bg-card border border-border rounded-xl p-5 mb-4 cursor-pointer hover:border-[#3F3F46] transition-colors">
+            <div className="bg-card border border-border rounded-xl p-5 mb-4 cursor-pointer hover:border-primary/30 transition-colors">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-[#27272A] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
                   <UsersThree className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="flex-1">
@@ -127,7 +127,7 @@ export function PointStackFeedView() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search posts by title, content, or tag..."
-          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-[#3F3F46] transition-colors"
+          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/30 transition-colors"
         />
       </div>
 

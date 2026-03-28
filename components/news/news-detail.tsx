@@ -115,7 +115,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
 
         {/* Source row */}
         <div className="flex items-center gap-3 mb-4 relative">
-          <div className="w-10 h-10 rounded-full bg-[#27272A] flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 overflow-hidden">
             {!faviconError ? (
               <Image
                 src={faviconSrc}

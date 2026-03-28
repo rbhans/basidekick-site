@@ -68,7 +68,7 @@ export function PointStackCompaniesView() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search companies..."
-          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-[#3F3F46] transition-colors"
+          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/30 transition-colors"
         />
       </div>
 
@@ -102,7 +102,7 @@ export function PointStackCompaniesView() {
             <Link
               key={company.id}
               href={ROUTES.POINTSTACK_COMPANY(company.slug)}
-              className="block p-4 border border-border rounded-xl bg-card hover:border-[#3F3F46] transition-colors"
+              className="block p-4 border border-border rounded-xl bg-card hover:border-primary/30 transition-colors"
             >
               <div className="flex items-start gap-3 mb-3">
                 {company.logo_url ? (

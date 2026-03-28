@@ -47,8 +47,8 @@ export function HeroBackground() {
         </div>
       ))}
 
-      {/* Heavy dark overlay — images are very faint, fading into black */}
-      <div className="absolute inset-0 bg-background/80" />
+      {/* Heavy overlay — images are very faint, fading into background */}
+      <div className="absolute inset-0 bg-background/80 dark:bg-background/80" />
 
       {/* Radial vignette — image only visible in a soft center ellipse */}
       <div
@@ -70,6 +70,9 @@ export function HeroBackground() {
       {/* Side fades */}
       <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-background to-transparent" />
       <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-background to-transparent" />
+
+      {/* Light mode: subtle warm tint over the hero area */}
+      <div className="absolute inset-0 bg-primary/[0.03] dark:bg-transparent" />
     </div>
   );
 }

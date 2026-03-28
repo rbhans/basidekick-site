@@ -64,7 +64,7 @@ export function PointStackMessagesView() {
                 key={conversation.id}
                 href={ROUTES.POINTSTACK_CONVERSATION(conversation.id)}
                 className={cn(
-                  "flex items-center gap-3 p-4 rounded-xl border border-border bg-card hover:border-[#3F3F46] transition-colors",
+                  "flex items-center gap-3 p-4 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors",
                   hasUnread && "bg-primary/5"
                 )}
               >
