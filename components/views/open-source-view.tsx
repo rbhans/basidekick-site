@@ -21,6 +21,14 @@ const rustCrates = [
       "Open source Rust crate for Modbus communication in BAS applications.",
     githubUrl: "https://github.com/rbhans/rust-mod",
   },
+  {
+    id: "opencrate-bms",
+    name: "OpenCrate BMS",
+    protocol: "BMS",
+    description:
+      "A hobby project to learn various parts of BMS by building the software from the ground up in pure Rust.",
+    githubUrl: "https://rbhans.github.io/opencrate-site/",
+  },
 ];
 
 export function OpenSourceView() {

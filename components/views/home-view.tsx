@@ -70,6 +70,14 @@ const rustCrates = [
     description: "Rust crate for Modbus communication in BAS applications.",
     githubUrl: "https://github.com/rbhans/rust-mod",
   },
+  {
+    id: "opencrate-bms",
+    name: "OpenCrate BMS",
+    protocol: "BMS",
+    description:
+      "Hobby project to learn BMS by building the software from the ground up in pure Rust.",
+    githubUrl: "https://rbhans.github.io/opencrate-site/",
+  },
 ];
 
 export function HomeView({
