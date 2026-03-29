@@ -1,16 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { ArrowLeft, DownloadSimple, Link as LinkIcon } from "@phosphor-icons/react";
+import { ArrowLeft, DownloadSimple, Link as LinkIcon, Heart, ChatCircle } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { UserAvatar } from "../shared/user-avatar";
+import { useAuth } from "@/hooks/use-auth";
 import { ROUTES } from "@/lib/routes";
-import { PointStackResourceListing, PointStackResourceCategory } from "@/lib/types";
+import { PointStackResourceListing, PointStackResourceCategory, PointStackResourceComment } from "@/lib/types";
+import { validateContent } from "@/lib/security";
 import * as api from "../pointstack-api";
+import { cn } from "@/lib/utils";
 
 interface ResourceDetailProps {
   slug: string;
@@ -26,24 +30,36 @@ const CATEGORY_LABELS: Record<PointStackResourceCategory, string> = {
 };
 
 export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
+  const { user } = useAuth();
   const [resource, setResource] = useState<PointStackResourceListing | null>(null);
+  const [comments, setComments] = useState<PointStackResourceComment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [commentContent, setCommentContent] = useState("");
+  const [commentLoading, setCommentLoading] = useState(false);
+  const [commentError, setCommentError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.fetchResourceBySlug(slug);
+      if (data) {
+        const [enriched] = await api.enrichResourcesWithVotes([data], user ?? null);
+        setResource(enriched);
+        const resourceComments = await api.fetchResourceComments(data.id);
+        setComments(resourceComments);
+      } else {
+        setResource(null);
+      }
+    } catch (error) {
+      console.error("Error fetching resource:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [slug, user]);
 
   useEffect(() => {
-    const fetchResource = async () => {
-      setLoading(true);
-      try {
-        const data = await api.fetchResourceBySlug(slug);
-        setResource(data);
-      } catch (error) {
-        console.error("Error fetching resource:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResource();
-  }, [slug]);
+    void fetchData();
+  }, [fetchData]);
 
   const handleDownload = async () => {
     if (!resource) return;
@@ -53,6 +69,60 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
     } else if (resource.external_link) {
       await api.incrementResourceDownloadCount(resource.id);
       window.open(resource.external_link, "_blank");
+    }
+  };
+
+  const handleVote = async () => {
+    if (!resource || !user) return;
+    const newVoteType = resource.user_vote === 1 ? -1 : 1;
+    // Optimistic update
+    setResource((prev) =>
+      prev
+        ? {
+            ...prev,
+            user_vote: prev.user_vote === 1 ? null : 1,
+            upvote_count:
+              prev.user_vote === 1
+                ? prev.upvote_count - 1
+                : prev.upvote_count + 1,
+          }
+        : prev
+    );
+    try {
+      await api.voteResource(resource.id, newVoteType);
+    } catch (error) {
+      console.error("Error voting:", error);
+      void fetchData(); // Revert on error
+    }
+  };
+
+  const handleSubmitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resource || !user) return;
+    setCommentError(null);
+
+    const validation = validateContent(commentContent);
+    if (!validation.valid) {
+      setCommentError(validation.error || "Invalid content");
+      return;
+    }
+
+    setCommentLoading(true);
+    try {
+      const newComment = await api.createResourceComment({
+        resource_id: resource.id,
+        content: commentContent.trim(),
+      });
+      setComments((prev) => [...prev, newComment]);
+      setCommentContent("");
+      setResource((prev) =>
+        prev ? { ...prev, comment_count: prev.comment_count + 1 } : prev
+      );
+    } catch (err) {
+      console.error("Error creating comment:", err);
+      setCommentError(err instanceof Error ? err.message : "Failed to post. Please try again.");
+    } finally {
+      setCommentLoading(false);
     }
   };
 
@@ -165,9 +235,26 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
           </div>
         )}
 
-        {/* Stats */}
+        {/* Stats & Like */}
         <div className="flex items-center gap-4 pt-4 border-t border-border text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
+          <button
+            onClick={handleVote}
+            disabled={!user}
+            className={cn(
+              "flex items-center gap-1.5 transition-colors",
+              resource.user_vote === 1
+                ? "text-primary"
+                : "text-muted-foreground hover:text-primary"
+            )}
+          >
+            <Heart className="w-4 h-4" weight={resource.user_vote === 1 ? "fill" : "regular"} />
+            <span>{resource.upvote_count}</span>
+          </button>
+          <div className="flex items-center gap-1.5">
+            <ChatCircle className="w-4 h-4" />
+            <span>{resource.comment_count} comments</span>
+          </div>
+          <div className="flex items-center gap-1.5">
             <DownloadSimple className="w-4 h-4" />
             <span>{resource.download_count} downloads</span>
           </div>
@@ -190,6 +277,67 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
           </div>
         </div>
       )}
+
+      {/* Comments section */}
+      <div className="mt-8 space-y-4">
+        <h2 className="text-lg font-semibold">Comments ({comments.length})</h2>
+
+        {/* Comment form */}
+        {user && (
+          <form onSubmit={handleSubmitComment} className="space-y-3">
+            <Textarea
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+              placeholder="Write a comment..."
+              rows={4}
+              maxLength={10000}
+            />
+            {commentError && <p className="text-sm text-destructive">{commentError}</p>}
+            <div className="flex justify-end">
+              <Button type="submit" disabled={commentLoading || !commentContent.trim()}>
+                {commentLoading ? "Posting..." : "Post Comment"}
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {/* Comments list */}
+        {comments.length > 0 ? (
+          <div className="space-y-4">
+            {comments.map((comment) => (
+              <div key={comment.id} className="border border-border rounded-xl bg-card p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Link
+                    href={ROUTES.POINTSTACK_PROFILE(comment.author?.display_name || "")}
+                    className="flex items-center gap-2"
+                  >
+                    <UserAvatar
+                      displayName={comment.author?.display_name || null}
+                      avatarUrl={comment.author?.avatar_url}
+                      size="sm"
+                    />
+                    <span className="text-sm font-medium hover:underline">
+                      {comment.author?.display_name || "Anonymous"}
+                    </span>
+                  </Link>
+                  <span className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+                  </span>
+                </div>
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                  {comment.content.split("\n").map((paragraph, i) => (
+                    <p key={i}>{paragraph}</p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground py-4">
+            No comments yet. {user ? "Be the first to comment!" : "Sign in to comment."}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

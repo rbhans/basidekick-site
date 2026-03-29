@@ -733,14 +733,31 @@ export interface PointStackResourceListing {
   is_free: boolean;
   external_link: string | null;
   download_count: number;
+  upvote_count: number;
+  comment_count: number;
   is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  // Joined/enriched data
+  author?: { display_name: string | null; avatar_url: string | null };
+  user_vote?: number | null;
+}
+
+export type PointStackResourceCategory = "template" | "script" | "document" | "guide" | "tool" | "other";
+
+// Resource Comment
+export interface PointStackResourceComment {
+  id: string;
+  resource_id: string;
+  author_id: string;
+  parent_id: string | null;
+  content: string;
+  upvote_count: number;
   created_at: string;
   updated_at: string;
   // Joined data
   author?: { display_name: string | null; avatar_url: string | null };
 }
-
-export type PointStackResourceCategory = "template" | "script" | "document" | "guide" | "tool" | "other";
 
 // Notification
 export interface PointStackNotification {

@@ -4,6 +4,7 @@ import {
   PointStackPostComment,
   PointStackJob,
   PointStackResourceListing,
+  PointStackResourceComment,
   PointStackCompany,
   PointStackCompanyJoinRequest,
   PointStackNotification,
@@ -1633,6 +1634,115 @@ export async function incrementResourceDownloadCount(resourceId: string): Promis
       .update({ download_count: (data.download_count || 0) + 1 })
       .eq("id", resourceId);
   }
+}
+
+// ============================================================
+// RESOURCE VOTING & COMMENTS API
+// ============================================================
+
+export async function voteResource(resourceId: string, voteType: 1 | -1): Promise<void> {
+  const supabase = getClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
+
+  const { data: existingVote } = await supabase
+    .from("pointstack_resource_votes")
+    .select("vote_type")
+    .eq("user_id", user.id)
+    .eq("resource_id", resourceId)
+    .single();
+
+  if (existingVote) {
+    if (existingVote.vote_type === voteType) {
+      await supabase
+        .from("pointstack_resource_votes")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("resource_id", resourceId);
+    } else {
+      await supabase
+        .from("pointstack_resource_votes")
+        .update({ vote_type: voteType })
+        .eq("user_id", user.id)
+        .eq("resource_id", resourceId);
+    }
+  } else {
+    await supabase.from("pointstack_resource_votes").insert({
+      user_id: user.id,
+      resource_id: resourceId,
+      vote_type: voteType,
+    });
+  }
+}
+
+export async function fetchResourceComments(resourceId: string): Promise<PointStackResourceComment[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("pointstack_resource_comments")
+    .select(`
+      *,
+      author:profiles!author_id(display_name, avatar_url)
+    `)
+    .eq("resource_id", resourceId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createResourceComment(input: {
+  resource_id: string;
+  content: string;
+  parent_id?: string;
+}): Promise<PointStackResourceComment> {
+  const supabase = getClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Your session has expired. Please sign in again.");
+
+  const { data, error } = await supabase
+    .from("pointstack_resource_comments")
+    .insert({
+      resource_id: input.resource_id,
+      author_id: user.id,
+      content: input.content,
+      parent_id: input.parent_id || null,
+    })
+    .select(`
+      *,
+      author:profiles!author_id(display_name, avatar_url)
+    `)
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteResourceComment(commentId: string): Promise<void> {
+  const supabase = getClient();
+  const { error } = await supabase
+    .from("pointstack_resource_comments")
+    .delete()
+    .eq("id", commentId);
+
+  if (error) throw error;
+}
+
+/** Enrich resources with user's vote status */
+export async function enrichResourcesWithVotes(
+  resources: PointStackResourceListing[],
+  user: User | null
+): Promise<PointStackResourceListing[]> {
+  if (!user || resources.length === 0) return resources;
+  const supabase = getClient();
+  const { data: votes } = await supabase
+    .from("pointstack_resource_votes")
+    .select("resource_id, vote_type")
+    .eq("user_id", user.id)
+    .in("resource_id", resources.map((r) => r.id));
+
+  if (!votes) return resources;
+  const voteMap = new Map<string, number>(votes.map((v: { resource_id: string; vote_type: number }) => [v.resource_id, v.vote_type]));
+  return resources.map((r) => ({ ...r, user_vote: voteMap.get(r.id) ?? null }));
 }
 
 // ============================================================

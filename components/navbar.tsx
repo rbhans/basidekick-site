@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { List, X, Moon, Sun, User, SignOut, Gear, ShieldCheck, MagnifyingGlass } from "@phosphor-icons/react";
+import { List, X, Moon, Sun, User, SignOut, Gear, ShieldCheck, MagnifyingGlass, Wrench, GlobeHemisphereWest, Newspaper, Code, UsersThree, BookOpenText, type Icon } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 import {
@@ -19,13 +19,13 @@ import { NotificationBell } from "@/components/pointstack/notifications/notifica
 import { HeaderSearch } from "./header-search";
 import { ROUTES } from "@/lib/routes";
 
-const NAV_LINKS = [
-  { href: ROUTES.TOOLS, label: "Tools" },
-  { href: ROUTES.ATLAS, label: "Atlas" },
-  { href: ROUTES.NEWS, label: "News" },
-  { href: ROUTES.OPEN_SOURCE, label: "Open Source" },
-  { href: ROUTES.POINTSTACK, label: "PointStack" },
-  { href: ROUTES.WIKI, label: "Wiki" },
+const NAV_LINKS: { href: string; label: string; icon: Icon }[] = [
+  { href: ROUTES.TOOLS, label: "Tools", icon: Wrench },
+  { href: ROUTES.ATLAS, label: "Atlas", icon: GlobeHemisphereWest },
+  { href: ROUTES.NEWS, label: "News", icon: Newspaper },
+  { href: ROUTES.OPEN_SOURCE, label: "Open Source", icon: Code },
+  { href: ROUTES.POINTSTACK, label: "PointStack Social", icon: UsersThree },
+  { href: ROUTES.WIKI, label: "Wiki", icon: BookOpenText },
 ];
 
 export function Navbar() {
@@ -79,19 +79,23 @@ export function Navbar() {
 
         {/* Center: Nav links — absolutely positioned for true centering */}
         <nav className="hidden md:flex items-center justify-center gap-1 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`px-4 py-2 rounded-lg text-[14px] font-medium transition-colors ${
-                isActive(link.href)
-                  ? "text-primary bg-primary/10"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const IconComponent = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-3 py-2 rounded-lg text-[14px] font-medium transition-colors inline-flex items-center gap-1.5 ${
+                  isActive(link.href)
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                }`}
+              >
+                <IconComponent className="w-4 h-4" />
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Right: Search + Actions */}
@@ -182,20 +186,24 @@ export function Navbar() {
               </Button>
             </div>
             <nav className="flex-1 p-4 space-y-1">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-3 rounded-lg text-[15px] font-semibold transition-colors ${
-                    isActive(link.href)
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {NAV_LINKS.map((link) => {
+                const IconComponent = link.icon;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-semibold transition-colors ${
+                      isActive(link.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <IconComponent className="w-5 h-5" />
+                    {link.label}
+                  </Link>
+                );
+              })}
             </nav>
             <div className="p-4 border-t border-border">
               <div className="sm:hidden mb-3">

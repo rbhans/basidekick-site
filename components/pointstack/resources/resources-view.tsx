@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
 import {
   DownloadSimple,
   Plus,
@@ -12,11 +11,15 @@ import {
   BookOpen,
   Wrench,
   Package,
+  Heart,
+  ChatCircle,
+  MagnifyingGlass,
 } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -52,22 +55,34 @@ export function PointStackResourcesView() {
   const [resources, setResources] = useState<PointStackResourceListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState<string | undefined>();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const loadResources = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await api.fetchResources(category);
+      let data = await api.fetchResources(category);
+      data = await api.enrichResourcesWithVotes(data, user ?? null);
       setResources(data);
     } catch (error) {
       console.error("Error fetching resources:", error);
     } finally {
       setLoading(false);
     }
-  }, [category]);
+  }, [category, user]);
 
   useEffect(() => {
     void loadResources();
   }, [loadResources]);
+
+  const filteredResources = useMemo(() => {
+    if (!searchQuery.trim()) return resources;
+    const q = searchQuery.toLowerCase();
+    return resources.filter(
+      (r) =>
+        r.title.toLowerCase().includes(q) ||
+        r.description?.toLowerCase().includes(q)
+    );
+  }, [resources, searchQuery]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
@@ -95,6 +110,15 @@ export function PointStackResourcesView() {
 
       {/* Filters */}
       <div className="flex items-center gap-3 mb-6">
+        <div className="relative flex-1 max-w-sm">
+          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search resources..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
         <Select value={category || "all"} onValueChange={(v) => setCategory(v === "all" ? undefined : v)}>
           <SelectTrigger className="w-[150px]">
             <SelectValue placeholder="Category" />
@@ -120,9 +144,9 @@ export function PointStackResourcesView() {
       )}
 
       {/* Resources grid */}
-      {!loading && resources.length > 0 && (
+      {!loading && filteredResources.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {resources.map((resource) => {
+          {filteredResources.map((resource) => {
             const Icon = CATEGORY_ICONS[resource.category];
             return (
               <Link
@@ -164,9 +188,19 @@ export function PointStackResourcesView() {
                   <Badge variant="outline">
                     {CATEGORY_LABELS[resource.category]}
                   </Badge>
-                  <div className="flex items-center gap-1">
-                    <DownloadSimple className="w-3 h-3" />
-                    <span>{resource.download_count}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <Heart className="w-3 h-3" weight={resource.user_vote === 1 ? "fill" : "regular"} />
+                      <span>{resource.upvote_count}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <ChatCircle className="w-3 h-3" />
+                      <span>{resource.comment_count}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <DownloadSimple className="w-3 h-3" />
+                      <span>{resource.download_count}</span>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -176,12 +210,16 @@ export function PointStackResourcesView() {
       )}
 
       {/* Empty state */}
-      {!loading && resources.length === 0 && (
+      {!loading && filteredResources.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">
-            No resources found. {category ? "Try a different category." : "Be the first to share!"}
+            {searchQuery
+              ? "No resources match your search."
+              : category
+              ? "No resources found. Try a different category."
+              : "No resources found. Be the first to share!"}
           </p>
-          {user && (
+          {user && !searchQuery && (
             <CreateResourceDialog
               onCreated={async () => {
                 await loadResources();
