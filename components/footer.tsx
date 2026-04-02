@@ -4,8 +4,6 @@ import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 
 const toolsLinks = [
-  { href: ROUTES.TOOLS, label: "SimulatorSidekick" },
-  { href: ROUTES.TOOLS, label: "QR Sidekick" },
   { href: ROUTES.ATLAS, label: "BAS Atlas" },
   { href: "/calculators", label: "Calculators" },
 ];

@@ -7,14 +7,10 @@ import { RotatingAtlasCard } from "@/components/rotating-atlas-card";
 import { HeroBackground } from "@/components/hero-background";
 import { HeroMarks } from "@/components/hero-marks";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
   BookOpen,
-  Wrench,
   GlobeHemisphereWest,
-  WaveTriangle,
-  QrCode,
   Cpu,
   Newspaper,
   GithubLogo,
@@ -331,65 +327,6 @@ export function HomeView({
         </div>
       </section>
 
-      {/* Tools Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20">
-          <SiteBadge label="TOOLS" icon={Wrench} />
-          <h2 className="mt-6 text-2xl md:text-3xl font-heading font-bold tracking-tight">
-            Built for BAS Professionals
-          </h2>
-
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* SSK Card */}
-            <Link
-              href={ROUTES.TOOLS}
-              className="group p-6 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <WaveTriangle className="w-5 h-5 text-primary" />
-                  </div>
-                  <span className="font-mono text-[12px] text-muted-foreground uppercase tracking-wider">SIM</span>
-                </div>
-                <Badge variant="outline" className="text-[11px] text-destructive border-destructive/30">
-                  Coming Soon
-                </Badge>
-              </div>
-              <h3 className="font-heading text-lg font-bold group-hover:text-primary transition-colors">
-                SimulatorSidekick
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Create virtual BACnet/Modbus devices in seconds for testing and development.
-              </p>
-            </Link>
-
-            {/* QSK Card */}
-            <Link
-              href={ROUTES.TOOLS}
-              className="group p-6 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <QrCode className="w-5 h-5 text-primary" />
-                  </div>
-                  <span className="font-mono text-[12px] text-muted-foreground uppercase tracking-wider">QSK</span>
-                </div>
-                <Badge variant="outline" className="text-[11px] text-destructive border-destructive/30">
-                  Coming Soon
-                </Badge>
-              </div>
-              <h3 className="font-heading text-lg font-bold group-hover:text-primary transition-colors">
-                QR Sidekick
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                The simplest way for field technicians to manage building equipment using QR codes.
-              </p>
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

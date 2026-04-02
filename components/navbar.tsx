@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { List, X, Moon, Sun, User, SignOut, Gear, ShieldCheck, MagnifyingGlass, Wrench, GlobeHemisphereWest, Newspaper, Code, UsersThree, BookOpenText, type Icon } from "@phosphor-icons/react";
+import { List, X, Moon, Sun, User, SignOut, Gear, ShieldCheck, MagnifyingGlass, GlobeHemisphereWest, Newspaper, Code, UsersThree, BookOpenText, type Icon } from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import { Button } from "./ui/button";
 import {
@@ -20,7 +20,6 @@ import { HeaderSearch } from "./header-search";
 import { ROUTES } from "@/lib/routes";
 
 const NAV_LINKS: { href: string; label: string; icon: Icon }[] = [
-  { href: ROUTES.TOOLS, label: "Tools", icon: Wrench },
   { href: ROUTES.ATLAS, label: "Atlas", icon: GlobeHemisphereWest },
   { href: ROUTES.NEWS, label: "News", icon: Newspaper },
   { href: ROUTES.OPEN_SOURCE, label: "Open Source", icon: Code },

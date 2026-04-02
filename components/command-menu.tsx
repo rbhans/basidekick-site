@@ -4,10 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   House,
-  Wrench,
   BookOpen,
   Calculator,
-
   BookmarksSimple,
   User,
   Gauge,
@@ -34,7 +32,6 @@ interface SearchItem {
 
 const SEARCH_ITEMS: SearchItem[] = [
   { id: "home", title: "Home", description: "Go to homepage", href: ROUTES.HOME, icon: <House className="size-4" />, category: "Navigation" },
-  { id: "tools", title: "Tools", description: "Browse all tools", href: ROUTES.TOOLS, icon: <Wrench className="size-4" />, category: "Navigation" },
   { id: "wiki", title: "Wiki", description: "Knowledge base", href: ROUTES.WIKI, icon: <BookOpen className="size-4" />, category: "Navigation" },
   { id: "atlas", title: "BAS Atlas", description: "Open source points and equipment reference", href: ROUTES.ATLAS, icon: <Gauge className="size-4" />, category: "Resources" },
   { id: "rust", title: "Rust", description: "Open source BAS crates", href: ROUTES.RESOURCES_RUST, icon: <Cpu className="size-4" />, category: "Resources" },
