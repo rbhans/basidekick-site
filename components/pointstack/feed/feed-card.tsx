@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { format, formatDistanceToNow } from "date-fns";
+import { getPostTypeClasses } from "@/lib/tag-colors";
 import {
   Heart,
   ChatCircle,
@@ -121,7 +122,7 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
               >
                 {post.author?.display_name || "Anonymous"}
               </Link>
-              <span className="px-2 py-0.5 rounded-full bg-muted text-[11px] font-mono text-muted-foreground">
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono ${getPostTypeClasses(post.post_type)}`}>
                 {typeConfig.label}
               </span>
             </div>

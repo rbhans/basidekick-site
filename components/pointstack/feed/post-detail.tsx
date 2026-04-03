@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
+import { getPostTypeClasses } from "@/lib/tag-colors";
 import { ArrowLeft, ChatCircle, Eye, Share, Check } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAtlasData } from "@/components/atlas/use-atlas-data";
@@ -140,7 +141,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
 
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="px-2 py-0.5 rounded-full bg-muted text-[11px] font-mono text-muted-foreground">
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono ${getPostTypeClasses(post.post_type)}`}>
                 {typeInfo.label}
               </span>
               {post.tags.map((tag) => (
