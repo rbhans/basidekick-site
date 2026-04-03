@@ -25,79 +25,61 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ─── ARTICLES TO INSERT ───────────────────────────────────────────────────────
-// Curated April 2, 2026 — sources from March 23–30, 2026
+// Curated April 3, 2026 — sources from April 1–3, 2026
 const ARTICLES = [
   {
-    title: "Your Smart Building Can't Explain Itself. Now We Know Why.",
-    url: "https://www.automatedbuildings.com/2026/03/your-smart-building-cant-explain-itself-now-we-know-why/",
-    slug: "your-smart-building-cant-explain-itself-now-we-kn-a3f7c8d2",
+    title: "CUBE Announces Strategic Partnership with Rizzo Controls: Revolutionizing BMS Service Operations",
+    url: "https://www.automatedbuildings.com/2026/04/cube-announces-strategic-partnership-with-rizzo-controls-revolutionizing-bms-service-operations/",
+    slug: "cube-announces-strategic-partnership-with-rizzo-c-m8x3b5n2",
     source_domain: "automatedbuildings.com",
     summary:
-      "A March 30 piece from AutomatedBuildings.com argues that smart buildings lack a shared semantic architecture, making AI decisions opaque and unauditable. The author calls for an 'Architect of Intelligence' role supported by AI agents that continuously validate and maintain system coherence across BAS subsystems over the building lifecycle.",
-    tags: ["smart-building", "ai", "analytics", "controls"],
+      "CUBE USA and Rizzo Controls are joining forces to help BMS service contractors structure operational data from their Niagara environments into actionable workflows, moving teams beyond reactive maintenance. Rizzo Controls, known for Niagara 4 training and technical enablement, will drive implementation and training of the CUBE platform across the Niagara market.",
+    tags: ["niagara", "tridium", "smart-building", "controls", "ddc"],
   },
   {
-    title: "When Buildings Govern Themselves",
-    url: "https://www.automatedbuildings.com/2026/03/when-buildings-govern-themselve/",
-    slug: "when-buildings-govern-themselves-b9k2m5x1",
+    title: "Annoying Acronyms of AI, Automation, and Cloud Services — The Decoder Page",
+    url: "https://www.automatedbuildings.com/2026/04/annoying-acronyms-of-ai-automation-and-cloud-services-the-decoder-page/",
+    slug: "annoying-acronyms-of-ai-automation-and-cloud-serv-k9p2r7q1",
     source_domain: "automatedbuildings.com",
     summary:
-      "Proposes replacing per-project custom integration work with a shared discovery-and-binding substrate built on open standards like ASHRAE 223P, turning the BAS 'integration tax' into a one-time architectural investment. Today's per-pair API key exchanges and custom glue code are identified as a fundamental antipattern preventing portable, auditable cross-platform integrations.",
-    tags: ["smart-building", "bacnet", "controls", "iot"],
+      "AutomatedBuildings.com launches a living glossary translating the fast-multiplying acronyms of AI, cloud, and data standards — including RDF, TTL/Turtle, CDL, and CXF — that are rapidly entering BAS and smart-building workflows. A practical reference for controls engineers and integrators connecting semantic data standards to real building systems.",
+    tags: ["smart-building", "ai", "iot", "controls"],
   },
   {
-    title: "AI and the Building Operator",
-    url: "https://www.automatedbuildings.com/2026/03/ai-and-the-building-operator/",
-    slug: "ai-and-the-building-operator-c7m2n5r1",
-    source_domain: "automatedbuildings.com",
+    title: "Five Global Trends Reshaping Building Automation",
+    url: "https://www.johnsoncontrols.com/building-insights/2026/thought-leadership/five-global-trends-reshaping-building-automation",
+    slug: "five-global-trends-reshaping-building-automation-j4w6t8s5",
+    source_domain: "johnsoncontrols.com",
     summary:
-      "Published March 23, 2026, this AutomatedBuildings.com article explores practical AI workflows that translate directly into smart building operations, with a focus on open-source tools as a counterweight to the increasingly proprietary nature of HVAC and BAS systems. The author demonstrates how AI agents can coordinate tasks, choose models, and run diagnostic workflows that could replace manual technician processes.",
-    tags: ["ai", "controls", "smart-building"],
+      "Johnson Controls identifies rising utility costs (wholesale prices projected up 19% by 2028), stricter regulations, aging infrastructure, and workforce shortages as the primary forces accelerating BAS modernization — with agentic AI, open-standards interoperability, and plug-and-play retrofit technology as the main response levers. Directly relevant to integrators and engineers advising clients on BAS upgrade strategy.",
+    tags: ["smart-building", "ai", "energy", "retrofit", "controls", "sustainability"],
   },
   {
-    title: "Eaton Unveils AI-Powered Brightlayer Energy Management System",
-    url: "https://www.buildings.com/products/energy-management/product/55366458/eaton-eaton-unveils-ai-powered-brightlayer-energy",
-    slug: "eaton-unveils-ai-powered-brightlayer-energy-d4n8p3q7",
-    source_domain: "buildings.com",
+    title: "CxEnergy 2026 Technical Program and Keynote Announced",
+    url: "https://www.csemag.com/cxenergy-2026-technical-program-and-keynote-announced/",
+    slug: "cxenergy-2026-technical-program-and-keynote-annou-h7v1d3f6",
+    source_domain: "csemag.com",
     summary:
-      "Eaton launched Brightlayer Energy on March 25, 2026 — an AI-powered energy management and optimization system for commercial buildings with 99%-accurate load forecasting, automated demand response, and solar-plus-BESS optimization. The platform integrates real-time weather data to maximize on-site generation and dispatches stored energy to minimize peak demand charges while meeting local regulatory requirements.",
-    tags: ["energy", "ai", "smart-building", "iot"],
+      "CxEnergy 2026 (April 21–24, Chicago) opens with a keynote on practical AI for commissioning and energy professionals, covering how AI tools increase revenue-per-engineer and reduce documentation burden. The full technical program spans AI/ML in BAS, ASHRAE Guideline 36 implementation, fault detection diagnostics, and energy management — highly relevant to commissioning authorities and controls engineers.",
+    tags: ["commissioning", "ai", "analytics", "energy", "controls", "ashrae"],
   },
   {
-    title: "5 Lessons for Scaling Smart Building Tech Across Large CRE Portfolios in 2026",
-    url: "https://www.buildings.com/smart-buildings/article/55359552/5-lessons-for-scaling-smart-building-tech-across-large-cre-portfolios-in-2026",
-    slug: "5-lessons-for-scaling-smart-building-tech-across-l-e6r1s5w9",
-    source_domain: "buildings.com",
+    title: "Honeywell Spin-Off Plans Leave Building Automation at Core",
+    url: "https://www.facilitiesdive.com/news/honeywell-spin-off-plans-leave-building-automation-at-core/803711/",
+    slug: "honeywell-spin-off-plans-leave-building-automation-n3y8c4g9",
+    source_domain: "facilitiesdive.com",
     summary:
-      "Identifies key prerequisites for deploying smart building systems across large commercial real estate portfolios, including open data tagging standards for interoperability and cybersecurity embedded from the outset (network segmentation, encryption, MFA). Correctly implemented, the article reports 15–25% portfolio-wide energy savings as a realistic target, but warns that skipping data standardization first makes analytics layers ineffective.",
-    tags: ["smart-building", "energy", "cybersecurity", "analytics"],
+      "Honeywell's planned three-way split places Building Automation as a standalone reporting segment starting Q1 2026, led by Billal Hammoud as president and CEO. For integrators and specifiers, this signals Honeywell is doubling down on its BAS portfolio — including Niagara/Connected Solutions — as a dedicated business rather than a sub-unit of a diversified conglomerate.",
+    tags: ["smart-building", "controls", "niagara", "energy", "hvac"],
   },
   {
     title: "Urban AI: What It Means for Intelligent HVAC",
     url: "https://www.hpac.com/technology/blog/55342954/urban-ai-what-it-means-for-intelligent-hvac",
-    slug: "urban-ai-what-it-means-for-intelligent-hvac-f2t7v4y8",
+    slug: "urban-ai-what-it-means-for-intelligent-hvac-p5m2j7k8",
     source_domain: "hpac.com",
     summary:
-      "HPAC Engineering examines 'Urban AI' — a paradigm shift for HVAC professionals that moves beyond building-level visibility to neighborhood-scale predictive infrastructure management, covering grid demand response and distributed energy optimization. The article notes that digital twins are evolving from static commissioning models into live operational systems connected directly to BAS sensors, schedules, and utility pricing signals.",
-    tags: ["hvac", "ai", "smart-building", "energy"],
-  },
-  {
-    title: "8 Takeaways from the Dragos 2026 OT Cybersecurity Report",
-    url: "https://www.sans.org/blog/top-takeaways-from-the-dragos-ot-cybersecurity-report-2026",
-    slug: "8-takeaways-dragos-2026-ot-cybersecurity-report-g3u9w6z2",
-    source_domain: "sans.org",
-    summary:
-      "SANS Institute distills the 2026 Dragos OT Year in Review, highlighting that 26 threat groups now target ICS/OT — three new ones in 2025 — with ransomware impacting 3,300 industrial organizations, a 49% year-over-year surge. For BAS and controls environments, key recommendations include extending monitoring to engineering workstations, remote access infrastructure, and internet-facing edge devices, not just core OT networks.",
-    tags: ["cybersecurity", "iot", "controls"],
-  },
-  {
-    title: "AI + Buildings 2026: Redefining Autonomy from People to Portfolios",
-    url: "https://www.automatedbuildings.com/2026/03/ai-buildings-2026-redefining-autonomy-from-people-to-portfolios-3/",
-    slug: "ai-buildings-2026-redefining-autonomy-from-people-h5x1a4k7",
-    source_domain: "automatedbuildings.com",
-    summary:
-      "An AutomatedBuildings.com roundtable examines the industry shift from reactive if/then BAS logic to AI agent systems that negotiate power, predict maintenance, and optimize for cost, carbon, and comfort across entire portfolios simultaneously. Panelists identify data silos between lighting, HVAC, and access control — plus the lack of explainable AI — as the primary obstacles preventing portfolio-scale autonomous building operations.",
-    tags: ["smart-building", "ai", "analytics", "energy"],
+      "HPAC Engineering examines how 'Urban AI' — city-scale machine learning applied to building clusters — is beginning to influence HVAC setpoint optimization, demand-response coordination, and predictive maintenance at the district level. Controls engineers will find this useful for understanding how building-level BAS decisions will increasingly be influenced by grid and neighborhood-scale signals.",
+    tags: ["hvac", "ai", "energy", "controls", "analytics", "smart-building"],
   },
 ];
 
