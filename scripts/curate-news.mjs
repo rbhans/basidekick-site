@@ -25,61 +25,70 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ─── ARTICLES TO INSERT ───────────────────────────────────────────────────────
-// Curated April 3, 2026 — sources from April 1–3, 2026
+// Curated April 4, 2026 — sources from April 1–4, 2026
 const ARTICLES = [
   {
-    title: "CUBE Announces Strategic Partnership with Rizzo Controls: Revolutionizing BMS Service Operations",
-    url: "https://www.automatedbuildings.com/2026/04/cube-announces-strategic-partnership-with-rizzo-controls-revolutionizing-bms-service-operations/",
-    slug: "cube-announces-strategic-partnership-with-rizzo-c-m8x3b5n2",
+    title: "Convergence on AutomatedBuildings.com — A History",
+    url: "https://www.automatedbuildings.com/2026/04/history-convergence-on-automatedbuildings-com/",
+    slug: "convergence-on-automatedbuildings-com-a-history-x2k9p4r1",
     source_domain: "automatedbuildings.com",
     summary:
-      "CUBE USA and Rizzo Controls are joining forces to help BMS service contractors structure operational data from their Niagara environments into actionable workflows, moving teams beyond reactive maintenance. Rizzo Controls, known for Niagara 4 training and technical enablement, will drive implementation and training of the CUBE platform across the Niagara market.",
-    tags: ["niagara", "tridium", "smart-building", "controls", "ddc"],
+      "AutomatedBuildings.com traces the arc from \"platform wars\" to \"platform peace\" — how open standards like Project Haystack and Brick Schema are converging BAS ecosystems into a shared semantic language that AI agents can act on without manual data mapping. A useful historical lens for integrators navigating multi-vendor environments and data normalization today.",
+    tags: ["smart-building", "analytics", "iot", "ai", "controls"],
   },
   {
-    title: "Annoying Acronyms of AI, Automation, and Cloud Services — The Decoder Page",
-    url: "https://www.automatedbuildings.com/2026/04/annoying-acronyms-of-ai-automation-and-cloud-services-the-decoder-page/",
-    slug: "annoying-acronyms-of-ai-automation-and-cloud-serv-k9p2r7q1",
-    source_domain: "automatedbuildings.com",
-    summary:
-      "AutomatedBuildings.com launches a living glossary translating the fast-multiplying acronyms of AI, cloud, and data standards — including RDF, TTL/Turtle, CDL, and CXF — that are rapidly entering BAS and smart-building workflows. A practical reference for controls engineers and integrators connecting semantic data standards to real building systems.",
-    tags: ["smart-building", "ai", "iot", "controls"],
-  },
-  {
-    title: "Five Global Trends Reshaping Building Automation",
-    url: "https://www.johnsoncontrols.com/building-insights/2026/thought-leadership/five-global-trends-reshaping-building-automation",
-    slug: "five-global-trends-reshaping-building-automation-j4w6t8s5",
-    source_domain: "johnsoncontrols.com",
-    summary:
-      "Johnson Controls identifies rising utility costs (wholesale prices projected up 19% by 2028), stricter regulations, aging infrastructure, and workforce shortages as the primary forces accelerating BAS modernization — with agentic AI, open-standards interoperability, and plug-and-play retrofit technology as the main response levers. Directly relevant to integrators and engineers advising clients on BAS upgrade strategy.",
-    tags: ["smart-building", "ai", "energy", "retrofit", "controls", "sustainability"],
-  },
-  {
-    title: "CxEnergy 2026 Technical Program and Keynote Announced",
-    url: "https://www.csemag.com/cxenergy-2026-technical-program-and-keynote-announced/",
-    slug: "cxenergy-2026-technical-program-and-keynote-annou-h7v1d3f6",
-    source_domain: "csemag.com",
-    summary:
-      "CxEnergy 2026 (April 21–24, Chicago) opens with a keynote on practical AI for commissioning and energy professionals, covering how AI tools increase revenue-per-engineer and reduce documentation burden. The full technical program spans AI/ML in BAS, ASHRAE Guideline 36 implementation, fault detection diagnostics, and energy management — highly relevant to commissioning authorities and controls engineers.",
-    tags: ["commissioning", "ai", "analytics", "energy", "controls", "ashrae"],
-  },
-  {
-    title: "Honeywell Spin-Off Plans Leave Building Automation at Core",
-    url: "https://www.facilitiesdive.com/news/honeywell-spin-off-plans-leave-building-automation-at-core/803711/",
-    slug: "honeywell-spin-off-plans-leave-building-automation-n3y8c4g9",
+    title: "Honeywell Expands Security Portfolio in Bid to Catch AI Wave",
+    url: "https://www.facilitiesdive.com/news/honeywell-expands-security-portfolio-in-bid-to-catch-ai-wave/815980/",
+    slug: "honeywell-expands-security-portfolio-ai-wave-f6n3t7w2",
     source_domain: "facilitiesdive.com",
     summary:
-      "Honeywell's planned three-way split places Building Automation as a standalone reporting segment starting Q1 2026, led by Billal Hammoud as president and CEO. For integrators and specifiers, this signals Honeywell is doubling down on its BAS portfolio — including Niagara/Connected Solutions — as a dedicated business rather than a sub-unit of a diversified conglomerate.",
-    tags: ["smart-building", "controls", "niagara", "energy", "hvac"],
+      "Honeywell is partnering with Rhombus to deliver AI-powered cloud video surveillance and access control through its existing system integrator channels, with Rhombus AI analytics being integrated directly into Honeywell's access control platforms. For BAS integrators, this signals that physical security and building controls convergence is accelerating — and that Honeywell is positioning as a unified cloud-managed building platform.",
+    tags: ["smart-building", "cybersecurity", "ai", "controls"],
   },
   {
-    title: "Urban AI: What It Means for Intelligent HVAC",
-    url: "https://www.hpac.com/technology/blog/55342954/urban-ai-what-it-means-for-intelligent-hvac",
-    slug: "urban-ai-what-it-means-for-intelligent-hvac-p5m2j7k8",
-    source_domain: "hpac.com",
+    title: "Siemens Takes Steps to Integrate IAQ Sensing and Response into Building Controls",
+    url: "https://www.facilitiesdive.com/news/siemens-takes-steps-to-integrate-iaq-sensing-and-response-into-building-con/815548/",
+    slug: "siemens-iaq-sensing-response-building-controls-b8v5q2m9",
+    source_domain: "facilitiesdive.com",
     summary:
-      "HPAC Engineering examines how 'Urban AI' — city-scale machine learning applied to building clusters — is beginning to influence HVAC setpoint optimization, demand-response coordination, and predictive maintenance at the district level. Controls engineers will find this useful for understanding how building-level BAS decisions will increasingly be influenced by grid and neighborhood-scale signals.",
-    tags: ["hvac", "ai", "energy", "controls", "analytics", "smart-building"],
+      "Siemens is advancing its ARPA-H BREATHE program work, integrating indoor air biosensors into building automation software that automatically adjusts ventilation and filtration when sensors detect respiratory risk — with a $40M Mayo Clinic deployment spanning three campuses as the flagship project. Controls engineers should expect IAQ-driven setpoint overrides to become a standard BAS feature requirement in healthcare and high-occupancy facilities.",
+    tags: ["hvac", "iot", "controls", "smart-building", "analytics"],
+  },
+  {
+    title: "Johnson Controls' Metasys Update Designed for Greater Device Security, Easier System Management",
+    url: "https://www.facilitiesdive.com/news/johnson-controls-metasys-update-designed-for-greater-device-security-easi/805920/",
+    slug: "jci-metasys-update-device-security-management-c4h7n1f5",
+    source_domain: "facilitiesdive.com",
+    summary:
+      "Metasys 15.0 raises the ceiling for open BAS scalability — supporting up to 1,000 IP devices per server (60% more than most competitors) and reducing device setup time by ~95% via a new web client, while adding BACnet/SC encrypted communication and single sign-on for IT-managed access control. Mission-critical sites like hospitals and data centers benefit most from the new multi-server redundancy that simultaneously backs up alerts, trends, and audit logs.",
+    tags: ["bacnet", "controls", "cybersecurity", "smart-building", "ddc"],
+  },
+  {
+    title: "Getting the Most from ASHRAE 36 HVAC Control Sequences",
+    url: "https://www.facilitiesdive.com/news/getting-the-most-from-ashrae-36-hvac-control-sequences/806438/",
+    slug: "getting-most-from-ashrae-36-hvac-control-sequence-w3j6p8s4",
+    source_domain: "facilitiesdive.com",
+    summary:
+      "Facilities Dive examines practical implementation of ASHRAE Guideline 36 High Performance Sequences, noting field deployments show up to 45% HVAC energy reduction compared to baseline — but only when commissioning is done right and sequences are kept current. A timely read as California and Boston building codes begin requiring Guideline 36 adoption and the CxEnergy 2026 program dedicates sessions to G36 field lessons.",
+    tags: ["hvac", "ashrae", "controls", "energy", "commissioning"],
+  },
+  {
+    title: "NFMT East 2026: How Building Operations Help Organizations' Strategic Goals",
+    url: "https://www.facilitiesdive.com/news/nfmt-east-2026-how-building-operations-help-organizations-strategic-goals/814435/",
+    slug: "nfmt-east-2026-building-operations-strategic-goal-r7d2k5n8",
+    source_domain: "facilitiesdive.com",
+    summary:
+      "Coverage from NFMT East 2026 highlights how facilities leaders are reframing BAS and building operations as a direct contributor to organizational strategy — connecting energy data, occupancy analytics, and maintenance workflows to C-suite metrics like carbon commitments and workforce productivity. Relevant for controls integrators making the case for BAS investment beyond utility savings.",
+    tags: ["smart-building", "energy", "analytics", "sustainability", "controls"],
+  },
+  {
+    title: "Siemens Advances Indoor Air Quality Innovation Through ARPA-H BREATHE Projects",
+    url: "https://news.siemens.com/en-us/siemens-advances-arpa-h-breathe-projects/",
+    slug: "siemens-advances-arpa-h-breathe-indoor-air-quality-m1t9v3q6",
+    source_domain: "news.siemens.com",
+    summary:
+      "Siemens announced on March 24 its role across two ARPA-H BREATHE projects — integrating biosensors, AI risk assessment, and real-time BMS responses (ventilation, filtration, UV disinfection) to reduce respiratory disease transmission in hospitals and defense facilities. This is a direct signal that health-driven automated ventilation overrides will increasingly be written into BAS specifications for healthcare and government buildings.",
+    tags: ["hvac", "iot", "controls", "analytics", "smart-building"],
   },
 ];
 
@@ -178,7 +187,7 @@ async function getActiveAiCount() {
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log("🤖 BASidekick News Curator — " + new Date().toISOString());
+  console.log("🤖 BASidekick News Curator — April 4, 2026 — " + new Date().toISOString());
   console.log("=".repeat(60));
 
   const retiredCount = await retireStaleArticles();
