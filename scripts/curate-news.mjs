@@ -25,70 +25,79 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ─── ARTICLES TO INSERT ───────────────────────────────────────────────────────
-// Curated April 4, 2026 — sources from April 1–4, 2026
+// Curated April 5, 2026 — sources from late March – early April 2026
 const ARTICLES = [
   {
-    title: "Convergence on AutomatedBuildings.com — A History",
-    url: "https://www.automatedbuildings.com/2026/04/history-convergence-on-automatedbuildings-com/",
-    slug: "convergence-on-automatedbuildings-com-a-history-x2k9p4r1",
-    source_domain: "automatedbuildings.com",
-    summary:
-      "AutomatedBuildings.com traces the arc from \"platform wars\" to \"platform peace\" — how open standards like Project Haystack and Brick Schema are converging BAS ecosystems into a shared semantic language that AI agents can act on without manual data mapping. A useful historical lens for integrators navigating multi-vendor environments and data normalization today.",
-    tags: ["smart-building", "analytics", "iot", "ai", "controls"],
-  },
-  {
-    title: "Honeywell Expands Security Portfolio in Bid to Catch AI Wave",
-    url: "https://www.facilitiesdive.com/news/honeywell-expands-security-portfolio-in-bid-to-catch-ai-wave/815980/",
-    slug: "honeywell-expands-security-portfolio-ai-wave-f6n3t7w2",
+    title: "Iran Conflict Highlights Cyberthreat Exposure of U.S. Facilities",
+    url: "https://www.facilitiesdive.com/news/iran-conflict-highlights-cyberthreat-exposure-of-us-facilities/816215/",
+    slug: "iran-conflict-highlights-cyberthreat-us-facilitie-m4k2p8r7",
     source_domain: "facilitiesdive.com",
     summary:
-      "Honeywell is partnering with Rhombus to deliver AI-powered cloud video surveillance and access control through its existing system integrator channels, with Rhombus AI analytics being integrated directly into Honeywell's access control platforms. For BAS integrators, this signals that physical security and building controls convergence is accelerating — and that Honeywell is positioning as a unified cloud-managed building platform.",
-    tags: ["smart-building", "cybersecurity", "ai", "controls"],
+      "State-backed threat actors linked to the Iran conflict are actively targeting unsecured BMS and OT systems in commercial real estate, critical facilities, and data centers — with a single phishing click documented as triggering a 90-day BMS recovery and full occupier relocation. Facility managers are urged to audit internet-exposed building systems and segment OT networks immediately.",
+    tags: ["cybersecurity", "smart-building", "iot", "controls"],
   },
   {
-    title: "Siemens Takes Steps to Integrate IAQ Sensing and Response into Building Controls",
-    url: "https://www.facilitiesdive.com/news/siemens-takes-steps-to-integrate-iaq-sensing-and-response-into-building-con/815548/",
-    slug: "siemens-iaq-sensing-response-building-controls-b8v5q2m9",
+    title: "Threat Groups Target Cyber-Physical Systems to Disrupt Critical Infrastructure Providers",
+    url: "https://www.facilitiesdive.com/news/threat-groups-target-cyber-physical-systems-to-disrupt-critical-infrastruct/815125/",
+    slug: "threat-groups-cyber-physical-critical-infrastruct-b9n3v5q1",
     source_domain: "facilitiesdive.com",
     summary:
-      "Siemens is advancing its ARPA-H BREATHE program work, integrating indoor air biosensors into building automation software that automatically adjusts ventilation and filtration when sensors detect respiratory risk — with a $40M Mayo Clinic deployment spanning three campuses as the flagship project. Controls engineers should expect IAQ-driven setpoint overrides to become a standard BAS feature requirement in healthcare and high-occupancy facilities.",
-    tags: ["hvac", "iot", "controls", "smart-building", "analytics"],
+      "Hacktivists and state-sponsored actors are exploiting OT vulnerabilities in building access control, HVAC, lighting, and metering systems with the goal of causing physical disruption to critical infrastructure operators. Controls integrators are being called to treat BAS network segmentation and device-level authentication as non-negotiable baseline posture, not optional hardening.",
+    tags: ["cybersecurity", "iot", "controls", "smart-building"],
   },
   {
-    title: "Johnson Controls' Metasys Update Designed for Greater Device Security, Easier System Management",
-    url: "https://www.facilitiesdive.com/news/johnson-controls-metasys-update-designed-for-greater-device-security-easi/805920/",
-    slug: "jci-metasys-update-device-security-management-c4h7n1f5",
+    title: "Legacy BMS Protocol Poses Threat to Building Systems: Claroty",
+    url: "https://www.facilitiesdive.com/news/legacy-bms-protocol-poses-threat-to-building-systems-claroty/812827/",
+    slug: "legacy-bms-lontalk-protocol-poses-threat-claroty-x7h2w4j6",
     source_domain: "facilitiesdive.com",
     summary:
-      "Metasys 15.0 raises the ceiling for open BAS scalability — supporting up to 1,000 IP devices per server (60% more than most competitors) and reducing device setup time by ~95% via a new web client, while adding BACnet/SC encrypted communication and single sign-on for IT-managed access control. Mission-critical sites like hospitals and data centers benefit most from the new multi-server redundancy that simultaneously backs up alerts, trends, and audit logs.",
-    tags: ["bacnet", "controls", "cybersecurity", "smart-building", "ddc"],
+      "Claroty's Team82 found the 1990s-era LonTalk protocol still running \"under the covers\" of proprietary BMS implementations across commercial real estate, hospitality, and data centers — with many exposed controllers providing weak or no authentication. This hidden attack surface persists even when integrators believe a building has fully migrated to BACnet or modern IP-based protocols.",
+    tags: ["cybersecurity", "bacnet", "controls", "smart-building"],
   },
   {
-    title: "Getting the Most from ASHRAE 36 HVAC Control Sequences",
-    url: "https://www.facilitiesdive.com/news/getting-the-most-from-ashrae-36-hvac-control-sequences/806438/",
-    slug: "getting-most-from-ashrae-36-hvac-control-sequence-w3j6p8s4",
+    title: "Schneider Electric Debuts Unified AI-Powered Platform for Buildings",
+    url: "https://www.facilitiesdive.com/news/schneider-electric-debuts-unified-ai-powered-platform-for-buildings/806535/",
+    slug: "schneider-ecostruxure-foresight-ai-platform-build-t3f8c1n5",
     source_domain: "facilitiesdive.com",
     summary:
-      "Facilities Dive examines practical implementation of ASHRAE Guideline 36 High Performance Sequences, noting field deployments show up to 45% HVAC energy reduction compared to baseline — but only when commissioning is done right and sequences are kept current. A timely read as California and Boston building codes begin requiring Guideline 36 adoption and the CxEnergy 2026 program dedicates sessions to G36 field lessons.",
-    tags: ["hvac", "ashrae", "controls", "energy", "commissioning"],
+      "Schneider Electric's EcoStruxure Foresight Operation unifies energy, electrical distribution, and building systems into a single AI-driven supervisory platform, targeting up to 50% operational efficiency gains and 40% reduction in engineering workload — with beta access planned for Q3 2026. For integrators, the platform directly addresses the long-standing fragmentation between BAS, power management, and utility data that drives up operational complexity.",
+    tags: ["ai", "energy", "controls", "smart-building", "analytics"],
   },
   {
-    title: "NFMT East 2026: How Building Operations Help Organizations' Strategic Goals",
-    url: "https://www.facilitiesdive.com/news/nfmt-east-2026-how-building-operations-help-organizations-strategic-goals/814435/",
-    slug: "nfmt-east-2026-building-operations-strategic-goal-r7d2k5n8",
+    title: "Five Global Trends Reshaping Building Automation",
+    url: "https://www.johnsoncontrols.com/building-insights/2026/thought-leadership/five-global-trends-reshaping-building-automation",
+    slug: "five-global-trends-reshaping-building-automation-k6m2s9r4",
+    source_domain: "johnsoncontrols.com",
+    summary:
+      "Johnson Controls identifies five forces accelerating BAS transformation in 2026: energy cost pressure, tightening decarbonization regulations, aging infrastructure, workforce shortages, and the shift to AI-integrated platforms that connect HVAC, lighting, security, and fire systems. A practical reference for integrators building the business case for BAS modernization and LEED v5 compliance pathways.",
+    tags: ["smart-building", "energy", "controls", "ai", "sustainability"],
+  },
+  {
+    title: "California's 2025 Title 24 Code: The 5 Biggest Changes Impacting Construction in 2026 and Beyond",
+    url: "https://www.milrose.com/insights/californias-2025-title-24-code-the-5-biggest-changes-impacting-construction-in-2026-and-beyond",
+    slug: "california-title-24-2025-biggest-changes-2026-p4v7n1q8",
+    source_domain: "milrose.com",
+    summary:
+      "California's 2025 Title 24 energy code, in force as of January 1, 2026, mandates ASHRAE Guideline 36 control sequences for VAV systems, requires automatic fault detection and diagnostics (AFDD) for covered HVAC equipment, and tightens DDC controller commissioning documentation requirements. The code is locked in through at least 2031 under AB 130, giving specifying engineers a stable compliance target for multi-year project pipelines.",
+    tags: ["energy", "ashrae", "controls", "commissioning", "hvac"],
+  },
+  {
+    title: "Cimetrics Releases BACstac 7.11 with Enhanced BACnet/SC and Revision 28 Support",
+    url: "https://cimetrics.com/march-2026-company-news/",
+    slug: "cimetrics-bacstac-711-bacnet-sc-revision-28-w2j5h8k3",
+    source_domain: "cimetrics.com",
+    summary:
+      "Cimetrics released BACstac 7.11 in March 2026, delivering enhanced BACnet/SC (Secure Connect) encrypted communications, alignment with Revision 28 including Addenda 2020ci, 2020cf, and 2020co, and streamlined BTL certification support across Windows, Linux, and embedded targets. For OEMs and device manufacturers, this update simplifies the path to shipping BACnet/SC-capable products ahead of growing specification requirements for encrypted BAS communications.",
+    tags: ["bacnet", "controls", "cybersecurity"],
+  },
+  {
+    title: "Energy Savings to Push Electrification Forward in 2026 Despite Federal Headwinds",
+    url: "https://www.facilitiesdive.com/news/energy-savings-to-push-electrification-forward-in-2026-despite-federal-headwinds/810541/",
+    slug: "energy-savings-electrification-forward-2026-federa-r9d4t7m1",
     source_domain: "facilitiesdive.com",
     summary:
-      "Coverage from NFMT East 2026 highlights how facilities leaders are reframing BAS and building operations as a direct contributor to organizational strategy — connecting energy data, occupancy analytics, and maintenance workflows to C-suite metrics like carbon commitments and workforce productivity. Relevant for controls integrators making the case for BAS investment beyond utility savings.",
-    tags: ["smart-building", "energy", "analytics", "sustainability", "controls"],
-  },
-  {
-    title: "Siemens Advances Indoor Air Quality Innovation Through ARPA-H BREATHE Projects",
-    url: "https://news.siemens.com/en-us/siemens-advances-arpa-h-breathe-projects/",
-    slug: "siemens-advances-arpa-h-breathe-indoor-air-quality-m1t9v3q6",
-    source_domain: "news.siemens.com",
-    summary:
-      "Siemens announced on March 24 its role across two ARPA-H BREATHE projects — integrating biosensors, AI risk assessment, and real-time BMS responses (ventilation, filtration, UV disinfection) to reduce respiratory disease transmission in hospitals and defense facilities. This is a direct signal that health-driven automated ventilation overrides will increasingly be written into BAS specifications for healthcare and government buildings.",
-    tags: ["hvac", "iot", "controls", "analytics", "smart-building"],
+      "Despite rollbacks in federal clean energy incentives, commercial building electrification momentum continues in 2026 — driven by heat pump efficiency gains, falling equipment costs, and state mandates requiring all-electric new construction in California, Massachusetts, and New York. BAS integrators should prepare for growing demand for heat pump control sequences, grid-interactive building strategies, and load-flexibility programming tied to utility demand response programs.",
+    tags: ["energy", "hvac", "sustainability", "retrofit", "controls"],
   },
 ];
 
@@ -187,7 +196,7 @@ async function getActiveAiCount() {
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log("🤖 BASidekick News Curator — April 4, 2026 — " + new Date().toISOString());
+  console.log("🤖 BASidekick News Curator — April 5, 2026 — " + new Date().toISOString());
   console.log("=".repeat(60));
 
   const retiredCount = await retireStaleArticles();
