@@ -25,79 +25,79 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ─── ARTICLES TO INSERT ───────────────────────────────────────────────────────
-// Curated April 5, 2026 — sources from late March – early April 2026
+// Curated April 6, 2026 — sources from early April 2026 and late March 2026
 const ARTICLES = [
   {
-    title: "Iran Conflict Highlights Cyberthreat Exposure of U.S. Facilities",
-    url: "https://www.facilitiesdive.com/news/iran-conflict-highlights-cyberthreat-exposure-of-us-facilities/816215/",
-    slug: "iran-conflict-highlights-cyberthreat-us-facilitie-m4k2p8r7",
+    title: "When Data Handling Alters Physical Interpretation: HVAC's Missing Evidence Layer",
+    url: "https://www.automatedbuildings.com/2026/04/when-data-handling-alters-physical-interpretation-hvacs-missing-evidence-layer/",
+    slug: "when-data-handling-alters-physical-interpretation-k7n2m4p8",
+    source_domain: "automatedbuildings.com",
+    summary:
+      "A 2026 study in Energy and AI (Guo et al.) shows that changing how missing sensor data is handled shifts ML conclusions about thermal comfort by 135%—with no change to the underlying building physics. The article argues BAS practitioners face a data provenance and governance gap, not just a modeling problem.",
+    tags: ["analytics", "hvac", "ddc", "ai"],
+  },
+  {
+    title: "How HVAC Contractors Can Navigate the 'Age of Electricity'",
+    url: "https://www.achrnews.com/articles/166031-how-hvac-contractors-can-navigate-the-age-of-electricity",
+    slug: "how-hvac-contractors-can-navigate-the-age-of-elect-b3r9v5x1",
+    source_domain: "achrnews.com",
+    summary:
+      "Outlines a repeatable all-electric readiness playbook for contractors—covering load calculations, duct/distribution fixes, control strategy, and commissioning discipline—as electrification mandates accelerate and average contractor margins sit at just 5%. Controls engineers and integrators are identified as critical to any credible electrification transition.",
+    tags: ["hvac", "controls", "commissioning", "energy"],
+  },
+  {
+    title: "History: Convergence on AutomatedBuildings.com",
+    url: "https://www.automatedbuildings.com/2026/04/history-convergence-on-automatedbuildings-com/",
+    slug: "history-convergence-on-automatedbuildings-com-w6q4j2t8",
+    source_domain: "automatedbuildings.com",
+    summary:
+      "Editor Ken Sinclair traces 27 years of convergence on the platform—from early IP-to-the-edge IoT through Project Haystack and Brick Schema semantic standards, to the current \"Platform Peace\" era where buildings self-configure and interact autonomously with the grid and AI agents. A strategic reference for integrators navigating open-standards adoption.",
+    tags: ["smart-building", "iot", "bacnet", "controls"],
+  },
+  {
+    title: "Honeywell Expands Security Portfolio in Bid to Catch AI Wave",
+    url: "https://www.facilitiesdive.com/news/honeywell-expands-security-portfolio-in-bid-to-catch-ai-wave/815980/",
+    slug: "honeywell-expands-security-portfolio-in-bid-to-cat-m5f1d9c7",
     source_domain: "facilitiesdive.com",
     summary:
-      "State-backed threat actors linked to the Iran conflict are actively targeting unsecured BMS and OT systems in commercial real estate, critical facilities, and data centers — with a single phishing click documented as triggering a 90-day BMS recovery and full occupier relocation. Facility managers are urged to audit internet-exposed building systems and segment OT networks immediately.",
-    tags: ["cybersecurity", "smart-building", "iot", "controls"],
+      "Honeywell is partnering with Rhombus to deliver a cloud-native, AI-powered video and access-control platform sold through its existing channel and system-integrator network, with AI analytics that learn from normal building behavior and integrate directly into Honeywell's access-control stack. Significant for integrators managing converged physical-security and BAS installations.",
+    tags: ["smart-building", "ai", "cybersecurity", "controls"],
   },
   {
-    title: "Threat Groups Target Cyber-Physical Systems to Disrupt Critical Infrastructure Providers",
-    url: "https://www.facilitiesdive.com/news/threat-groups-target-cyber-physical-systems-to-disrupt-critical-infrastruct/815125/",
-    slug: "threat-groups-cyber-physical-critical-infrastruct-b9n3v5q1",
+    title: "ABB Launches Ability BuildingPro Suites to Unify Building and IoT Systems",
+    url: "https://new.abb.com/news/detail/134002/abb-launches-ability-buildingpro-suites-to-unify-building-and-iot-systems-for-data-driven-performance",
+    slug: "abb-launches-ability-buildingpro-suites-to-unify-b-h3p7n2s6",
+    source_domain: "new.abb.com",
+    summary:
+      "Announced at Light + Building 2026, ABB's BuildingPro Suites is a modular software platform connecting BAS, HVAC, energy, IT, and IoT systems via an open, cybersecure architecture on a utilization-based (per data-point) model. Targets system integrators and building operators who want measurable performance outcomes without a full rip-and-replace.",
+    tags: ["smart-building", "iot", "energy", "cybersecurity"],
+  },
+  {
+    title: "Facility Security Teams Must Deploy AI With Intention or Risk Bloat Without Outcomes",
+    url: "https://www.facilitiesdive.com/news/facility-security-teams-must-deploy-ai-with-intention-or-risk-bloat-without/815865/",
+    slug: "facility-security-teams-must-deploy-ai-with-intent-r4k8w1v5",
     source_domain: "facilitiesdive.com",
     summary:
-      "Hacktivists and state-sponsored actors are exploiting OT vulnerabilities in building access control, HVAC, lighting, and metering systems with the goal of causing physical disruption to critical infrastructure operators. Controls integrators are being called to treat BAS network segmentation and device-level authentication as non-negotiable baseline posture, not optional hardening.",
-    tags: ["cybersecurity", "iot", "controls", "smart-building"],
+      "Integration firm Convergint warns that AI adoption in facility security is outpacing governance—adding sensors and analytics without clear use-case definition produces \"bloat without outcomes.\" Integrators and facility managers are advised to define success metrics and map AI tools to specific operational gaps before deployment, a lesson equally applicable to BAS analytics rollouts.",
+    tags: ["ai", "smart-building", "cybersecurity", "controls"],
   },
   {
-    title: "Legacy BMS Protocol Poses Threat to Building Systems: Claroty",
-    url: "https://www.facilitiesdive.com/news/legacy-bms-protocol-poses-threat-to-building-systems-claroty/812827/",
-    slug: "legacy-bms-lontalk-protocol-poses-threat-claroty-x7h2w4j6",
+    title: "Energy Star Is Moving to DOE. Industry Groups Are Hopeful.",
+    url: "https://www.utilitydive.com/news/energy-star-is-moving-to-doe-industry-groups-are-hopeful/814283/",
+    slug: "energy-star-is-moving-to-doe-industry-groups-are-x9c3t6m2",
+    source_domain: "utilitydive.com",
+    summary:
+      "A March 3 memorandum transfers EPA's Energy Star program to the Department of Energy under a 10-year agreement, with a 90-day IT and database migration underway. Facility managers and controls engineers relying on Energy Star benchmarking for compliance and retrofit planning should monitor the transition closely.",
+    tags: ["energy", "sustainability", "retrofit"],
+  },
+  {
+    title: "NFMT East 2026: Lowering Peak Energy Demand Can Provide Outsized Benefit",
+    url: "https://www.facilitiesdive.com/news/nfmt-east-2026-lowering-peak-energy-demand-can-provide-outsized-benefit/814702/",
+    slug: "nfmt-east-2026-lowering-peak-energy-demand-can-pro-f2b7n9k4",
     source_domain: "facilitiesdive.com",
     summary:
-      "Claroty's Team82 found the 1990s-era LonTalk protocol still running \"under the covers\" of proprietary BMS implementations across commercial real estate, hospitality, and data centers — with many exposed controllers providing weak or no authentication. This hidden attack surface persists even when integrators believe a building has fully migrated to BACnet or modern IP-based protocols.",
-    tags: ["cybersecurity", "bacnet", "controls", "smart-building"],
-  },
-  {
-    title: "Schneider Electric Debuts Unified AI-Powered Platform for Buildings",
-    url: "https://www.facilitiesdive.com/news/schneider-electric-debuts-unified-ai-powered-platform-for-buildings/806535/",
-    slug: "schneider-ecostruxure-foresight-ai-platform-build-t3f8c1n5",
-    source_domain: "facilitiesdive.com",
-    summary:
-      "Schneider Electric's EcoStruxure Foresight Operation unifies energy, electrical distribution, and building systems into a single AI-driven supervisory platform, targeting up to 50% operational efficiency gains and 40% reduction in engineering workload — with beta access planned for Q3 2026. For integrators, the platform directly addresses the long-standing fragmentation between BAS, power management, and utility data that drives up operational complexity.",
-    tags: ["ai", "energy", "controls", "smart-building", "analytics"],
-  },
-  {
-    title: "Five Global Trends Reshaping Building Automation",
-    url: "https://www.johnsoncontrols.com/building-insights/2026/thought-leadership/five-global-trends-reshaping-building-automation",
-    slug: "five-global-trends-reshaping-building-automation-k6m2s9r4",
-    source_domain: "johnsoncontrols.com",
-    summary:
-      "Johnson Controls identifies five forces accelerating BAS transformation in 2026: energy cost pressure, tightening decarbonization regulations, aging infrastructure, workforce shortages, and the shift to AI-integrated platforms that connect HVAC, lighting, security, and fire systems. A practical reference for integrators building the business case for BAS modernization and LEED v5 compliance pathways.",
-    tags: ["smart-building", "energy", "controls", "ai", "sustainability"],
-  },
-  {
-    title: "California's 2025 Title 24 Code: The 5 Biggest Changes Impacting Construction in 2026 and Beyond",
-    url: "https://www.milrose.com/insights/californias-2025-title-24-code-the-5-biggest-changes-impacting-construction-in-2026-and-beyond",
-    slug: "california-title-24-2025-biggest-changes-2026-p4v7n1q8",
-    source_domain: "milrose.com",
-    summary:
-      "California's 2025 Title 24 energy code, in force as of January 1, 2026, mandates ASHRAE Guideline 36 control sequences for VAV systems, requires automatic fault detection and diagnostics (AFDD) for covered HVAC equipment, and tightens DDC controller commissioning documentation requirements. The code is locked in through at least 2031 under AB 130, giving specifying engineers a stable compliance target for multi-year project pipelines.",
-    tags: ["energy", "ashrae", "controls", "commissioning", "hvac"],
-  },
-  {
-    title: "Cimetrics Releases BACstac 7.11 with Enhanced BACnet/SC and Revision 28 Support",
-    url: "https://cimetrics.com/march-2026-company-news/",
-    slug: "cimetrics-bacstac-711-bacnet-sc-revision-28-w2j5h8k3",
-    source_domain: "cimetrics.com",
-    summary:
-      "Cimetrics released BACstac 7.11 in March 2026, delivering enhanced BACnet/SC (Secure Connect) encrypted communications, alignment with Revision 28 including Addenda 2020ci, 2020cf, and 2020co, and streamlined BTL certification support across Windows, Linux, and embedded targets. For OEMs and device manufacturers, this update simplifies the path to shipping BACnet/SC-capable products ahead of growing specification requirements for encrypted BAS communications.",
-    tags: ["bacnet", "controls", "cybersecurity"],
-  },
-  {
-    title: "Energy Savings to Push Electrification Forward in 2026 Despite Federal Headwinds",
-    url: "https://www.facilitiesdive.com/news/energy-savings-to-push-electrification-forward-in-2026-despite-federal-headwinds/810541/",
-    slug: "energy-savings-electrification-forward-2026-federa-r9d4t7m1",
-    source_domain: "facilitiesdive.com",
-    summary:
-      "Despite rollbacks in federal clean energy incentives, commercial building electrification momentum continues in 2026 — driven by heat pump efficiency gains, falling equipment costs, and state mandates requiring all-electric new construction in California, Massachusetts, and New York. BAS integrators should prepare for growing demand for heat pump control sequences, grid-interactive building strategies, and load-flexibility programming tied to utility demand response programs.",
-    tags: ["energy", "hvac", "sustainability", "retrofit", "controls"],
+      "Conference recap from NFMT East 2026 covering how demand charges now approach $70/kW and how energy management systems combined with battery storage can dramatically cut those charges. Directly actionable for facility managers and controls engineers designing or retrofitting EMS and BAS demand-response logic.",
+    tags: ["energy", "controls", "analytics", "smart-building"],
   },
 ];
 
@@ -196,7 +196,7 @@ async function getActiveAiCount() {
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log("🤖 BASidekick News Curator — April 5, 2026 — " + new Date().toISOString());
+  console.log("🤖 BASidekick News Curator — April 6, 2026 — " + new Date().toISOString());
   console.log("=".repeat(60));
 
   const retiredCount = await retireStaleArticles();
