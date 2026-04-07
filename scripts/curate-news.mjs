@@ -25,79 +25,52 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ─── ARTICLES TO INSERT ───────────────────────────────────────────────────────
-// Curated April 6, 2026 — sources from early April 2026 and late March 2026
+// Curated April 7, 2026 — sources from April 2026 and late March 2026
 const ARTICLES = [
   {
-    title: "When Data Handling Alters Physical Interpretation: HVAC's Missing Evidence Layer",
-    url: "https://www.automatedbuildings.com/2026/04/when-data-handling-alters-physical-interpretation-hvacs-missing-evidence-layer/",
-    slug: "when-data-handling-alters-physical-interpretation-k7n2m4p8",
-    source_domain: "automatedbuildings.com",
-    summary:
-      "A 2026 study in Energy and AI (Guo et al.) shows that changing how missing sensor data is handled shifts ML conclusions about thermal comfort by 135%—with no change to the underlying building physics. The article argues BAS practitioners face a data provenance and governance gap, not just a modeling problem.",
-    tags: ["analytics", "hvac", "ddc", "ai"],
-  },
-  {
-    title: "How HVAC Contractors Can Navigate the 'Age of Electricity'",
-    url: "https://www.achrnews.com/articles/166031-how-hvac-contractors-can-navigate-the-age-of-electricity",
-    slug: "how-hvac-contractors-can-navigate-the-age-of-elect-b3r9v5x1",
+    title: "FYI: News Briefs in HVAC — April 6, 2026",
+    url: "https://www.achrnews.com/articles/166038-fyi-news-briefs-in-hvac-april-6-2026",
+    slug: "fyi-news-briefs-in-hvac-april-6-2026-k4m7n2p9",
     source_domain: "achrnews.com",
     summary:
-      "Outlines a repeatable all-electric readiness playbook for contractors—covering load calculations, duct/distribution fixes, control strategy, and commissioning discipline—as electrification mandates accelerate and average contractor margins sit at just 5%. Controls engineers and integrators are identified as critical to any credible electrification transition.",
-    tags: ["hvac", "controls", "commissioning", "energy"],
+      "ACHR News' weekly industry roundup covering USMCA review uncertainty and new tariff pressures affecting HVAC equipment supply chains, alongside product and industry news relevant to contractors and controls engineers.",
+    tags: ["hvac", "controls", "energy"],
   },
   {
-    title: "History: Convergence on AutomatedBuildings.com",
-    url: "https://www.automatedbuildings.com/2026/04/history-convergence-on-automatedbuildings-com/",
-    slug: "history-convergence-on-automatedbuildings-com-w6q4j2t8",
-    source_domain: "automatedbuildings.com",
-    summary:
-      "Editor Ken Sinclair traces 27 years of convergence on the platform—from early IP-to-the-edge IoT through Project Haystack and Brick Schema semantic standards, to the current \"Platform Peace\" era where buildings self-configure and interact autonomously with the grid and AI agents. A strategic reference for integrators navigating open-standards adoption.",
-    tags: ["smart-building", "iot", "bacnet", "controls"],
-  },
-  {
-    title: "Honeywell Expands Security Portfolio in Bid to Catch AI Wave",
-    url: "https://www.facilitiesdive.com/news/honeywell-expands-security-portfolio-in-bid-to-catch-ai-wave/815980/",
-    slug: "honeywell-expands-security-portfolio-in-bid-to-cat-m5f1d9c7",
+    title: "As Facilities Increase AI Use, Cyber Threats Loom as a Constraint",
+    url: "https://www.facilitiesdive.com/news/as-facilities-increase-ai-use-cyber-threats-loom-as-a-constraint/814314/",
+    slug: "as-facilities-increase-ai-use-cyber-threats-loom-a-q8r3t5w1",
     source_domain: "facilitiesdive.com",
     summary:
-      "Honeywell is partnering with Rhombus to deliver a cloud-native, AI-powered video and access-control platform sold through its existing channel and system-integrator network, with AI analytics that learn from normal building behavior and integrate directly into Honeywell's access-control stack. Significant for integrators managing converged physical-security and BAS installations.",
-    tags: ["smart-building", "ai", "cybersecurity", "controls"],
+      "Johnson Controls' 2026 survey of 1,000+ facility managers finds 60%+ are using AI for energy optimization and building system efficiency, yet nearly a quarter cite cybersecurity and data privacy as the biggest barrier to expanding AI adoption in building operations.",
+    tags: ["ai", "cybersecurity", "energy", "smart-building", "analytics"],
   },
   {
-    title: "ABB Launches Ability BuildingPro Suites to Unify Building and IoT Systems",
-    url: "https://new.abb.com/news/detail/134002/abb-launches-ability-buildingpro-suites-to-unify-building-and-iot-systems-for-data-driven-performance",
-    slug: "abb-launches-ability-buildingpro-suites-to-unify-b-h3p7n2s6",
-    source_domain: "new.abb.com",
+    title: "Honeywell and Rhombus Introduce AI-Driven Cloud Video and Access Solution",
+    url: "https://www.prnewswire.com/news-releases/honeywell-and-rhombus-introduce-ai-driven-cloud-video-and-access-solution-to-modernize-building-security-302725531.html",
+    slug: "honeywell-and-rhombus-introduce-ai-driven-cloud-vi-b5c9f2k7",
+    source_domain: "prnewswire.com",
     summary:
-      "Announced at Light + Building 2026, ABB's BuildingPro Suites is a modular software platform connecting BAS, HVAC, energy, IT, and IoT systems via an open, cybersecure architecture on a utilization-based (per data-point) model. Targets system integrators and building operators who want measurable performance outcomes without a full rip-and-replace.",
-    tags: ["smart-building", "iot", "energy", "cybersecurity"],
+      "Honeywell and Rhombus have partnered to deliver a cloud-native, AI-powered video and access control platform deployable as an overlay on existing building security infrastructure and distributed through Honeywell's system integrator channel — eliminating the need for a full rip-and-replace.",
+    tags: ["smart-building", "ai", "cybersecurity", "iot", "retrofit"],
   },
   {
-    title: "Facility Security Teams Must Deploy AI With Intention or Risk Bloat Without Outcomes",
-    url: "https://www.facilitiesdive.com/news/facility-security-teams-must-deploy-ai-with-intention-or-risk-bloat-without/815865/",
-    slug: "facility-security-teams-must-deploy-ai-with-intent-r4k8w1v5",
-    source_domain: "facilitiesdive.com",
+    title: "Siemens Showcases Building Automation Modernization at AHR Expo 2026",
+    url: "https://news.siemens.com/en-us/modernization-solutions-ahr-expo-2026/",
+    slug: "siemens-showcases-building-automation-modernizatio-n3p6v8x2",
+    source_domain: "news.siemens.com",
     summary:
-      "Integration firm Convergint warns that AI adoption in facility security is outpacing governance—adding sensors and analytics without clear use-case definition produces \"bloat without outcomes.\" Integrators and facility managers are advised to define success metrics and map AI tools to specific operational gaps before deployment, a lesson equally applicable to BAS analytics rollouts.",
-    tags: ["ai", "smart-building", "cybersecurity", "controls"],
+      "Siemens highlighted its Desigo PXC 4/5/7 HVAC controller family at AHR Expo 2026, supporting BACnet Secure Connect and open protocol integration, alongside Desigo CC V9 and Siemens SLX on Niagara Framework — all emphasizing stepwise modernization without full system replacement for integrators managing aging BAS infrastructure.",
+    tags: ["bacnet", "niagara", "controls", "hvac", "ddc", "retrofit", "cybersecurity"],
   },
   {
-    title: "Energy Star Is Moving to DOE. Industry Groups Are Hopeful.",
-    url: "https://www.utilitydive.com/news/energy-star-is-moving-to-doe-industry-groups-are-hopeful/814283/",
-    slug: "energy-star-is-moving-to-doe-industry-groups-are-x9c3t6m2",
-    source_domain: "utilitydive.com",
+    title: "Niagara Summit 2026: Niagara 5 Previews, Building Data APIs, and AI Use Cases",
+    url: "https://www.tridium.com/us/en/niagarasummit",
+    slug: "niagara-summit-2026-event-hub-j7m4r9k1",
+    source_domain: "tridium.com",
     summary:
-      "A March 3 memorandum transfers EPA's Energy Star program to the Department of Energy under a 10-year agreement, with a 90-day IT and database migration underway. Facility managers and controls engineers relying on Energy Star benchmarking for compliance and retrofit planning should monitor the transition closely.",
-    tags: ["energy", "sustainability", "retrofit"],
-  },
-  {
-    title: "NFMT East 2026: Lowering Peak Energy Demand Can Provide Outsized Benefit",
-    url: "https://www.facilitiesdive.com/news/nfmt-east-2026-lowering-peak-energy-demand-can-provide-outsized-benefit/814702/",
-    slug: "nfmt-east-2026-lowering-peak-energy-demand-can-pro-f2b7n9k4",
-    source_domain: "facilitiesdive.com",
-    summary:
-      "Conference recap from NFMT East 2026 covering how demand charges now approach $70/kW and how energy management systems combined with battery storage can dramatically cut those charges. Directly actionable for facility managers and controls engineers designing or retrofitting EMS and BAS demand-response logic.",
-    tags: ["energy", "controls", "analytics", "smart-building"],
+      "Tridium's annual Niagara Summit (April 7–9, National Harbor MD) features early-access Niagara 5 developer previews, Building Data Service APIs for cloud app development, AI/GenAI use cases in building automation, and cross-protocol interoperability sessions covering BACnet, Modbus, LonWorks, and KNX — plus a limited-time JACE 8000→9000 license transfer promotion through June 2026.",
+    tags: ["niagara", "tridium", "bacnet", "modbus", "controls", "iot", "ai"],
   },
 ];
 
@@ -196,7 +169,7 @@ async function getActiveAiCount() {
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log("🤖 BASidekick News Curator — April 6, 2026 — " + new Date().toISOString());
+  console.log("🤖 BASidekick News Curator — April 7, 2026 — " + new Date().toISOString());
   console.log("=".repeat(60));
 
   const retiredCount = await retireStaleArticles();
