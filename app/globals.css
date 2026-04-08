@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "highlight.js/styles/atom-one-dark.css";
+@import "highlight.js/styles/github.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -41,77 +41,32 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-/* Light Mode */
 :root {
-  --background: #ffffff;
-  --foreground: #18181b;
-  --card: #f8f8f8;
-  --card-foreground: #18181b;
-  --popover: #ffffff;
-  --popover-foreground: #18181b;
-  --primary: #4d7a0f;
-  --primary-foreground: #ffffff;
-  --secondary: #f0f0f2;
-  --secondary-foreground: #18181b;
-  --muted: #e4e4e7;
-  --muted-foreground: #52525b;
-  --accent: #f0f0f2;
-  --accent-foreground: #18181b;
-  --destructive: #dc3a09;
-  --border: #d4d4d8;
-  --input: #d4d4d8;
-  --ring: #4d7a0f;
-  --chart-1: #4d7a0f;
-  --chart-2: #5c8f12;
-  --chart-3: #3d6208;
-  --chart-4: #2e4a06;
-  --chart-5: #1f3204;
+  --background: #f1efe6;
+  --foreground: #1f2920;
+  --card: #fbfaf5;
+  --card-foreground: #1f2920;
+  --popover: #fbfaf5;
+  --popover-foreground: #1f2920;
+  --primary: #1f2920;
+  --primary-foreground: #f1efe6;
+  --secondary: #e2e3d3;
+  --secondary-foreground: #1f2920;
+  --muted: #e2e3d3;
+  --muted-foreground: #5e6b58;
+  --accent: #c08621;
+  --accent-foreground: #1f2920;
+  --destructive: #8b2914;
+  --destructive-foreground: #f1efe6;
+  --border: #d8d9c5;
+  --input: #d8d9c5;
+  --ring: #c08621;
+  --chart-1: #1f2920;
+  --chart-2: #5e6b58;
+  --chart-3: #9a7a3a;
+  --chart-4: #c08621;
+  --chart-5: #a3530c;
   --radius: 0.5rem;
-
-  /* Wiki category colors — darker for light bg contrast */
-  --wiki-networking: #3d6208;
-  --wiki-programming: #2563EB;
-  --wiki-standards: #d97706;
-  --wiki-commissioning: #7c3aed;
-  --wiki-cybersecurity: #dc2626;
-  --wiki-troubleshooting: #059669;
-  --wiki-best-practices: #ea580c;
-}
-
-/* Dark Mode (Default) */
-.dark {
-  --background: #0A0A0A;
-  --foreground: #FFFFFF;
-  --card: #18181B;
-  --card-foreground: #FFFFFF;
-  --popover: #18181B;
-  --popover-foreground: #FFFFFF;
-  --primary: #C4F82A;
-  --primary-foreground: #0A0A0A;
-  --secondary: #18181B;
-  --secondary-foreground: #FFFFFF;
-  --muted: #27272A;
-  --muted-foreground: #A1A1AA;
-  --accent: #27272A;
-  --accent-foreground: #FFFFFF;
-  --destructive: #FA541C;
-  --border: #27272A;
-  --input: #27272A;
-  --ring: #C4F82A;
-  --chart-1: #C4F82A;
-  --chart-2: #9AC820;
-  --chart-3: #7BA318;
-  --chart-4: #5C7D10;
-  --chart-5: #3D5708;
-
-  /* Wiki category colors */
-  --wiki-networking: #C4F82A;
-  --wiki-programming: #3B82F6;
-  --wiki-standards: #F59E0B;
-  --wiki-commissioning: #8B5CF6;
-  --wiki-cybersecurity: #EF4444;
-  --wiki-troubleshooting: #10B981;
-  --wiki-best-practices: #F97316;
 }
 
 @layer base {
@@ -125,12 +80,6 @@
   [role="button"] {
     cursor: pointer;
   }
-}
-
-/* Continuous marquee scroll for carousel */
-@keyframes marquee-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
 }
 
 /* Entrance Animations */
@@ -189,42 +138,11 @@
   opacity: 0;
 }
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, var(--primary) 0%, #7ba318 50%, var(--primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-:is(.dark) .gradient-text {
-  background: linear-gradient(135deg, var(--primary) 0%, #d4ff5a 50%, var(--primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Gradient glow - uses CSS variable so accent color changes propagate */
-.gradient-glow {
-  background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-}
-
-/* Card hover lift effect */
-.card-hover-lift {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card-hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px -8px hsl(from var(--primary) h s l / 0.15);
-}
-
 /* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-in-up,
   .animate-fade-in,
-  .animate-scale-in,
-  .card-hover-lift {
+  .animate-scale-in {
     animation: none;
     transform: none;
     transition: none;
