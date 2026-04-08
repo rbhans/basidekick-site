@@ -1,69 +1,29 @@
 import { ReactNode } from "react";
-import Image from "next/image";
 
 interface PageHeroProps {
   children: ReactNode;
   /** Center the text content */
   centered?: boolean;
-  /** Optional static background image path (e.g., "/images/hero/tools.png") */
+  /** Kept for backwards compatibility — ignored in the new design */
   imageSrc?: string;
-  /** Optional custom background component (replaces imageSrc) */
+  /** Kept for backwards compatibility — ignored in the new design */
   backgroundElement?: ReactNode;
 }
 
 /**
- * Shared hero section with gradient glow overlay.
- * Replaces the duplicated gradient-overlay + container pattern across pages.
+ * Page header wrapper. Retrofit of the old PageHero component — the hero
+ * imagery, gradient glow, and vignette effects have been removed per the
+ * redesign spec (§4.5). It now renders a simple padded section so legacy
+ * pages using <PageHero> still look clean in the new palette.
+ *
+ * For new pages, prefer the title block strip pattern from spec §3.5
+ * (see components/views/home-view.tsx for an example).
  */
-export function PageHero({ children, centered = false, imageSrc, backgroundElement }: PageHeroProps) {
+export function PageHero({ children, centered = false }: PageHeroProps) {
   return (
-    <section className="relative py-16 md:py-20 overflow-hidden">
-      {/* Custom background element (takes priority over imageSrc) */}
-      {backgroundElement}
-
-      {/* Static background image (when provided and no custom background) */}
-      {imageSrc && !backgroundElement && (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-          <Image
-            src={imageSrc}
-            alt=""
-            fill
-            className="object-cover object-center"
-            priority
-            sizes="100vw"
-          />
-
-          {/* Heavy dark overlay */}
-          <div className="absolute inset-0 bg-background/80" />
-
-          {/* Radial vignette */}
-          <div
-            className="absolute inset-0 bg-background"
-            style={{
-              maskImage:
-                "radial-gradient(ellipse 65% 55% at 50% 35%, transparent 15%, black 65%)",
-              WebkitMaskImage:
-                "radial-gradient(ellipse 65% 55% at 50% 35%, transparent 15%, black 65%)",
-            }}
-          />
-
-          {/* Bottom hard fade */}
-          <div className="absolute bottom-0 left-0 right-0 h-2/5 bg-gradient-to-t from-background via-background/90 to-transparent" />
-
-          {/* Top fade */}
-          <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-background/70 to-transparent" />
-
-          {/* Side fades */}
-          <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-background to-transparent" />
-          <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-background to-transparent" />
-        </div>
-      )}
-
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-[0.04] gradient-glow" />
-      </div>
+    <section className="border-b border-border">
       <div
-        className={`container mx-auto px-4 sm:px-6 lg:px-20 relative z-10${
+        className={`container mx-auto px-4 sm:px-6 lg:px-16 py-14 md:py-16 max-w-[1100px]${
           centered ? " text-center" : ""
         }`}
       >
