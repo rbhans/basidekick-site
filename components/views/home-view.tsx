@@ -1,332 +1,365 @@
 "use client";
 
 import Link from "next/link";
-import { SiteBadge } from "@/components/site-badge";
-import { WikiCarousel } from "@/components/wiki-carousel";
-import { RotatingAtlasCard } from "@/components/rotating-atlas-card";
-import { HeroBackground } from "@/components/hero-background";
-import { HeroMarks } from "@/components/hero-marks";
-import { Button } from "@/components/ui/button";
-import {
-  ArrowRight,
-  BookOpen,
-  GlobeHemisphereWest,
-  Cpu,
-  Newspaper,
-  GithubLogo,
-  ArrowSquareOut,
-} from "@phosphor-icons/react";
+import { ArrowRight, GithubLogo } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
-import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
 import { formatDistanceToNow } from "date-fns";
 
-interface CarouselArticle {
-  id: string;
-  title: string;
-  slug: string;
-  summary: string | null;
-  created_at: string;
-  category: { name: string; slug: string } | null;
+// Types ----------------------------------------------------------------
+
+interface FeaturedAtlasEntry {
+  name: string;
+  aliases: string[];
+  description: string | null;
+  type: string;
+  haystackTags: string[];
+  brick: string | null;
+  foundOn: string[];
+  aliasCount: number;
+  url: string;
 }
 
-interface RecentNewsItem {
+interface RecentPostItem {
   id: string;
+  kind: "question" | "project" | "job";
   title: string;
-  slug: string;
-  source_domain: string;
-  summary: string | null;
-  created_at: string;
-  tags: string[];
+  authorHandle: string;
+  createdAt: string;
+  meta: { label: string; value: string }[];
+  url: string;
 }
 
 interface HomeViewProps {
-  carouselArticles?: CarouselArticle[];
-  stats?: {
-    articleCount: number;
-    termCount: number;
-    modelCount: number;
+  pulse: {
+    newWikiThisWeek: number;
+    newAtlasThisWeek: number;
+    newPointStackThisWeek: number;
   };
-  samplePoints?: BabelPointEntry[];
-  sampleEquipment?: BabelEquipmentEntry[];
-  recentNews?: RecentNewsItem[];
+  featuredAtlas: FeaturedAtlasEntry | null;
+  pointStackPosts: RecentPostItem[];
+  pointStackStats: {
+    members: number;
+    posts: number;
+    openJobs: number;
+    onlineNow: number;
+  };
+  alsoHere: {
+    wikiCount: number;
+    newsLatest: string | null;
+    crateCount: number;
+  };
 }
 
-const rustCrates = [
-  {
-    id: "rustbac",
-    name: "rustbac",
-    protocol: "BACnet",
-    description: "Rust crate for BACnet communication in BAS applications.",
-    githubUrl: "https://github.com/rbhans/rust-bac",
-  },
-  {
-    id: "rustmod",
-    name: "rustmod",
-    protocol: "Modbus",
-    description: "Rust crate for Modbus communication in BAS applications.",
-    githubUrl: "https://github.com/rbhans/rust-mod",
-  },
-  {
-    id: "opencrate-bms",
-    name: "OpenCrate BMS",
-    protocol: "BMS",
-    description:
-      "Hobby project to learn BMS by building the software from the ground up in pure Rust.",
-    githubUrl: "https://rbhans.github.io/opencrate-site/",
-  },
-];
+// Component ------------------------------------------------------------
 
 export function HomeView({
-  carouselArticles = [],
-  stats = { articleCount: 0, termCount: 0, modelCount: 0 },
-  samplePoints = [],
-  sampleEquipment = [],
-  recentNews = [],
+  pulse,
+  featuredAtlas,
+  pointStackPosts,
+  pointStackStats,
+  alsoHere,
 }: HomeViewProps) {
   return (
     <div className="min-h-full">
-      {/* Hero Section */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
-        <HeroBackground />
-        <HeroMarks count={50} seed={42} />
+      {/* ============ HERO / MANIFESTO ============ */}
+      <div className="hero-wrap">
+        <div className="hero-bg" aria-hidden="true" />
+        <section className="relative z-[2] container mx-auto px-4 sm:px-6 lg:px-16 py-24 md:py-28 max-w-[1100px]">
+          <div className="max-w-[980px]">
+            {/* Pulse line */}
+            <div className="font-mono text-[11px] uppercase tracking-[1.5px] text-muted-foreground mb-8 flex items-center gap-2">
+              <span className="live-dot" aria-hidden="true" />
+              <span>
+                Updated this week · {pulse.newWikiThisWeek} new wiki entries · {pulse.newAtlasThisWeek} new atlas points · {pulse.newPointStackThisWeek} new PointStack posts
+              </span>
+            </div>
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20 relative z-10">
-          <div className="max-w-3xl mx-auto text-center animate-fade-in-up">
-            <h1 className="text-4xl md:text-5xl lg:text-[56px] font-heading font-bold tracking-tight leading-tight">
-              Tools, community, and{" "}
-              <span className="gradient-text">knowledge</span>.
+            <h1 className="font-heading font-semibold text-[34px] md:text-[44px] lg:text-[52px] leading-[1.08] tracking-[-0.015em] text-foreground">
+              BAS info, community, and resources —{" "}
+              <em className="italic font-medium text-accent">
+                collected from next to the industry
+              </em>
+              , not from inside it.
             </h1>
-            <p className="mt-5 text-lg md:text-[20px] text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Assistive tools, shared knowledge, and a community for BAS
-              professionals.
-            </p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <Button size="lg" asChild className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-8 rounded-lg">
-                <Link href={ROUTES.ATLAS}>
-                  Explore Atlas
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="rounded-lg font-semibold px-8">
-                <Link href={ROUTES.WIKI}>
-                  Browse Wiki
-                </Link>
-              </Button>
-            </div>
-          </div>
 
-          {/* Stats Bar */}
-          <div className="mt-16 max-w-2xl mx-auto">
-            <div className="grid grid-cols-3 gap-4 p-6 bg-card/60 border border-border/50 rounded-xl backdrop-blur-sm">
-              <div className="text-center">
-                <p className="text-2xl md:text-3xl font-heading font-bold text-foreground">
-                  {stats.articleCount > 0 ? `${stats.articleCount}+` : "---"}
-                </p>
-                <p className="text-[12px] text-muted-foreground font-mono uppercase tracking-wider mt-1">
-                  Wiki Articles
-                </p>
-              </div>
-              <div className="text-center border-x border-border">
-                <p className="text-2xl md:text-3xl font-heading font-bold text-foreground">
-                  {stats.termCount > 0 ? `${stats.termCount}+` : "---"}
-                </p>
-                <p className="text-[12px] text-muted-foreground font-mono uppercase tracking-wider mt-1">
-                  Point Definitions
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl md:text-3xl font-heading font-bold text-foreground">
-                  {stats.modelCount > 0 ? `${stats.modelCount}+` : "---"}
-                </p>
-                <p className="text-[12px] text-muted-foreground font-mono uppercase tracking-wider mt-1">
-                  Equipment Models
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Atlas Section — prominent feature area */}
-      <section className="py-16 bg-muted/40">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            {/* Left: Description */}
-            <div>
-              <SiteBadge label="BAS ATLAS" icon={GlobeHemisphereWest} />
-              <h2 className="mt-6 text-2xl md:text-3xl font-heading font-bold tracking-tight">
-                An open source, community-driven reference for{" "}
-                <span className="gradient-text">BAS professionals</span>
-              </h2>
-              <p className="mt-4 text-muted-foreground leading-relaxed">
-                Browse standardized point definitions with Haystack and Brick mappings,
-                explore equipment from major manufacturers, and clean up messy point
-                names — all in one place. BAS Atlas is open source and actively growing
-                with community contributions.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button size="lg" asChild className="rounded-lg font-semibold px-8">
-                  <Link href={ROUTES.ATLAS}>
-                    Explore Atlas
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild className="rounded-lg font-semibold px-8">
-                  <Link href={ROUTES.ATLAS_EQUIPMENT}>
-                    Equipment Catalog
-                  </Link>
-                </Button>
-              </div>
-            </div>
-
-            {/* Right: Rotating example cards */}
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {samplePoints.length > 0 && (
-                  <RotatingAtlasCard entries={samplePoints} type="point" intervalMs={6000} />
-                )}
-                {sampleEquipment.length > 0 && (
-                  <RotatingAtlasCard entries={sampleEquipment} type="equipment" intervalMs={7000} />
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Wiki Carousel */}
-          <div className="mt-20">
-            <div className="flex items-center justify-between mb-8">
-              <SiteBadge label="WIKI" icon={BookOpen} />
-              <Button variant="outline" size="sm" asChild className="rounded-lg font-semibold">
-                <Link href={ROUTES.WIKI}>
-                  Browse All
-                  <ArrowRight className="w-3 h-3 ml-2" />
-                </Link>
-              </Button>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-heading font-bold tracking-tight mb-2">
-              Latest from the Wiki
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              Guides, tutorials, and reference documentation for BAS professionals.
+            <p className="mt-8 text-[17px] md:text-[18px] leading-[1.55] text-foreground max-w-[640px]">
+              A growing reference for the people who build, integrate, and operate building automation systems. Open data, open source, and a small community that actually answers questions.
             </p>
 
-            <WikiCarousel articles={carouselArticles} />
+            <p className="mt-9 font-heading italic text-[16px] text-muted-foreground">
+              — Rob, Tucson
+            </p>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      {/* News + Open Source — side by side on large screens */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* News */}
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <SiteBadge label="NEWS" icon={Newspaper} />
-                <Button variant="outline" size="sm" asChild className="rounded-lg font-semibold">
-                  <Link href={ROUTES.NEWS}>
-                    All News
-                    <ArrowRight className="w-3 h-3 ml-2" />
-                  </Link>
-                </Button>
-              </div>
-              <h2 className="text-2xl md:text-3xl font-heading font-bold tracking-tight mb-2">
-                Industry News
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                The latest in building automation, curated by AI and the community.
-              </p>
+      {/* ============ 01 / ATLAS, TODAY ============ */}
+      <section className="bg-secondary border-y border-border">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-20 max-w-[1100px]">
+          <div className="font-mono text-[11px] uppercase tracking-[1.4px] text-muted-foreground mb-3">
+            <span className="text-accent mr-1.5">01 /</span>
+            Atlas, today
+          </div>
+          <h2 className="font-heading font-semibold text-[28px] md:text-[34px] leading-[1.15] tracking-[-0.01em] text-foreground max-w-[760px]">
+            An open reference for points, equipment, and the messy names they show up under.
+          </h2>
+          <p className="mt-3 text-[16px] text-muted-foreground max-w-[620px] leading-[1.55]">
+            Browse 800+ standardized point definitions with Haystack and Brick mappings. Today&apos;s exhibit:
+          </p>
 
-              {recentNews.length > 0 ? (
-                <div className="space-y-3">
-                  {recentNews.map((article) => (
-                    <Link
-                      key={article.id}
-                      href={ROUTES.NEWS_ARTICLE(article.slug)}
-                      className="group block p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[11px] font-mono text-muted-foreground/60 px-2 py-0.5 rounded border border-border bg-muted/40">
-                          {article.source_domain}
-                        </span>
-                        <span className="text-[11px] text-muted-foreground/40">
-                          {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
-                        </span>
-                      </div>
-                      <h3 className="font-heading text-[15px] font-bold text-foreground group-hover:text-primary transition-colors leading-snug line-clamp-2">
-                        {article.title}
-                      </h3>
-                      {article.summary && (
-                        <p className="mt-1.5 text-[13px] text-muted-foreground line-clamp-2 leading-relaxed">
-                          {article.summary}
-                        </p>
-                      )}
-                    </Link>
-                  ))}
+          {/* Specimen card */}
+          {featuredAtlas && (
+            <div className="mt-9 bg-card border border-border rounded-md p-9 grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="md:pr-6 md:border-r md:border-border">
+                <h3 className="font-heading font-semibold text-[26px] leading-[1.15] text-foreground mb-2">
+                  {featuredAtlas.name}
+                </h3>
+                <div className="font-mono text-[12px] text-muted-foreground leading-[1.6] mb-6">
+                  {featuredAtlas.aliases.join(" · ")}
                 </div>
-              ) : (
-                <div className="p-6 bg-card border border-border rounded-xl text-center">
-                  <p className="text-sm text-muted-foreground">No news articles yet.</p>
-                </div>
-              )}
-            </div>
-
-            {/* Open Source */}
-            <div>
-              <div className="flex items-center justify-between mb-6">
-                <SiteBadge label="OPEN SOURCE" icon={Cpu} />
-                <Button variant="outline" size="sm" asChild className="rounded-lg font-semibold">
-                  <Link href={ROUTES.OPEN_SOURCE}>
-                    View All
-                    <ArrowRight className="w-3 h-3 ml-2" />
-                  </Link>
-                </Button>
+                {featuredAtlas.description && (
+                  <p className="text-[14px] leading-[1.55] text-foreground">
+                    {featuredAtlas.description}
+                  </p>
+                )}
               </div>
-              <h2 className="text-2xl md:text-3xl font-heading font-bold tracking-tight mb-2">
-                Rust Crates for BAS
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                Protocol-first crates for open source BAS software development.
-              </p>
 
-              <div className="space-y-3">
-                {rustCrates.map((crate) => (
-                  <a
-                    key={crate.id}
-                    href={crate.githubUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group block p-4 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Cpu className="w-4 h-4 text-primary" />
-                        </div>
-                        <span className="font-heading text-[15px] font-bold group-hover:text-primary transition-colors">
-                          {crate.name}
+              <div>
+                <SpecimenField label="Type" value={featuredAtlas.type} />
+                <SpecimenField
+                  label="Haystack"
+                  value={
+                    <div className="flex flex-wrap gap-1">
+                      {featuredAtlas.haystackTags.map((t) => (
+                        <span
+                          key={t}
+                          className="inline-block bg-muted px-2 py-0.5 rounded-sm text-[11px]"
+                        >
+                          {t}
                         </span>
-                      </div>
-                      <span className="text-[11px] font-mono px-2 py-0.5 rounded border border-border bg-muted/40 text-muted-foreground">
-                        {crate.protocol}
-                      </span>
+                      ))}
                     </div>
-                    <p className="text-[13px] text-muted-foreground leading-relaxed">
-                      {crate.description}
-                    </p>
-                    <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary group-hover:underline underline-offset-4">
-                      <GithubLogo className="w-3.5 h-3.5" />
-                      View on GitHub
-                      <ArrowSquareOut className="w-3 h-3" />
-                    </span>
-                  </a>
-                ))}
+                  }
+                />
+                {featuredAtlas.brick && (
+                  <SpecimenField label="Brick" value={featuredAtlas.brick} />
+                )}
+                <SpecimenField label="Found on" value={featuredAtlas.foundOn.join(" · ")} />
+                <SpecimenField label="Aliases" value={`${featuredAtlas.aliasCount} known variants`} last />
               </div>
             </div>
+          )}
+
+          {/* Action row */}
+          <div className="mt-9 flex flex-wrap items-center gap-4">
+            <Link
+              href={ROUTES.ATLAS}
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md text-[14px] font-semibold hover:bg-primary/90 transition-colors"
+            >
+              Browse the Atlas
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href={featuredAtlas?.url ?? ROUTES.ATLAS}
+              className="text-[14px] font-semibold text-foreground hover:text-accent transition-colors px-1 py-3"
+            >
+              Suggest a point
+            </Link>
+            <span className="md:ml-auto font-heading italic text-[13px] text-muted-foreground">
+              Featured manually · changes weekly
+            </span>
           </div>
         </div>
       </section>
 
+      {/* ============ 02 / POINTSTACK ============ */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 py-24 max-w-[1100px]">
+        <div className="font-mono text-[11px] uppercase tracking-[1.4px] text-muted-foreground mb-3">
+          <span className="text-accent mr-1.5">02 /</span>
+          PointStack
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-end mb-11">
+          <h2 className="font-heading font-semibold text-[28px] md:text-[34px] leading-[1.15] tracking-[-0.01em] text-foreground">
+            A quiet place to talk shop with people who actually <em className="italic text-muted-foreground font-normal">know</em>.
+          </h2>
+          <div>
+            <p className="text-[16px] text-muted-foreground leading-[1.6] mb-4">
+              Ask questions, post projects, share the things you learned the hard way. PointStack is small, moderated, and specifically for BAS — not another general engineering forum.
+            </p>
+            <div className="flex flex-wrap gap-7 font-mono text-[11px] text-muted-foreground uppercase tracking-[1.2px]">
+              <PointStackStat label="People" value={pointStackStats.members} />
+              <PointStackStat label="Posts" value={pointStackStats.posts} />
+              <PointStackStat label="Open jobs" value={pointStackStats.openJobs} />
+              <PointStackStat label="Online now" value={pointStackStats.onlineNow} accent />
+            </div>
+          </div>
+        </div>
+
+        {/* Recent posts feed */}
+        {pointStackPosts.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-9">
+            {pointStackPosts.slice(0, 3).map((post) => (
+              <Link
+                key={post.id}
+                href={post.url}
+                className="bg-card border border-border rounded-md p-5 flex flex-col gap-2 hover:border-foreground transition-colors"
+              >
+                <div className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                  {post.kind === "question" && <span className="text-accent mr-0.5">?</span>}
+                  {post.kind === "question" ? "Question" : post.kind === "project" ? "Project" : "Job"}
+                </div>
+                <h4 className="font-heading font-semibold text-[16px] leading-[1.3] text-foreground">
+                  {post.title}
+                </h4>
+                <div className="mt-auto pt-2 font-mono text-[10px] text-muted-foreground tracking-[0.5px]">
+                  <span className="text-foreground font-medium">@{post.authorHandle}</span>
+                  {" · "}
+                  {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                  {post.meta[0] && (
+                    <>
+                      {" · "}
+                      {post.meta[0].value} {post.meta[0].label}
+                    </>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* CTA with rule */}
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-foreground" />
+          <Link
+            href={ROUTES.POINTSTACK}
+            className="font-heading italic text-[16px] font-medium text-foreground hover:text-accent transition-colors"
+          >
+            Join the community →
+          </Link>
+        </div>
+      </section>
+
+      {/* ============ ALSO HERE ============ */}
+      <section className="bg-secondary border-t border-border">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-20 max-w-[1100px]">
+          <h3 className="font-heading font-semibold text-[24px] mb-10 text-foreground">
+            Also here. <em className="italic text-muted-foreground font-normal">Smaller, but still loved.</em>
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-9">
+            <AlsoHereItem
+              num="03"
+              title="Wiki"
+              description={`Field-tested guides on grounding, sequencing, commissioning, and the things nobody writes down. ${alsoHere.wikiCount} articles and counting.`}
+              linkLabel="Browse the wiki"
+              href={ROUTES.WIKI}
+            />
+            <AlsoHereItem
+              num="04"
+              title="News"
+              description="A small daily-ish feed of the BAS industry — standards updates, vendor news, security advisories. No hot takes."
+              linkLabel="Read the feed"
+              href={ROUTES.NEWS}
+            />
+            <AlsoHereItem
+              num="05"
+              title="Open Source"
+              description={
+                <>
+                  Rust crates and tools for building BAS software from the ground up. <em>rustbac</em>, <em>rustmod</em>, and an experimental BMS.
+                </>
+              }
+              linkLabel={
+                <span className="inline-flex items-center gap-1.5">
+                  <GithubLogo className="w-3.5 h-3.5" />
+                  View on GitHub
+                </span>
+              }
+              href={ROUTES.OPEN_SOURCE}
+            />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// Sub-components -------------------------------------------------------
+
+function SpecimenField({
+  label,
+  value,
+  last = false,
+}: {
+  label: string;
+  value: React.ReactNode;
+  last?: boolean;
+}) {
+  return (
+    <div
+      className={`grid grid-cols-[90px_1fr] gap-3 py-2.5 ${
+        last ? "" : "border-b border-muted"
+      }`}
+    >
+      <div className="font-mono text-[11px] uppercase tracking-[1px] text-muted-foreground pt-0.5">
+        {label}
+      </div>
+      <div className="font-mono text-[12px] leading-[1.5] text-foreground">{value}</div>
+    </div>
+  );
+}
+
+function PointStackStat({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: number;
+  accent?: boolean;
+}) {
+  return (
+    <div>
+      <strong className="block font-heading not-italic font-semibold text-[24px] text-foreground tracking-normal normal-case mb-0.5 tabular-nums">
+        {value}
+      </strong>
+      <span className={accent ? "text-accent flex items-center gap-1.5" : ""}>
+        {accent && <span className="live-dot" aria-hidden="true" />}
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function AlsoHereItem({
+  num,
+  title,
+  description,
+  linkLabel,
+  href,
+}: {
+  num: string;
+  title: string;
+  description: React.ReactNode;
+  linkLabel: React.ReactNode;
+  href: string;
+}) {
+  return (
+    <div className="border-t border-foreground pt-5">
+      <div className="font-mono text-[11px] tracking-[1px] text-accent">{num}</div>
+      <h4 className="font-heading font-semibold text-[24px] mt-1.5 mb-2 text-foreground leading-[1.2]">
+        {title}
+      </h4>
+      <div className="text-[13px] text-muted-foreground leading-[1.55] mb-4">
+        {description}
+      </div>
+      <Link
+        href={href}
+        className="text-[13px] font-semibold text-foreground border-b border-foreground pb-px hover:text-accent hover:border-accent transition-colors"
+      >
+        {linkLabel}
+      </Link>
     </div>
   );
 }
