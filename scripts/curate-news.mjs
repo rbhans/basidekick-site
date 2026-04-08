@@ -25,52 +25,70 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ─── ARTICLES TO INSERT ───────────────────────────────────────────────────────
-// Curated April 7, 2026 — sources from April 2026 and late March 2026
+// Curated April 8, 2026 — sources from April 6-8, 2026 and late March 2026
 const ARTICLES = [
   {
-    title: "FYI: News Briefs in HVAC — April 6, 2026",
-    url: "https://www.achrnews.com/articles/166038-fyi-news-briefs-in-hvac-april-6-2026",
-    slug: "fyi-news-briefs-in-hvac-april-6-2026-k4m7n2p9",
+    title: "How HVAC Contractors Can Navigate the 'Age of Electricity'",
+    url: "https://www.achrnews.com/articles/166031-how-hvac-contractors-can-navigate-the-age-of-electricity",
+    slug: "how-hvac-contractors-can-navigate-the-age-of-elect-m2p7k4n9",
     source_domain: "achrnews.com",
     summary:
-      "ACHR News' weekly industry roundup covering USMCA review uncertainty and new tariff pressures affecting HVAC equipment supply chains, alongside product and industry news relevant to contractors and controls engineers.",
-    tags: ["hvac", "controls", "energy"],
+      "As heat pump sales now outpace gas furnaces nationally, ACHR News examines the practical gaps for contractors: cold-climate sizing expertise, electrical panel coordination, and utility permitting workflows — plus the cash-flow math of why a 5% average net margin isn't sustainable as jobs grow more complex.",
+    tags: ["hvac", "controls", "energy", "sustainability"],
   },
   {
-    title: "As Facilities Increase AI Use, Cyber Threats Loom as a Constraint",
-    url: "https://www.facilitiesdive.com/news/as-facilities-increase-ai-use-cyber-threats-loom-as-a-constraint/814314/",
-    slug: "as-facilities-increase-ai-use-cyber-threats-loom-a-q8r3t5w1",
+    title: "Shaping Intelligence: How Our Built Environment Must Guide AI Before It Guides Us",
+    url: "https://www.automatedbuildings.com/2026/04/shaping-intelligence-how-our-built-environment-must-guide-ai-before-it-guides-us/",
+    slug: "shaping-intelligence-how-our-built-environment-mus-b4t8r2x6",
+    source_domain: "automatedbuildings.com",
+    summary:
+      "AutomatedBuildings.com's April 2026 theme examines why the built environment's safety constraints, liability structures, and long asset lifecycles must actively shape AI deployment frameworks — not passively adapt to them — as agentic AI moves closer to autonomous building control.",
+    tags: ["ai", "smart-building", "controls", "analytics"],
+  },
+  {
+    title: "The Building Revolution: Is AI About to Eat Your Smart Building Stack?",
+    url: "https://www.automatedbuildings.com/2026/04/the-building-revolution-is-ai-about-to-eat-your-smart-building-stack/",
+    slug: "the-building-revolution-is-ai-about-to-eat-your-sm-c9k3m5p1",
+    source_domain: "automatedbuildings.com",
+    summary:
+      "AutomatedBuildings.com revisits its 'Smarter Stack' framework in the AI era, asking whether the layered architecture model integrators have relied on for technology selection still holds when AI can now span and subsume multiple stack layers simultaneously.",
+    tags: ["ai", "smart-building", "controls", "iot"],
+  },
+  {
+    title: "Iran Conflict Highlights Cyberthreat Exposure of U.S. Facilities",
+    url: "https://www.facilitiesdive.com/news/iran-conflict-highlights-cyberthreat-exposure-of-us-facilities/816215/",
+    slug: "iran-conflict-highlights-cyberthreat-exposure-of-u-j7n3t5w8",
     source_domain: "facilitiesdive.com",
     summary:
-      "Johnson Controls' 2026 survey of 1,000+ facility managers finds 60%+ are using AI for energy optimization and building system efficiency, yet nearly a quarter cite cybersecurity and data privacy as the biggest barrier to expanding AI adoption in building operations.",
-    tags: ["ai", "cybersecurity", "energy", "smart-building", "analytics"],
+      "State-backed actors linked to the Iran conflict are actively targeting cyber-physical building systems; a WiredScore resiliency report warns that BMS and connected building infrastructure — often not designed with security in mind — have dramatically expanded commercial real estate's attack surface.",
+    tags: ["cybersecurity", "smart-building", "iot", "controls"],
   },
   {
-    title: "Honeywell and Rhombus Introduce AI-Driven Cloud Video and Access Solution",
-    url: "https://www.prnewswire.com/news-releases/honeywell-and-rhombus-introduce-ai-driven-cloud-video-and-access-solution-to-modernize-building-security-302725531.html",
-    slug: "honeywell-and-rhombus-introduce-ai-driven-cloud-vi-b5c9f2k7",
-    source_domain: "prnewswire.com",
+    title: "Iran-Linked Hackers Disrupt U.S. Critical Infrastructure by Targeting Internet-Exposed PLCs",
+    url: "https://thehackernews.com/2026/04/iran-linked-hackers-disrupt-us-critical.html",
+    slug: "iran-linked-hackers-disrupt-u-s-critical-infrastru-p9k2n4t6",
+    source_domain: "thehackernews.com",
     summary:
-      "Honeywell and Rhombus have partnered to deliver a cloud-native, AI-powered video and access control platform deployable as an overlay on existing building security infrastructure and distributed through Honeywell's system integrator channel — eliminating the need for a full rip-and-replace.",
-    tags: ["smart-building", "ai", "cybersecurity", "iot", "retrofit"],
+      "A joint CISA/FBI/NSA/DOE advisory released April 7 details how Iranian-affiliated group Handala exploited internet-exposed Rockwell Allen-Bradley PLCs across government facilities, water, and energy sectors since March 2026 — a direct call to action for any integrator with OT devices reachable from the internet.",
+    tags: ["cybersecurity", "controls", "ddc", "iot"],
   },
   {
-    title: "Siemens Showcases Building Automation Modernization at AHR Expo 2026",
-    url: "https://news.siemens.com/en-us/modernization-solutions-ahr-expo-2026/",
-    slug: "siemens-showcases-building-automation-modernizatio-n3p6v8x2",
+    title: "Five Global Trends Reshaping Building Automation",
+    url: "https://www.johnsoncontrols.com/building-insights/2026/thought-leadership/five-global-trends-reshaping-building-automation",
+    slug: "five-global-trends-reshaping-building-automation-p4n6k8r2",
+    source_domain: "johnsoncontrols.com",
+    summary:
+      "Johnson Controls' 2026 thought leadership piece identifies five forces reshaping BAS: rising energy costs, stricter decarbonization mandates, aging infrastructure (68% of U.S. offices predate 2000), AI-driven predictive maintenance, and workforce shortages — with 76% of organizations planning AI deployment for building operations.",
+    tags: ["hvac", "energy", "ai", "retrofit", "controls", "smart-building"],
+  },
+  {
+    title: "Siemens and Viakoo Deliver Advanced OT/IoT Security Management",
+    url: "https://news.siemens.com/en-us/siemens-viakoo-deliver-advanced-security-management/",
+    slug: "siemens-and-viakoo-deliver-advanced-ot-iot-securit-r5k8m2p4",
     source_domain: "news.siemens.com",
     summary:
-      "Siemens highlighted its Desigo PXC 4/5/7 HVAC controller family at AHR Expo 2026, supporting BACnet Secure Connect and open protocol integration, alongside Desigo CC V9 and Siemens SLX on Niagara Framework — all emphasizing stepwise modernization without full system replacement for integrators managing aging BAS infrastructure.",
-    tags: ["bacnet", "niagara", "controls", "hvac", "ddc", "retrofit", "cybersecurity"],
-  },
-  {
-    title: "Niagara Summit 2026: Niagara 5 Previews, Building Data APIs, and AI Use Cases",
-    url: "https://www.tridium.com/us/en/niagarasummit",
-    slug: "niagara-summit-2026-event-hub-j7m4r9k1",
-    source_domain: "tridium.com",
-    summary:
-      "Tridium's annual Niagara Summit (April 7–9, National Harbor MD) features early-access Niagara 5 developer previews, Building Data Service APIs for cloud app development, AI/GenAI use cases in building automation, and cross-protocol interoperability sessions covering BACnet, Modbus, LonWorks, and KNX — plus a limited-time JACE 8000→9000 license transfer promotion through June 2026.",
-    tags: ["niagara", "tridium", "bacnet", "modbus", "controls", "iot", "ai"],
+      "Siemens Smart Infrastructure has integrated Viakoo's Action Platform to offer customers automated OT/IoT security management — covering firmware updates, certificate enforcement, and password hygiene — for large, distributed fleets of physical security devices and building IoT systems.",
+    tags: ["cybersecurity", "iot", "smart-building", "controls"],
   },
 ];
 
@@ -169,7 +187,7 @@ async function getActiveAiCount() {
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log("🤖 BASidekick News Curator — April 7, 2026 — " + new Date().toISOString());
+  console.log("🤖 BASidekick News Curator — April 8, 2026 — " + new Date().toISOString());
   console.log("=".repeat(60));
 
   const retiredCount = await retireStaleArticles();
