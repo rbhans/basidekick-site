@@ -61,12 +61,15 @@ export function FloatingMessenger() {
       {!messengerOpen && (
         <button
           onClick={toggleMessenger}
-          className="fixed bottom-6 right-6 z-40 w-[52px] h-[52px] rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_-10px_hsl(from_var(--primary)_h_s_l_/_0.5)] flex items-center justify-center hover:brightness-110 transition-all"
           aria-label="Open messages"
+          className="group fixed bottom-6 right-6 z-40 bg-primary text-primary-foreground border-[1.5px] border-foreground rounded-md pl-4 pr-4 py-3 flex items-center gap-2.5 shadow-[0_10px_30px_-12px_rgba(31,41,32,0.35)] hover:shadow-[0_14px_34px_-12px_rgba(31,41,32,0.5)] hover:-translate-y-0.5 transition-all"
         >
-          <ChatCircle className="w-6 h-6" weight="fill" />
+          <ChatCircle className="w-4 h-4" weight="fill" />
+          <span className="font-mono text-[11px] font-medium uppercase tracking-[1.4px]">
+            Messages
+          </span>
           {displayCount > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 font-mono text-[10px] font-bold bg-accent text-accent-foreground rounded-full flex items-center justify-center tabular-nums">
+            <span className="ml-1 min-w-[22px] h-[18px] px-1.5 font-mono text-[10px] font-bold bg-accent text-accent-foreground rounded-sm flex items-center justify-center tabular-nums border border-foreground">
               {displayCount > 99 ? "99+" : displayCount}
             </span>
           )}
