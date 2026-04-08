@@ -1,143 +1,157 @@
 import { HomeView } from "@/components/views/home-view";
 import { createClient } from "@supabase/supabase-js";
-import { getBabelData } from "@/lib/data/babel";
-import { getAtlasData } from "@/lib/data/atlas";
+import { ROUTES } from "@/lib/routes";
 
 // ISR: Revalidate daily — content updates come via redeployments
 export const revalidate = 86400;
 
-// Simple Supabase client for public data (no cookies needed)
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return null;
-  }
-
+  if (!supabaseUrl || !supabaseAnonKey) return null;
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
-async function getBabelTermCount(): Promise<number> {
-  try {
-    const data = await getBabelData();
-    if (!data) return 500;
-    return (data.equipment?.length || 0) + (data.points?.length || 0);
-  } catch {
-    return 500;
-  }
-}
+// Hand-curated featured Atlas entry. Rotate manually by editing this constant.
+// The spec explicitly calls for "Featured manually · changes weekly" — a constant
+// is the honest implementation until a featuring UI is added in a follow-up.
+const FEATURED_ATLAS = {
+  name: "Discharge Air Temperature",
+  aliases: ["DAT", "DA-T", "SAT", "SaTemp", "DischrgAirTmp", "DA_TEMP"],
+  description:
+    "Temperature of the air leaving an air-handling unit or terminal box, after any heating, cooling, or mixing. One of the four most-aliased points in the Atlas — every vendor names it differently.",
+  type: "Analog input · °F",
+  haystackTags: ["discharge", "air", "temp", "sensor", "point"],
+  brick: "brick:Discharge_Air_Temperature_Sensor",
+  foundOn: ["AHU", "RTU", "VAV", "FCU", "MAU"],
+  aliasCount: 17,
+  url: ROUTES.ATLAS,
+};
 
-async function getAtlasModelCount(): Promise<number> {
-  try {
-    const data = await getAtlasData();
-    if (!data) return 0;
-    return data.models?.length || 0;
-  } catch {
-    return 0;
-  }
-}
-
-async function getRecentContent() {
+async function getHomePageData() {
   const supabase = getSupabaseClient();
 
   if (!supabase) {
     return {
-      carouselArticles: [],
-      stats: { articleCount: 0, termCount: 500, modelCount: 0 },
-      samplePoints: [],
-      sampleEquipment: [],
-      recentNews: [],
+      pulse: { newWikiThisWeek: 0, newAtlasThisWeek: 0, newPointStackThisWeek: 0 },
+      featuredAtlas: FEATURED_ATLAS,
+      pointStackPosts: [],
+      pointStackStats: { members: 0, posts: 0, openJobs: 0, onlineNow: 0 },
+      alsoHere: { wikiCount: 0, newsLatest: null, crateCount: 3 },
     };
   }
 
-  // Fetch all data in parallel
-  const [articlesResult, articleCountResult, termCount, modelCount, babelData, newsResult] = await Promise.all([
-    // Wiki articles with category (fetch more for carousel)
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [
+    wikiCountResult,
+    wikiThisWeekResult,
+    pointStackPostsResult,
+    pointStackTotalCountResult,
+    pointStackThisWeekResult,
+    pointStackOpenJobsResult,
+    pointStackMemberCountResult,
+  ] = await Promise.all([
     supabase
       .from("wiki_articles")
+      .select("id", { count: "exact", head: true })
+      .eq("is_published", true),
+    supabase
+      .from("wiki_articles")
+      .select("id", { count: "exact", head: true })
+      .eq("is_published", true)
+      .gte("created_at", oneWeekAgo),
+    supabase
+      .from("pointstack_posts")
       .select(`
-        id, title, slug, summary, created_at,
-        category:wiki_categories!wiki_articles_category_id_fkey(name, slug)
+        id,
+        post_type,
+        title,
+        slug,
+        created_at,
+        comment_count,
+        author:profiles!author_id(display_name)
       `)
       .eq("is_published", true)
+      .in("post_type", ["question", "project", "job"])
       .order("created_at", { ascending: false })
-      .limit(30),
-    // Counts
-    supabase.from("wiki_articles").select("id", { count: "exact", head: true }).eq("is_published", true),
-    // Babel and Atlas counts
-    getBabelTermCount(),
-    getAtlasModelCount(),
-    // Babel data for sample cards
-    getBabelData(),
-    // Recent news articles for home page
+      .limit(3),
     supabase
-      .from("news_articles")
-      .select("id, title, slug, source_domain, summary, created_at, tags")
+      .from("pointstack_posts")
+      .select("id", { count: "exact", head: true })
+      .eq("is_published", true),
+    supabase
+      .from("pointstack_posts")
+      .select("id", { count: "exact", head: true })
       .eq("is_published", true)
-      .order("created_at", { ascending: false })
-      .limit(4),
+      .gte("created_at", oneWeekAgo),
+    supabase
+      .from("pointstack_posts")
+      .select("id", { count: "exact", head: true })
+      .eq("is_published", true)
+      .eq("post_type", "job"),
+    supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true }),
   ]);
 
-  if (articlesResult.error) {
-    console.error("[Home] Wiki articles error:", articlesResult.error);
-  }
+  // Map PointStack posts to the HomeView shape.
+  const pointStackPosts = (pointStackPostsResult.data ?? []).map((raw) => {
+    const row = raw as unknown as {
+      id: string;
+      post_type: string;
+      title: string;
+      slug: string;
+      created_at: string;
+      comment_count: number | null;
+      author: { display_name: string | null } | { display_name: string | null }[] | null;
+    };
 
-  // Handle Supabase join returns (may be array or object)
-  const normalizeJoin = <T,>(data: T | T[] | null): T | null => {
-    if (!data) return null;
-    return Array.isArray(data) ? data[0] : data;
-  };
+    const authorObj = Array.isArray(row.author) ? row.author[0] : row.author;
+    const displayName = authorObj?.display_name ?? "anonymous";
+    const handle = displayName.toLowerCase().replace(/\s+/g, "");
 
-  const carouselArticles = (articlesResult.data || []).map(article => ({
-    id: article.id,
-    title: article.title,
-    slug: article.slug,
-    summary: article.summary,
-    created_at: article.created_at,
-    category: normalizeJoin(article.category),
-  }));
+    const kind: "question" | "project" | "job" =
+      row.post_type === "question"
+        ? "question"
+        : row.post_type === "job"
+          ? "job"
+          : "project";
 
-  const stats = {
-    articleCount: articleCountResult.count || 0,
-    termCount,
-    modelCount,
-  };
-
-  // Sample entries for rotating cards
-  const samplePoints = babelData?.points?.slice(0, 20) || [];
-  const sampleEquipment = babelData?.equipment?.slice(0, 20) || [];
-
-  // Recent news
-  const recentNews = (newsResult.data || []).map((article: Record<string, unknown>) => ({
-    id: article.id as string,
-    title: article.title as string,
-    slug: article.slug as string,
-    source_domain: article.source_domain as string,
-    summary: article.summary as string | null,
-    created_at: article.created_at as string,
-    tags: (article.tags || []) as string[],
-  }));
+    return {
+      id: row.id,
+      kind,
+      title: row.title,
+      authorHandle: handle,
+      createdAt: row.created_at,
+      meta: [{ label: "replies", value: String(row.comment_count ?? 0) }],
+      url: `${ROUTES.POINTSTACK}/posts/${row.slug}`,
+    };
+  });
 
   return {
-    carouselArticles,
-    stats,
-    samplePoints,
-    sampleEquipment,
-    recentNews,
+    pulse: {
+      newWikiThisWeek: wikiThisWeekResult.count ?? 0,
+      newAtlasThisWeek: 0, // Atlas data is file-based, no "added this week" query yet
+      newPointStackThisWeek: pointStackThisWeekResult.count ?? 0,
+    },
+    featuredAtlas: FEATURED_ATLAS,
+    pointStackPosts,
+    pointStackStats: {
+      members: pointStackMemberCountResult.count ?? 0,
+      posts: pointStackTotalCountResult.count ?? 0,
+      openJobs: pointStackOpenJobsResult.count ?? 0,
+      onlineNow: 0, // Real presence tracking deferred to follow-up
+    },
+    alsoHere: {
+      wikiCount: wikiCountResult.count ?? 0,
+      newsLatest: null,
+      crateCount: 3,
+    },
   };
 }
 
 export default async function HomePage() {
-  const { carouselArticles, stats, samplePoints, sampleEquipment, recentNews } = await getRecentContent();
-
-  return (
-    <HomeView
-      carouselArticles={carouselArticles}
-      stats={stats}
-      samplePoints={samplePoints}
-      sampleEquipment={sampleEquipment}
-      recentNews={recentNews}
-    />
-  );
+  const data = await getHomePageData();
+  return <HomeView {...data} />;
 }
