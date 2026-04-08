@@ -4,8 +4,7 @@ import Link from "next/link";
 import { WikiArticle, WikiCollection } from "@/lib/types";
 import { WikiArticleRow } from "@/components/wiki";
 import { ROUTES } from "@/lib/routes";
-import { ArrowLeft, FolderOpen } from "@phosphor-icons/react";
-import { PageHero } from "@/components/page-hero";
+import { ArrowLeft } from "@phosphor-icons/react";
 
 interface WikiCollectionViewProps {
   collection: WikiCollection;
@@ -15,46 +14,59 @@ interface WikiCollectionViewProps {
 export function WikiCollectionView({ collection, articles }: WikiCollectionViewProps) {
   return (
     <div className="min-h-full">
-      <PageHero>
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Wiki</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Collection</span>
+          <span className="field-value truncate max-w-[260px]">{collection.name}</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Articles</span>
+          <span className="field-value tabular-nums">{articles.length}</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Drawn by</span>
+          <span className="field-value">R.H.</span>
+        </div>
+      </div>
+
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pt-6 pb-16 max-w-[1100px]">
         <Link
           href={ROUTES.WIKI}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5 mb-6"
         >
-          <ArrowLeft className="size-4" />
-          Back to Wiki
+          <ArrowLeft className="w-3 h-3 text-accent" />
+          Back to wiki
         </Link>
 
-        <div className="flex items-center gap-2 mt-6">
-          <FolderOpen className="size-6 text-primary" />
-          <h1 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
-            {collection.name}
-          </h1>
-        </div>
+        <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.1] tracking-[-0.015em] text-foreground">
+          {collection.name}
+        </h1>
         {collection.description && (
-          <p className="mt-3 text-muted-foreground max-w-[600px]">
+          <p className="mt-4 text-[16px] text-muted-foreground max-w-[680px] leading-[1.55]">
             {collection.description}
           </p>
         )}
-        <p className="mt-2 text-sm text-muted-foreground">
-          {articles.length} {articles.length === 1 ? "article" : "articles"}
-        </p>
-      </PageHero>
 
-      <section className="py-8">
-        <div className="container mx-auto px-4">
+        <div className="mt-10 space-y-2">
           {articles.length === 0 ? (
-            <p className="text-muted-foreground">No articles in this collection yet.</p>
+            <p className="font-heading italic text-[18px] text-muted-foreground py-12 text-center">
+              No articles in this collection yet.
+            </p>
           ) : (
-            <div className="space-y-2">
-              {articles.map((article) => (
-                <WikiArticleRow
-                  key={article.id}
-                  article={article}
-                  onClick={() => {}}
-                  href={ROUTES.WIKI_ARTICLE(article.slug)}
-                />
-              ))}
-            </div>
+            articles.map((article) => (
+              <WikiArticleRow
+                key={article.id}
+                article={article}
+                onClick={() => {}}
+                href={ROUTES.WIKI_ARTICLE(article.slug)}
+              />
+            ))
           )}
         </div>
       </section>

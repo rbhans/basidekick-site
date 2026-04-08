@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { SiteBadge } from "@/components/site-badge";
 import { ArticleCard } from "@/components/article-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +21,6 @@ import {
   WikiFilterState,
   PARAM_TO_GROUP_SLUG,
 } from "@/lib/wiki-filters";
-import { PageHero } from "@/components/page-hero";
 import {
   BookOpen,
   ArrowLeft,
@@ -315,19 +313,37 @@ export function WikiView() {
 
   return (
     <div className="min-h-full">
-      {/* Hero */}
-      <PageHero centered imageSrc="/images/hero/wiki.png">
-        <div className="flex justify-center">
-          <SiteBadge label="WIKI" icon={BookOpen} />
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Wiki</span>
         </div>
-        <h1 className="mt-6 text-3xl md:text-[42px] font-heading font-bold tracking-tight">
-          Knowledge Base
-        </h1>
-        <p className="mt-3 text-muted-foreground max-w-[600px] mx-auto text-lg">
-          Articles, guides, and references for building automation professionals.
-          Learn from industry experts and community contributors.
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">Field Guide &amp; Reference</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Articles</span>
+          <span className="field-value tabular-nums">{totalArticles}</span>
+        </div>
+        <div className="field hidden md:flex">
+          <span className="field-label">Categories</span>
+          <span className="field-value tabular-nums">{categories.length}</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Drawn by</span>
+          <span className="field-value">R.H.</span>
+        </div>
+      </div>
+
+      {/* Tagline */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-16 pt-14 pb-4 max-w-[1100px]">
+        <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5]">
+          Field-tested guides on grounding, sequencing, commissioning, and the things nobody writes down.
         </p>
-      </PageHero>
+      </div>
 
       {/* Landing Sections — shown only when no filters are active */}
       {isLanding && initialDataLoaded && (

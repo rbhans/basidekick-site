@@ -4,8 +4,7 @@ import Link from "next/link";
 import { WikiArticle, WikiFacet } from "@/lib/types";
 import { WikiArticleRow } from "@/components/wiki";
 import { ROUTES } from "@/lib/routes";
-import { ArrowLeft, Tag } from "@phosphor-icons/react";
-import { PageHero } from "@/components/page-hero";
+import { ArrowLeft } from "@phosphor-icons/react";
 
 interface WikiFacetLandingProps {
   facet: WikiFacet;
@@ -16,46 +15,59 @@ interface WikiFacetLandingProps {
 export function WikiFacetLanding({ facet, groupName, articles }: WikiFacetLandingProps) {
   return (
     <div className="min-h-full">
-      <PageHero>
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Wiki</span>
+        </div>
+        <div className="field">
+          <span className="field-label">{groupName}</span>
+          <span className="field-value">{facet.name}</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Articles</span>
+          <span className="field-value tabular-nums">{articles.length}</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Drawn by</span>
+          <span className="field-value">R.H.</span>
+        </div>
+      </div>
+
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pt-6 pb-16 max-w-[1100px]">
         <Link
           href={ROUTES.WIKI}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5 mb-6"
         >
-          <ArrowLeft className="size-4" />
-          Back to Wiki
+          <ArrowLeft className="w-3 h-3 text-accent" />
+          Back to wiki
         </Link>
 
-        <div className="flex items-center gap-2 mt-6">
-          <Tag className="size-6 text-primary" />
-          <h1 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
-            {facet.name}
-          </h1>
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          <span className="font-mono text-[11px] uppercase tracking-wider">{groupName}</span>
-          {" · "}
-          {articles.length} {articles.length === 1 ? "article" : "articles"}
-        </p>
+        <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.1] tracking-[-0.015em] text-foreground">
+          {facet.name}
+        </h1>
         {facet.description && (
-          <p className="mt-3 text-muted-foreground max-w-[600px]">{facet.description}</p>
+          <p className="mt-4 text-[16px] text-muted-foreground max-w-[680px] leading-[1.55]">
+            {facet.description}
+          </p>
         )}
-      </PageHero>
 
-      <section className="py-8">
-        <div className="container mx-auto px-4">
+        <div className="mt-10 space-y-2">
           {articles.length === 0 ? (
-            <p className="text-muted-foreground">No articles with this facet.</p>
+            <p className="font-heading italic text-[18px] text-muted-foreground py-12 text-center">
+              No articles with this facet yet.
+            </p>
           ) : (
-            <div className="space-y-2">
-              {articles.map((article) => (
-                <WikiArticleRow
-                  key={article.id}
-                  article={article}
-                  onClick={() => {}}
-                  href={ROUTES.WIKI_ARTICLE(article.slug)}
-                />
-              ))}
-            </div>
+            articles.map((article) => (
+              <WikiArticleRow
+                key={article.id}
+                article={article}
+                onClick={() => {}}
+                href={ROUTES.WIKI_ARTICLE(article.slug)}
+              />
+            ))
           )}
         </div>
       </section>

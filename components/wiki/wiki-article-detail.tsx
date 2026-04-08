@@ -20,7 +20,6 @@ import {
 import { MarkdownContent } from "@/components/markdown-content";
 import { RelatedArticles } from "@/components/wiki/related-articles";
 import { BookmarkButton } from "@/components/bookmark-button";
-import { PageHero } from "@/components/page-hero";
 
 // Map facet group slugs to URL route prefixes
 const GROUP_ROUTE_MAP: Record<string, string> = {
@@ -158,82 +157,111 @@ export function WikiArticleDetail({ article, tags, facets = [] }: WikiArticleDet
 
   return (
     <div className="min-h-full">
-      <PageHero>
-          <Link
-            href={ROUTES.WIKI}
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
-          >
-            <ArrowLeft className="size-4" />
-            Back to Wiki
-          </Link>
-
-          {article.category && (
-            <Badge variant="outline" className="mb-4">
-              {article.category.name}
-            </Badge>
-          )}
-
-          <h1 className="text-2xl md:text-3xl font-heading font-bold tracking-tight">
-            {article.title}
-          </h1>
-
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <User className="size-4" />
-                {article.author?.display_name || "Anonymous"}
-              </span>
-              <span className="flex items-center gap-1">
-                <Calendar className="size-4" />
-                {formatDate(article.created_at)}
-              </span>
-              <span className="flex items-center gap-1">
-                <Eye className="size-4" />
-                {viewCount} views
-              </span>
-            </div>
-            <BookmarkButton
-              item={{
-                id: article.id,
-                type: "wiki",
-                title: article.title,
-                slug: article.slug,
-                category: article.category?.name,
-              }}
-              size="sm"
-            />
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Wiki</span>
+        </div>
+        {article.category && (
+          <div className="field hidden md:flex">
+            <span className="field-label">Category</span>
+            <span className="field-value">{article.category.name}</span>
           </div>
+        )}
+        <div className="field hidden lg:flex">
+          <span className="field-label">Title</span>
+          <span className="field-value truncate max-w-[340px]">{article.title}</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Rev</span>
+          <span className="field-value">{formatDate(article.created_at)}</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Views</span>
+          <span className="field-value tabular-nums">{viewCount}</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Drawn by</span>
+          <span className="field-value">{article.author?.display_name || "Anonymous"}</span>
+        </div>
+      </div>
 
-          {facets.length > 0 ? (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {facets.map((facet) => {
-                const groupSlug = facet.group?.slug || "";
-                const routePrefix = GROUP_ROUTE_MAP[groupSlug] || "topic";
-                return (
-                  <Link
-                    key={facet.id}
-                    href={ROUTES.WIKI_FACET(routePrefix, facet.slug)}
-                    className="px-2 py-0.5 text-xs border border-border hover:bg-accent transition-colors rounded"
-                  >
-                    {facet.name}
-                  </Link>
-                );
-              })}
-            </div>
-          ) : tags.length > 0 ? (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {tags.map((tag) => (
+      {/* Back strip + article header */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-16 pt-6 max-w-[880px]">
+        <Link
+          href={ROUTES.WIKI}
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5"
+        >
+          <ArrowLeft className="w-3 h-3 text-accent" />
+          Back to wiki
+        </Link>
+
+        {/* Headline */}
+        <h1 className="mt-6 font-heading font-semibold text-[32px] md:text-[38px] leading-[1.1] tracking-[-0.015em] text-foreground max-w-[760px]">
+          {article.title}
+        </h1>
+
+        {/* Meta row */}
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-border">
+          <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <User className="w-3 h-3" />
+              {article.author?.display_name || "Anonymous"}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Calendar className="w-3 h-3" />
+              {formatDate(article.created_at)}
+            </span>
+            <span className="flex items-center gap-1.5 tabular-nums">
+              <Eye className="w-3 h-3" />
+              {viewCount} views
+            </span>
+          </div>
+          <BookmarkButton
+            item={{
+              id: article.id,
+              type: "wiki",
+              title: article.title,
+              slug: article.slug,
+              category: article.category?.name,
+            }}
+            size="sm"
+          />
+        </div>
+
+        {/* Tags / facets */}
+        {facets.length > 0 ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {facets.map((facet) => {
+              const groupSlug = facet.group?.slug || "";
+              const routePrefix = GROUP_ROUTE_MAP[groupSlug] || "topic";
+              return (
                 <Link
-                  key={tag.id}
-                  href={ROUTES.WIKI_TAG(tag.slug)}
-                  className="px-2 py-0.5 text-xs border border-border hover:bg-accent transition-colors"
+                  key={facet.id}
+                  href={ROUTES.WIKI_FACET(routePrefix, facet.slug)}
+                  className="px-2.5 py-1 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border rounded-sm hover:border-foreground hover:text-foreground transition-colors"
                 >
-                  {tag.name}
+                  {facet.name}
                 </Link>
-              ))}
-            </div>
-          ) : null}
-      </PageHero>
+              );
+            })}
+          </div>
+        ) : tags.length > 0 ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <Link
+                key={tag.id}
+                href={ROUTES.WIKI_TAG(tag.slug)}
+                className="px-2.5 py-1 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border rounded-sm hover:border-foreground hover:text-foreground transition-colors"
+              >
+                {tag.name}
+              </Link>
+            ))}
+          </div>
+        ) : null}
+      </div>
 
       {/* Article Content */}
       <section className="py-8">
