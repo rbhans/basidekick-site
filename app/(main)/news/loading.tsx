@@ -2,50 +2,42 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function NewsLoading() {
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-6">
-      {/* Submit box skeleton */}
-      <div className="mb-4 p-5 border border-border rounded-xl bg-card">
-        <Skeleton className="h-5 w-64" />
+    <div className="min-h-full flex-1">
+      {/* Title block strip placeholder */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">News</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">Industry Feed</span>
+        </div>
       </div>
 
-      {/* Search skeleton */}
-      <Skeleton className="h-11 w-full rounded-xl mb-6" />
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pt-16 pb-16 max-w-[900px]">
+        <Skeleton className="h-6 w-[420px] max-w-full mx-auto mb-8 rounded-sm" />
+        <Skeleton className="h-12 w-full mb-5 rounded-md" />
+        <div className="flex gap-3 mb-10">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-7 w-20 rounded-sm" />
+          ))}
+        </div>
 
-      {/* Sort tabs skeleton */}
-      <div className="mb-8 flex gap-2">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-9 w-20 rounded-lg" />
-        ))}
-      </div>
-
-      {/* Card skeletons */}
-      <div className="space-y-4">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="p-6 border border-border rounded-xl bg-card">
-            <div className="flex items-start gap-3 mb-4">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <div className="flex-1">
-                <Skeleton className="h-4 w-32 mb-1" />
-                <Skeleton className="h-3 w-24" />
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="border border-border rounded-md bg-card p-5 grid grid-cols-[56px_1fr_120px] gap-5 items-start">
+              <Skeleton className="h-10 w-10 rounded-sm" />
+              <div>
+                <Skeleton className="h-3 w-32 mb-2" />
+                <Skeleton className="h-5 w-full mb-2" />
+                <Skeleton className="h-3 w-3/4" />
               </div>
-              <Skeleton className="h-5 w-16 rounded-full" />
+              <Skeleton className="h-4 w-full" />
             </div>
-            <Skeleton className="h-5 w-3/4 mb-2" />
-            <Skeleton className="h-4 w-full mb-1" />
-            <Skeleton className="h-4 w-2/3 mb-4" />
-            <div className="flex gap-2 mb-4">
-              <Skeleton className="h-6 w-16 rounded-full" />
-              <Skeleton className="h-6 w-20 rounded-full" />
-              <Skeleton className="h-6 w-14 rounded-full" />
-            </div>
-            <div className="flex gap-6 pt-4 border-t border-border">
-              <Skeleton className="h-4 w-12" />
-              <Skeleton className="h-4 w-8" />
-              <Skeleton className="h-4 w-14" />
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
