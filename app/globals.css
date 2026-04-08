@@ -152,3 +152,79 @@
     opacity: 1;
   }
 }
+
+/* ============ Title block strip — see spec §3.5 ============ */
+.title-block {
+  background: var(--secondary);
+  border-bottom: 1px solid var(--border);
+  padding: 14px clamp(1rem, 4vw, 64px);
+  display: flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--muted-foreground);
+}
+.title-block .field { display: flex; align-items: center; }
+.title-block .field + .field {
+  padding-left: 24px;
+  margin-left: 24px;
+  border-left: 1px solid var(--border);
+}
+.title-block .field-label { color: var(--accent); margin-right: 8px; }
+.title-block .field-value { color: var(--foreground); font-weight: 500; }
+.title-block .spacer { flex: 1; }
+.title-block .live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 6px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+  box-shadow: 0 0 0 0 hsl(from var(--accent) h s l / 0.5);
+  animation: bsk-pulse 2.4s ease-out infinite;
+}
+
+@keyframes bsk-pulse {
+  0% { box-shadow: 0 0 0 0 hsl(from var(--accent) h s l / 0.55); }
+  100% { box-shadow: 0 0 0 8px hsl(from var(--accent) h s l / 0); }
+}
+
+/* ============ Hero schematic background — see spec §4.3 ============ */
+.hero-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url('/hero-schematic.jpg');
+  background-size: 90% auto;
+  background-repeat: no-repeat;
+  background-position: right -2% center;
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+}
+.hero-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    var(--background) 0%,
+    hsl(from var(--background) h s l / 0.85) 25%,
+    hsl(from var(--background) h s l / 0) 55%
+  );
+}
+
+/* ============ Tabular figures — see spec §2.7 ============ */
+.tabular-nums {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
