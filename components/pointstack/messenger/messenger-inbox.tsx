@@ -14,7 +14,7 @@ export function MessengerInbox() {
     conversations,
     messagesLoading,
     fetchConversations,
-    openMessengerConversation
+    openMessengerConversation,
   } = usePointStackStore();
 
   useEffect(() => {
@@ -26,7 +26,9 @@ export function MessengerInbox() {
   if (!user) {
     return (
       <div className="flex-1 flex items-center justify-center p-4">
-        <p className="text-sm text-muted-foreground">Sign in to view messages</p>
+        <p className="font-heading italic text-[14px] text-muted-foreground">
+          Sign in to view messages
+        </p>
       </div>
     );
   }
@@ -37,17 +39,17 @@ export function MessengerInbox() {
       {messagesLoading && conversations.length === 0 && (
         <div className="p-3 space-y-2">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 rounded-lg" />
+            <Skeleton key={i} className="h-14 rounded-sm" />
           ))}
         </div>
       )}
 
       {/* Conversations list */}
       {conversations.length > 0 && (
-        <div className="divide-y divide-border">
+        <div>
           {conversations.map((conversation) => {
             const otherParticipant = conversation.participants?.find(
-              (p) => p.user_id !== user.id
+              (p) => p.user_id !== user.id,
             );
             const hasUnread = conversation.unread_count && conversation.unread_count > 0;
 
@@ -55,10 +57,7 @@ export function MessengerInbox() {
               <button
                 key={conversation.id}
                 onClick={() => openMessengerConversation(conversation.id)}
-                className={cn(
-                  "w-full flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors text-left",
-                  hasUnread && "bg-primary/5"
-                )}
+                className="w-full flex items-center gap-3 px-4 py-3 border-b border-muted hover:bg-muted/50 transition-colors text-left"
               >
                 <UserAvatar
                   displayName={otherParticipant?.profile?.display_name || null}
@@ -67,22 +66,27 @@ export function MessengerInbox() {
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <p className={cn("text-sm font-medium truncate", hasUnread && "text-primary")}>
+                    <p className="font-heading font-semibold text-[14px] leading-tight text-foreground truncate">
                       {otherParticipant?.profile?.display_name || "Unknown User"}
                     </p>
-                    <span className="text-[10px] text-muted-foreground shrink-0">
+                    <span className="font-mono text-[9px] uppercase tracking-[1px] text-muted-foreground shrink-0">
                       {formatDistanceToNow(new Date(conversation.updated_at), { addSuffix: false })}
                     </span>
                   </div>
                   {conversation.last_message && (
-                    <p className="text-xs text-muted-foreground truncate">
+                    <p
+                      className={cn(
+                        "text-[12px] truncate mt-0.5 leading-[1.4]",
+                        hasUnread ? "text-foreground" : "text-muted-foreground",
+                      )}
+                    >
                       {conversation.last_message.content}
                     </p>
                   )}
                 </div>
-                {hasUnread && (
-                  <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
-                )}
+                {hasUnread ? (
+                  <span className="w-2 h-2 rounded-full bg-accent shrink-0" aria-label="Unread" />
+                ) : null}
               </button>
             );
           })}
@@ -92,8 +96,8 @@ export function MessengerInbox() {
       {/* Empty state */}
       {!messagesLoading && conversations.length === 0 && (
         <div className="flex-1 flex items-center justify-center p-6">
-          <p className="text-sm text-muted-foreground text-center">
-            No messages yet
+          <p className="font-heading italic text-[14px] text-muted-foreground text-center">
+            No messages yet.
           </p>
         </div>
       )}

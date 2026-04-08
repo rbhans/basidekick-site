@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "@/hooks/use-auth";
 import { usePointStackStore } from "../pointstack-store";
 import { UserAvatar } from "../shared/user-avatar";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
@@ -21,41 +20,61 @@ export function PointStackMessagesView() {
     }
   }, [user, fetchConversations]);
 
+  const totalUnread = useMemo(
+    () => conversations.reduce((sum, c) => sum + (c.unread_count || 0), 0),
+    [conversations],
+  );
+
   if (!user) {
     return (
-      <div className="max-w-2xl mx-auto p-6">
-        <div className="text-center py-12">
-          <h2 className="text-xl font-semibold mb-2">Sign in to view messages</h2>
-          <p className="text-muted-foreground mb-4">
-            You need to be signed in to access your messages.
-          </p>
-          <Button asChild>
-            <Link href={ROUTES.SIGNIN}>Sign In</Link>
-          </Button>
-        </div>
+      <div className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-16 text-center">
+        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+          Sign in to view your messages.
+        </p>
+        <Link
+          href={ROUTES.SIGNIN}
+          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-md text-[13px] font-semibold hover:bg-primary/90 transition-colors"
+        >
+          Sign in
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 md:p-6">
-      <h1 className="text-2xl font-heading font-bold mb-6">Messages</h1>
+    <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-14">
+      {/* Section heading */}
+      <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-0">
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
+        <h1 className="font-heading font-semibold text-[26px] leading-none text-foreground">
+          Messages
+        </h1>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+          {conversations.length} {conversations.length === 1 ? "thread" : "threads"}
+          {totalUnread > 0 && (
+            <>
+              <span className="text-muted-foreground/50 mx-1.5">·</span>
+              <span className="text-accent">{totalUnread} unread</span>
+            </>
+          )}
+        </span>
+      </div>
 
       {/* Loading */}
       {messagesLoading && conversations.length === 0 && (
-        <div className="space-y-3">
+        <div className="space-y-2 mt-6">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-lg" />
+            <Skeleton key={i} className="h-16 rounded-md" />
           ))}
         </div>
       )}
 
       {/* Conversations list */}
       {conversations.length > 0 && (
-        <div className="space-y-2">
+        <div>
           {conversations.map((conversation) => {
             const otherParticipant = conversation.participants?.find(
-              (p) => p.user_id !== user.id
+              (p) => p.user_id !== user.id,
             );
             const hasUnread = conversation.unread_count && conversation.unread_count > 0;
 
@@ -63,10 +82,7 @@ export function PointStackMessagesView() {
               <Link
                 key={conversation.id}
                 href={ROUTES.POINTSTACK_CONVERSATION(conversation.id)}
-                className={cn(
-                  "flex items-center gap-3 p-4 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors",
-                  hasUnread && "bg-primary/5"
-                )}
+                className="group flex items-center gap-4 py-4 px-2 border-b border-muted hover:bg-muted/40 transition-colors"
               >
                 <UserAvatar
                   displayName={otherParticipant?.profile?.display_name || null}
@@ -74,22 +90,33 @@ export function PointStackMessagesView() {
                   size="lg"
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className={cn("font-medium truncate", hasUnread && "text-primary")}>
+                  <div className="flex items-center justify-between gap-3">
+                    <p
+                      className={cn(
+                        "font-heading font-semibold text-[16px] leading-[1.2] text-foreground truncate group-hover:text-accent transition-colors",
+                      )}
+                    >
                       {otherParticipant?.profile?.display_name || "Unknown User"}
                     </p>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground shrink-0">
                       {formatDistanceToNow(new Date(conversation.updated_at), { addSuffix: true })}
                     </span>
                   </div>
                   {conversation.last_message && (
-                    <p className="text-sm text-muted-foreground truncate">
+                    <p
+                      className={cn(
+                        "text-[13px] truncate mt-1 leading-[1.4]",
+                        hasUnread ? "text-foreground" : "text-muted-foreground",
+                      )}
+                    >
                       {conversation.last_message.content}
                     </p>
                   )}
                 </div>
-                {hasUnread && (
-                  <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                {hasUnread ? (
+                  <span className="shrink-0 w-2 h-2 rounded-full bg-accent" aria-label="Unread" />
+                ) : (
+                  <span className="shrink-0 w-2 h-2" aria-hidden />
                 )}
               </Link>
             );
@@ -99,12 +126,10 @@ export function PointStackMessagesView() {
 
       {/* Empty state */}
       {!messagesLoading && conversations.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">
-            No messages yet. Start a conversation with someone!
-          </p>
+        <div className="py-20 text-center font-heading italic text-[18px] text-muted-foreground">
+          No messages yet. Start a conversation with someone.
         </div>
       )}
-    </div>
+    </section>
   );
 }
