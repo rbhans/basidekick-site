@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import {
   ArrowSquareOut,
   Heart,
@@ -22,7 +22,7 @@ interface NewsCardProps {
   article: NewsArticle;
 }
 
-/** Google's public favicon service — returns 64px icon for any domain */
+/** Google's public favicon service */
 function getFaviconUrl(domain: string, size = 64) {
   return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=${size}`;
 }
@@ -35,11 +35,12 @@ export function NewsCard({ article }: NewsCardProps) {
   const [faviconError, setFaviconError] = useState(false);
 
   const createdDate = new Date(article.created_at);
-  const fullTimestamp = format(createdDate, "MMM d, yyyy 'at' h:mm a");
   const relativeTime = formatDistanceToNow(createdDate, { addSuffix: true });
   const faviconSrc = getFaviconUrl(article.source_domain);
 
-  const handleShare = async () => {
+  const handleShare = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     const url = `${window.location.origin}${detailHref}`;
     try {
       if (navigator.share) {
@@ -51,146 +52,117 @@ export function NewsCard({ article }: NewsCardProps) {
         setTimeout(() => setShareSuccess(false), 2000);
       }
     } catch {
-      // User cancelled share
+      // User cancelled
     }
   };
 
+  const handleVote = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (user) voteArticle(article.id, article.user_vote === 1 ? -1 : 1);
+  };
+
   return (
-    <article className="relative bg-card border border-border rounded-xl p-6 hover:border-primary/30 transition-colors group/card overflow-hidden">
-      {/* Faint favicon watermark in top-right corner */}
-      {!faviconError && (
-        <div className="absolute top-4 right-4 w-20 h-20 opacity-[0.04] pointer-events-none">
+    <article className="group grid grid-cols-[56px_1fr_auto] gap-5 items-start py-5 px-4 border border-border rounded-md bg-card hover:border-foreground transition-colors">
+      {/* Favicon tile */}
+      <div className="w-10 h-10 border border-border rounded-sm bg-background flex items-center justify-center overflow-hidden shrink-0 mt-0.5">
+        {!faviconError ? (
           <Image
             src={faviconSrc}
-            alt=""
-            width={80}
-            height={80}
-            className="w-full h-full object-contain"
+            alt={article.source_domain}
+            width={28}
+            height={28}
+            className="w-7 h-7 object-contain"
             onError={() => setFaviconError(true)}
             unoptimized
           />
-        </div>
-      )}
-
-      {/* Source row */}
-      <div className="flex items-center gap-3 mb-4 relative">
-        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0 overflow-hidden">
-          {!faviconError ? (
-            <Image
-              src={faviconSrc}
-              alt={article.source_domain}
-              width={24}
-              height={24}
-              className="w-6 h-6"
-              onError={() => setFaviconError(true)}
-              unoptimized
-            />
-          ) : (
-            <ArrowSquareOut className="w-5 h-5 text-muted-foreground" />
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <span className="text-[14px] font-semibold text-foreground truncate block">
-            {article.source_domain}
-          </span>
-          <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground/60">
-            {article.submitter?.display_name && (
-              <>
-                <span>by {article.submitter.display_name}</span>
-                <span>·</span>
-              </>
-            )}
-            <time dateTime={article.created_at} title={fullTimestamp}>
-              About {relativeTime}
-            </time>
-          </div>
-        </div>
+        ) : (
+          <ArrowSquareOut className="w-4 h-4 text-muted-foreground" />
+        )}
       </div>
 
-      {/* Title — links to detail/comments page */}
-      <Link href={detailHref} className="block group/link relative">
-        <h3 className="font-heading text-[16px] font-bold text-foreground group-hover/link:text-primary transition-colors leading-snug">
-          {article.title}
-        </h3>
-      </Link>
-
-      {/* Summary */}
-      {article.summary && (
-        <Link href={detailHref} className="block relative">
-          <p className="text-[14px] text-muted-foreground leading-relaxed mt-2 line-clamp-3">
-            {article.summary}
-          </p>
-        </Link>
-      )}
-
-      {/* External link */}
-      <a
-        href={article.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="relative inline-flex items-center gap-1.5 mt-3 text-[13px] text-primary/70 hover:text-primary transition-colors"
-      >
-        Read at {article.source_domain}
-        <ArrowSquareOut className="w-3 h-3" />
-      </a>
-
-      {/* Tags */}
-      {article.tags.length > 0 && (
-        <div className="flex items-center gap-2 mt-4 flex-wrap relative">
-          {article.tags.slice(0, 5).map((tag) => (
-            <span
-              key={tag}
-              className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground"
-            >
-              {tag}
-            </span>
-          ))}
-          {article.tags.length > 5 && (
-            <span className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground">
-              +{article.tags.length - 5}
-            </span>
+      {/* Body */}
+      <Link href={detailHref} className="block min-w-0">
+        <div className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground mb-1">
+          {article.source_domain}
+          {article.submitter?.display_name && (
+            <>
+              <span className="mx-1.5 text-muted-foreground/50">·</span>
+              <span>by {article.submitter.display_name}</span>
+            </>
           )}
         </div>
-      )}
+        <h3 className="font-heading font-semibold text-[17px] leading-[1.3] text-foreground group-hover:text-accent transition-colors">
+          {article.title}
+        </h3>
+        {article.summary && (
+          <p className="mt-1.5 text-[13px] text-muted-foreground leading-[1.5] line-clamp-2 max-w-[640px]">
+            {article.summary}
+          </p>
+        )}
 
-      {/* Engagement */}
-      <div className="flex items-center gap-6 pt-4 mt-4 border-t border-border relative">
-        <button
-          onClick={() => user && voteArticle(article.id, article.user_vote === 1 ? -1 : 1)}
-          disabled={!user}
-          className={cn(
-            "flex items-center gap-2 transition-colors",
-            article.user_vote === 1
-              ? "text-primary"
-              : "text-muted-foreground hover:text-primary"
+        {/* Tags + engagement row */}
+        <div className="mt-3 flex items-center gap-4 flex-wrap font-mono text-[10px] text-muted-foreground uppercase tracking-[1.1px]">
+          <time dateTime={article.created_at}>{relativeTime}</time>
+
+          {article.tags.length > 0 && (
+            <>
+              <span className="text-muted-foreground/40">·</span>
+              <span className="normal-case tracking-normal text-[11px] text-muted-foreground">
+                {article.tags.slice(0, 3).join(" · ")}
+                {article.tags.length > 3 && ` · +${article.tags.length - 3}`}
+              </span>
+            </>
           )}
+        </div>
+      </Link>
+
+      {/* Actions column */}
+      <div className="flex flex-col items-end gap-2 text-right">
+        <a
+          href={article.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="font-mono text-[10px] uppercase tracking-[1.2px] text-foreground hover:text-accent transition-colors border-b border-accent/60 pb-0.5"
         >
-          <Heart className="w-4 h-4" weight={article.user_vote === 1 ? "fill" : "regular"} />
-          <span className="text-[13px]">{article.upvote_count}</span>
-        </button>
-        <Link
-          href={detailHref}
-          className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
-        >
-          <ChatCircle className="w-4 h-4" />
-          <span className="text-[13px]">{article.comment_count}</span>
-        </Link>
-        <button
-          onClick={handleShare}
-          className={cn(
-            "flex items-center gap-2 transition-colors",
-            shareSuccess
-              ? "text-green-500"
-              : "text-muted-foreground hover:text-primary"
-          )}
-        >
-          {shareSuccess ? (
-            <CheckCircle className="w-4 h-4" weight="fill" />
-          ) : (
-            <Share className="w-4 h-4" />
-          )}
-          <span className="text-[13px]">Share</span>
-        </button>
+          Read original
+          <ArrowSquareOut className="inline w-3 h-3 ml-1" />
+        </a>
+        <div className="flex items-center gap-3 mt-auto pt-2">
+          <button
+            onClick={handleVote}
+            disabled={!user}
+            className={cn(
+              "flex items-center gap-1 text-[11px] font-mono transition-colors tabular-nums",
+              article.user_vote === 1
+                ? "text-accent"
+                : "text-muted-foreground hover:text-accent disabled:hover:text-muted-foreground",
+            )}
+            aria-label="Upvote"
+          >
+            <Heart className="w-3.5 h-3.5" weight={article.user_vote === 1 ? "fill" : "regular"} />
+            {article.upvote_count}
+          </button>
+          <Link
+            href={detailHref}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1 text-[11px] font-mono text-muted-foreground hover:text-accent transition-colors tabular-nums"
+          >
+            <ChatCircle className="w-3.5 h-3.5" />
+            {article.comment_count}
+          </Link>
+          <button
+            onClick={handleShare}
+            className={cn(
+              "flex items-center gap-1 text-[11px] font-mono transition-colors",
+              shareSuccess ? "text-accent" : "text-muted-foreground hover:text-accent",
+            )}
+            aria-label="Share"
+          >
+            {shareSuccess ? <CheckCircle className="w-3.5 h-3.5" weight="fill" /> : <Share className="w-3.5 h-3.5" />}
+          </button>
+        </div>
       </div>
     </article>
   );
