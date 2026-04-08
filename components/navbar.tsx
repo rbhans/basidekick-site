@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { List, X, Moon, Sun, User, SignOut, Gear, ShieldCheck, MagnifyingGlass, GlobeHemisphereWest, Newspaper, Code, UsersThree, BookOpenText, type Icon } from "@phosphor-icons/react";
-import { useTheme } from "next-themes";
+import { List, X, SignOut, Gear, ShieldCheck } from "@phosphor-icons/react";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -19,18 +18,17 @@ import { NotificationBell } from "@/components/pointstack/notifications/notifica
 import { HeaderSearch } from "./header-search";
 import { ROUTES } from "@/lib/routes";
 
-const NAV_LINKS: { href: string; label: string; icon: Icon }[] = [
-  { href: ROUTES.ATLAS, label: "Atlas", icon: GlobeHemisphereWest },
-  { href: ROUTES.NEWS, label: "News", icon: Newspaper },
-  { href: ROUTES.OPEN_SOURCE, label: "Open Source", icon: Code },
-  { href: ROUTES.POINTSTACK, label: "PointStack Social", icon: UsersThree },
-  { href: ROUTES.WIKI, label: "Wiki", icon: BookOpenText },
+const NAV_LINKS: { href: string; label: string }[] = [
+  { href: ROUTES.ATLAS, label: "Atlas" },
+  { href: ROUTES.POINTSTACK, label: "PointStack" },
+  { href: ROUTES.WIKI, label: "Wiki" },
+  { href: ROUTES.NEWS, label: "News" },
+  { href: ROUTES.OPEN_SOURCE, label: "Open Source" },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
   const { user, loading: authLoading, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -68,61 +66,51 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 h-[64px] px-4 sm:px-6 lg:px-10 border-b border-border/50 bg-background/90 backdrop-blur-md flex items-center relative">
-        {/* Left: Logo */}
-        <div className="flex items-center shrink-0">
-          <Link href="/" className="font-heading text-[18px] font-bold text-foreground hover:text-primary transition-colors">
-            [BASidekick]
-          </Link>
-        </div>
+      <header className="sticky top-0 z-50 px-4 sm:px-6 lg:px-16 py-5 border-b border-border bg-background flex items-center gap-8">
+        {/* Brand — italic Fraunces */}
+        <Link
+          href="/"
+          className="font-heading italic text-[22px] font-semibold tracking-tight text-foreground hover:text-accent transition-colors shrink-0"
+        >
+          BASidekick
+        </Link>
 
-        {/* Center: Nav links — absolutely positioned for true centering */}
-        <nav className="hidden md:flex items-center justify-center gap-1 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          {NAV_LINKS.map((link) => {
-            const IconComponent = link.icon;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`px-3 py-2 rounded-lg text-[14px] font-medium transition-colors inline-flex items-center gap-1.5 ${
-                  isActive(link.href)
-                    ? "text-primary bg-primary/10"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                }`}
-              >
-                <IconComponent className="w-4 h-4" />
-                {link.label}
-              </Link>
-            );
-          })}
+        {/* Desktop nav links */}
+        <nav className="hidden md:flex items-center gap-8 ml-auto">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`text-[14px] font-medium transition-colors ${
+                isActive(link.href)
+                  ? "text-accent"
+                  : "text-foreground hover:text-accent"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
-        {/* Right: Search + Actions */}
-        <div className="flex items-center gap-2 shrink-0 ml-auto">
+        {/* Right cluster: search, notifications, user menu */}
+        <div className="flex items-center gap-3 shrink-0 md:ml-6 ml-auto">
           <div className="hidden sm:block">
             <HeaderSearch />
           </div>
 
           {user && <NotificationBell />}
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            aria-label="Toggle theme"
-          >
-            <Sun className="w-4 h-4 hidden dark:block" />
-            <Moon className="w-4 h-4 dark:hidden" />
-          </Button>
-
-          {/* User menu */}
           {!authLoading && (
             user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 relative" aria-label="User menu">
-                    <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 relative"
+                    aria-label="User menu"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-mono text-xs font-medium">
                       {getUserInitials()}
                     </div>
                   </Button>
@@ -153,9 +141,9 @@ export function Navbar() {
               <Button
                 size="sm"
                 onClick={() => router.push(ROUTES.SIGNIN)}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-sm px-4"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-sm px-4 rounded-md"
               >
-                Sign In
+                Sign in
               </Button>
             )
           )}
@@ -176,33 +164,29 @@ export function Navbar() {
       {/* Mobile drawer */}
       {mobileOpen && (
         <>
-          <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setMobileOpen(false)} />
+          <div className="fixed inset-0 z-50 bg-foreground/50" onClick={() => setMobileOpen(false)} />
           <div className="fixed top-0 right-0 bottom-0 z-50 w-[280px] bg-background border-l border-border flex flex-col">
-            <div className="h-[64px] px-4 flex items-center justify-between border-b border-border">
-              <span className="font-heading text-lg font-bold">Menu</span>
+            <div className="px-4 py-5 flex items-center justify-between border-b border-border">
+              <span className="font-heading italic text-[20px] font-semibold tracking-tight">BASidekick</span>
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(false)} aria-label="Close menu">
                 <X className="w-5 h-5" />
               </Button>
             </div>
             <nav className="flex-1 p-4 space-y-1">
-              {NAV_LINKS.map((link) => {
-                const IconComponent = link.icon;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-[15px] font-semibold transition-colors ${
-                      isActive(link.href)
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <IconComponent className="w-5 h-5" />
-                    {link.label}
-                  </Link>
-                );
-              })}
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`block px-4 py-3 rounded-md text-[15px] font-medium transition-colors ${
+                    isActive(link.href)
+                      ? "text-accent"
+                      : "text-foreground hover:text-accent hover:bg-secondary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
             </nav>
             <div className="p-4 border-t border-border">
               <div className="sm:hidden mb-3">
@@ -213,7 +197,7 @@ export function Navbar() {
                   className="w-full"
                   onClick={() => { router.push(ROUTES.SIGNIN); setMobileOpen(false); }}
                 >
-                  Sign In
+                  Sign in
                 </Button>
               )}
             </div>
