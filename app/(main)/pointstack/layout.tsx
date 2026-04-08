@@ -3,25 +3,16 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import {
-  House,
-  UsersThree,
-  Buildings,
-  Briefcase,
-  Folder,
-  ChatCircle,
-  Bell,
-} from "@phosphor-icons/react";
+import { ChatCircle, Bell } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
 import { usePointStackStore } from "@/components/pointstack/pointstack-store";
-import { PageHero } from "@/components/page-hero";
 
-const NAV_ITEMS = [
-  { href: "/pointstack", label: "Feed", icon: House, exact: true },
-  { href: "/pointstack/people", label: "People", icon: UsersThree },
-  { href: "/pointstack/companies", label: "Companies", icon: Buildings },
-  { href: "/pointstack/jobs", label: "Jobs", icon: Briefcase },
-  { href: "/pointstack/resources", label: "Resources", icon: Folder },
+const NAV_ITEMS: { href: string; label: string; exact?: boolean }[] = [
+  { href: "/pointstack", label: "Feed", exact: true },
+  { href: "/pointstack/people", label: "People" },
+  { href: "/pointstack/companies", label: "Companies" },
+  { href: "/pointstack/jobs", label: "Jobs" },
+  { href: "/pointstack/resources", label: "Resources" },
 ];
 
 const USER_NAV_ITEMS = [
@@ -51,44 +42,52 @@ export default function PointStackLayout({
 
   return (
     <div className="min-h-full flex flex-col">
-      {/* Hero */}
-      <PageHero centered imageSrc="/images/hero/pointstack.png">
-        <h1 className="text-3xl md:text-[42px] font-heading font-bold tracking-tight">
-          PointStack
-        </h1>
-        <p className="mt-3 text-muted-foreground max-w-[600px] mx-auto text-lg">
-          Connect with BAS professionals, share projects, find work, and grow your network.
-        </p>
-      </PageHero>
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">PointStack</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">Community Feed</span>
+        </div>
+        <div className="field hidden md:flex">
+          <span className="field-label">Scope</span>
+          <span className="field-value">BAS Professionals</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label"><span className="live-dot" />Live</span>
+          <span className="field-value">Active</span>
+        </div>
+      </div>
 
-      {/* Horizontal Nav */}
-      <nav className="border-b border-border sticky top-[64px] z-10 bg-background">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-center gap-1 pb-4 overflow-x-auto scrollbar-hide">
+      {/* Section sub-nav */}
+      <nav className="border-b border-border sticky top-0 z-10 bg-background">
+        <div className="container mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-16">
+          <div className="flex items-center gap-6 py-4 overflow-x-auto scrollbar-hide">
             {NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
               const active = isActive(item.href, item.exact);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 text-[14px] font-semibold rounded-lg whitespace-nowrap transition-colors",
+                    "font-mono text-[11px] uppercase tracking-[1.2px] whitespace-nowrap transition-colors py-1",
                     active
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground/70 hover:bg-muted/50"
+                      ? "text-accent border-b-[1.5px] border-accent pb-0.5"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  <Icon className="w-4 h-4" weight={active ? "fill" : "regular"} />
-                  <span className="hidden sm:inline">{item.label}</span>
+                  {item.label}
                 </Link>
               );
             })}
 
-            {/* User-specific navigation */}
             {user && (
               <>
-                <div className="w-px h-5 bg-border mx-3 shrink-0" />
+                <span className="w-px h-4 bg-border mx-1 shrink-0" />
                 {USER_NAV_ITEMS.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.href);
@@ -98,17 +97,17 @@ export default function PointStackLayout({
                       key={item.href}
                       href={item.href}
                       className={cn(
-                        "relative flex items-center gap-2 px-4 py-2 text-[14px] font-semibold rounded-lg whitespace-nowrap transition-colors",
+                        "relative flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[1.2px] whitespace-nowrap transition-colors py-1",
                         active
-                          ? "text-primary bg-primary/10"
-                          : "text-muted-foreground hover:text-foreground/70 hover:bg-muted/50"
+                          ? "text-accent"
+                          : "text-muted-foreground hover:text-foreground",
                       )}
                       aria-label={item.label}
                     >
-                      <Icon className="w-4 h-4" weight={active ? "fill" : "regular"} />
+                      <Icon className="w-3.5 h-3.5" weight={active ? "fill" : "regular"} />
                       <span className="hidden md:inline">{item.label}</span>
                       {count > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 text-[10px] font-bold bg-destructive text-white rounded-full flex items-center justify-center">
+                        <span className="min-w-[16px] h-4 px-1 text-[9px] font-bold bg-accent text-accent-foreground rounded-full flex items-center justify-center tabular-nums">
                           {count > 99 ? "99+" : count}
                         </span>
                       )}

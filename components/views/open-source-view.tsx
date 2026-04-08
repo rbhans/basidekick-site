@@ -1,8 +1,6 @@
 "use client";
 
-import { ArrowRight, Cpu, GithubLogo } from "@phosphor-icons/react";
-import { SiteBadge } from "@/components/site-badge";
-import { PageHero } from "@/components/page-hero";
+import { ArrowRight, GithubLogo } from "@phosphor-icons/react";
 
 const rustCrates = [
   {
@@ -10,7 +8,7 @@ const rustCrates = [
     name: "rustbac",
     protocol: "BACnet",
     description:
-      "Open source Rust crate for BACnet communication in BAS applications. This is the first protocol crate in the BASidekick Rust suite.",
+      "Open source Rust crate for BACnet communication in BAS applications. The first protocol crate in the BASidekick Rust suite.",
     githubUrl: "https://github.com/rbhans/rust-bac",
   },
   {
@@ -34,57 +32,94 @@ const rustCrates = [
 export function OpenSourceView() {
   return (
     <div className="min-h-full">
-      <PageHero>
-        <SiteBadge label="OPEN SOURCE" icon={Cpu} />
-        <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
-          Open Source Rust Crates for BAS
-        </h1>
-        <p className="mt-3 text-muted-foreground max-w-2xl">
-          Protocol-first Rust crates for open source BAS software. Start with
-          BACnet and expand into a full Rust-native protocol stack.
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Open Source</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">Rust Crates for BAS</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Crates</span>
+          <span className="field-value tabular-nums">{rustCrates.length}</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Drawn by</span>
+          <span className="field-value">R.H.</span>
+        </div>
+      </div>
+
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pt-16 pb-16 max-w-[1100px]">
+        <p className="font-heading italic text-[17px] text-muted-foreground text-center mb-12 leading-[1.5] max-w-[640px] mx-auto">
+          Rust crates and tools for building BAS software from the ground up. Protocol-first, open source.
         </p>
-      </PageHero>
 
-      <section className="py-8 pb-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-20">
-          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-6">
-            RUST CRATES ({rustCrates.length})
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {rustCrates.map((item) => (
-              <a
-                key={item.id}
-                href={item.githubUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="group block p-6 bg-card border border-border rounded-xl hover:border-primary/30 transition-all"
-              >
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Cpu className="w-5 h-5 text-primary" />
-                  </div>
-                  <span className="text-xs font-mono px-2.5 py-1 rounded-md border border-border bg-muted/40">
-                    {item.protocol}
-                  </span>
-                </div>
+        <div className="font-mono text-[11px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-3 border-b border-foreground">
+          <span className="text-accent mr-1.5">01 /</span>
+          Crates
+        </div>
 
-                <h2 className="font-heading text-lg font-bold group-hover:text-primary transition-colors">
-                  {item.name}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+          {rustCrates.map((crate) => (
+            <a
+              key={crate.id}
+              href={crate.githubUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="group block p-6 bg-card border border-border rounded-md hover:border-foreground transition-colors"
+            >
+              <div className="flex items-baseline justify-between gap-3 mb-3">
+                <h2 className="font-heading font-semibold text-[22px] leading-[1.15] text-foreground group-hover:text-accent transition-colors">
+                  {crate.name}
                 </h2>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                  {item.description}
-                </p>
-
-                <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary group-hover:underline underline-offset-4">
-                  <GithubLogo className="w-4 h-4" />
-                  View on GitHub
-                  <ArrowRight className="w-3 h-3" />
+                <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground border border-border px-2 py-1 rounded-sm shrink-0">
+                  {crate.protocol}
                 </span>
-              </a>
-            ))}
-          </div>
+              </div>
+              <p className="text-[13px] text-muted-foreground leading-[1.55] mb-4">
+                {crate.description}
+              </p>
+              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[1.2px] text-foreground border-b border-accent pb-0.5 group-hover:text-accent transition-colors">
+                <GithubLogo className="w-3.5 h-3.5" />
+                View on GitHub
+                <ArrowRight className="w-3 h-3" />
+              </span>
+            </a>
+          ))}
         </div>
       </section>
+
+      {/* Colophon */}
+      <div className="border-t border-border bg-secondary">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-14 max-w-[1100px]">
+          <div className="grid grid-cols-1 md:grid-cols-[240px_1fr_220px] gap-10 font-mono text-[12px] text-muted-foreground leading-relaxed">
+            <div>
+              <strong className="text-foreground font-bold">Open Source</strong>
+              <br />
+              Built and maintained by
+              <br />
+              Rob Hansen, Tucson
+            </div>
+            <div>
+              Protocol-first, MIT-licensed, Rust-native. Pull requests welcome on every public repo.
+            </div>
+            <div className="md:text-right">
+              <a
+                href="https://github.com/rbhans"
+                target="_blank"
+                rel="noreferrer"
+                className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors"
+              >
+                github.com/rbhans
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
