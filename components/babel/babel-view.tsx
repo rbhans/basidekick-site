@@ -1,275 +1,433 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { GithubLogo, ArrowSquareOut, Code, Copy } from "@phosphor-icons/react";
-import { toast } from "sonner";
-import { SiteBadge } from "@/components/site-badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { MagnifyingGlass, GithubLogo } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
-import { BabelEntryCard } from "./babel-entry-card";
-import { BabelSearch } from "./babel-search";
-import { BabelSidebar } from "./babel-sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useBabelAll } from "./use-babel-data";
-import { PageHero } from "@/components/page-hero";
+import { BabelEntryRow } from "./babel-entry-row";
+import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
 
-interface BabelViewShellProps {
-  showHeader: boolean;
+export type AtlasScope = "all" | "points" | "equipment";
+
+interface BabelViewProps {
+  scope: AtlasScope;
+  onScopeChange: (scope: AtlasScope) => void;
 }
 
-function BabelViewShell({ showHeader }: BabelViewShellProps) {
-  const { data, categories, loading, error: dataError } = useBabelAll();
+// Equipment category IDs — used to disambiguate point vs equipment categories
+// when building grouped browse sections.
+const EQUIPMENT_CATEGORY_IDS = new Set([
+  "air-handling",
+  "terminal-units",
+  "central-plant",
+  "metering",
+  "motors",
+  "vrf",
+]);
+
+// ---- Utility: filter + group ----
+
+function matchesQuery(
+  query: string,
+  haystacks: Array<string | undefined | null>,
+): boolean {
+  if (!query) return true;
+  const q = query.toLowerCase().trim();
+  if (!q) return true;
+  return haystacks.some((h) => h && h.toLowerCase().includes(q));
+}
+
+function pointMatches(entry: BabelPointEntry, query: string): boolean {
+  return matchesQuery(query, [
+    entry.concept.name,
+    entry.concept.description,
+    entry.concept.haystack?.tagString,
+    entry.concept.brick,
+    ...entry.aliases.common,
+    ...(entry.aliases.abbreviated ?? []),
+    ...(entry.aliases.verbose ?? []),
+    ...(entry.aliases.misspellings ?? []),
+  ]);
+}
+
+function equipmentMatches(entry: BabelEquipmentEntry, query: string): boolean {
+  return matchesQuery(query, [
+    entry.name,
+    entry.full_name,
+    entry.description,
+    entry.haystack?.tagString,
+    entry.brick,
+    ...entry.aliases.common,
+    ...(entry.aliases.abbreviated ?? []),
+    ...(entry.aliases.verbose ?? []),
+    ...(entry.aliases.misspellings ?? []),
+  ]);
+}
+
+// ---- Main view ----
+
+export function BabelView({ scope, onScopeChange }: BabelViewProps) {
+  const { data, categories, loading, error } = useBabelAll();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [showApi, setShowApi] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
-  const apiEndpoints = [
-    {
-      name: "Full Dataset",
-      url: "https://basidekick.com/api/atlas/babel",
-      description: "Complete point and equipment definitions",
-    },
-    {
-      name: "Categories",
-      url: "https://basidekick.com/api/atlas/babel/categories",
-      description: "Category tree with counts",
-    },
-    {
-      name: "Search",
-      url: "https://basidekick.com/api/atlas/search?q=temperature",
-      description: "Full-text search across all entries",
-    },
-  ];
+  const lastUpdated = useMemo(
+    () =>
+      new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
+    [],
+  );
 
-  const copyToClipboard = (url: string) => {
-    navigator.clipboard.writeText(url);
-    toast.success("API URL copied");
+  // Filtering
+  const filtered = useMemo(() => {
+    if (!data) return { points: [] as BabelPointEntry[], equipment: [] as BabelEquipmentEntry[] };
+
+    const q = searchQuery.trim();
+    const points = (scope === "equipment" ? [] : data.points).filter((p) => pointMatches(p, q));
+    const equipment = (scope === "points" ? [] : data.equipment).filter((e) => equipmentMatches(e, q));
+    return { points, equipment };
+  }, [data, searchQuery, scope]);
+
+  const totalVisible = filtered.points.length + filtered.equipment.length;
+
+  // Grouping — build groups from the categories tree so the order is stable.
+  const groups = useMemo(() => {
+    if (!data || !categories) return [] as Array<{ id: string; name: string; type: "point" | "equipment"; points: BabelPointEntry[]; equipment: BabelEquipmentEntry[] }>;
+
+    const pointCats = categories.categories.filter((c) => c.type === "points");
+    const equipCats = categories.categories.filter((c) => c.type === "equipment");
+
+    const pointGroups = pointCats
+      .map((cat) => {
+        const points = filtered.points.filter((p) => p.concept.category === cat.id);
+        return { id: `pt-${cat.id}`, name: cat.name, type: "point" as const, points, equipment: [] as BabelEquipmentEntry[] };
+      })
+      .filter((g) => g.points.length > 0 || (!searchQuery && scope === "points"));
+
+    const equipGroups = equipCats
+      .map((cat) => {
+        const equipment = filtered.equipment.filter((e) => e.category === cat.id);
+        return { id: `eq-${cat.id}`, name: cat.name, type: "equipment" as const, points: [] as BabelPointEntry[], equipment };
+      })
+      .filter((g) => g.equipment.length > 0 || (!searchQuery && scope === "equipment"));
+
+    if (scope === "points") return pointGroups;
+    if (scope === "equipment") return equipGroups;
+    return [...pointGroups, ...equipGroups];
+  }, [data, categories, filtered, scope, searchQuery]);
+
+  const toggleGroup = (id: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
-  const filteredEntries = useMemo(() => {
-    if (!data) return { points: [], equipment: [] };
+  const isGroupExpanded = (id: string, itemCount: number) => {
+    // When searching: auto-expand groups that have results
+    if (searchQuery.trim() && itemCount > 0) return true;
+    // Otherwise: respect the user's explicit toggle, default to collapsed
+    return expandedGroups.has(id);
+  };
 
-    let points = [...data.points];
-    let equipment = [...data.equipment];
-
-    if (selectedCategory) {
-      const isEquipmentCategory = [
-        "air-handling",
-        "terminal-units",
-        "central-plant",
-        "metering",
-        "motors",
-        "vrf",
-      ].includes(selectedCategory);
-
-      if (isEquipmentCategory) {
-        points = [];
-        equipment = equipment.filter((entry) => entry.category === selectedCategory);
-      } else {
-        equipment = [];
-        points = points.filter((entry) => entry.concept.category === selectedCategory);
-      }
-    }
-
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-
-      points = points.filter((entry) => {
-        if (entry.concept.name.toLowerCase().includes(query)) return true;
-        if (entry.concept.description?.toLowerCase().includes(query)) return true;
-        if (entry.concept.haystack?.tagString.toLowerCase().includes(query)) return true;
-        const allAliases = [
-          ...entry.aliases.common,
-          ...(entry.aliases.misspellings || []),
-        ];
-        return allAliases.some((alias) => alias.toLowerCase().includes(query));
-      });
-
-      equipment = equipment.filter((entry) => {
-        if (entry.name.toLowerCase().includes(query)) return true;
-        if (entry.full_name?.toLowerCase().includes(query)) return true;
-        if (entry.description?.toLowerCase().includes(query)) return true;
-        return entry.aliases.common.some((alias) => alias.toLowerCase().includes(query));
-      });
-    }
-
-    return { points, equipment };
-  }, [data, searchQuery, selectedCategory]);
-
-  const totalResults = filteredEntries.points.length + filteredEntries.equipment.length;
-  const totalEntries = data ? data.totalPoints + data.totalEquipment : 0;
-
-  if (dataError) {
+  // Loading and error states
+  if (error) {
     return (
-      <div className="min-h-full flex items-center justify-center">
+      <div className="min-h-full flex items-center justify-center py-24">
         <div className="text-center">
-          <p className="text-muted-foreground">Failed to load Atlas core data</p>
-          <p className="text-sm text-muted-foreground mt-1">{dataError.message}</p>
+          <p className="text-foreground font-heading italic">Failed to load Atlas data.</p>
+          <p className="text-sm text-muted-foreground mt-1">{error.message}</p>
         </div>
       </div>
     );
   }
 
+  const totalPoints = data?.totalPoints ?? 0;
+  const totalEquipment = data?.totalEquipment ?? 0;
+
+  // --- Render ---
+
   return (
     <div className="min-h-full">
-      {showHeader && (
-        <PageHero>
-            <SiteBadge label="RESOURCES" />
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Atlas</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">Point &amp; Equipment Reference</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Rev</span>
+          <span className="field-value">{lastUpdated}</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Points</span>
+          <span className="field-value tabular-nums">{totalPoints}</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Equipment</span>
+          <span className="field-value tabular-nums">{totalEquipment}</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Drawn by</span>
+          <span className="field-value">R.H.</span>
+        </div>
+      </div>
 
-            <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">Atlas Points</h1>
-            <p className="mt-3 text-muted-foreground max-w-2xl">
-              Open, community-driven BAS point naming standards and equipment definitions. Translate between vendor
-              conventions, Haystack tags, and Brick schema with a shared reference that grows with contributions from
-              the industry.
-            </p>
+      {/* Search area */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pt-20 pb-12 max-w-[980px]">
+        <p className="font-heading italic text-[17px] text-muted-foreground text-center mb-5 leading-[1.5]">
+          A reference of points, equipment, and the names they show up under.
+        </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+        {/* Search input */}
+        <div className="relative border-[1.5px] border-foreground rounded-md bg-card focus-within:border-accent transition-colors">
+          <MagnifyingGlass className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search points, aliases, equipment, brands…"
+            className="w-full bg-transparent border-none outline-none font-heading text-[20px] md:text-[22px] text-foreground placeholder:text-muted-foreground/60 placeholder:italic placeholder:font-normal py-[22px] pl-[56px] pr-6"
+            aria-label="Search atlas"
+          />
+        </div>
+
+        {/* Scope chips */}
+        <div className="mt-[18px] flex items-center gap-3.5 flex-wrap font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground">
+          <span>Showing</span>
+          <ScopeChip active={scope === "all"} onClick={() => onScopeChange("all")}>
+            All <span className="text-accent ml-1.5">{totalPoints + totalEquipment}</span>
+          </ScopeChip>
+          <ScopeChip active={scope === "points"} onClick={() => onScopeChange("points")}>
+            Points <span className="text-accent ml-1.5">{totalPoints}</span>
+          </ScopeChip>
+          <ScopeChip active={scope === "equipment"} onClick={() => onScopeChange("equipment")}>
+            Equipment <span className="text-accent ml-1.5">{totalEquipment}</span>
+          </ScopeChip>
+          <span className="flex-1" />
+          <span className="font-mono text-[11px] text-muted-foreground">
+            <strong className="text-foreground tabular-nums">{totalVisible}</strong> shown
+          </span>
+        </div>
+      </section>
+
+      {/* Browse */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pb-16 max-w-[1100px]">
+        {loading ? (
+          <div className="space-y-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i}>
+                <Skeleton className="h-7 w-60 mb-4" />
+                <div className="space-y-2">
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : totalVisible === 0 ? (
+          <div className="py-24 text-center font-heading italic text-[18px] text-muted-foreground">
+            <span className="block font-mono not-italic text-[28px] mb-3">⌕</span>
+            Nothing matches that. Try a different alias, vendor name, or part of the description.
+          </div>
+        ) : (
+          <div className="space-y-9">
+            {groups.map((group, idx) => {
+              const itemCount = group.points.length + group.equipment.length;
+              if (itemCount === 0) return null;
+              const expanded = isGroupExpanded(group.id, itemCount);
+              const num = String(idx + 1).padStart(2, "0");
+              return (
+                <div key={group.id}>
+                  <button
+                    onClick={() => toggleGroup(group.id)}
+                    className="w-full flex items-baseline gap-3.5 pb-3.5 border-b border-foreground text-left"
+                  >
+                    <span className="font-mono text-[11px] text-accent tracking-[1px]">{num} /</span>
+                    <span className="font-heading font-semibold text-[22px] leading-none text-foreground">
+                      {group.name}
+                    </span>
+                    <span className="ml-auto font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+                      {itemCount} {group.type === "point" ? "points" : "models"}
+                    </span>
+                    <span className="ml-3.5 font-mono text-[11px] text-muted-foreground">
+                      [ {expanded ? "COLLAPSE" : "EXPAND"} ]
+                    </span>
+                  </button>
+                  {expanded && (
+                    <div className="mt-0">
+                      {group.points.map((entry) => (
+                        <BabelEntryRow key={`pt-${entry.concept.id}`} entry={entry} type="point" />
+                      ))}
+                      {group.equipment.map((entry) => (
+                        <BabelEntryRow key={`eq-${entry.id}`} entry={entry} type="equipment" />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      {/* Footer row */}
+      <section className="bg-secondary border-t border-border">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-16 max-w-[1100px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-14">
+            <FooterColumn letter="A" title="Recently added">
+              <p className="text-[13px] text-muted-foreground leading-[1.55]">
+                New entries ship with the weekly data drop. Follow the repo for the changelog.
+              </p>
+            </FooterColumn>
+            <FooterColumn letter="B" title="API access">
+              <a
+                href="https://basidekick.com/api/atlas/babel"
+                target="_blank"
+                rel="noreferrer"
+                className="block font-heading italic text-[14px] text-foreground hover:text-accent py-2 transition-colors"
+              >
+                /api/atlas/babel →
+              </a>
+              <a
+                href="https://basidekick.com/api/atlas/babel/categories"
+                target="_blank"
+                rel="noreferrer"
+                className="block font-heading italic text-[14px] text-foreground hover:text-accent py-2 transition-colors"
+              >
+                /api/atlas/babel/categories →
+              </a>
+              <a
+                href="https://basidekick.com/api/atlas/search?q=temperature"
+                target="_blank"
+                rel="noreferrer"
+                className="block font-heading italic text-[14px] text-foreground hover:text-accent py-2 transition-colors"
+              >
+                /api/atlas/search →
+              </a>
+              <p className="text-[11px] text-muted-foreground mt-2 font-mono uppercase tracking-[1px]">
+                No auth · JSON · stable URLs
+              </p>
+            </FooterColumn>
+            <FooterColumn letter="C" title="Contribute">
               <a
                 href="https://github.com/rbhans/bas-babel"
                 target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 font-heading italic text-[14px] text-foreground hover:text-accent py-2 transition-colors"
               >
-                <GithubLogo className="size-4" weight="bold" />
-                View on GitHub
-                <ArrowSquareOut className="size-3" />
+                <GithubLogo className="w-3.5 h-3.5" />
+                View on GitHub →
               </a>
-              <button
-                onClick={() => setShowApi(!showApi)}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-border hover:bg-muted transition-colors"
+              <Link
+                href={ROUTES.ATLAS_EQUIPMENT_ADD}
+                className="block font-heading italic text-[14px] text-foreground hover:text-accent py-2 transition-colors"
               >
-                <Code className="size-4" weight="bold" />
-                API Access
-              </button>
-            </div>
-
-            {showApi && (
-              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
-                <h3 className="text-sm font-semibold mb-2">Free JSON API</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Access the complete dataset via stable BASidekick URLs. No authentication required.
-                </p>
-                <div className="space-y-3">
-                  {apiEndpoints.map((endpoint) => (
-                    <div key={endpoint.name} className="flex flex-col sm:flex-row sm:items-center gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">{endpoint.name}</p>
-                        <p className="text-xs text-muted-foreground">{endpoint.description}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <code className="text-xs bg-background px-2 py-1 rounded border truncate max-w-[300px]">
-                          {endpoint.url}
-                        </code>
-                        <button
-                          onClick={() => copyToClipboard(endpoint.url)}
-                          className="shrink-0 p-1.5 hover:bg-background rounded transition-colors"
-                          title="Copy URL"
-                        >
-                          <Copy className="size-4" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 pt-4 border-t">
-                  <p className="text-xs text-muted-foreground mb-2">Example usage:</p>
-                  <pre className="text-xs bg-background p-3 rounded border overflow-x-auto">
-{`fetch("https://basidekick.com/api/atlas/babel")
-  .then(res => res.json())
-  .then(data => console.log(data));`}
-                  </pre>
-                </div>
-              </div>
-            )}
-        </PageHero>
-      )}
-
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {loading ? (
-              <aside className="w-full lg:w-56 shrink-0 space-y-2">
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-8 w-full" />
-                <Skeleton className="h-8 w-full" />
-                <Skeleton className="h-8 w-full" />
-              </aside>
-            ) : (
-              <BabelSidebar
-                categories={categories?.categories || []}
-                selectedCategory={selectedCategory}
-                onCategorySelect={setSelectedCategory}
-              />
-            )}
-
-            <div className="flex-1 min-w-0">
-              <BabelSearch
-                query={searchQuery}
-                onQueryChange={setSearchQuery}
-                resultCount={totalResults}
-                totalCount={totalEntries}
-              />
-
-              <div className="mt-6">
-                {loading ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                      <Skeleton key={i} className="h-32" />
-                    ))}
-                  </div>
-                ) : totalResults === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground">No entries found</p>
-                    {searchQuery && (
-                      <p className="text-sm text-muted-foreground mt-1">Try a different search term</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {filteredEntries.equipment.length > 0 && (
-                      <div>
-                        {!selectedCategory && (
-                          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                            Equipment ({filteredEntries.equipment.length})
-                          </h2>
-                        )}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {filteredEntries.equipment.map((entry) => (
-                            <BabelEntryCard key={entry.id} entry={entry} type="equipment" />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {filteredEntries.points.length > 0 && (
-                      <div>
-                        {!selectedCategory && (
-                          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                            Points ({filteredEntries.points.length})
-                          </h2>
-                        )}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {filteredEntries.points.map((entry) => (
-                            <BabelEntryCard key={entry.concept.id} entry={entry} type="point" />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+                Add equipment →
+              </Link>
+              <p className="text-[11px] text-muted-foreground mt-2 font-mono uppercase tracking-[1px]">
+                PRs welcome · Open reference
+              </p>
+            </FooterColumn>
           </div>
         </div>
       </section>
+
+      {/* Colophon */}
+      <div className="border-t border-border">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-14 max-w-[1100px]">
+          <div className="grid grid-cols-1 md:grid-cols-[240px_1fr_220px] gap-10 font-mono text-[12px] text-muted-foreground leading-relaxed">
+            <div>
+              <strong className="text-foreground font-bold">Atlas</strong>
+              <br />
+              Curated by Rob Hansen
+              <br />
+              Collected from next to the industry
+            </div>
+            <div>
+              Sources: Project Haystack, Brick Schema, vendor docs, community submissions.
+              <br />
+              <a
+                href="https://github.com/rbhans/bas-babel"
+                target="_blank"
+                rel="noreferrer"
+                className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors"
+              >
+                View sources on GitHub
+              </a>
+            </div>
+            <div className="md:text-right">
+              Last updated · {lastUpdated}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-export function BabelView() {
-  return <BabelViewShell showHeader />;
+// ---- Sub-components ----
+
+function ScopeChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`px-3 py-1.5 border rounded-sm font-mono text-[11px] uppercase tracking-[1.2px] transition-colors ${
+        active
+          ? "bg-primary text-primary-foreground border-primary"
+          : "bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground"
+      }`}
+    >
+      {children}
+    </button>
+  );
 }
 
+function FooterColumn({
+  letter,
+  title,
+  children,
+}: {
+  letter: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <h4 className="font-mono text-[11px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-3 border-b border-foreground">
+        <span className="text-accent mr-1.5">{letter} /</span>
+        {title}
+      </h4>
+      {children}
+    </div>
+  );
+}
+
+// ---- Legacy exports for backwards compat ----
+
 export function BabelViewContent() {
-  return <BabelViewShell showHeader={false} />;
+  // Kept for any external imports; renders with scope defaulting to "all".
+  return <BabelView scope="all" onScopeChange={() => {}} />;
 }
