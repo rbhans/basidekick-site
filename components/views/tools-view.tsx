@@ -1,14 +1,10 @@
 "use client";
 
-import { SiteBadge } from "@/components/site-badge";
-import { FeatureCard } from "@/components/feature-card";
-import { StepCard } from "@/components/step-card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Play, AppleLogo, GooglePlayLogo } from "@phosphor-icons/react";
+import { AppleLogo, GooglePlayLogo, Play } from "@phosphor-icons/react";
 import { TOOL_DETAILS } from "@/lib/constants";
 import { getIcon } from "@/lib/icons";
-import { PageHero } from "@/components/page-hero";
+
+type ToolData = (typeof TOOL_DETAILS)[keyof typeof TOOL_DETAILS];
 
 export function ToolsView() {
   const ssk = TOOL_DETAILS["ssk"];
@@ -16,165 +12,174 @@ export function ToolsView() {
 
   return (
     <div className="min-h-full">
-      {/* Hero */}
-            <PageHero imageSrc="/images/hero/tools.png">
-          <SiteBadge label="TOOLS" />
-          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
-            Built for BAS Professionals
-          </h1>
-          <p className="mt-3 text-muted-foreground max-w-xl">
-            Professional software for building automation. One-time purchase, no subscriptions.
-          </p>
-      </PageHero>
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Tools</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">Built for BAS Professionals</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Status</span>
+          <span className="field-value">Coming soon</span>
+        </div>
+      </div>
 
-      {/* SimulatorSidekick Section */}
-      {ssk && (
-        <section className="py-16 border-t border-border" id="ssk">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-20">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Left: Description */}
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <h2 className="text-2xl md:text-3xl font-heading font-bold">{ssk.name}</h2>
-                  <Badge variant="outline" className="text-destructive border-destructive/30">Coming Soon</Badge>
-                </div>
-                <p className="text-muted-foreground leading-relaxed">
-                  {ssk.tagline}. {ssk.description}
-                </p>
-                <div className="mt-6">
-                  <Button className="rounded-lg font-semibold">Get Notified</Button>
-                </div>
-              </div>
+      <section className="container mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-16 py-14">
+        <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-14 max-w-[640px] mx-auto">
+          Professional software for building automation — one-time purchase, no subscriptions.
+        </p>
 
-              {/* Right: Demo Placeholder */}
-              <div className="aspect-video bg-card border border-border rounded-md flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-14 h-14 bg-secondary rounded-md flex items-center justify-center mx-auto mb-3">
-                    <Play className="w-7 h-7 text-primary" weight="fill" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">{ssk.name} demo</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Features / Steps / Requirements */}
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Features</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {ssk.detailedFeatures.map((f) => (
-                    <FeatureCard
-                      key={f.title}
-                      title={f.title}
-                      description={f.description}
-                      icon={getIcon(f.iconName, "w-5 h-5 text-primary")}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">How It Works</h3>
-                <div className="space-y-4">
-                  {ssk.steps.map((s) => (
-                    <StepCard key={s.number} number={s.number} title={s.title} description={s.description} />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Requirements</h3>
-                <div className="bg-card border border-border rounded-md p-5">
-                  <dl className="space-y-3">
-                    {ssk.requirements.map((r) => (
-                      <div key={r.label} className="flex justify-between py-2 border-b border-border last:border-0">
-                        <dt className="text-sm text-muted-foreground">{r.label}</dt>
-                        <dd className="text-sm font-medium">{r.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* QR Sidekick Section */}
-      {qsk && (
-        <section className="py-16" id="qsk">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-20">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Left: Description */}
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <h2 className="text-2xl md:text-3xl font-heading font-bold">{qsk.name}</h2>
-                  <Badge variant="outline" className="text-destructive border-destructive/30">Coming Soon</Badge>
-                </div>
-                <p className="text-muted-foreground leading-relaxed">
-                  {qsk.tagline}. {qsk.description}
-                </p>
-                <div className="mt-6 flex gap-3">
-                  <Button disabled className="gap-2 rounded-lg font-semibold">
-                    <AppleLogo className="w-5 h-5" weight="fill" />
-                    App Store
-                  </Button>
-                  <Button variant="outline" disabled className="gap-2 rounded-lg font-semibold">
-                    <GooglePlayLogo className="w-5 h-5" weight="fill" />
-                    Google Play
-                  </Button>
-                </div>
-              </div>
-
-              {/* Right: Demo Placeholder */}
-              <div className="aspect-video bg-card border border-border rounded-md flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-14 h-14 bg-secondary rounded-md flex items-center justify-center mx-auto mb-3">
-                    <Play className="w-7 h-7 text-primary" weight="fill" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">{qsk.name} demo</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Features / Steps / Requirements */}
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Features</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {qsk.detailedFeatures.map((f) => (
-                    <FeatureCard
-                      key={f.title}
-                      title={f.title}
-                      description={f.description}
-                      icon={getIcon(f.iconName, "w-5 h-5 text-primary")}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">How It Works</h3>
-                <div className="space-y-4">
-                  {qsk.steps.map((s) => (
-                    <StepCard key={s.number} number={s.number} title={s.title} description={s.description} />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Requirements</h3>
-                <div className="bg-card border border-border rounded-md p-5">
-                  <dl className="space-y-3">
-                    {qsk.requirements.map((r) => (
-                      <div key={r.label} className="flex justify-between py-2 border-b border-border last:border-0">
-                        <dt className="text-sm text-muted-foreground">{r.label}</dt>
-                        <dd className="text-sm font-medium">{r.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+        {ssk && <ToolSection index={1} tool={ssk} platform="desktop" id="ssk" />}
+        {qsk && <ToolSection index={2} tool={qsk} platform="mobile" id="qsk" />}
+      </section>
     </div>
+  );
+}
+
+interface ToolSectionProps {
+  index: number;
+  tool: ToolData;
+  platform: "desktop" | "mobile";
+  id: string;
+}
+
+function ToolSection({ index, tool, platform, id }: ToolSectionProps) {
+  const num = String(index).padStart(2, "0");
+
+  return (
+    <section id={id} className="mb-16 last:mb-0 scroll-mt-24">
+      <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-7">
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">{num} /</span>
+        <h2 className="font-heading font-semibold text-[26px] leading-none text-foreground">
+          {tool.name}
+        </h2>
+        <span className="ml-auto font-mono text-[9px] uppercase tracking-[1.2px] text-accent border border-accent px-1.5 py-0.5 rounded-sm">
+          Coming soon
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-10 mb-10">
+        <div>
+          <p className="font-heading italic text-[17px] text-muted-foreground leading-[1.5] mb-6">
+            {tool.tagline}.
+          </p>
+          <p className="text-[14px] text-foreground leading-[1.6] mb-6">
+            {tool.description}
+          </p>
+          {platform === "desktop" ? (
+            <button
+              disabled
+              className="px-5 py-2.5 border border-foreground bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-primary/90 disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+            >
+              Get notified →
+            </button>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              <button
+                disabled
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground bg-card text-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-muted disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+              >
+                <AppleLogo className="w-3.5 h-3.5" weight="fill" />
+                App Store
+              </button>
+              <button
+                disabled
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground bg-card text-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-muted disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+              >
+                <GooglePlayLogo className="w-3.5 h-3.5" weight="fill" />
+                Google Play
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Demo placeholder */}
+        <div className="aspect-video border border-border bg-card flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-14 h-14 border border-foreground bg-muted flex items-center justify-center mx-auto mb-3">
+              <Play className="w-6 h-6 text-accent" weight="fill" />
+            </div>
+            <p className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+              {tool.name} · Demo
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        {/* Features */}
+        <div>
+          <h3 className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground pb-2 mb-4 border-b border-foreground">
+            <span className="text-accent mr-1.5">A /</span>Features
+          </h3>
+          <ul className="space-y-3">
+            {tool.detailedFeatures.map((f) => (
+              <li key={f.title} className="flex gap-3">
+                <span className="shrink-0 mt-0.5">
+                  {getIcon(f.iconName, "w-4 h-4 text-accent")}
+                </span>
+                <div>
+                  <div className="font-heading font-semibold text-[14px] text-foreground leading-[1.3]">
+                    {f.title}
+                  </div>
+                  <div className="font-heading italic text-[12px] text-muted-foreground mt-0.5 leading-[1.4]">
+                    {f.description}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Steps */}
+        <div>
+          <h3 className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground pb-2 mb-4 border-b border-foreground">
+            <span className="text-accent mr-1.5">B /</span>How it works
+          </h3>
+          <ol className="space-y-4">
+            {tool.steps.map((s) => (
+              <li key={s.number} className="flex gap-3">
+                <span className="font-mono text-[11px] text-accent tabular-nums shrink-0 mt-1">
+                  {String(s.number).padStart(2, "0")}
+                </span>
+                <div>
+                  <div className="font-heading font-semibold text-[14px] text-foreground leading-[1.3]">
+                    {s.title}
+                  </div>
+                  <div className="text-[12px] text-muted-foreground mt-0.5 leading-[1.5]">
+                    {s.description}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* Requirements */}
+        <div>
+          <h3 className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground pb-2 mb-4 border-b border-foreground">
+            <span className="text-accent mr-1.5">C /</span>Requirements
+          </h3>
+          <dl className="border-t border-b border-foreground">
+            {tool.requirements.map((r) => (
+              <div
+                key={r.label}
+                className="grid grid-cols-[100px_1fr] gap-3 py-2.5 border-b border-border last:border-b-0"
+              >
+                <dt className="font-mono text-[9px] uppercase tracking-[1.2px] text-muted-foreground">
+                  {r.label}
+                </dt>
+                <dd className="text-[13px] text-foreground">{r.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </section>
   );
 }

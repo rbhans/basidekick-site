@@ -1,50 +1,44 @@
 "use client";
 
-import { SiteBadge } from "@/components/site-badge";
-import { PageHero } from "@/components/page-hero";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Plugs,
-  Factory,
-  Lightning,
-  Drop,
-  Cpu,
-  Gauge,
-} from "@phosphor-icons/react";
+import { useState } from "react";
+import { CaretDown } from "@phosphor-icons/react";
 
 // Collapsible Section Component
 function Section({
-  sectionKey,
+  num,
   title,
-  icon,
+  defaultOpen = false,
   children,
 }: {
-  sectionKey: string;
+  num: string;
   title: string;
-  icon: React.ReactNode;
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
+
   return (
-    <AccordionItem value={sectionKey} className="mb-3 border-0">
-      <AccordionTrigger
-        className="w-full p-4 bg-card hover:bg-card/80 border border-border transition-all group hover:no-underline"
+    <div className="mb-4">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-baseline gap-3.5 pb-3.5 border-b border-foreground text-left"
       >
-        <div className="flex items-center gap-3">
-          <span className="text-primary">{icon}</span>
-          <span className="font-semibold">{title}</span>
-        </div>
-      </AccordionTrigger>
-      <AccordionContent className="pb-0">
-        <div className="mt-1 p-4 bg-card/50 border border-border border-t-0 overflow-x-auto">
-          {children}
-        </div>
-      </AccordionContent>
-    </AccordionItem>
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">{num} /</span>
+        <span className="font-heading font-semibold text-[20px] leading-none text-foreground">
+          {title}
+        </span>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+          [ {open ? "COLLAPSE" : "EXPAND"} ]
+        </span>
+        <CaretDown
+          className={`w-3 h-3 text-muted-foreground transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+      {open && <div className="pt-5">{children}</div>}
+    </div>
   );
 }
 
@@ -57,34 +51,36 @@ function ReferenceTable({
   rows: string[][];
 }) {
   return (
-    <table className="w-full text-sm">
-      <thead>
-        <tr className="border-b border-border">
-          {headers.map((header, i) => (
-            <th
-              key={i}
-              className="text-left py-2 px-3 text-xs font-medium text-primary uppercase tracking-wide"
-            >
-              {header}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row, rowIndex) => (
-          <tr
-            key={rowIndex}
-            className={`border-b border-border/50 ${rowIndex % 2 === 0 ? "bg-card/30" : ""}`}
-          >
-            {row.map((cell, cellIndex) => (
-              <td key={cellIndex} className="py-2 px-3 text-muted-foreground">
-                {cell}
-              </td>
+    <div className="border border-border bg-card overflow-x-auto">
+      <table className="w-full text-[13px]">
+        <thead>
+          <tr className="border-b border-foreground bg-muted">
+            {headers.map((header, i) => (
+              <th
+                key={i}
+                className="text-left py-2.5 px-3 font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground"
+              >
+                {header}
+              </th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map((row, rowIndex) => (
+            <tr key={rowIndex} className="border-b border-border last:border-b-0">
+              {row.map((cell, cellIndex) => (
+                <td
+                  key={cellIndex}
+                  className="py-2.5 px-3 text-foreground align-top leading-[1.5]"
+                >
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -95,25 +91,27 @@ function AbbreviationList({
   items: { abbr: string; full: string; description?: string }[];
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-      {items.map((item, index) => (
-        <div
-          key={index}
-          className="flex items-start gap-3 p-2 bg-card/30 border border-border/50"
-        >
-          <span className="font-mono text-primary font-semibold min-w-[60px]">
-            {item.abbr}
-          </span>
-          <span className="text-muted-foreground">
-            {item.full}
-            {item.description && (
-              <span className="text-xs text-muted-foreground/70 block mt-0.5">
-                {item.description}
-              </span>
-            )}
-          </span>
-        </div>
-      ))}
+    <div className="border-t border-b border-foreground">
+      <dl className="grid grid-cols-1 md:grid-cols-2">
+        {items.map((item, index) => (
+          <div
+            key={index}
+            className="grid grid-cols-[80px_1fr] gap-3 py-3 px-3 border-b border-border"
+          >
+            <dt className="font-mono text-[12px] text-accent font-bold tabular-nums tracking-tight">
+              {item.abbr}
+            </dt>
+            <dd>
+              <div className="text-[13px] text-foreground leading-[1.35]">{item.full}</div>
+              {item.description && (
+                <div className="font-heading italic text-[12px] text-muted-foreground mt-0.5 leading-[1.4]">
+                  {item.description}
+                </div>
+              )}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </div>
   );
 }
@@ -226,59 +224,62 @@ const electricalPower = [
 export function ReferencesView() {
   return (
     <div className="min-h-full">
-      {/* Header */}
-            <PageHero imageSrc="/images/hero/resources.png">
-          <SiteBadge label="RESOURCES" />
-          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
-            BAS References
-          </h1>
-          <p className="mt-3 text-muted-foreground max-w-xl">
-            Quick reference materials for building automation professionals. Common
-            abbreviations, protocol specifications, and industry terminology.
-          </p>
-      </PageHero>
-
-      {/* Reference Sections */}
-      <section className="py-8">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <Accordion type="multiple" defaultValue={["bacnet"]} className="w-full">
-          {/* BACnet Object Types */}
-          <Section sectionKey="bacnet" title="BACnet Object Types" icon={<Plugs className="size-5" />}>
-            <ReferenceTable
-              headers={["Code", "Abbr", "Name", "Description"]}
-              rows={bacnetObjectTypes}
-            />
-          </Section>
-
-          {/* Modbus Register Types */}
-          <Section sectionKey="modbus" title="Modbus Register Types" icon={<Cpu className="size-5" />}>
-            <ReferenceTable
-              headers={["Type", "Address Range", "Access", "Function Codes", "Description"]}
-              rows={modbusRegisterTypes}
-            />
-          </Section>
-
-          {/* HVAC Equipment */}
-          <Section sectionKey="hvac" title="HVAC Equipment" icon={<Factory className="size-5" />}>
-            <AbbreviationList items={hvacEquipment} />
-          </Section>
-
-          {/* Piping & Fluids */}
-          <Section sectionKey="piping" title="Piping & Fluids" icon={<Drop className="size-5" />}>
-            <AbbreviationList items={pipingFluids} />
-          </Section>
-
-          {/* Controls Abbreviations */}
-          <Section sectionKey="controls" title="Controls Abbreviations" icon={<Gauge className="size-5" />}>
-            <AbbreviationList items={controlsAbbreviations} />
-          </Section>
-
-          {/* Electrical & Power */}
-          <Section sectionKey="electrical" title="Electrical & Power" icon={<Lightning className="size-5" />}>
-            <AbbreviationList items={electricalPower} />
-          </Section>
-          </Accordion>
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">References</span>
         </div>
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">BAS Quick Reference</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Sections</span>
+          <span className="field-value tabular-nums">06</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Format</span>
+          <span className="field-value">Cheat sheet</span>
+        </div>
+      </div>
+
+      <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-14">
+        <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[640px] mx-auto">
+          Quick reference materials for building automation professionals — common abbreviations,
+          protocol specs, and industry terminology.
+        </p>
+
+        <Section num="01" title="BACnet object types" defaultOpen>
+          <ReferenceTable
+            headers={["Code", "Abbr", "Name", "Description"]}
+            rows={bacnetObjectTypes}
+          />
+        </Section>
+
+        <Section num="02" title="Modbus register types">
+          <ReferenceTable
+            headers={["Type", "Address range", "Access", "Function codes", "Description"]}
+            rows={modbusRegisterTypes}
+          />
+        </Section>
+
+        <Section num="03" title="HVAC equipment">
+          <AbbreviationList items={hvacEquipment} />
+        </Section>
+
+        <Section num="04" title="Piping & fluids">
+          <AbbreviationList items={pipingFluids} />
+        </Section>
+
+        <Section num="05" title="Controls abbreviations">
+          <AbbreviationList items={controlsAbbreviations} />
+        </Section>
+
+        <Section num="06" title="Electrical & power">
+          <AbbreviationList items={electricalPower} />
+        </Section>
       </section>
     </div>
   );

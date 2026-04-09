@@ -2,7 +2,6 @@
 
 import { useState, Fragment } from "react";
 import Link from "next/link";
-import { SiteBadge } from "@/components/site-badge";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/user-avatar";
 import { createClient } from "@/lib/supabase/client";
@@ -28,7 +27,6 @@ import {
   Gauge,
   Buildings,
 } from "@phosphor-icons/react";
-import { PageHero } from "@/components/page-hero";
 
 interface AdminUser {
   id: string;
@@ -367,42 +365,69 @@ export function AdminView({
 
   return (
     <div className="min-h-full">
-      {/* Header */}
-      <PageHero>
-          <SiteBadge label="ADMIN" />
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Admin</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">Dashboard</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Users</span>
+          <span className="field-value tabular-nums">{stats.userCount}</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Articles</span>
+          <span className="field-value tabular-nums">{stats.articleCount}</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Pending</span>
+          <span className="field-value tabular-nums text-accent">
+            {stats.pendingBabelContributions + stats.pendingEquipmentSubmissions}
+          </span>
+        </div>
+      </div>
 
-          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
-            Admin Dashboard
+      <section className="container mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-16 pt-10 pb-4">
+        <div className="pb-5 border-b border-foreground mb-0">
+          <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-2">
+            Admin
+          </div>
+          <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.05] text-foreground">
+            Dashboard
           </h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="font-heading italic text-[15px] text-muted-foreground mt-2">
             Manage users, content, and site settings.
           </p>
-      </PageHero>
+        </div>
+      </section>
 
       {/* Tabs */}
-      <section className="border-b border-border bg-card/50">
-        <div className="container mx-auto px-4">
-          <div className="flex gap-1 overflow-x-auto">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-                {tab.count !== undefined && (
-                  <span className="ml-1 px-1.5 py-0.5 text-xs bg-muted rounded">
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
+      <section className="container mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-16 border-b border-border">
+        <div className="flex gap-0 overflow-x-auto -mb-px">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`inline-flex items-center gap-2 px-4 py-3 font-mono text-[10px] uppercase tracking-[1.2px] border-b-2 transition-colors whitespace-nowrap ${
+                activeTab === tab.id
+                  ? "border-accent text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+              {tab.count !== undefined && (
+                <span className="ml-1 px-1.5 py-0.5 text-[9px] tabular-nums bg-muted border border-border text-muted-foreground">
+                  {tab.count}
+                </span>
+              )}
+            </button>
+          ))}
         </div>
       </section>
 

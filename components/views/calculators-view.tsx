@@ -1,73 +1,56 @@
 "use client";
 
 import { useState } from "react";
-import { SiteBadge } from "@/components/site-badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { PageHero } from "@/components/page-hero";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  ChartLine,
-  Wind,
-  Plugs,
-  Drop,
-  Lightning,
-  Thermometer,
-  Calendar,
-  Wrench,
-  Factory,
-  Function,
-  ArrowsClockwise,
-} from "@phosphor-icons/react";
+import { CaretDown } from "@phosphor-icons/react";
 
-// Collapsible Section Component
+// Collapsible Section Component — numbered accordion
 function Section({
-  sectionKey,
+  num,
   title,
-  icon,
+  defaultOpen = false,
   children,
 }: {
-  sectionKey: string;
+  num: string;
   title: string;
-  icon: React.ReactNode;
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
+
   return (
-    <AccordionItem value={sectionKey} className="mb-3 border-0">
-      <AccordionTrigger
-        className="w-full p-4 bg-card hover:bg-card/80 border border-border transition-all group hover:no-underline"
+    <div className="mb-5">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-baseline gap-3.5 pb-3.5 border-b border-foreground text-left"
       >
-        <div className="flex items-center gap-3">
-          <span className="text-primary">{icon}</span>
-          <span className="font-semibold">{title}</span>
-        </div>
-      </AccordionTrigger>
-      <AccordionContent className="pb-0">
-        <div className="mt-1 grid grid-cols-1 lg:grid-cols-2 gap-3 p-4 bg-card/50 border border-border border-t-0">
-          {children}
-        </div>
-      </AccordionContent>
-    </AccordionItem>
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">{num} /</span>
+        <span className="font-heading font-semibold text-[20px] leading-none text-foreground">
+          {title}
+        </span>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+          [ {open ? "COLLAPSE" : "EXPAND"} ]
+        </span>
+        <CaretDown
+          className={`w-3 h-3 text-muted-foreground transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+      {open && (
+        <div className="pt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">{children}</div>
+      )}
+    </div>
   );
 }
 
 // Calculator Card
 function Calculator({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-card border border-border p-4 hover:border-foreground transition-colors">
-      <h3 className="text-xs font-medium text-primary mb-3 uppercase tracking-wide">{title}</h3>
+    <div className="border border-border bg-card hover:border-foreground transition-colors p-5">
+      <h3 className="font-mono text-[10px] uppercase tracking-[1.3px] text-accent pb-2 mb-4 border-b border-border">
+        {title}
+      </h3>
       <div className="space-y-3">{children}</div>
     </div>
   );
@@ -89,17 +72,19 @@ function CalcInput({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
+      <label className="font-mono text-[9px] uppercase tracking-[1.2px] text-muted-foreground">
+        {label}
+      </label>
       <div className="flex">
-        <Input
+        <input
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           step="any"
-          className="flex-1 font-mono"
+          className="flex-1 border border-border bg-background focus:border-foreground transition-colors outline-none px-2.5 py-2 text-[13px] text-foreground font-mono tabular-nums"
         />
         {unit && (
-          <span className="bg-muted border border-l-0 border-input px-2 py-1 text-xs text-muted-foreground min-w-[50px] text-center flex items-center justify-center">
+          <span className="bg-muted border border-l-0 border-border px-2.5 py-2 font-mono text-[10px] text-muted-foreground min-w-[54px] text-center flex items-center justify-center">
             {unit}
           </span>
         )}
@@ -112,13 +97,15 @@ function CalcInput({
 function CalcOutput({ label, value, unit }: { label: string; value: string; unit?: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
+      <label className="font-mono text-[9px] uppercase tracking-[1.2px] text-muted-foreground">
+        {label}
+      </label>
       <div className="flex">
-        <div className="flex-1 bg-secondary border border-foreground px-2 py-1 text-primary text-sm font-mono min-h-[32px] flex items-center">
+        <div className="flex-1 bg-secondary border border-foreground px-2.5 py-2 text-foreground text-[13px] font-mono tabular-nums min-h-[36px] flex items-center">
           {value || "—"}
         </div>
         {unit && (
-          <span className="bg-muted border border-l-0 border-foreground px-2 py-1 text-xs text-primary min-w-[50px] text-center flex items-center justify-center">
+          <span className="bg-accent border border-l-0 border-foreground px-2.5 py-2 font-mono text-[10px] text-accent-foreground min-w-[54px] text-center flex items-center justify-center">
             {unit}
           </span>
         )}
@@ -127,7 +114,7 @@ function CalcOutput({ label, value, unit }: { label: string; value: string; unit
   );
 }
 
-// Select Component
+// Select Component — styled native select
 function CalcSelect({
   label,
   value,
@@ -141,19 +128,25 @@ function CalcSelect({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <Label className="text-xs text-muted-foreground">{label}</Label>
-      <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full h-8 px-2 py-1 text-sm">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
+      <label className="font-mono text-[9px] uppercase tracking-[1.2px] text-muted-foreground">
+        {label}
+      </label>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full border border-border bg-background focus:border-foreground transition-colors outline-none px-2.5 py-2 text-[13px] text-foreground appearance-none cursor-pointer pr-8"
+        >
           {options.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value}>
+            <option key={opt.value} value={opt.value}>
               {opt.label}
-            </SelectItem>
+            </option>
           ))}
-        </SelectContent>
-      </Select>
+        </select>
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] text-muted-foreground">
+          ▾
+        </span>
+      </div>
     </div>
   );
 }
@@ -817,24 +810,35 @@ export function CalculatorsView() {
 
   return (
     <div className="min-h-full">
-      {/* Header */}
-            <PageHero imageSrc="/images/hero/resources.png">
-          <SiteBadge label="RESOURCES" />
-          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
-            BAS Calculators
-          </h1>
-          <p className="mt-3 text-muted-foreground max-w-xl">
-            Quick reference calculators for building automation professionals. For estimation
-            purposes—verify critical calculations.
-          </p>
-      </PageHero>
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Calculators</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">BAS Quick Math</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Sections</span>
+          <span className="field-value tabular-nums">08</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">Caution</span>
+          <span className="field-value">Verify critical values</span>
+        </div>
+      </div>
 
-      {/* Calculators */}
-      <section className="py-8">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <Accordion type="multiple" defaultValue={["sensor-scaling"]} className="w-full">
+      <section className="container mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-16 py-14">
+        <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[680px] mx-auto">
+          Quick reference calculators for building automation professionals. For estimation
+          purposes — verify critical calculations.
+        </p>
+        <div className="w-full">
           {/* Sensor & Signal Scaling */}
-          <Section sectionKey="sensor-scaling" title="Sensor & Signal Scaling" icon={<ChartLine className="size-5" />}>
+          <Section num="01" title="Sensor & signal scaling" defaultOpen>
             <Calculator title="Analog Input Scaling">
               <div className="grid grid-cols-2 gap-2">
                 <CalcInput label="Raw Min" value={analogRawMin} onChange={setAnalogRawMin} unit="mA/V" />
@@ -869,7 +873,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Airside Calculations */}
-          <Section sectionKey="airside" title="Airside Calculations" icon={<Wind className="size-5" />}>
+          <Section num="02" title="Airside calculations">
             <Calculator title="Air Changes per Hour">
               <CalcInput label="Airflow" value={achCfm} onChange={setAchCfm} unit="CFM" />
               <div className="grid grid-cols-3 gap-2">
@@ -910,7 +914,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Network & Integration */}
-          <Section sectionKey="network" title="Network & Integration" icon={<Plugs className="size-5" />}>
+          <Section num="03" title="Network & integration">
             <Calculator title="BACnet Device Instance">
               <CalcInput label="Building Number" value={bacnetBuilding} onChange={setBacnetBuilding} />
               <CalcInput label="Floor Number" value={bacnetFloor} onChange={setBacnetFloor} />
@@ -950,7 +954,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Hydronic Systems */}
-          <Section sectionKey="hydronic" title="Hydronic Systems" icon={<Drop className="size-5" />}>
+          <Section num="04" title="Hydronic systems">
             <Calculator title="Pump Head Pressure">
               <CalcInput label="Flow Rate" value={pumpGpm} onChange={setPumpGpm} unit="GPM" />
               <CalcInput label="Pipe Run Length" value={pumpLength} onChange={setPumpLength} unit="ft" />
@@ -986,7 +990,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Electrical & Power */}
-          <Section sectionKey="electrical" title="Electrical & Power" icon={<Lightning className="size-5" />}>
+          <Section num="05" title="Electrical & power">
             <Calculator title="3-Phase Power">
               <CalcInput label="Voltage" value={powerVolts} onChange={setPowerVolts} unit="V" />
               <CalcInput label="Current" value={powerAmps} onChange={setPowerAmps} unit="A" />
@@ -1014,7 +1018,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Psychrometrics */}
-          <Section sectionKey="psychrometrics" title="Psychrometrics" icon={<Thermometer className="size-5" />}>
+          <Section num="06" title="Psychrometrics">
             <Calculator title="Dew Point">
               <CalcInput label="Dry Bulb Temp" value={dpTemp} onChange={setDpTemp} unit="°F" />
               <CalcInput label="Relative Humidity" value={dpRh} onChange={setDpRh} unit="%" />
@@ -1042,7 +1046,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Scheduling & Time */}
-          <Section sectionKey="scheduling" title="Scheduling & Time" icon={<Calendar className="size-5" />}>
+          <Section num="07" title="Scheduling & time">
             <Calculator title="Optimal Stop Time">
               <CalcInput label="Coast Time" value={osCoastTime} onChange={setOsCoastTime} unit="min" />
               <CalcInput label="Occupancy End" value={osOccEnd} onChange={setOsOccEnd} type="time" />
@@ -1118,7 +1122,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Commissioning & Troubleshooting */}
-          <Section sectionKey="commissioning" title="Commissioning & Troubleshooting" icon={<Wrench className="size-5" />}>
+          <Section num="08" title="Commissioning & troubleshooting">
             <Calculator title="Sensor Drift Check">
               <CalcInput label="Expected Value" value={driftExpected} onChange={setDriftExpected} />
               <CalcInput label="Actual Reading" value={driftActual} onChange={setDriftActual} />
@@ -1142,7 +1146,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Energy & Equipment */}
-          <Section sectionKey="energy" title="Energy & Equipment" icon={<Factory className="size-5" />}>
+          <Section num="09" title="Energy & equipment">
             <Calculator title="Chiller Efficiency">
               <CalcInput label="Power Input" value={chillerKw} onChange={setChillerKw} unit="kW" />
               <CalcInput label="Cooling Output" value={chillerTons} onChange={setChillerTons} unit="tons" />
@@ -1168,7 +1172,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Controls Math */}
-          <Section sectionKey="controls-math" title="Controls Math" icon={<Function className="size-5" />}>
+          <Section num="10" title="Controls math">
             <Calculator title="PID Tuning (Ziegler-Nichols)">
               <CalcInput label="Ultimate Gain (Ku)" value={pidKu} onChange={setPidKu} />
               <CalcInput label="Ultimate Period (Tu)" value={pidTu} onChange={setPidTu} unit="sec" />
@@ -1190,7 +1194,7 @@ export function CalculatorsView() {
           </Section>
 
           {/* Unit Conversions */}
-          <Section sectionKey="unit-conversions" title="Unit Conversions" icon={<ArrowsClockwise className="size-5" />}>
+          <Section num="11" title="Unit conversions">
             <Calculator title="Pressure">
               <div className="flex gap-2">
                 <div className="flex-1">
@@ -1268,7 +1272,6 @@ export function CalculatorsView() {
               </div>
             </Calculator>
           </Section>
-          </Accordion>
         </div>
       </section>
     </div>

@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Cpu } from "@phosphor-icons/react";
-import { SiteBadge } from "@/components/site-badge";
+import { GithubLogo } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
-import { PageHero } from "@/components/page-hero";
 
 const rustCrates = [
   {
@@ -14,6 +12,7 @@ const rustCrates = [
     description:
       "Open source Rust crate for BACnet communication in BAS applications. This is the first protocol crate in the BASidekick Rust suite.",
     githubUrl: "https://github.com/rbhans/rust-bac",
+    letter: "A",
   },
   {
     id: "rustmod",
@@ -22,61 +21,97 @@ const rustCrates = [
     description:
       "Open source Rust crate for Modbus communication in BAS applications.",
     githubUrl: "https://github.com/rbhans/rust-mod",
+    letter: "B",
   },
 ];
 
 export function RustResourcesView() {
   return (
     <div className="min-h-full">
-            <PageHero>
-          <SiteBadge label="RUST" />
-          <h1 className="mt-6 text-3xl md:text-4xl font-heading font-bold tracking-tight">
-            Open Source Rust Crates for BAS
+      {/* Title block strip */}
+      <div className="title-block">
+        <div className="field">
+          <span className="field-label">Drawing</span>
+          <span className="field-value">Rust</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Title</span>
+          <span className="field-value">Protocol Crates</span>
+        </div>
+        <div className="field">
+          <span className="field-label">Crates</span>
+          <span className="field-value tabular-nums">{rustCrates.length}</span>
+        </div>
+        <div className="spacer" />
+        <div className="field">
+          <span className="field-label">License</span>
+          <span className="field-value">MIT</span>
+        </div>
+      </div>
+
+      <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-14">
+        <Link
+          href={ROUTES.OPEN_SOURCE}
+          className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors mb-6"
+        >
+          <span className="text-accent">←</span>
+          Back to open source
+        </Link>
+
+        <div className="pb-5 border-b border-foreground mb-8">
+          <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-2">
+            Rust · Crates
+          </div>
+          <h1 className="font-heading font-semibold text-[32px] md:text-[40px] leading-[1.05] text-foreground">
+            Open source Rust crates for BAS
           </h1>
-          <p className="mt-3 text-muted-foreground max-w-2xl">
-            Protocol-first Rust crates for open source BAS software. Start with BACnet and expand into a full
-            Rust-native protocol stack.
+          <p className="font-heading italic text-[16px] text-muted-foreground mt-3 max-w-[680px] leading-[1.5]">
+            Protocol-first Rust crates for open source BAS software. Start with BACnet and expand
+            into a full Rust-native protocol stack.
           </p>
+        </div>
 
-          <Link
-            href={ROUTES.OPEN_SOURCE}
-            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline underline-offset-4"
-          >
-            <ArrowLeft className="size-3" />
-            Back to Open Source
-          </Link>
-      </PageHero>
+        <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+          <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
+          <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+            Crates
+          </h2>
+          <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+            {rustCrates.length} items
+          </span>
+        </div>
 
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {rustCrates.map((item) => (
-              <article
-                key={item.id}
-                className="p-6 border border-border bg-card shadow-sm"
-              >
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <Cpu className="size-8 text-primary" />
-                  <span className="text-xs font-mono px-2 py-1 border border-border bg-muted/40">
-                    {item.protocol}
+        <div className="space-y-0">
+          {rustCrates.map((crate) => (
+            <a
+              key={crate.id}
+              href={crate.githubUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="group grid grid-cols-[32px_1fr_auto] gap-5 items-start py-5 px-2 border-b border-muted hover:bg-muted/40 transition-colors"
+            >
+              <span className="font-mono text-[11px] text-accent tracking-[1.2px] mt-1">
+                {crate.letter} /
+              </span>
+              <div className="min-w-0">
+                <div className="flex items-center gap-3 mb-1">
+                  <h3 className="font-heading font-semibold text-[18px] leading-[1.25] text-foreground group-hover:text-accent transition-colors">
+                    {crate.name}
+                  </h3>
+                  <span className="font-mono text-[9px] uppercase tracking-[1.2px] text-accent border border-accent px-1.5 py-0.5 rounded-sm">
+                    {crate.protocol}
                   </span>
                 </div>
-
-                <h2 className="text-xl font-semibold">{item.name}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">{item.description}</p>
-
-                <a
-                  href={item.githubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline underline-offset-4"
-                >
-                  View on GitHub
-                  <ArrowRight className="size-3" />
-                </a>
-              </article>
-            ))}
-          </div>
+                <p className="font-heading italic text-[14px] text-muted-foreground leading-[1.5]">
+                  {crate.description}
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground group-hover:text-accent transition-colors self-center">
+                <GithubLogo className="w-3 h-3" />
+                GitHub →
+              </span>
+            </a>
+          ))}
         </div>
       </section>
     </div>

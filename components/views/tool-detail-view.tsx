@@ -1,14 +1,10 @@
 "use client";
 
-import { SiteBadge } from "@/components/site-badge";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Play, AppleLogo, GooglePlayLogo, CheckCircle, ShieldCheck } from "@phosphor-icons/react";
 import Link from "next/link";
+import { AppleLogo, GooglePlayLogo, Play, ShieldCheck } from "@phosphor-icons/react";
 import { TOOL_DETAILS } from "@/lib/constants";
 import { getIcon } from "@/lib/icons";
-import { cn } from "@/lib/utils";
-import { PageHero } from "@/components/page-hero";
+import { ROUTES } from "@/lib/routes";
 
 interface ToolDetailViewProps {
   toolId: "ssk" | "qsk";
@@ -19,248 +15,245 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
 
   if (!tool) {
     return (
-      <div className="p-8 text-center text-muted-foreground">
-        Tool not found
+      <div className="py-24 text-center font-heading italic text-[18px] text-muted-foreground">
+        Tool not found.
       </div>
     );
   }
 
-  const renderPurchaseButton = (size: "default" | "lg" = "lg") => {
-    // All tools are "Coming Soon" for now
-    return (
-      <Button size={size}>
-        Get Notified When Ready
-      </Button>
-    );
-  };
-
   return (
-    <div className="min-h-full">
-      {/* Hero Section */}
-      <PageHero>
-          <div className="flex items-center gap-3 mb-4">
-            <SiteBadge label={tool.id.toUpperCase()} />
-            <Badge variant="outline">
-              Coming Soon
-            </Badge>
-          </div>
+    <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
+      {/* Back link */}
+      <Link
+        href={ROUTES.TOOLS}
+        className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors mb-6"
+      >
+        <span className="text-accent">←</span>
+        Back to tools
+      </Link>
 
-          <h1 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
+      {/* Header */}
+      <div className="pb-5 border-b border-foreground mb-10">
+        <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-2">
+          {tool.id.toUpperCase()} · Tool
+        </div>
+        <div className="flex items-start gap-3 flex-wrap">
+          <h1 className="font-heading font-semibold text-[32px] md:text-[42px] leading-[1.05] text-foreground">
             {tool.name}
           </h1>
-          <p className="mt-3 text-lg text-muted-foreground max-w-xl">
-            {tool.tagline}. {tool.description}
-          </p>
+          <span className="mt-2 font-mono text-[9px] uppercase tracking-[1.2px] text-accent border border-accent px-1.5 py-0.5 rounded-sm">
+            Coming soon
+          </span>
+        </div>
+        <p className="font-heading italic text-[17px] text-muted-foreground mt-3 max-w-[680px] leading-[1.5]">
+          {tool.tagline}. {tool.description}
+        </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            {tool.mobileApp ? (
-              <>
-                <Button size="lg" disabled className="gap-2">
-                  <AppleLogo className="size-5" weight="fill" />
-                  App Store
-                  <Badge variant="outline" className="ml-1 text-xs">Coming Soon</Badge>
-                </Button>
-                <Button size="lg" variant="outline" disabled className="gap-2">
-                  <GooglePlayLogo className="size-5" weight="fill" />
-                  Google Play
-                  <Badge variant="outline" className="ml-1 text-xs">Coming Soon</Badge>
-                </Button>
-              </>
-            ) : (
-              renderPurchaseButton("lg")
-            )}
-          </div>
-      </PageHero>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {tool.mobileApp ? (
+            <>
+              <button
+                disabled
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground bg-card text-foreground font-mono text-[10px] uppercase tracking-[1.2px] disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+              >
+                <AppleLogo className="w-3.5 h-3.5" weight="fill" />
+                App Store
+              </button>
+              <button
+                disabled
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground bg-card text-foreground font-mono text-[10px] uppercase tracking-[1.2px] disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+              >
+                <GooglePlayLogo className="w-3.5 h-3.5" weight="fill" />
+                Google Play
+              </button>
+            </>
+          ) : (
+            <button
+              disabled
+              className="px-5 py-2.5 border border-foreground bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[1.2px] disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+            >
+              Get notified when ready →
+            </button>
+          )}
+        </div>
+      </div>
 
-      {/* Demo Section */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">demo</h3>
-
-          <div className="mt-6 max-w-3xl">
-            <div className="aspect-video bg-muted border border-border flex items-center justify-center">
-              <div className="text-center">
-                <div className="size-14 bg-secondary flex items-center justify-center mx-auto mb-3">
-                  <Play className="size-7 text-primary" weight="fill" />
-                </div>
-                <p className="text-muted-foreground text-sm">{tool.name} demo video</p>
-              </div>
+      {/* 01 / Demo */}
+      <NumberedSection num="01" title="Demo">
+        <div className="aspect-video border border-border bg-card flex items-center justify-center max-w-[720px]">
+          <div className="text-center">
+            <div className="w-14 h-14 border border-foreground bg-muted flex items-center justify-center mx-auto mb-3">
+              <Play className="w-6 h-6 text-accent" weight="fill" />
             </div>
+            <p className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+              {tool.name} · Demo video
+            </p>
           </div>
         </div>
-      </section>
+      </NumberedSection>
 
-      {/* Features Section */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">features</h3>
-
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            {tool.detailedFeatures.map((feature) => (
-              <div
-                key={feature.title}
-                className="p-5 border border-border bg-card shadow-sm"
-              >
-                {getIcon(feature.iconName, "size-8 text-primary")}
-                <h3 className="text-base font-semibold mt-3 mb-1">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">
+      {/* 02 / Features */}
+      <NumberedSection num="02" title="Features">
+        <ul className="space-y-5 max-w-[720px]">
+          {tool.detailedFeatures.map((feature) => (
+            <li key={feature.title} className="grid grid-cols-[32px_1fr] gap-4">
+              <span className="shrink-0 mt-0.5">
+                {getIcon(feature.iconName, "w-6 h-6 text-accent")}
+              </span>
+              <div>
+                <h3 className="font-heading font-semibold text-[17px] text-foreground leading-[1.3]">
+                  {feature.title}
+                </h3>
+                <p className="font-heading italic text-[14px] text-muted-foreground mt-1 leading-[1.5]">
                   {feature.description}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </NumberedSection>
+
+      {/* 03 / How it works */}
+      <NumberedSection num="03" title="How it works">
+        <ol className="space-y-5 max-w-[640px]">
+          {tool.steps.map((step) => (
+            <li key={step.number} className="grid grid-cols-[40px_1fr] gap-4">
+              <span className="font-mono text-[13px] text-accent tabular-nums mt-1">
+                {String(step.number).padStart(2, "0")}
+              </span>
+              <div>
+                <h4 className="font-heading font-semibold text-[16px] text-foreground leading-[1.3]">
+                  {step.title}
+                </h4>
+                <p className="text-[13px] text-muted-foreground mt-1 leading-[1.55]">
+                  {step.description}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </NumberedSection>
+
+      {/* 04 / Requirements */}
+      <NumberedSection num="04" title="Requirements">
+        <dl className="border-t border-b border-foreground max-w-[520px]">
+          {tool.requirements.map((req) => (
+            <div
+              key={req.label}
+              className="grid grid-cols-[160px_1fr] gap-4 py-3 border-b border-border last:border-b-0"
+            >
+              <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                {req.label}
+              </dt>
+              <dd className="text-[14px] text-foreground">{req.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </NumberedSection>
+
+      {/* 05 / Use cases */}
+      {tool.useCases && tool.useCases.length > 0 && (
+        <NumberedSection num="05" title="Use cases">
+          <ul className="space-y-2 max-w-[640px]">
+            {tool.useCases.map((useCase, index) => (
+              <li
+                key={index}
+                className="flex gap-3 text-[14px] text-foreground leading-[1.55] py-2 border-b border-muted"
+              >
+                <span className="text-accent font-mono text-[11px] shrink-0 mt-0.5">→</span>
+                <span>{useCase}</span>
+              </li>
+            ))}
+          </ul>
+        </NumberedSection>
+      )}
+
+      {/* Perfect for */}
+      {tool.perfectFor && tool.perfectFor.length > 0 && (
+        <NumberedSection num="06" title="Perfect for">
+          <div className="flex flex-wrap gap-2">
+            {tool.perfectFor.map((persona, index) => (
+              <span
+                key={index}
+                className="inline-block px-3 py-1.5 border border-border bg-card font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground"
+              >
+                {persona}
+              </span>
+            ))}
+          </div>
+        </NumberedSection>
+      )}
+
+      {/* Pricing */}
+      {tool.pricing && tool.pricing.length > 0 && (
+        <NumberedSection num="07" title="Pricing">
+          <p className="font-heading italic text-[14px] text-muted-foreground mb-5 max-w-[640px]">
+            Free to scan and use. Upgrade for more equipment.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 max-w-[760px]">
+            {tool.pricing.map((tier) => (
+              <div
+                key={tier.name}
+                className={`p-5 border bg-card ${
+                  tier.highlighted ? "border-foreground" : "border-border"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-heading font-semibold text-[16px] text-foreground">
+                    {tier.name}
+                  </h3>
+                  {tier.highlighted && (
+                    <span className="font-mono text-[9px] uppercase tracking-[1.2px] text-accent border border-accent px-1.5 py-0.5 rounded-sm">
+                      Popular
+                    </span>
+                  )}
+                </div>
+                <p className="font-heading font-semibold text-[22px] text-foreground tabular-nums">
+                  {tier.price}
+                </p>
+                <p className="font-heading italic text-[12px] text-muted-foreground mt-0.5">
+                  {tier.limit}
                 </p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">how it works</h3>
-
-          <div className="mt-6 max-w-lg">
-            <div className="relative">
-              <div className="absolute left-4 top-6 bottom-6 w-px bg-border" />
-
-              <div className="space-y-6">
-                {tool.steps.map((step) => (
-                  <div key={step.number} className="relative flex gap-4">
-                    <div className="relative z-10 flex items-center justify-center size-8 bg-primary text-primary-foreground font-mono text-sm font-medium">
-                      {step.number}
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold">{step.title}</h4>
-                      <p className="text-sm text-muted-foreground mt-0.5">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Requirements */}
-      <section className="py-12">
-        <div className="container mx-auto px-4">
-          <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">requirements</h3>
-
-          <div className="mt-6 max-w-sm">
-            <dl className="space-y-3">
-              {tool.requirements.map((req) => (
-                <div key={req.label} className="flex justify-between py-2 border-b border-border">
-                  <dt className="text-sm text-muted-foreground">{req.label}</dt>
-                  <dd className="text-sm font-medium">{req.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </section>
-
-      {/* Use Cases - Only for tools that have them */}
-      {tool.useCases && tool.useCases.length > 0 && (
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">use cases</h3>
-
-            <div className="mt-6 max-w-lg space-y-3">
-              {tool.useCases.map((useCase, index) => (
-                <div key={index} className="flex gap-3 items-start">
-                  <CheckCircle className="size-5 text-primary mt-0.5 flex-shrink-0" weight="fill" />
-                  <p className="text-sm text-muted-foreground">{useCase}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        </NumberedSection>
       )}
 
-      {/* Perfect For - Only for tools that have them */}
-      {tool.perfectFor && tool.perfectFor.length > 0 && (
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">perfect for</h3>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              {tool.perfectFor.map((persona, index) => (
-                <Badge key={index} variant="secondary" className="text-sm py-1.5 px-3">
-                  {persona}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Pricing - Only for tools that have pricing tiers */}
-      {tool.pricing && tool.pricing.length > 0 && (
-        <section className="py-12">
-          <div className="container mx-auto px-4">
-            <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase">pricing</h3>
-            <p className="mt-2 text-sm text-muted-foreground">Free to scan and use. Upgrade for more equipment.</p>
-
-            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-3xl">
-              {tool.pricing.map((tier) => (
-                <div
-                  key={tier.name}
-                  className={cn(
-                    "p-5 border bg-card",
-                    tier.highlighted ? "border-primary" : "border-border"
-                  )}
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <h3 className="font-semibold">{tier.name}</h3>
-                    {tier.highlighted && (
-                      <Badge variant="default" className="text-xs">Popular</Badge>
-                    )}
-                  </div>
-                  <p className="text-2xl font-bold">{tier.price}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{tier.limit}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* CTA */}
-      <section className="py-12">
-        <div className="container mx-auto px-4 text-center">
-          <div>
-            {tool.mobileApp ? (
-              <div className="flex flex-wrap justify-center gap-3">
-                <Button size="lg" disabled className="gap-2">
-                  <AppleLogo className="size-5" weight="fill" />
-                  App Store
-                  <Badge variant="outline" className="ml-1 text-xs">Coming Soon</Badge>
-                </Button>
-                <Button size="lg" variant="outline" disabled className="gap-2">
-                  <GooglePlayLogo className="size-5" weight="fill" />
-                  Google Play
-                  <Badge variant="outline" className="ml-1 text-xs">Coming Soon</Badge>
-                </Button>
-              </div>
-            ) : (
-              renderPurchaseButton("lg")
-            )}
-          </div>
-
-          {/* Privacy Policy Link for QSK */}
-          {toolId === "qsk" && (
-            <div className="mt-6">
-              <Link
-                href="/tools/qsk/privacy"
-                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <ShieldCheck className="size-4" />
-                Privacy Policy
-              </Link>
-            </div>
-          )}
+      {/* QSK privacy policy link */}
+      {toolId === "qsk" && (
+        <div className="mt-10 pt-8 border-t border-border">
+          <Link
+            href="/tools/qsk/privacy"
+            className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors"
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Privacy policy →
+          </Link>
         </div>
-      </section>
+      )}
+    </section>
+  );
+}
+
+function NumberedSection({
+  num,
+  title,
+  children,
+}: {
+  num: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mb-12 last:mb-0">
+      <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-6">
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">{num} /</span>
+        <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+          {title}
+        </h2>
+      </div>
+      {children}
     </div>
   );
 }
