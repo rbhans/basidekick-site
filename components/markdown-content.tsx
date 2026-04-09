@@ -140,33 +140,49 @@ const markdownComponents: Components = {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-primary hover:underline"
+        className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors"
       >
         {children}
       </a>
     );
   },
   // Style headers
+  h1: ({ children }) => (
+    <h1 className="font-heading font-semibold text-[28px] md:text-[32px] leading-[1.15] text-foreground mt-10 mb-5 first:mt-0">
+      {children}
+    </h1>
+  ),
   h2: ({ children }) => (
-    <h2 className="text-xl font-semibold mt-8 mb-4 first:mt-0">{children}</h2>
+    <h2 className="font-heading font-semibold text-[22px] md:text-[24px] leading-[1.2] text-foreground mt-10 mb-4 first:mt-0 pb-2 border-b border-border">
+      {children}
+    </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="text-lg font-semibold mt-6 mb-3">{children}</h3>
+    <h3 className="font-heading font-semibold text-[18px] md:text-[19px] leading-[1.3] text-foreground mt-8 mb-3">
+      {children}
+    </h3>
+  ),
+  h4: ({ children }) => (
+    <h4 className="font-heading font-semibold text-[16px] leading-[1.3] text-foreground mt-6 mb-2">
+      {children}
+    </h4>
   ),
   // Style paragraphs
   p: ({ children }) => (
-    <p className="mb-4 leading-relaxed">{children}</p>
+    <p className="mb-5 text-[15px] leading-[1.7] text-foreground">{children}</p>
   ),
   // Style lists
   ul: ({ children }) => (
-    <ul className="mb-4 ml-4 list-disc space-y-1">{children}</ul>
+    <ul className="mb-5 pl-5 list-disc marker:text-accent space-y-1.5 text-[15px] leading-[1.7] text-foreground">
+      {children}
+    </ul>
   ),
   ol: ({ children }) => (
-    <ol className="mb-4 ml-4 list-decimal space-y-1">{children}</ol>
+    <ol className="mb-5 pl-5 list-decimal marker:text-accent marker:font-mono marker:text-[13px] space-y-1.5 text-[15px] leading-[1.7] text-foreground">
+      {children}
+    </ol>
   ),
-  li: ({ children }) => (
-    <li className="leading-relaxed">{children}</li>
-  ),
+  li: ({ children }) => <li className="leading-[1.65]">{children}</li>,
   // Style code blocks - with Mermaid diagram support
   code: ({ className, children }) => {
     const isInline = !className;
@@ -179,33 +195,52 @@ const markdownComponents: Components = {
 
     if (isInline) {
       return (
-        <code className="px-1.5 py-0.5 bg-muted font-mono text-sm rounded">
+        <code className="px-1.5 py-0.5 bg-muted border border-border font-mono text-[13px] text-foreground">
           {children}
         </code>
       );
     }
     return (
-      <code className={`block p-4 bg-muted font-mono text-sm overflow-x-auto ${className || ""}`}>
+      <code
+        className={`block p-4 bg-muted border border-border font-mono text-[13px] text-foreground overflow-x-auto ${className || ""}`}
+      >
         {children}
       </code>
     );
   },
-  pre: ({ children }) => (
-    <pre className="mb-4 rounded overflow-hidden">{children}</pre>
-  ),
+  pre: ({ children }) => <pre className="mb-5 overflow-hidden">{children}</pre>,
   // Style blockquotes
   blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-foreground pl-4 italic text-muted-foreground mb-4">
+    <blockquote className="border-l-[3px] border-accent pl-5 my-6 font-heading italic text-[16px] leading-[1.6] text-muted-foreground">
       {children}
     </blockquote>
   ),
   // Style strong/bold
   strong: ({ children }) => (
-    <strong className="font-semibold">{children}</strong>
+    <strong className="font-heading font-semibold text-foreground">{children}</strong>
   ),
+  // Style em/italic
+  em: ({ children }) => <em className="font-heading italic">{children}</em>,
   // Style horizontal rules
-  hr: () => (
-    <hr className="my-8 border-border" />
+  hr: () => <hr className="my-10 border-t border-foreground" />,
+  // Style tables
+  table: ({ children }) => (
+    <div className="my-6 border border-border bg-card overflow-x-auto">
+      <table className="w-full text-[13px]">{children}</table>
+    </div>
+  ),
+  thead: ({ children }) => (
+    <thead className="bg-muted border-b border-foreground">{children}</thead>
+  ),
+  th: ({ children }) => (
+    <th className="text-left py-2.5 px-3 font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground">
+      {children}
+    </th>
+  ),
+  td: ({ children }) => (
+    <td className="py-2.5 px-3 text-foreground border-b border-border last:border-b-0 align-top leading-[1.5]">
+      {children}
+    </td>
   ),
 };
 
@@ -215,7 +250,7 @@ const markdownComponents: Components = {
  */
 export function MarkdownContent({ content, className = "" }: MarkdownContentProps) {
   return (
-    <div className={`prose prose-sm max-w-none dark:prose-invert ${className}`}>
+    <div className={`max-w-none ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[[rehypeHighlight, { ignoreMissing: true }]]}

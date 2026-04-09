@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/lib/routes";
-import { ArticleNyTimes, ArrowRight } from "@phosphor-icons/react";
 
 interface RelatedArticle {
   id: string;
@@ -139,13 +138,7 @@ export function RelatedArticles({
   }, [currentArticleId, categoryId, tagIds, facetIds]);
 
   if (loading) {
-    return (
-      <div className="animate-pulse space-y-3">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="h-16 bg-muted rounded" />
-        ))}
-      </div>
-    );
+    return null;
   }
 
   if (articles.length === 0) {
@@ -153,45 +146,53 @@ export function RelatedArticles({
   }
 
   return (
-    <section className="py-8 border-t border-border">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center gap-2 mb-6">
-          <ArticleNyTimes className="size-5 text-primary" />
-          <h2 className="text-xl font-semibold">Related Articles</h2>
-        </div>
+    <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-10 border-t border-border">
+      <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">03 /</span>
+        <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+          Related articles
+        </h2>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+          {articles.length} {articles.length === 1 ? "article" : "articles"}
+        </span>
+      </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {articles.map((article) => {
-            const category = Array.isArray(article.category)
-              ? article.category[0]
-              : article.category;
+      <div className="space-y-0">
+        {articles.map((article, idx) => {
+          const category = Array.isArray(article.category)
+            ? article.category[0]
+            : article.category;
 
-            return (
-              <Link
-                key={article.id}
-                href={ROUTES.WIKI_ARTICLE(article.slug)}
-                className="group block p-4 border border-border bg-card shadow-sm hover:bg-accent/50 transition-colors"
-              >
+          return (
+            <Link
+              key={article.id}
+              href={ROUTES.WIKI_ARTICLE(article.slug)}
+              className="group grid grid-cols-[28px_1fr_60px] gap-4 items-start py-4 px-2 border-b border-muted hover:bg-muted/40 transition-colors"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums mt-1">
+                {String(idx + 1).padStart(2, "0")}
+              </span>
+              <div className="min-w-0">
                 {category?.name && (
-                  <span className="text-xs text-muted-foreground mb-1 block">
+                  <div className="font-mono text-[9px] uppercase tracking-[1.2px] text-accent mb-1">
                     {category.name}
-                  </span>
+                  </div>
                 )}
-                <h3 className="font-medium text-sm leading-snug group-hover:text-accent transition-colors line-clamp-2">
+                <div className="font-heading font-semibold text-[16px] leading-[1.3] text-foreground group-hover:text-accent transition-colors">
                   {article.title}
-                </h3>
+                </div>
                 {article.summary && (
-                  <p className="mt-2 text-xs text-muted-foreground line-clamp-2">
+                  <p className="font-heading italic text-[13px] text-muted-foreground mt-1 leading-[1.5] line-clamp-2">
                     {article.summary}
                   </p>
                 )}
-                <span className="mt-3 inline-flex items-center gap-1 text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                  Read more <ArrowRight className="size-3" />
-                </span>
-              </Link>
-            );
-          })}
-        </div>
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground group-hover:text-accent transition-colors text-right self-center">
+                Read →
+              </span>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

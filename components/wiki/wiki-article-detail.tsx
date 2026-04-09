@@ -2,8 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { WikiArticle, WikiTag, WikiFacet, WikiComment } from "@/lib/types";
@@ -14,7 +12,6 @@ import {
   Eye,
   Calendar,
   User,
-  ChatCircle,
   SignIn,
 } from "@phosphor-icons/react";
 import { MarkdownContent } from "@/components/markdown-content";
@@ -263,92 +260,107 @@ export function WikiArticleDetail({ article, tags, facets = [] }: WikiArticleDet
         ) : null}
       </div>
 
-      {/* Article Content */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <MarkdownContent content={article.content || ""} />
+      {/* 01 / Article */}
+      <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 pt-10 pb-4">
+        <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-6">
+          <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
+          <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+            Article
+          </h2>
         </div>
+        <MarkdownContent content={article.content || ""} />
       </section>
 
-      {/* Comments */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-2 mb-6">
-            <ChatCircle className="size-5 text-primary" />
-            <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
-          </div>
-
-          {comments.length === 0 ? (
-            <p className="text-muted-foreground mb-6">
-              No comments yet. Be the first to comment!
-            </p>
-          ) : (
-            <div className="space-y-4 mb-8">
-              {comments.map((comment) => (
-                <div key={comment.id} className="border border-border bg-card shadow-sm p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="size-8 bg-secondary flex items-center justify-center text-sm font-mono text-primary">
-                      {(comment.author?.display_name || "A")[0].toUpperCase()}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-sm">
-                        {comment.author?.display_name || "Anonymous"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDate(comment.created_at)}
-                        {comment.is_edited && " (edited)"}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Comment form */}
-          {user ? (
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Add a Comment</h3>
-              <textarea
-                value={commentContent}
-                onChange={(e) => {
-                  setCommentContent(e.target.value);
-                  if (error) setError("");
-                }}
-                placeholder="Write your comment..."
-                maxLength={MAX_LENGTHS.COMMENT}
-                className="w-full min-h-[100px] p-4 bg-background border border-border resize-y focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <div className="mt-2 flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">
-                  {commentContent.length}/{MAX_LENGTHS.COMMENT}
-                </span>
-                {error && (
-                  <span className="text-xs text-destructive">{error}</span>
-                )}
-              </div>
-              <div className="mt-3 flex justify-end">
-                <Button
-                  onClick={handlePostComment}
-                  disabled={submitting || !commentContent.trim()}
-                >
-                  {submitting ? "Posting..." : "Post Comment"}
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-6 border border-dashed border-border">
-              <p className="text-muted-foreground mb-4">Sign in to leave a comment.</p>
-              <Button asChild>
-                <Link href={ROUTES.SIGNIN}>
-                  <SignIn className="size-4 mr-2" />
-                  Sign In
-                </Link>
-              </Button>
-            </div>
-          )}
+      {/* 02 / Discussion */}
+      <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-10">
+        <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-6">
+          <span className="font-mono text-[11px] text-accent tracking-[1px]">02 /</span>
+          <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+            Discussion
+          </h2>
+          <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+            {comments.length} {comments.length === 1 ? "comment" : "comments"}
+          </span>
         </div>
+
+        {comments.length === 0 ? (
+          <p className="font-heading italic text-[15px] text-muted-foreground mb-8">
+            No comments yet. Be the first.
+          </p>
+        ) : (
+          <div className="space-y-0 mb-8">
+            {comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="grid grid-cols-[36px_1fr] gap-4 py-4 border-b border-muted"
+              >
+                <div className="size-8 border border-border bg-muted flex items-center justify-center font-heading font-semibold text-[14px] text-foreground">
+                  {(comment.author?.display_name || "A")[0].toUpperCase()}
+                </div>
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground mb-1.5">
+                    {comment.author?.display_name || "Anonymous"} ·{" "}
+                    <span className="tabular-nums">{formatDate(comment.created_at)}</span>
+                    {comment.is_edited && " · edited"}
+                  </div>
+                  <p className="text-[14px] text-foreground leading-[1.55] whitespace-pre-wrap">
+                    {comment.content}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Comment form */}
+        {user ? (
+          <div>
+            <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-2">
+              Add a comment
+            </div>
+            <textarea
+              value={commentContent}
+              onChange={(e) => {
+                setCommentContent(e.target.value);
+                if (error) setError("");
+              }}
+              placeholder="Write your comment…"
+              maxLength={MAX_LENGTHS.COMMENT}
+              rows={4}
+              className="w-full border border-border bg-card focus:border-foreground transition-colors outline-none p-3 text-[14px] text-foreground placeholder:text-muted-foreground/60 placeholder:italic font-sans resize-y"
+            />
+            <div className="flex items-center justify-between mt-2">
+              <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground tabular-nums">
+                {commentContent.length}/{MAX_LENGTHS.COMMENT}
+              </span>
+              {error && (
+                <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-destructive">
+                  {error}
+                </span>
+              )}
+              <button
+                onClick={handlePostComment}
+                disabled={submitting || !commentContent.trim()}
+                className="px-4 py-2 border border-foreground bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {submitting ? "Posting…" : "Post comment"}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="py-8 text-center border border-dashed border-border">
+            <p className="font-heading italic text-[15px] text-muted-foreground mb-4">
+              Sign in to leave a comment.
+            </p>
+            <Link
+              href={ROUTES.SIGNIN}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-foreground bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-primary/90 transition-colors"
+            >
+              <SignIn className="w-3.5 h-3.5" />
+              Sign in
+            </Link>
+          </div>
+        )}
       </section>
 
       {/* Related Articles */}
