@@ -2,8 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { WikiFacetGroup } from "@/lib/types";
-import { MagnifyingGlass, SortAscending, Funnel, X, Check, CaretDown } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
+import { MagnifyingGlass, Funnel, X, Check, CaretDown } from "@phosphor-icons/react";
 
 export type SortOption = "newest" | "oldest" | "popular" | "alphabetical";
 
@@ -23,8 +22,8 @@ interface WikiFilterBarProps {
 const sortOptions: { value: SortOption; label: string }[] = [
   { value: "newest", label: "Newest" },
   { value: "oldest", label: "Oldest" },
-  { value: "popular", label: "Most Viewed" },
-  { value: "alphabetical", label: "A-Z" },
+  { value: "popular", label: "Most viewed" },
+  { value: "alphabetical", label: "A–Z" },
 ];
 
 const GROUP_SLUG_TO_PARAM: Record<string, string> = {
@@ -76,15 +75,16 @@ export function WikiFilterBar({
   return (
     <div className="flex flex-col sm:flex-row gap-3">
       {/* Search Input */}
-      <div className="relative flex-1">
-        <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+      <div className="relative flex-1 border border-border rounded-md bg-card focus-within:border-foreground transition-colors">
+        <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
         <input
-          type="text"
+          type="search"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Search articles..."
-          className="w-full h-11 bg-card border border-border rounded-md pl-11 pr-4 text-sm focus:outline-none focus:border-muted-foreground transition-colors"
+          placeholder="Search articles…"
+          className="w-full bg-transparent border-none outline-none font-sans text-[14px] text-foreground placeholder:text-muted-foreground/60 placeholder:italic py-3 pl-11 pr-4"
+          aria-label="Search wiki articles"
         />
       </div>
 
@@ -93,16 +93,14 @@ export function WikiFilterBar({
         <div className="relative" ref={sortRef}>
           <button
             onClick={() => setSortOpen(!sortOpen)}
-            className="h-11 px-4 bg-card border border-border rounded-md flex items-center gap-2 text-muted-foreground hover:border-muted-foreground transition-colors"
+            className="h-11 px-4 bg-card border border-border rounded-md flex items-center gap-2 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:border-foreground hover:text-foreground transition-colors"
           >
-            <span className="text-[13px]">
-              {sortOptions.find((o) => o.value === sortBy)?.label}
-            </span>
-            <CaretDown className="size-4" />
+            <span>{sortOptions.find((o) => o.value === sortBy)?.label}</span>
+            <CaretDown className="w-3 h-3" />
           </button>
 
           {sortOpen && (
-            <div className="absolute right-0 top-full mt-1 z-50 min-w-[140px] border border-border bg-card rounded-md shadow-lg overflow-hidden">
+            <div className="absolute right-0 top-full mt-1 z-50 min-w-[160px] border border-foreground bg-card rounded-md shadow-lg overflow-hidden">
               {sortOptions.map((option) => (
                 <button
                   key={option.value}
@@ -110,12 +108,12 @@ export function WikiFilterBar({
                     onSortChange(option.value);
                     setSortOpen(false);
                   }}
-                  className={`w-full px-3 py-2 text-left text-sm hover:bg-muted flex items-center justify-between transition-colors ${
-                    sortBy === option.value ? "bg-muted/50" : ""
+                  className={`w-full px-3 py-2 text-left font-mono text-[11px] uppercase tracking-[1.2px] hover:bg-muted flex items-center justify-between transition-colors ${
+                    sortBy === option.value ? "text-accent" : "text-muted-foreground"
                   }`}
                 >
                   {option.label}
-                  {sortBy === option.value && <Check className="size-4 text-primary" />}
+                  {sortBy === option.value && <Check className="w-3 h-3" />}
                 </button>
               ))}
             </div>
@@ -126,33 +124,35 @@ export function WikiFilterBar({
         <div className="relative" ref={filterRef}>
           <button
             onClick={() => setFilterOpen(!filterOpen)}
-            className="h-11 px-4 bg-card border border-border rounded-md flex items-center gap-2 text-muted-foreground hover:border-muted-foreground transition-colors"
+            className="h-11 px-4 bg-card border border-border rounded-md flex items-center gap-2 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:border-foreground hover:text-foreground transition-colors"
           >
-            <Funnel className="size-4" />
-            <span className="text-[13px]">Filters</span>
+            <Funnel className="w-3.5 h-3.5" />
+            <span>Filters</span>
             {activeFilterCount > 0 && (
-              <span className="size-5 flex items-center justify-center bg-primary text-primary-foreground text-xs rounded-full font-bold">
+              <span className="w-5 h-5 flex items-center justify-center bg-accent text-accent-foreground rounded-sm font-bold tabular-nums text-[10px] border border-foreground">
                 {activeFilterCount}
               </span>
             )}
-            <CaretDown className="size-4" />
+            <CaretDown className="w-3 h-3" />
           </button>
 
           {filterOpen && (
-            <div className="absolute right-0 top-full mt-1 z-50 w-[280px] border border-border bg-card rounded-md shadow-lg overflow-hidden">
-              <div className="p-2 border-b border-border flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Filter by facets</span>
+            <div className="absolute right-0 top-full mt-1 z-50 w-[300px] border border-foreground bg-card rounded-md shadow-lg overflow-hidden">
+              <div className="px-3 py-2 border-b border-border flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground">
+                  Filter by facets
+                </span>
                 {activeFilterCount > 0 && (
                   <button
                     onClick={onClearFacets}
-                    className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+                    className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground hover:text-accent transition-colors flex items-center gap-1"
                   >
-                    <X className="size-3" />
+                    <X className="w-3 h-3" />
                     Clear
                   </button>
                 )}
               </div>
-              <div className="max-h-[320px] overflow-y-auto">
+              <div className="max-h-[340px] overflow-y-auto">
                 {facetGroups.map((group) => {
                   const paramName = GROUP_SLUG_TO_PARAM[group.slug];
                   if (!paramName) return null;
@@ -162,8 +162,8 @@ export function WikiFilterBar({
 
                   return (
                     <div key={group.id}>
-                      <div className="px-3 py-1.5 bg-muted/30">
-                        <span className="font-mono text-[10px] font-bold text-muted-foreground tracking-[1.5px] uppercase">
+                      <div className="px-3 py-1.5 bg-muted border-y border-border">
+                        <span className="font-mono text-[9px] font-bold text-accent tracking-[1.3px] uppercase">
                           {group.name}
                         </span>
                       </div>
@@ -173,18 +173,26 @@ export function WikiFilterBar({
                           <button
                             key={facet.id}
                             onClick={() => onFacetToggle(paramName, facet.slug)}
-                            className="w-full px-3 py-1.5 text-left text-sm hover:bg-muted flex items-center gap-2 transition-colors"
+                            className="w-full px-3 py-2 text-left hover:bg-muted/50 flex items-center gap-2.5 transition-colors"
                           >
                             <div
-                              className={`size-3.5 border rounded flex items-center justify-center shrink-0 ${
-                                isChecked ? "bg-primary border-primary" : "border-border"
+                              className={`w-3.5 h-3.5 border rounded-sm flex items-center justify-center shrink-0 ${
+                                isChecked
+                                  ? "bg-accent border-foreground"
+                                  : "border-border"
                               }`}
                             >
-                              {isChecked && <Check className="size-2.5 text-primary-foreground" />}
+                              {isChecked && (
+                                <Check className="w-2.5 h-2.5 text-accent-foreground" weight="bold" />
+                              )}
                             </div>
-                            <span className="flex-1 truncate text-[13px]">{facet.name}</span>
+                            <span className="flex-1 truncate text-[13px] text-foreground">
+                              {facet.name}
+                            </span>
                             {facet.article_count > 0 && (
-                              <span className="text-[11px] text-muted-foreground/60">({facet.article_count})</span>
+                              <span className="font-mono text-[10px] text-muted-foreground tabular-nums">
+                                {facet.article_count}
+                              </span>
                             )}
                           </button>
                         );
@@ -198,9 +206,12 @@ export function WikiFilterBar({
         </div>
 
         {/* Search Button */}
-        <Button onClick={onSearch} className="h-11 px-5 rounded-md font-semibold">
+        <button
+          onClick={onSearch}
+          className="h-11 px-5 bg-primary text-primary-foreground rounded-md font-mono text-[11px] uppercase tracking-[1.2px] font-medium hover:bg-primary/90 transition-colors"
+        >
           Search
-        </Button>
+        </button>
       </div>
     </div>
   );

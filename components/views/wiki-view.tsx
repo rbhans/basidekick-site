@@ -2,13 +2,12 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ArticleCard } from "@/components/article-card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import { WikiFilterBar, WikiSidebar, SortOption } from "@/components/wiki";
 import { WikiCategoryBlock } from "@/components/wiki/wiki-category-block";
 import { WikiCollectionCard } from "@/components/wiki/wiki-collection-card";
+import { WikiArticleRow } from "@/components/wiki/wiki-article-row";
 import { createClient } from "@/lib/supabase/client";
 import { WikiCategory, WikiArticle, WikiFacetGroup, WikiCollection } from "@/lib/types";
 import { sanitizeSearchInput } from "@/lib/security";
@@ -347,21 +346,26 @@ export function WikiView() {
 
       {/* Landing Sections — shown only when no filters are active */}
       {isLanding && initialDataLoaded && (
-        <section className="py-8">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-20 space-y-12">
+        <section className="py-10 pb-2">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-16 max-w-[1100px] space-y-12">
             {/* Browse by Category */}
             {categories.length > 0 && (
               <div>
-                <h2 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">
-                  Browse by Category
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+                  <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
+                  <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+                    Browse by category
+                  </h2>
+                  <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+                    {categories.length} {categories.length === 1 ? "category" : "categories"}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                   {categories.map((cat) => (
                     <WikiCategoryBlock
                       key={cat.id}
                       name={cat.name}
                       slug={cat.slug}
-                      color={cat.color || getWikiCategoryColor(cat.name, cat.slug)}
                       count={cat.article_count}
                       onClick={() => handleCategorySelect(cat.slug)}
                     />
@@ -373,10 +377,13 @@ export function WikiView() {
             {/* Featured Collections */}
             {featuredCollections.length > 0 && (
               <div>
-                <h2 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">
-                  Featured Collections
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+                  <span className="font-mono text-[11px] text-accent tracking-[1px]">02 /</span>
+                  <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+                    Featured collections
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {featuredCollections.map((col) => (
                     <WikiCollectionCard key={col.id} collection={col} />
                   ))}
@@ -391,18 +398,21 @@ export function WikiView() {
               if (platforms.length === 0) return null;
               return (
                 <div>
-                  <h2 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">
-                    Popular Platforms
-                  </h2>
+                  <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+                    <span className="font-mono text-[11px] text-accent tracking-[1px]">03 /</span>
+                    <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+                      Popular platforms
+                    </h2>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {platforms.map((facet) => (
                       <button
                         key={facet.id}
                         onClick={() => updateFilters({ platform: [facet.slug] })}
-                        className="px-4 py-2 rounded-md border border-border bg-card hover:border-foreground transition-all text-sm text-foreground hover:text-accent"
+                        className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground border border-border bg-card px-3 py-1.5 rounded-sm hover:border-foreground hover:text-foreground transition-colors"
                       >
                         {facet.name}
-                        <span className="ml-2 text-[11px] text-muted-foreground">({facet.article_count})</span>
+                        <span className="ml-2 text-accent tabular-nums">{facet.article_count}</span>
                       </button>
                     ))}
                   </div>
@@ -413,28 +423,19 @@ export function WikiView() {
             {/* Recently Updated */}
             {recentArticles.length > 0 && (
               <div>
-                <h2 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">
-                  <Clock className="size-4 inline mr-1 -mt-0.5" />
-                  Recently Updated
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-0">
+                  <span className="font-mono text-[11px] text-accent tracking-[1px]">04 /</span>
+                  <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+                    Recently updated
+                  </h2>
+                  <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground inline-flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    Latest
+                  </span>
+                </div>
+                <div>
                   {recentArticles.map((article) => (
-                    <ArticleCard
-                      key={article.id}
-                      slug={article.slug}
-                      category={
-                        (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.name
-                      }
-                      categorySlug={
-                        (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.slug
-                      }
-                      title={article.title}
-                      description={article.summary || ""}
-                      accentColor={getWikiCategoryColor(
-                        (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.name,
-                        (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.slug
-                      )}
-                    />
+                    <WikiArticleRow key={article.id} article={article} />
                   ))}
                 </div>
               </div>
@@ -491,94 +492,85 @@ export function WikiView() {
 
               {/* Active Filters */}
               {(filters.q || activeFilterCount > 0) && (
-                <div className="mt-3 flex flex-wrap items-center gap-2">
+                <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[1.1px]">
                   {filters.q && (
-                    <Badge variant="secondary" className="gap-1">
-                      Search: {filters.q}
+                    <span className="inline-flex items-center gap-1.5 text-muted-foreground border border-border bg-card px-2 py-1 rounded-sm">
+                      <span className="text-accent">Search:</span>
+                      <span className="text-foreground normal-case tracking-normal text-[11px]">{filters.q}</span>
                       <button
                         onClick={() => {
                           setDraftSearch(null);
                           updateFilters({ q: "" });
                         }}
-                        className="ml-1 hover:text-foreground"
+                        className="ml-0.5 hover:text-accent"
+                        aria-label="Clear search"
                       >
                         ×
                       </button>
-                    </Badge>
+                    </span>
                   )}
                   {Object.entries(selectedFacets).flatMap(([paramName, slugs]) =>
                     slugs.map((slug) => {
-                      // Find the facet name
                       const groupSlug = PARAM_TO_GROUP_SLUG[paramName];
                       const group = facetGroups.find((g) => g.slug === groupSlug);
                       const facet = group?.facets?.find((f) => f.slug === slug);
                       return (
-                        <Badge key={`${paramName}-${slug}`} variant="secondary" className="gap-1">
+                        <span
+                          key={`${paramName}-${slug}`}
+                          className="inline-flex items-center gap-1.5 text-foreground border border-border bg-card px-2 py-1 rounded-sm"
+                        >
                           {facet?.name || slug}
                           <button
                             onClick={() => handleFacetToggle(paramName, slug)}
-                            className="ml-1 hover:text-foreground"
+                            className="ml-0.5 hover:text-accent"
+                            aria-label="Remove filter"
                           >
                             ×
                           </button>
-                        </Badge>
+                        </span>
                       );
                     })
                   )}
                   <button
                     onClick={handleClearAll}
-                    className="text-xs text-muted-foreground hover:text-foreground"
+                    className="text-muted-foreground hover:text-accent transition-colors"
                   >
                     Clear all
                   </button>
                 </div>
               )}
 
-              {/* Article Count */}
-              <p className="mt-4 mb-4 text-sm text-muted-foreground">
-                {totalArticles} articles available
-              </p>
+              {/* Section heading with count */}
+              <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mt-6 mb-0">
+                <span className="font-mono text-[11px] text-accent tracking-[1px]">A /</span>
+                <h3 className="font-heading font-semibold text-[20px] leading-none text-foreground">
+                  Articles
+                </h3>
+                <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+                  {totalArticles} total · showing {articles.length}
+                </span>
+              </div>
 
-              {/* Section Header */}
-              <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">
-                ARTICLES ({totalArticles})
-              </h3>
-
-              {/* Article Grid */}
+              {/* Article list */}
               <div>
                 {loading ? (
-                  <div className="p-8 text-center">
-                    <p className="text-muted-foreground font-mono">Loading articles...</p>
+                  <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
+                    Loading articles…
                   </div>
                 ) : articles.length === 0 ? (
-                  <div className="border border-dashed border-border rounded-md p-8 text-center">
-                    <List className="size-10 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">No articles found.</p>
+                  <div className="py-20 text-center font-heading italic text-[18px] text-muted-foreground">
+                    <List className="w-7 h-7 text-muted-foreground/50 mx-auto mb-3" />
+                    Nothing matches these filters.
                     {(filters.q || activeFilterCount > 0) && (
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Try adjusting your search or filters.
+                      <p className="text-[13px] not-italic font-sans mt-2">
+                        Try loosening your search.
                       </p>
                     )}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
                     {articles.map((article) => (
-                      <ArticleCard
-                        key={article.id}
-                        slug={article.slug}
-                        category={
-                          (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.name
-                        }
-                        categorySlug={
-                          (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.slug
-                        }
-                        title={article.title}
-                        description={article.summary || ""}
-                        accentColor={getWikiCategoryColor(
-                          (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.name,
-                          (article as WikiArticle & { category?: { name: string; slug: string } | null }).category?.slug
-                        )}
-                      />
+                      <WikiArticleRow key={article.id} article={article} />
                     ))}
                   </div>
                 )}
@@ -586,7 +578,7 @@ export function WikiView() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="mt-6">
+                <div className="mt-8">
                   <Pagination
                     currentPage={filters.page}
                     totalPages={totalPages}
@@ -619,7 +611,7 @@ export function WikiView() {
         <div className="lg:hidden">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40 bg-black/50"
+            className="fixed inset-0 z-40 bg-foreground/50"
             onClick={() => setIsMobileOpen(false)}
           />
           {/* Panel */}
