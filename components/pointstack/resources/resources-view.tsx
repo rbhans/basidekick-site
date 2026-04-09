@@ -5,41 +5,16 @@ import Link from "next/link";
 import {
   DownloadSimple,
   Plus,
-  File,
-  Code,
-  FileText,
-  BookOpen,
-  Wrench,
-  Package,
   Heart,
   ChatCircle,
   MagnifyingGlass,
 } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ROUTES } from "@/lib/routes";
 import { PointStackResourceListing, PointStackResourceCategory } from "@/lib/types";
 import * as api from "../pointstack-api";
 import { CreateResourceDialog } from "./create-resource-dialog";
-
-const CATEGORY_ICONS: Record<PointStackResourceCategory, typeof File> = {
-  template: FileText,
-  script: Code,
-  document: File,
-  guide: BookOpen,
-  tool: Wrench,
-  other: Package,
-};
 
 const CATEGORY_LABELS: Record<PointStackResourceCategory, string> = {
   template: "Templates",
@@ -49,6 +24,15 @@ const CATEGORY_LABELS: Record<PointStackResourceCategory, string> = {
   tool: "Tools",
   other: "Other",
 };
+
+const CATEGORY_CHIPS: { key: string | undefined; label: string }[] = [
+  { key: undefined, label: "All" },
+  { key: "template", label: "Templates" },
+  { key: "script", label: "Scripts" },
+  { key: "document", label: "Documents" },
+  { key: "guide", label: "Guides" },
+  { key: "tool", label: "Tools" },
+];
 
 export function PointStackResourcesView() {
   const { user } = useAuth();
@@ -80,160 +64,150 @@ export function PointStackResourcesView() {
     return resources.filter(
       (r) =>
         r.title.toLowerCase().includes(q) ||
-        r.description?.toLowerCase().includes(q)
+        r.description?.toLowerCase().includes(q),
     );
   }, [resources, searchQuery]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-heading font-bold">Resource Library</h2>
-          <p className="text-muted-foreground">
-            Download templates, scripts, and resources shared by the community.
-          </p>
-        </div>
+    <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
+      {/* Section heading */}
+      <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-6">
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
+        <h1 className="font-heading font-semibold text-[26px] leading-none text-foreground">
+          Resources
+        </h1>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+          {filteredResources.length} {filteredResources.length === 1 ? "item" : "items"}
+        </span>
         {user && (
           <CreateResourceDialog
             onCreated={async () => {
               await loadResources();
             }}
             trigger={
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Share Resource
-              </Button>
+              <button className="ml-3 font-mono text-[10px] uppercase tracking-[1.2px] text-foreground hover:text-accent transition-colors inline-flex items-center gap-1">
+                <Plus className="w-3 h-3" />
+                Share
+              </button>
             }
           />
         )}
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center gap-3 mb-6">
-        <div className="relative flex-1 max-w-sm">
-          <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search resources..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <Select value={category || "all"} onValueChange={(v) => setCategory(v === "all" ? undefined : v)}>
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {Object.entries(CATEGORY_LABELS).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <p className="font-heading italic text-[15px] text-muted-foreground mb-7">
+        Templates, scripts, and tools the community has open-sourced.
+      </p>
+
+      {/* Search */}
+      <div className="relative border border-border rounded-md bg-card focus-within:border-foreground transition-colors mb-5">
+        <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search by title or description…"
+          className="w-full bg-transparent border-none outline-none font-sans text-[14px] text-foreground placeholder:text-muted-foreground/60 placeholder:italic py-3 pl-11 pr-4"
+          aria-label="Search resources"
+        />
+      </div>
+
+      {/* Category chips */}
+      <div className="flex items-center gap-3 mb-8 flex-wrap font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground">
+        <span>Kind</span>
+        {CATEGORY_CHIPS.map((chip) => (
+          <button
+            key={chip.label}
+            onClick={() => setCategory(chip.key)}
+            className={`px-3 py-1.5 border rounded-sm transition-colors ${
+              category === chip.key
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground"
+            }`}
+          >
+            {chip.label}
+          </button>
+        ))}
       </div>
 
       {/* Loading */}
       {loading && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <Skeleton key={i} className="h-48 rounded-lg" />
+        <div className="space-y-0">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="grid grid-cols-[1fr_auto] gap-4 py-4 px-2 border-b border-muted">
+              <div>
+                <Skeleton className="h-5 w-60 mb-2" />
+                <Skeleton className="h-4 w-full max-w-md mb-2" />
+                <Skeleton className="h-3 w-40" />
+              </div>
+              <Skeleton className="h-4 w-16 self-center" />
+            </div>
           ))}
         </div>
       )}
 
-      {/* Resources grid */}
+      {/* Resources list */}
       {!loading && filteredResources.length > 0 && (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {filteredResources.map((resource) => {
-            const Icon = CATEGORY_ICONS[resource.category];
-            return (
-              <Link
-                key={resource.id}
-                href={ROUTES.POINTSTACK_RESOURCE(resource.slug)}
-                className="block p-5 border border-border rounded-md bg-card hover:border-foreground transition-colors"
-              >
-                {/* Preview image or icon */}
-                {resource.preview_images && resource.preview_images.length > 0 ? (
-                  <div className="aspect-video rounded-lg overflow-hidden mb-4 bg-muted">
-                    <img
-                      src={resource.preview_images[0]}
-                      alt={resource.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-video rounded-lg mb-4 bg-muted/50 flex items-center justify-center">
-                    <Icon className="w-12 h-12 text-muted-foreground" />
-                  </div>
-                )}
-
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <h3 className="font-semibold line-clamp-2">{resource.title}</h3>
+        <div className="space-y-0">
+          {filteredResources.map((resource) => (
+            <Link
+              key={resource.id}
+              href={ROUTES.POINTSTACK_RESOURCE(resource.slug)}
+              className="group grid grid-cols-[1fr_auto] gap-5 items-start py-4 px-2 border-b border-muted hover:bg-muted/40 transition-colors"
+            >
+              <div className="min-w-0">
+                <div className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground mb-1 flex items-center gap-2">
+                  <span className="text-accent">{CATEGORY_LABELS[resource.category]}</span>
                   {resource.is_free ? (
-                    <Badge variant="secondary" className="shrink-0">Free</Badge>
+                    <span>· Free</span>
                   ) : (
-                    <Badge className="shrink-0">Premium</Badge>
+                    <span className="text-accent">· Premium</span>
                   )}
                 </div>
-
+                <h3 className="font-heading font-semibold text-[17px] leading-[1.25] text-foreground group-hover:text-accent transition-colors line-clamp-2">
+                  {resource.title}
+                </h3>
                 {resource.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                  <p className="text-[13px] text-muted-foreground leading-[1.5] mt-1 line-clamp-2 max-w-[640px]">
                     {resource.description}
                   </p>
                 )}
-
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <Badge variant="outline">
-                    {CATEGORY_LABELS[resource.category]}
-                  </Badge>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <Heart className="w-3 h-3" weight={resource.user_vote === 1 ? "fill" : "regular"} />
-                      <span>{resource.upvote_count}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <ChatCircle className="w-3 h-3" />
-                      <span>{resource.comment_count}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <DownloadSimple className="w-3 h-3" />
-                      <span>{resource.download_count}</span>
-                    </div>
-                  </div>
+                <div className="mt-2 flex items-center gap-4 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
+                  <span className="inline-flex items-center gap-1 tabular-nums">
+                    <Heart
+                      className="w-3 h-3"
+                      weight={resource.user_vote === 1 ? "fill" : "regular"}
+                    />
+                    {resource.upvote_count}
+                  </span>
+                  <span className="inline-flex items-center gap-1 tabular-nums">
+                    <ChatCircle className="w-3 h-3" />
+                    {resource.comment_count}
+                  </span>
+                  <span className="inline-flex items-center gap-1 tabular-nums">
+                    <DownloadSimple className="w-3 h-3" />
+                    {resource.download_count}
+                  </span>
                 </div>
-              </Link>
-            );
-          })}
+              </div>
+
+              <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground group-hover:text-accent transition-colors self-center">
+                Open →
+              </span>
+            </Link>
+          ))}
         </div>
       )}
 
       {/* Empty state */}
       {!loading && filteredResources.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">
-            {searchQuery
-              ? "No resources match your search."
-              : category
-              ? "No resources found. Try a different category."
-              : "No resources found. Be the first to share!"}
-          </p>
-          {user && !searchQuery && (
-            <CreateResourceDialog
-              onCreated={async () => {
-                await loadResources();
-              }}
-              trigger={
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Share Resource
-                </Button>
-              }
-            />
-          )}
+        <div className="py-20 text-center font-heading italic text-[18px] text-muted-foreground">
+          {searchQuery
+            ? `Nothing matches "${searchQuery}".`
+            : category
+              ? "No resources in that category yet."
+              : "No resources shared yet."}
         </div>
       )}
-    </div>
+    </section>
   );
 }
