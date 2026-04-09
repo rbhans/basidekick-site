@@ -81,7 +81,7 @@ function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
   if (loading) {
     return (
       <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Equipment in BAS Atlas</h2>
+        <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-2.5 border-b border-foreground"><span className="text-accent mr-1.5">·</span>Equipment in Atlas</div>
         <p className="text-sm text-muted-foreground">Loading Atlas equipment models...</p>
       </div>
     );
@@ -92,7 +92,7 @@ function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
   if (!atlasTypeExists) {
     return (
       <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Equipment in BAS Atlas</h2>
+        <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-2.5 border-b border-foreground"><span className="text-accent mr-1.5">·</span>Equipment in Atlas</div>
         <p className="text-sm text-destructive">
           Broken mapping: this BAS Atlas term references an Atlas type that no longer exists.
         </p>
@@ -102,7 +102,7 @@ function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
 
   return (
     <div className="mb-6">
-      <h2 className="text-lg font-semibold mb-3">Equipment in BAS Atlas</h2>
+      <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-2.5 border-b border-foreground"><span className="text-accent mr-1.5">·</span>Equipment in Atlas</div>
       {modelsByBrand.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           No models tracked yet.{" "}
@@ -180,80 +180,95 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-[820px] mx-auto">
       {/* Back link */}
       {!hideBackLink && (
         <Link
           href={ROUTES.ATLAS}
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5 mb-6"
         >
-          <ArrowLeft className="size-4" />
-          Back to BAS Atlas
+          <ArrowLeft className="w-3 h-3 text-accent" />
+          Back to Atlas
         </Link>
       )}
 
       {/* Header */}
       <div className="mb-8">
-        <span className="text-xs font-medium uppercase tracking-wider text-primary/70">
-          {type}
-        </span>
-        <h1 className="mt-2 text-2xl md:text-3xl font-semibold tracking-tight">
+        <div className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground mb-2">
+          <span className="text-accent mr-1">{type}</span>
+          <span className="text-muted-foreground/40 mx-1.5">·</span>
+          <span>{category.replace("-", " ")}</span>
+        </div>
+        <h1 className="font-heading font-semibold text-[30px] md:text-[36px] leading-[1.1] tracking-[-0.015em] text-foreground">
           {name}
         </h1>
         {fullName && fullName !== name && (
-          <p className="text-lg text-muted-foreground mt-1">{fullName}</p>
+          <p className="font-heading italic text-[17px] text-muted-foreground mt-1.5">
+            {fullName}
+          </p>
         )}
-        <p className="text-muted-foreground mt-2">{description || <EmptyState text="No description" />}</p>
+        {description ? (
+          <p className="text-[15px] text-foreground leading-[1.6] mt-4 max-w-[680px]">
+            {description}
+          </p>
+        ) : (
+          <p className="font-heading italic text-[14px] text-muted-foreground mt-4">
+            No description yet.
+          </p>
+        )}
       </div>
 
-      {/* Metadata */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-card border border-border rounded mb-6">
-        <div className="min-w-0">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Brick</p>
-          <p className={`font-mono text-sm mt-1 break-words ${brick ? "" : "text-muted-foreground/50"}`}>
-            {brick || "-"}
-          </p>
+      {/* Metadata — specimen style */}
+      <div className="border-t border-b border-foreground mb-8">
+        <div className="grid grid-cols-[140px_1fr] gap-4 py-2.5 border-b border-muted">
+          <div className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground pt-0.5">Brick</div>
+          <div className="font-mono text-[12px] text-foreground leading-[1.5] break-words">
+            {brick || <span className="text-muted-foreground/40">—</span>}
+          </div>
         </div>
-        <div>
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">Category</p>
-          <p className="text-sm mt-1 capitalize">{category.replace("-", " ")}</p>
+        <div className="grid grid-cols-[140px_1fr] gap-4 py-2.5 border-b border-muted">
+          <div className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground pt-0.5">Category</div>
+          <div className="font-mono text-[12px] text-foreground leading-[1.5] capitalize">
+            {category.replace("-", " ")}
+          </div>
         </div>
-
-        {/* Point-specific metadata */}
         {isPoint && (
           <>
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Typical Range</p>
-              <p className={`font-mono text-sm mt-1 ${typicalRange ? "" : "text-muted-foreground/50"}`}>
-                {typicalRange ? `${typicalRange.min} - ${typicalRange.max}` : "-"}
-              </p>
+            <div className="grid grid-cols-[140px_1fr] gap-4 py-2.5 border-b border-muted">
+              <div className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground pt-0.5">Typical range</div>
+              <div className="font-mono text-[12px] text-foreground leading-[1.5] tabular-nums">
+                {typicalRange ? `${typicalRange.min} – ${typicalRange.max}` : <span className="text-muted-foreground/40">—</span>}
+              </div>
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Object Type</p>
-              <p className={`font-mono text-sm mt-1 ${objectType ? "" : "text-muted-foreground/50"}`}>
-                {objectType || "-"}
-              </p>
+            <div className="grid grid-cols-[140px_1fr] gap-4 py-2.5">
+              <div className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground pt-0.5">Object type</div>
+              <div className="font-mono text-[12px] text-foreground leading-[1.5]">
+                {objectType || <span className="text-muted-foreground/40">—</span>}
+              </div>
             </div>
           </>
         )}
       </div>
 
       {/* Haystack */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Haystack</h2>
-        <div className="p-4 bg-card border border-border rounded space-y-4">
+      <div className="mb-8">
+        <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-2.5 border-b border-foreground">
+          <span className="text-accent mr-1.5">01 /</span>
+          Haystack
+        </div>
+        <div className="space-y-4">
           {haystack ? (
             <>
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Tags</p>
+                <p className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground mb-2">Tags</p>
                 <div className="flex flex-wrap gap-1.5">
                   {haystack.tags.map((tag) => (
                     <span
                       key={tag.name}
-                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-mono bg-secondary text-primary rounded"
+                      className="inline-flex items-center gap-1 px-2 py-1 font-mono text-[11px] bg-muted text-foreground border border-border rounded-sm"
                     >
                       {tag.name}
-                      <span className="text-[10px] text-primary/50">{tag.kind}</span>
+                      <span className="text-[9px] text-muted-foreground">{tag.kind}</span>
                     </span>
                   ))}
                 </div>
@@ -263,17 +278,17 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Kind</p>
+                      <p className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">Kind</p>
                       <p className="font-mono text-sm mt-1">{pointEntry.concept.haystack?.kind ?? inferredPointKind}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Point Function</p>
+                      <p className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">Point Function</p>
                       <p className={`font-mono text-sm mt-1 ${pointEntry.concept.point_function ? "" : "text-muted-foreground/50"}`}>
                         {pointEntry.concept.point_function || "-"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Haystack Unit</p>
+                      <p className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">Haystack Unit</p>
                       <p className={`font-mono text-sm mt-1 ${pointEntry.concept.haystack?.unit ? "" : "text-muted-foreground/50"}`}>
                         {pointEntry.concept.haystack?.unit || "-"}
                       </p>
@@ -282,7 +297,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
 
                   {unit && (
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Source Units</p>
+                      <p className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">Source Units</p>
                       <p className="font-mono text-sm mt-1">
                         {Array.isArray(unit) ? unit.join(" / ") : unit}
                       </p>
@@ -320,7 +335,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
 
       {/* Aliases */}
       <div className="space-y-4 mb-6">
-        <h2 className="text-lg font-semibold">Aliases</h2>
+        <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-2.5 border-b border-foreground"><span className="text-accent mr-1.5">02 /</span>Aliases</div>
 
         <div>
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Common</p>
@@ -365,7 +380,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
       {/* Subtypes (equipment only) */}
       {!isPoint && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-3">Subtypes</h2>
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-2.5 border-b border-foreground"><span className="text-accent mr-1.5">03 /</span>Subtypes</div>
           {subtypes && subtypes.length > 0 ? (
             <div className="space-y-3">
               {subtypes.map((subtype) => (
@@ -398,7 +413,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
       {/* Notes (points only) */}
       {isPoint && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-3">Notes</h2>
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-2.5 border-b border-foreground"><span className="text-accent mr-1.5">03 /</span>Notes</div>
           {notes && notes.length > 0 ? (
             <ul className="space-y-2">
               {notes.map((note, index) => (
@@ -416,7 +431,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
       {/* Related entries (points only) */}
       {isPoint && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-3">Related Points</h2>
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-2.5 border-b border-foreground"><span className="text-accent mr-1.5">04 /</span>Related points</div>
           {related && related.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {related.map((relatedId) => (
@@ -438,7 +453,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
       {/* Typical points (equipment only) */}
       {!isPoint && (
         <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-3">Typical Points</h2>
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-4 pb-2.5 border-b border-foreground"><span className="text-accent mr-1.5">04 /</span>Typical points</div>
           {typicalPoints && typicalPoints.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {typicalPoints.map((pointId) => (
