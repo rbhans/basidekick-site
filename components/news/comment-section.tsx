@@ -4,11 +4,9 @@ import { useState, useMemo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ArrowUp, Trash, CaretDown, CaretUp } from "@phosphor-icons/react";
 import { NewsArticleComment } from "@/lib/types";
-import { Button } from "@/components/ui/button";
 import { useNewsStore } from "./news-store";
 import { useAuth } from "@/hooks/use-auth";
 import { NewsCommentForm } from "./comment-form";
-import { cn } from "@/lib/utils";
 
 interface CommentNodeProps {
   comment: NewsArticleComment;
@@ -25,25 +23,32 @@ function CommentNode({ comment, articleId, depth }: CommentNodeProps) {
   const isAuthor = user?.id === comment.author_id;
 
   return (
-    <div className={cn("relative", depth > 0 && "ml-6 pl-4 border-l border-border/50")}>
+    <div className={`relative ${depth > 0 ? "ml-5 pl-4 border-l border-border" : ""}`}>
       {/* Comment header */}
-      <div className="flex items-center gap-2 text-xs text-muted-foreground/60">
+      <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hover:text-muted-foreground transition-colors"
+          className="hover:text-foreground transition-colors"
         >
           {collapsed ? <CaretDown className="w-3 h-3" /> : <CaretUp className="w-3 h-3" />}
         </button>
-        <span className="font-medium text-muted-foreground/80">
+        <span className="text-foreground normal-case tracking-normal font-sans text-[13px] font-heading font-semibold">
           {comment.author?.display_name || "Anonymous"}
         </span>
         <span>·</span>
-        <span>{formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}</span>
+        <span className="tabular-nums">
+          {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+        </span>
         {comment.upvote_count !== 0 && (
           <>
             <span>·</span>
-            <span className={cn(comment.upvote_count > 0 ? "text-primary" : "text-destructive")}>
-              {comment.upvote_count} {Math.abs(comment.upvote_count) === 1 ? "point" : "points"}
+            <span
+              className={`tabular-nums ${
+                comment.upvote_count > 0 ? "text-accent" : "text-destructive"
+              }`}
+            >
+              {comment.upvote_count}{" "}
+              {Math.abs(comment.upvote_count) === 1 ? "point" : "points"}
             </span>
           </>
         )}
@@ -52,40 +57,42 @@ function CommentNode({ comment, articleId, depth }: CommentNodeProps) {
       {!collapsed && (
         <>
           {/* Comment body */}
-          <div className="mt-1 text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
+          <div className="mt-2 text-[14px] text-foreground leading-[1.6] whitespace-pre-wrap">
             {comment.content}
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 mt-2 text-xs">
+          <div className="flex items-center gap-4 mt-2">
             <button
               onClick={() => user && voteComment(comment.id, 1)}
               disabled={!user}
-              className={cn(
-                "flex items-center gap-1 transition-colors",
+              className={`inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[1.1px] transition-colors ${
                 comment.user_vote === 1
-                  ? "text-primary"
-                  : "text-muted-foreground/40 hover:text-accent"
-              )}
+                  ? "text-accent"
+                  : "text-muted-foreground hover:text-accent"
+              } disabled:cursor-not-allowed`}
             >
-              <ArrowUp className="w-3 h-3" weight={comment.user_vote === 1 ? "fill" : "regular"} />
-              upvote
+              <ArrowUp
+                className="w-3 h-3"
+                weight={comment.user_vote === 1 ? "fill" : "regular"}
+              />
+              Upvote
             </button>
             {user && (
               <button
                 onClick={() => setShowReply(!showReply)}
-                className="text-muted-foreground/40 hover:text-foreground transition-colors"
+                className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground hover:text-foreground transition-colors"
               >
-                reply
+                Reply
               </button>
             )}
             {isAuthor && (
               <button
                 onClick={() => deleteComment(comment.id)}
-                className="text-muted-foreground/40 hover:text-destructive transition-colors flex items-center gap-1"
+                className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground hover:text-destructive transition-colors"
               >
                 <Trash className="w-3 h-3" />
-                delete
+                Delete
               </button>
             )}
           </div>
@@ -103,7 +110,7 @@ function CommentNode({ comment, articleId, depth }: CommentNodeProps) {
 
           {/* Nested replies */}
           {comment.replies && comment.replies.length > 0 && (
-            <div className="mt-3 space-y-3">
+            <div className="mt-4 space-y-4">
               {comment.replies.map((reply) => (
                 <CommentNode
                   key={reply.id}
@@ -133,12 +140,10 @@ export function CommentSection({ articleId }: CommentSectionProps) {
     const map = new Map<string, NewsArticleComment & { replies: NewsArticleComment[] }>();
     const roots: (NewsArticleComment & { replies: NewsArticleComment[] })[] = [];
 
-    // First pass: create map entries
     for (const c of comments) {
       map.set(c.id, { ...c, replies: [] });
     }
 
-    // Second pass: build tree
     for (const c of comments) {
       const node = map.get(c.id)!;
       if (c.parent_id && map.has(c.parent_id)) {
@@ -152,19 +157,19 @@ export function CommentSection({ articleId }: CommentSectionProps) {
   }, [comments]);
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Comment form */}
       {user ? (
         <NewsCommentForm articleId={articleId} />
       ) : (
-        <p className="text-sm text-muted-foreground/60">
+        <p className="font-heading italic text-[15px] text-muted-foreground">
           Sign in to join the discussion.
         </p>
       )}
 
       {/* Comment list */}
       {commentTree.length > 0 && (
-        <div className="space-y-4 pt-4 border-t border-border">
+        <div className="mt-6 pt-6 border-t border-foreground space-y-6">
           {commentTree.map((comment) => (
             <CommentNode
               key={comment.id}

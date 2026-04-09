@@ -10,7 +10,6 @@ import {
   Wrench,
   BookOpen,
 } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ActivityItem, ActivityItemType } from "@/lib/types";
 import * as api from "../pointstack-api";
@@ -28,13 +27,13 @@ const ACTIVITY_ICONS: Record<ActivityItemType, React.ElementType> = {
   wiki_article: BookOpen,
 };
 
-const ACTIVITY_COLORS: Record<ActivityItemType, string> = {
-  post: "text-blue-500 bg-blue-500/10",
-  comment: "text-green-500 bg-green-500/10",
-  babel_contribution: "text-orange-500 bg-orange-500/10",
-  equipment_submission: "text-purple-500 bg-purple-500/10",
-  equipment_note: "text-yellow-500 bg-yellow-500/10",
-  wiki_article: "text-cyan-500 bg-cyan-500/10",
+const ACTIVITY_LABELS: Record<ActivityItemType, string> = {
+  post: "Post",
+  comment: "Comment",
+  babel_contribution: "Atlas",
+  equipment_submission: "Equipment",
+  equipment_note: "Note",
+  wiki_article: "Wiki",
 };
 
 export function ActivityFeed({ userId }: ActivityFeedProps) {
@@ -63,10 +62,10 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-3">
         {[1, 2, 3, 4, 5].map((i) => (
           <div key={i} className="flex gap-3">
-            <Skeleton className="w-8 h-8 rounded-full" />
+            <Skeleton className="w-8 h-8" />
             <div className="flex-1">
               <Skeleton className="h-4 w-3/4 mb-2" />
               <Skeleton className="h-3 w-1/2" />
@@ -79,45 +78,61 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <p className="text-sm text-destructive mb-3">{error}</p>
-        <Button variant="outline" size="sm" onClick={() => setRetryCount((c) => c + 1)}>
-          Try Again
-        </Button>
+      <div className="py-12 text-center">
+        <p className="font-heading italic text-[15px] text-destructive mb-4">{error}</p>
+        <button
+          onClick={() => setRetryCount((c) => c + 1)}
+          className="px-4 py-2 border border-foreground bg-card text-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-muted transition-colors"
+        >
+          Try again →
+        </button>
       </div>
     );
   }
 
   if (activities.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
+      <div className="py-16 text-center font-heading italic text-[16px] text-muted-foreground">
         No recent activity.
       </div>
     );
   }
 
   return (
-    <div className="space-y-1">
-      {activities.map((activity) => {
+    <div className="space-y-0">
+      {activities.map((activity, idx) => {
         const Icon = ACTIVITY_ICONS[activity.type] || Article;
-        const colorClass = ACTIVITY_COLORS[activity.type] || "text-muted-foreground bg-muted";
+        const label = ACTIVITY_LABELS[activity.type] || "Activity";
 
         const content = (
-          <div className="flex gap-3 p-3 rounded-md hover:bg-muted/50 transition-colors">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${colorClass}`}>
-              <Icon className="w-4 h-4" />
+          <div className="group grid grid-cols-[28px_32px_1fr_auto] gap-4 items-start py-4 px-2 border-b border-muted hover:bg-muted/40 transition-colors">
+            <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums mt-1">
+              {String(idx + 1).padStart(2, "0")}
+            </span>
+            <div className="w-8 h-8 border border-border bg-card flex items-center justify-center">
+              <Icon className="w-4 h-4 text-accent" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{activity.title}</p>
+            <div className="min-w-0">
+              <div className="font-mono text-[9px] uppercase tracking-[1.2px] text-accent mb-0.5">
+                {label}
+              </div>
+              <p className="font-heading text-[15px] text-foreground leading-[1.3] truncate group-hover:text-accent transition-colors">
+                {activity.title}
+              </p>
               {activity.description && (
-                <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                <p className="text-[13px] text-muted-foreground line-clamp-2 mt-1 leading-[1.5]">
                   {activity.description}
                 </p>
               )}
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground mt-1.5 tabular-nums">
                 {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
               </p>
             </div>
+            {activity.link && (
+              <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground group-hover:text-accent transition-colors self-center">
+                View →
+              </span>
+            )}
           </div>
         );
 

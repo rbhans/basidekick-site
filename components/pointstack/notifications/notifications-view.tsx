@@ -15,11 +15,9 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { usePointStackStore } from "../pointstack-store";
 import { UserAvatar } from "../shared/user-avatar";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
 import { PointStackNotificationType } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 const NOTIFICATION_ICONS: Record<PointStackNotificationType, typeof Bell> = {
   mention: At,
@@ -49,56 +47,74 @@ export function PointStackNotificationsView() {
 
   if (!user) {
     return (
-      <div className="max-w-2xl mx-auto p-6">
-        <div className="text-center py-12">
-          <h2 className="text-xl font-semibold mb-2">Sign in to view notifications</h2>
-          <p className="text-muted-foreground mb-4">
+      <section className="container mx-auto max-w-[720px] px-4 sm:px-6 lg:px-16 py-20">
+        <div className="pb-5 border-b border-foreground mb-8">
+          <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-2">
+            PointStack
+          </div>
+          <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.05] text-foreground">
+            Sign in to view notifications
+          </h1>
+          <p className="font-heading italic text-[15px] text-muted-foreground mt-3">
             You need to be signed in to access your notifications.
           </p>
-          <Button asChild>
-            <Link href={ROUTES.SIGNIN}>Sign In</Link>
-          </Button>
         </div>
-      </div>
+        <Link
+          href={ROUTES.SIGNIN}
+          className="inline-flex items-center gap-1.5 px-5 py-3 border border-foreground bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-primary/90 transition-colors"
+        >
+          Sign in →
+        </Link>
+      </section>
     );
   }
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
   return (
-    <div className="max-w-2xl mx-auto p-4 md:p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-heading font-bold">Notifications</h1>
+    <section className="container mx-auto max-w-[800px] px-4 sm:px-6 lg:px-16 py-10">
+      {/* Header */}
+      <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-6">
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
+        <h1 className="font-heading font-semibold text-[26px] leading-none text-foreground">
+          Notifications
+        </h1>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+          {unreadCount > 0 ? `${unreadCount} unread` : "all caught up"}
+        </span>
         {unreadCount > 0 && (
-          <Button variant="outline" size="sm" onClick={markAllNotificationsRead}>
-            Mark all as read
-          </Button>
+          <button
+            onClick={markAllNotificationsRead}
+            className="ml-3.5 font-mono text-[10px] uppercase tracking-[1.2px] text-accent hover:text-foreground transition-colors"
+          >
+            Mark all read →
+          </button>
         )}
       </div>
 
       {/* Loading */}
       {notificationsLoading && notifications.length === 0 && (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-lg" />
+            <Skeleton key={i} className="h-16 w-full" />
           ))}
         </div>
       )}
 
       {/* Notifications list */}
       {notifications.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-0">
           {notifications.map((notification) => {
             const Icon = NOTIFICATION_ICONS[notification.type];
+            const unread = !notification.is_read;
             return (
               <div
                 key={notification.id}
-                className={cn(
-                  "flex items-start gap-3 p-4 rounded-md border border-border bg-card hover:border-foreground transition-colors",
-                  !notification.is_read && "bg-muted"
-                )}
+                className={`grid grid-cols-[36px_1fr_auto] gap-4 items-start py-4 px-2 border-b border-muted cursor-pointer transition-colors ${
+                  unread ? "bg-muted/40" : "hover:bg-muted/30"
+                }`}
                 onClick={() => {
-                  if (!notification.is_read) {
+                  if (unread) {
                     markNotificationRead(notification.id);
                   }
                 }}
@@ -110,37 +126,42 @@ export function PointStackNotificationsView() {
                     size="md"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
-                    <Icon className="w-4 h-4 text-primary" />
+                  <div className="w-8 h-8 border border-border bg-card flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-accent" />
                   </div>
                 )}
 
-                <div className="flex-1 min-w-0">
-                  <p className={cn("text-sm", !notification.is_read && "font-medium")}>
+                <div className="min-w-0">
+                  <p
+                    className={`text-[14px] leading-[1.4] text-foreground ${
+                      unread ? "font-heading font-semibold" : ""
+                    }`}
+                  >
                     {notification.title}
                   </p>
                   {notification.body && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                    <p className="text-[13px] text-muted-foreground line-clamp-2 mt-0.5 leading-[1.5]">
                       {notification.body}
                     </p>
                   )}
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })}
+                  <p className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground mt-1 tabular-nums">
+                    {formatDistanceToNow(new Date(notification.created_at), {
+                      addSuffix: true,
+                    })}
                   </p>
                 </div>
 
-                {notification.link && (
-                  <Link
-                    href={notification.link}
-                    className="shrink-0 text-sm text-primary hover:underline"
-                  >
-                    View
-                  </Link>
-                )}
-
-                {!notification.is_read && (
-                  <div className="w-2 h-2 rounded-full bg-primary shrink-0 mt-2" />
-                )}
+                <div className="flex items-center gap-2 self-center">
+                  {unread && <span className="w-1.5 h-1.5 rounded-full bg-accent" />}
+                  {notification.link && (
+                    <Link
+                      href={notification.link}
+                      className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground hover:text-accent transition-colors"
+                    >
+                      View →
+                    </Link>
+                  )}
+                </div>
               </div>
             );
           })}
@@ -149,13 +170,13 @@ export function PointStackNotificationsView() {
 
       {/* Empty state */}
       {!notificationsLoading && notifications.length === 0 && (
-        <div className="text-center py-12">
-          <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">
-            No notifications yet. We&apos;ll let you know when something happens!
+        <div className="py-20 text-center">
+          <Bell className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
+          <p className="font-heading italic text-[16px] text-muted-foreground">
+            No notifications yet. We&apos;ll let you know when something happens.
           </p>
         </div>
       )}
-    </div>
+    </section>
   );
 }

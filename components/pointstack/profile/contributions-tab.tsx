@@ -3,17 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import {
-  Translate,
-  HardDrives,
-  BookOpen,
-  Check,
-  Clock,
-  X,
-  CaretDown,
-  CaretUp,
-} from "@phosphor-icons/react";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   BabelContribution,
@@ -22,27 +11,15 @@ import {
 } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import * as api from "../pointstack-api";
-import { cn } from "@/lib/utils";
 
 interface ContributionsTabProps {
   userId: string;
 }
 
-type ContributionSection = "babel" | "equipment" | "wiki";
-
-const SECTION_CONFIG: Record<
-  ContributionSection,
-  { label: string; icon: React.ElementType; color: string }
-> = {
-  babel: { label: "Atlas Terms Contributions", icon: Translate, color: "text-orange-500" },
-  equipment: { label: "Equipment Submissions", icon: HardDrives, color: "text-purple-500" },
-  wiki: { label: "Wiki Articles", icon: BookOpen, color: "text-cyan-500" },
-};
-
-const STATUS_BADGES: Record<string, { label: string; className: string; icon: React.ElementType }> = {
-  pending: { label: "Pending", className: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20", icon: Clock },
-  approved: { label: "Approved", className: "bg-green-500/10 text-green-600 border-green-500/20", icon: Check },
-  rejected: { label: "Rejected", className: "bg-red-500/10 text-red-600 border-red-500/20", icon: X },
+const STATUS_LABELS: Record<string, { label: string; className: string }> = {
+  pending: { label: "Pending", className: "text-accent" },
+  approved: { label: "Approved", className: "text-accent" },
+  rejected: { label: "Rejected", className: "text-destructive" },
 };
 
 export function ContributionsTab({ userId }: ContributionsTabProps) {
@@ -50,9 +27,6 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
   const [babelContributions, setBabelContributions] = useState<BabelContribution[]>([]);
   const [equipmentSubmissions, setEquipmentSubmissions] = useState<EquipmentSubmission[]>([]);
   const [wikiArticles, setWikiArticles] = useState<WikiArticle[]>([]);
-  const [expandedSections, setExpandedSections] = useState<Set<ContributionSection>>(
-    new Set(["babel", "equipment", "wiki"])
-  );
 
   useEffect(() => {
     const fetchContributions = async () => {
@@ -76,27 +50,15 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
     fetchContributions();
   }, [userId]);
 
-  const toggleSection = (section: ContributionSection) => {
-    setExpandedSections((prev) => {
-      const next = new Set(prev);
-      if (next.has(section)) {
-        next.delete(section);
-      } else {
-        next.add(section);
-      }
-      return next;
-    });
-  };
-
   if (loading) {
     return (
       <div className="space-y-6">
         {[1, 2, 3].map((i) => (
           <div key={i}>
-            <Skeleton className="h-6 w-40 mb-3" />
+            <Skeleton className="h-6 w-48 mb-3" />
             <div className="space-y-2">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-14 w-full" />
+              <Skeleton className="h-14 w-full" />
             </div>
           </div>
         ))}
@@ -105,162 +67,181 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
   }
 
   const totalContributions =
-    babelContributions.length +
-    equipmentSubmissions.length +
-    wikiArticles.length;
+    babelContributions.length + equipmentSubmissions.length + wikiArticles.length;
 
   if (totalContributions === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
+      <div className="py-16 text-center font-heading italic text-[16px] text-muted-foreground">
         No contributions yet.
       </div>
     );
   }
 
-  const renderSectionHeader = (section: ContributionSection, count: number) => {
-    const config = SECTION_CONFIG[section];
-    const Icon = config.icon;
-    const isExpanded = expandedSections.has(section);
-    const ExpandIcon = isExpanded ? CaretUp : CaretDown;
-
-    return (
-      <button
-        onClick={() => toggleSection(section)}
-        className="flex items-center justify-between w-full p-2 rounded-md hover:bg-muted/50 transition-colors"
-      >
-        <div className="flex items-center gap-2">
-          <Icon className={cn("w-5 h-5", config.color)} />
-          <span className="font-medium">{config.label}</span>
-          <Badge variant="secondary" className="ml-1">
-            {count}
-          </Badge>
-        </div>
-        <ExpandIcon className="w-4 h-4 text-muted-foreground" />
-      </button>
-    );
-  };
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-10">
       {/* Atlas Terms Contributions */}
       {babelContributions.length > 0 && (
-        <div className="border border-border rounded-md bg-card">
-          {renderSectionHeader("babel", babelContributions.length)}
-          {expandedSections.has("babel") && (
-            <div className="p-3 pt-0 space-y-2">
-              {babelContributions.map((contribution) => {
-                const status = STATUS_BADGES[contribution.status];
-                const StatusIcon = status?.icon || Clock;
-                return (
-                  <div
-                    key={contribution.id}
-                    className="p-3 border border-border rounded-lg bg-card"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{contribution.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                          {contribution.description}
-                        </p>
-                      </div>
-                      <Badge className={cn("gap-1 shrink-0", status?.className)}>
-                        <StatusIcon className="w-3 h-3" />
-                        {status?.label}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      {formatDistanceToNow(new Date(contribution.created_at), { addSuffix: true })}
-                      {contribution.entry_type && (
-                        <span> · {contribution.type} ({contribution.entry_type})</span>
-                      )}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        <ContributionSection num="01" title="Atlas terms" count={babelContributions.length}>
+          {babelContributions.map((contribution, idx) => {
+            const status = STATUS_LABELS[contribution.status];
+            return (
+              <ContributionRow
+                key={contribution.id}
+                idx={idx}
+                title={contribution.title}
+                description={contribution.description}
+                meta={[
+                  formatDistanceToNow(new Date(contribution.created_at), { addSuffix: true }),
+                  contribution.entry_type
+                    ? `${contribution.type} (${contribution.entry_type})`
+                    : contribution.type,
+                ]}
+                statusLabel={status?.label}
+                statusClass={status?.className}
+              />
+            );
+          })}
+        </ContributionSection>
       )}
 
       {/* Equipment Submissions */}
       {equipmentSubmissions.length > 0 && (
-        <div className="border border-border rounded-md bg-card">
-          {renderSectionHeader("equipment", equipmentSubmissions.length)}
-          {expandedSections.has("equipment") && (
-            <div className="p-3 pt-0 space-y-2">
-              {equipmentSubmissions.map((submission) => {
-                const status = STATUS_BADGES[submission.review_status];
-                const StatusIcon = status?.icon || Clock;
-                return (
-                  <div
-                    key={submission.id}
-                    className="p-3 border border-border rounded-lg bg-card"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">
-                          {submission.model_name || submission.brand_name || "Equipment Submission"}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {submission.type === "new_entry"
-                            ? "New entry"
-                            : submission.type === "edit"
-                            ? "Edit suggestion"
-                            : "Error report"}
-                          {submission.brand_name && ` · ${submission.brand_name}`}
-                        </p>
-                      </div>
-                      <Badge className={cn("gap-1 shrink-0", status?.className)}>
-                        <StatusIcon className="w-3 h-3" />
-                        {status?.label}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      {formatDistanceToNow(new Date(submission.created_at), { addSuffix: true })}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        <ContributionSection num="02" title="Equipment submissions" count={equipmentSubmissions.length}>
+          {equipmentSubmissions.map((submission, idx) => {
+            const status = STATUS_LABELS[submission.review_status];
+            return (
+              <ContributionRow
+                key={submission.id}
+                idx={idx}
+                title={submission.model_name || submission.brand_name || "Equipment submission"}
+                description={
+                  submission.type === "new_entry"
+                    ? "New entry"
+                    : submission.type === "edit"
+                    ? "Edit suggestion"
+                    : "Error report"
+                }
+                meta={[
+                  formatDistanceToNow(new Date(submission.created_at), { addSuffix: true }),
+                  submission.brand_name || undefined,
+                ]}
+                statusLabel={status?.label}
+                statusClass={status?.className}
+              />
+            );
+          })}
+        </ContributionSection>
       )}
 
       {/* Wiki Articles */}
       {wikiArticles.length > 0 && (
-        <div className="border border-border rounded-md bg-card">
-          {renderSectionHeader("wiki", wikiArticles.length)}
-          {expandedSections.has("wiki") && (
-            <div className="p-3 pt-0 space-y-2">
-              {wikiArticles.map((article) => (
-                <Link
-                  key={article.id}
-                  href={ROUTES.WIKI_ARTICLE(article.slug)}
-                  className="block p-3 border border-border rounded-md bg-card hover:bg-muted/50 transition-colors"
-                >
-                  <p className="font-medium text-sm truncate">{article.title}</p>
-                  {article.summary && (
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                      {article.summary}
-                    </p>
+        <ContributionSection num="03" title="Wiki articles" count={wikiArticles.length}>
+          {wikiArticles.map((article, idx) => (
+            <Link
+              key={article.id}
+              href={ROUTES.WIKI_ARTICLE(article.slug)}
+              className="group grid grid-cols-[28px_1fr_auto] gap-4 items-start py-4 px-2 border-b border-muted hover:bg-muted/40 transition-colors"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums mt-1">
+                {String(idx + 1).padStart(2, "0")}
+              </span>
+              <div className="min-w-0">
+                <h4 className="font-heading font-semibold text-[15px] leading-[1.3] text-foreground group-hover:text-accent transition-colors truncate">
+                  {article.title}
+                </h4>
+                {article.summary && (
+                  <p className="font-heading italic text-[13px] text-muted-foreground mt-1 line-clamp-2 leading-[1.5]">
+                    {article.summary}
+                  </p>
+                )}
+                <div className="mt-2 font-mono text-[9px] uppercase tracking-[1.1px] text-muted-foreground">
+                  {article.category?.name && (
+                    <span className="text-accent">{article.category.name}</span>
                   )}
-                  <div className="flex items-center gap-2 mt-2">
-                    {article.category && (
-                      <Badge variant="secondary" className="text-xs">
-                        {article.category.name}
-                      </Badge>
-                    )}
-                    <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
+                  {article.category?.name && " · "}
+                  <span className="tabular-nums">
+                    {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
+                  </span>
+                </div>
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground group-hover:text-accent transition-colors self-center">
+                View →
+              </span>
+            </Link>
+          ))}
+        </ContributionSection>
       )}
+    </div>
+  );
+}
 
+function ContributionSection({
+  num,
+  title,
+  count,
+  children,
+}: {
+  num: string;
+  title: string;
+  count: number;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-4">
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">{num} /</span>
+        <h3 className="font-heading font-semibold text-[20px] leading-none text-foreground">
+          {title}
+        </h3>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+          {count}
+        </span>
+      </div>
+      <div className="space-y-0">{children}</div>
+    </div>
+  );
+}
+
+function ContributionRow({
+  idx,
+  title,
+  description,
+  meta,
+  statusLabel,
+  statusClass,
+}: {
+  idx: number;
+  title: string;
+  description?: string;
+  meta: (string | undefined)[];
+  statusLabel?: string;
+  statusClass?: string;
+}) {
+  return (
+    <div className="grid grid-cols-[28px_1fr_auto] gap-4 items-start py-4 px-2 border-b border-muted">
+      <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums mt-1">
+        {String(idx + 1).padStart(2, "0")}
+      </span>
+      <div className="min-w-0">
+        <div className="font-heading font-semibold text-[15px] leading-[1.3] text-foreground truncate">
+          {title}
+        </div>
+        {description && (
+          <p className="font-heading italic text-[13px] text-muted-foreground mt-1 line-clamp-2 leading-[1.5]">
+            {description}
+          </p>
+        )}
+        <div className="mt-2 font-mono text-[9px] uppercase tracking-[1.1px] text-muted-foreground">
+          {meta.filter(Boolean).join(" · ")}
+        </div>
+      </div>
+      {statusLabel && (
+        <span
+          className={`font-mono text-[9px] uppercase tracking-[1.2px] border border-current px-1.5 py-0.5 rounded-sm self-start ${statusClass}`}
+        >
+          {statusLabel}
+        </span>
+      )}
     </div>
   );
 }
