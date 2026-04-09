@@ -109,12 +109,12 @@ export function OpenSourceView() {
             </div>
             <div className="md:text-right">
               <a
-                href="https://github.com/rbhans"
+                href="https://rbhans.github.io"
                 target="_blank"
                 rel="noreferrer"
                 className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors"
               >
-                github.com/rbhans
+                rbhans.github.io
               </a>
             </div>
           </div>

@@ -23,12 +23,12 @@ export function Footer() {
             Open source where it matters. Pull requests welcome on every public repo.
             <br />
             <a
-              href="https://github.com/rbhans"
+              href="https://rbhans.github.io"
               target="_blank"
               rel="noreferrer"
               className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors"
             >
-              github.com/rbhans
+              rbhans.github.io
             </a>
             {" · "}
             <a
