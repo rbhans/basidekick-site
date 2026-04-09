@@ -2,17 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { MagnifyingGlass, ArrowRight } from "@phosphor-icons/react";
-import { SiteBadge } from "@/components/site-badge";
-import { Input } from "@/components/ui/input";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/lib/supabase/client";
 import { ROUTES } from "@/lib/routes";
 import type { AtlasModel } from "@/lib/types";
-import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 import { AtlasBrandLogo } from "./atlas-brand-logo";
 import { useAtlasAll } from "./use-atlas-data";
-import { PageHero } from "@/components/page-hero";
 
 interface EquipmentBrowseViewShellProps {
   showHeader: boolean;
@@ -24,8 +20,14 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
   const [popularModels, setPopularModels] = useState<AtlasModel[]>([]);
   const [popularCounts, setPopularCounts] = useState<Record<string, number>>({});
 
-  const brandById = useMemo(() => new Map(data?.brands.map((brand) => [brand.id, brand]) || []), [data]);
-  const typeById = useMemo(() => new Map(data?.types.map((type) => [type.id, type]) || []), [data]);
+  const brandById = useMemo(
+    () => new Map(data?.brands.map((brand) => [brand.id, brand]) || []),
+    [data]
+  );
+  const typeById = useMemo(
+    () => new Map(data?.types.map((type) => [type.id, type]) || []),
+    [data]
+  );
 
   const modelCountByBrand = useMemo(() => {
     const counts = new Map<string, number>();
@@ -41,20 +43,24 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
   const brandCards = useMemo(() => {
     if (!data) return [];
 
-    const categoryBrandById = new Map((categories?.brands || []).map((brand) => [brand.id, brand]));
+    const categoryBrandById = new Map(
+      (categories?.brands || []).map((brand) => [brand.id, brand])
+    );
 
-    return data.brands.map((brand) => {
-      const categoryBrand = categoryBrandById.get(brand.id);
-      return {
-        id: brand.id,
-        name: brand.name,
-        slug: brand.slug,
-        count: categoryBrand?.count ?? modelCountByBrand.get(brand.id) ?? 0,
-        types: categoryBrand?.types || [],
-        logo_url: brand.logo_url || "",
-        website: brand.website || "",
-      };
-    });
+    return data.brands
+      .map((brand) => {
+        const categoryBrand = categoryBrandById.get(brand.id);
+        return {
+          id: brand.id,
+          name: brand.name,
+          slug: brand.slug,
+          count: categoryBrand?.count ?? modelCountByBrand.get(brand.id) ?? 0,
+          types: categoryBrand?.types || [],
+          logo_url: brand.logo_url || "",
+          website: brand.website || "",
+        };
+      })
+      .sort((a, b) => b.count - a.count);
   }, [data, categories, modelCountByBrand]);
 
   const recentModels = useMemo(() => {
@@ -77,7 +83,7 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
         (brand) =>
           brand.name.toLowerCase().includes(lower) ||
           brand.id.toLowerCase().includes(lower) ||
-          (brand.slug || "").toLowerCase().includes(lower),
+          (brand.slug || "").toLowerCase().includes(lower)
       )
       .slice(0, 4);
 
@@ -116,7 +122,9 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
         counts[row.equipment_id] = (counts[row.equipment_id] || 0) + 1;
       }
 
-      const sorted = [...data.models].sort((a, b) => (counts[b.id] || 0) - (counts[a.id] || 0));
+      const sorted = [...data.models].sort(
+        (a, b) => (counts[b.id] || 0) - (counts[a.id] || 0)
+      );
       setPopularCounts(counts);
       setPopularModels(sorted.slice(0, 6));
     };
@@ -126,217 +134,303 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
 
   if (error) {
     return (
-      <div className="min-h-full flex items-center justify-center">
+      <div className="min-h-full flex items-center justify-center py-24">
         <div className="text-center">
-          <p className="text-muted-foreground">Failed to load BAS Atlas data</p>
-          <p className="text-sm text-muted-foreground mt-1">{error.message}</p>
+          <p className="font-heading italic text-[17px] text-muted-foreground">
+            Failed to load BAS Atlas data
+          </p>
+          <p className="font-mono text-[11px] text-muted-foreground mt-2">{error.message}</p>
         </div>
       </div>
     );
   }
 
+  const totalBrands = data?.brands.length ?? 0;
+  const totalModels = data?.models.length ?? 0;
+  const totalTypes = data?.types.length ?? 0;
+
   return (
     <div className="min-h-full">
       {showHeader && (
-                <PageHero>
-            <SiteBadge label="RESOURCES" />
-            <AtlasBreadcrumb items={[]} />
+        <>
+          {/* Title block strip */}
+          <div className="title-block">
+            <div className="field">
+              <span className="field-label">Drawing</span>
+              <span className="field-value">Atlas</span>
+            </div>
+            <div className="field">
+              <span className="field-label">Title</span>
+              <span className="field-value">Equipment Catalog</span>
+            </div>
+            <div className="field">
+              <span className="field-label">Brands</span>
+              <span className="field-value tabular-nums">{totalBrands}</span>
+            </div>
+            <div className="field">
+              <span className="field-label">Types</span>
+              <span className="field-value tabular-nums">{totalTypes}</span>
+            </div>
+            <div className="field">
+              <span className="field-label">Models</span>
+              <span className="field-value tabular-nums">{totalModels}</span>
+            </div>
+            <div className="spacer" />
+            <div className="field">
+              <span className="field-label">Submit</span>
+              <span className="field-value">
+                <Link href={ROUTES.ATLAS_EQUIPMENT_ADD} className="hover:text-accent transition-colors">
+                  + Add
+                </Link>
+              </span>
+            </div>
+          </div>
 
-            <h1 className="mt-4 text-3xl md:text-4xl font-heading font-bold tracking-tight">BAS Atlas Equipment</h1>
-            <p className="mt-3 text-muted-foreground max-w-2xl">
-              Community-driven equipment catalog for BAS professionals. Browse by brand and type, track what
-              you&apos;ve worked with, and share field notes.
+          <section className="container mx-auto px-4 sm:px-6 lg:px-16 pt-16 pb-10 max-w-[980px]">
+            <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5]">
+              A community-kept catalog of BAS equipment — brand, type, protocols, field notes.
             </p>
-        </PageHero>
+          </section>
+        </>
       )}
 
-      <section className="py-6">
-        <div className="container mx-auto px-4">
-          <div className="relative max-w-xl">
-            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search by brand or model..."
-              className="pl-9"
-            />
-          </div>
-
-          {query.trim() && (
-            <div className="mt-4 border border-border rounded-lg overflow-hidden bg-card">
-              {searchResults.brands.length === 0 && searchResults.models.length === 0 ? (
-                <div className="p-4 text-sm text-muted-foreground">No results found.</div>
-              ) : (
-                <div className="divide-y divide-border">
-                  {searchResults.brands.length > 0 && (
-                    <div className="p-4">
-                      <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Brands</p>
-                      <div className="flex flex-col gap-2">
-                        {searchResults.brands.map((brand) => (
-                          <Link
-                            key={brand.id}
-                            href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
-                            className="flex items-center justify-between text-sm hover:text-accent"
-                          >
-                            {brand.name}
-                            <ArrowRight className="size-3" />
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {searchResults.models.length > 0 && (
-                    <div className="p-4">
-                      <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">Models</p>
-                      <div className="flex flex-col gap-2">
-                        {searchResults.models.map((model) => {
-                          const brand = brandById.get(model.brand);
-                          const type = typeById.get(model.type);
-                          if (!brand || !type) return null;
-                          return (
-                            <Link
-                              key={model.id}
-                              href={ROUTES.ATLAS_EQUIPMENT_MODEL(
-                                brand.slug || brand.id,
-                                type.slug || type.id,
-                                model.slug || model.id,
-                              )}
-                              className="flex items-center justify-between text-sm hover:text-accent"
-                            >
-                              <span>{model.name}</span>
-                              <span className="text-xs text-muted-foreground">{brand.name}</span>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
+      {/* Search */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pb-10 max-w-[980px]">
+        <div className="relative border-[1.5px] border-foreground rounded-md bg-card focus-within:border-accent transition-colors">
+          <MagnifyingGlass className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search brands, models, or part numbers…"
+            className="w-full bg-transparent border-none outline-none font-heading text-[18px] md:text-[20px] text-foreground placeholder:text-muted-foreground/60 placeholder:italic placeholder:font-normal py-[18px] pl-[52px] pr-6"
+            aria-label="Search equipment"
+          />
         </div>
-      </section>
 
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Brands</h2>
-            <Link href={ROUTES.ATLAS_EQUIPMENT_ADD} className="text-sm text-primary hover:underline">
-              Add equipment
-            </Link>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <Skeleton key={i} className="h-24" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {brandCards.map((brand) => (
-                <Link
-                  key={brand.id}
-                  href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
-                  className="group p-4 border border-border bg-card shadow-sm hover:border-foreground transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <AtlasBrandLogo
-                      brand={brand}
-                      className="size-8"
-                      fallbackClassName="size-8 rounded bg-muted flex items-center justify-center text-sm font-semibold"
-                    />
-                    <div>
-                      <p className="text-sm font-medium group-hover:text-accent transition-colors">{brand.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {brand.count} model{brand.count === 1 ? "" : "s"}
-                      </p>
+        {query.trim() && (
+          <div className="mt-4 border border-foreground rounded-md bg-card overflow-hidden">
+            {searchResults.brands.length === 0 && searchResults.models.length === 0 ? (
+              <div className="p-5 font-heading italic text-[15px] text-muted-foreground">
+                No results found.
+              </div>
+            ) : (
+              <>
+                {searchResults.brands.length > 0 && (
+                  <div className="px-5 py-4 border-b border-border">
+                    <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-3">
+                      Brands
+                    </div>
+                    <div className="space-y-1">
+                      {searchResults.brands.map((brand) => (
+                        <Link
+                          key={brand.id}
+                          href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
+                          className="flex items-center justify-between text-[14px] text-foreground hover:text-accent py-1 transition-colors"
+                        >
+                          <span>{brand.name}</span>
+                          <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
+                            →
+                          </span>
+                        </Link>
+                      ))}
                     </div>
                   </div>
+                )}
+
+                {searchResults.models.length > 0 && (
+                  <div className="px-5 py-4">
+                    <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-3">
+                      Models
+                    </div>
+                    <div className="space-y-1">
+                      {searchResults.models.map((model) => {
+                        const brand = brandById.get(model.brand);
+                        const type = typeById.get(model.type);
+                        if (!brand || !type) return null;
+                        return (
+                          <Link
+                            key={model.id}
+                            href={ROUTES.ATLAS_EQUIPMENT_MODEL(
+                              brand.slug || brand.id,
+                              type.slug || type.id,
+                              model.slug || model.id
+                            )}
+                            className="flex items-center justify-between text-[14px] text-foreground hover:text-accent py-1 transition-colors"
+                          >
+                            <span>{model.name}</span>
+                            <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
+                              {brand.name}
+                            </span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* 01 / Brands */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pb-14 max-w-[1100px]">
+        <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-6">
+          <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
+          <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+            Brands
+          </h2>
+          <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+            {totalBrands} {totalBrands === 1 ? "brand" : "brands"}
+          </span>
+          <Link
+            href={ROUTES.ATLAS_EQUIPMENT_ADD}
+            className="ml-3.5 font-mono text-[10px] uppercase tracking-[1.2px] text-accent hover:text-foreground transition-colors"
+          >
+            + Add equipment
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-3">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <Skeleton key={i} className="h-14" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-1">
+            {brandCards.map((brand) => (
+              <Link
+                key={brand.id}
+                href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
+                className="group flex items-center gap-3 py-3 border-b border-muted hover:border-foreground transition-colors"
+              >
+                <div className="size-8 shrink-0 flex items-center justify-center">
+                  <AtlasBrandLogo
+                    brand={brand}
+                    className="max-w-[32px] max-h-[32px]"
+                    fallbackClassName="w-8 h-8 border border-border flex items-center justify-center font-heading font-semibold text-[12px] text-foreground"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-heading font-semibold text-[14px] leading-[1.2] text-foreground group-hover:text-accent transition-colors truncate">
+                    {brand.name}
+                  </div>
+                  <div className="font-mono text-[9px] uppercase tracking-[1px] text-muted-foreground tabular-nums mt-0.5">
+                    {brand.count} {brand.count === 1 ? "model" : "models"}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* 02 / Recently added */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pb-14 max-w-[1100px]">
+        <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+          <span className="font-mono text-[11px] text-accent tracking-[1px]">02 /</span>
+          <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+            Recently added
+          </h2>
+        </div>
+        {loading ? (
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full" />
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-0">
+            {recentModels.map((model, idx) => {
+              const brand = brandById.get(model.brand);
+              const type = typeById.get(model.type);
+              if (!brand || !type) return null;
+              return (
+                <Link
+                  key={model.id}
+                  href={ROUTES.ATLAS_EQUIPMENT_MODEL(
+                    brand.slug || brand.id,
+                    type.slug || type.id,
+                    model.slug || model.id
+                  )}
+                  className="group grid grid-cols-[28px_1fr_auto] gap-4 items-center py-3 px-2 border-b border-muted hover:bg-muted/40 transition-colors"
+                >
+                  <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="font-heading font-semibold text-[15px] leading-[1.25] text-foreground group-hover:text-accent transition-colors truncate">
+                      {model.name}
+                    </div>
+                    <div className="font-mono text-[9px] uppercase tracking-[1.1px] text-muted-foreground mt-0.5 truncate">
+                      {brand.name} · {type.name}
+                    </div>
+                  </div>
+                  <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground group-hover:text-accent transition-colors">
+                    View →
+                  </span>
                 </Link>
-              ))}
-            </div>
-          )}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
-      <section className="py-8 border-t border-border">
-        <div className="container mx-auto px-4">
-          <h2 className="text-xl font-semibold mb-4">Recently added</h2>
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-24" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {recentModels.map((model) => {
-                const brand = brandById.get(model.brand);
-                const type = typeById.get(model.type);
-                if (!brand || !type) return null;
-                return (
-                  <Link
-                    key={model.id}
-                    href={ROUTES.ATLAS_EQUIPMENT_MODEL(
-                      brand.slug || brand.id,
-                      type.slug || type.id,
-                      model.slug || model.id,
-                    )}
-                    className="p-4 border border-border bg-card shadow-sm hover:border-foreground transition-colors"
-                  >
-                    <p className="text-sm font-semibold">{model.name}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {brand.name} · {type.name}
-                    </p>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+      {/* 03 / Most popular */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pb-16 max-w-[1100px]">
+        <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+          <span className="font-mono text-[11px] text-accent tracking-[1px]">03 /</span>
+          <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+            Most worked with
+          </h2>
         </div>
-      </section>
-
-      <section className="py-8 border-t border-border">
-        <div className="container mx-auto px-4">
-          <h2 className="text-xl font-semibold mb-4">Most popular</h2>
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-24" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {popularModels.map((model) => {
-                const brand = brandById.get(model.brand);
-                const type = typeById.get(model.type);
-                if (!brand || !type) return null;
-                return (
-                  <Link
-                    key={model.id}
-                    href={ROUTES.ATLAS_EQUIPMENT_MODEL(
-                      brand.slug || brand.id,
-                      type.slug || type.id,
-                      model.slug || model.id,
-                    )}
-                    className="p-4 border border-border bg-card shadow-sm hover:border-foreground transition-colors"
-                  >
-                    <p className="text-sm font-semibold">{model.name}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
+        {loading ? (
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full" />
+            ))}
+          </div>
+        ) : popularModels.length === 0 ? (
+          <p className="font-heading italic text-[15px] text-muted-foreground">
+            No experience data yet.
+          </p>
+        ) : (
+          <div className="space-y-0">
+            {popularModels.map((model, idx) => {
+              const brand = brandById.get(model.brand);
+              const type = typeById.get(model.type);
+              if (!brand || !type) return null;
+              return (
+                <Link
+                  key={model.id}
+                  href={ROUTES.ATLAS_EQUIPMENT_MODEL(
+                    brand.slug || brand.id,
+                    type.slug || type.id,
+                    model.slug || model.id
+                  )}
+                  className="group grid grid-cols-[28px_1fr_auto] gap-4 items-center py-3 px-2 border-b border-muted hover:bg-muted/40 transition-colors"
+                >
+                  <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="font-heading font-semibold text-[15px] leading-[1.25] text-foreground group-hover:text-accent transition-colors truncate">
+                      {model.name}
+                    </div>
+                    <div className="font-mono text-[9px] uppercase tracking-[1.1px] text-muted-foreground mt-0.5 truncate">
                       {brand.name} · {type.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      {popularCounts[model.id] || 0} people worked with this
-                    </p>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                    </div>
+                  </div>
+                  <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-accent tabular-nums">
+                    {popularCounts[model.id] || 0} worked
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </section>
     </div>
   );

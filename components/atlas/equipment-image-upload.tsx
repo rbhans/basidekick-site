@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
 import { ImageSquare, SpinnerGap } from "@phosphor-icons/react";
@@ -57,9 +56,9 @@ export function EquipmentImageUpload({ equipmentId, onUploaded }: EquipmentImage
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from("equipment-images")
-        .getPublicUrl(fileName);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("equipment-images").getPublicUrl(fileName);
 
       const { data: imageRow, error: insertError } = await supabase
         .from("equipment_images")
@@ -98,24 +97,24 @@ export function EquipmentImageUpload({ equipmentId, onUploaded }: EquipmentImage
         className="hidden"
         disabled={isUploading}
       />
-      <Button
+      <button
         type="button"
-        variant="ghost"
-        size="sm"
         onClick={handleClick}
         disabled={isUploading}
-        className="text-muted-foreground hover:text-foreground"
+        className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[1.2px] text-accent hover:text-foreground disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {isUploading ? (
-          <SpinnerGap className="size-4 animate-spin" />
+          <SpinnerGap className="w-3 h-3 animate-spin" />
         ) : (
-          <ImageSquare className="size-4" />
+          <ImageSquare className="w-3 h-3" />
         )}
-        <span className="ml-1 text-xs">
-          {isUploading ? "Uploading..." : "Add Photo"}
+        {isUploading ? "Uploading…" : "+ Add photo"}
+      </button>
+      {error && (
+        <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-destructive">
+          {error}
         </span>
-      </Button>
-      {error && <span className="text-xs text-destructive">{error}</span>}
+      )}
     </div>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { SiteBadge } from "@/components/site-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getBabelIdsForAtlasType } from "@/lib/data/atlas-babel-map";
 import { useAtlasAll } from "./use-atlas-data";
@@ -10,8 +9,6 @@ import { useBabelData } from "@/components/babel/use-babel-data";
 import { getBrandBySlug, getTypeBySlug } from "./atlas-utils";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
-import { AtlasBreadcrumb } from "./atlas-breadcrumb";
-import { PageHero } from "@/components/page-hero";
 
 interface EquipmentTypeViewProps {
   brandSlug: string;
@@ -45,44 +42,25 @@ function BabelTypeLink({ atlasTypeId }: { atlasTypeId: string }) {
 
   if (babelIds.length === 0) return null;
 
-  if (linkedEquipment.length === 1) {
-    const entry = linkedEquipment[0];
-    return (
-      <p className="mt-3 text-sm text-muted-foreground">
-        {entry.isBroken ? (
-          <>
-            Point standards mapping for <span className="text-destructive">{entry.name}</span> is broken.
-          </>
-        ) : (
-          <>
-            View point naming standards for{" "}
-            <Link href={ROUTES.ATLAS_ENTRY(entry.id)} className="text-primary hover:underline">
-              {entry.name}
-            </Link>{" "}
-            in BAS Atlas.
-          </>
-        )}
-      </p>
-    );
-  }
-
   return (
-    <p className="mt-3 text-sm text-muted-foreground">
-      View point naming standards in BAS Atlas:{" "}
+    <div className="font-heading italic text-[14px] text-muted-foreground leading-[1.5]">
+      Point standards:{" "}
       {linkedEquipment.map((entry, index) => (
         <span key={entry.id}>
           {entry.isBroken ? (
             <span className="text-destructive">{entry.name} (broken mapping)</span>
           ) : (
-            <Link href={ROUTES.ATLAS_ENTRY(entry.id)} className="text-primary hover:underline">
+            <Link
+              href={ROUTES.ATLAS_ENTRY(entry.id)}
+              className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors not-italic"
+            >
               {entry.name}
             </Link>
           )}
           {index < linkedEquipment.length - 1 ? ", " : ""}
         </span>
       ))}
-      .
-    </p>
+    </div>
   );
 }
 
@@ -122,79 +100,122 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
 
   if (error) {
     return (
-      <div className="min-h-full flex items-center justify-center">
-        <p className="text-muted-foreground">Failed to load BAS Atlas data</p>
+      <div className="min-h-full flex items-center justify-center py-24">
+        <p className="font-heading italic text-[17px] text-muted-foreground">
+          Failed to load BAS Atlas data
+        </p>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Skeleton className="h-8 w-48 mb-4" />
-        <Skeleton className="h-4 w-64 mb-8" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-24" />
+      <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
+        <Skeleton className="h-6 w-32 mb-4" />
+        <Skeleton className="h-10 w-80 mb-8" />
+        <div className="space-y-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full" />
           ))}
         </div>
-      </div>
+      </section>
     );
   }
 
   if (!brand || !type) {
     return (
-      <div className="container mx-auto px-4 py-12 text-center text-muted-foreground">
+      <div className="py-24 text-center font-heading italic text-[18px] text-muted-foreground">
         Type not found.
       </div>
     );
   }
 
   return (
-    <div className="min-h-full">
-      <PageHero>
-          <SiteBadge label="EQUIPMENT" />
-          <AtlasBreadcrumb
-            items={[
-              { label: brand.name, href: ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id) },
-              { label: type.name },
-            ]}
-          />
-          <h1 className="mt-4 text-2xl md:text-3xl font-heading font-bold">{type.name}</h1>
+    <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
+      {/* Back link */}
+      <Link
+        href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
+        className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors mb-6"
+      >
+        <span className="text-accent">←</span>
+        Back to {brand.name}
+      </Link>
+
+      {/* Header */}
+      <div className="pb-5 border-b border-foreground mb-8">
+        <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-2">
+          {brand.name} · Type
+        </div>
+        <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.05] text-foreground">
+          {type.name}
+        </h1>
+        <div className="mt-3">
           {getBabelIdsForAtlasType(type.id).length > 0 ? (
             <BabelTypeLink atlasTypeId={type.id} />
-          ) : null}
-      </PageHero>
-
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Models</h2>
-            <Link href={ROUTES.ATLAS_EQUIPMENT_ADD} className="text-sm text-primary hover:underline">
-              Add model
-            </Link>
-          </div>
-
-          {models.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No models yet.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {models.map((model) => (
-                <Link
-                  key={model.id}
-                  href={ROUTES.ATLAS_EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id)}
-                  className="p-4 border border-border bg-card shadow-sm hover:border-foreground transition-colors"
-                >
-                  <p className="text-sm font-semibold">{model.name}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {counts[model.id] || 0} people worked with this
-                  </p>
-                </Link>
-              ))}
-            </div>
+            <p className="font-heading italic text-[14px] text-muted-foreground">
+              {models.length} model{models.length === 1 ? "" : "s"} in this type.
+            </p>
           )}
         </div>
-      </section>
-    </div>
+      </div>
+
+      {/* Numbered section: Models */}
+      <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
+        <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+          Models
+        </h2>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+          {models.length} {models.length === 1 ? "model" : "models"}
+        </span>
+        <Link
+          href={ROUTES.ATLAS_EQUIPMENT_ADD}
+          className="ml-3.5 font-mono text-[10px] uppercase tracking-[1.2px] text-accent hover:text-foreground transition-colors"
+        >
+          + Add model
+        </Link>
+      </div>
+
+      {models.length === 0 ? (
+        <div className="py-12 text-center font-heading italic text-[16px] text-muted-foreground">
+          No models yet. Be the first to add one.
+        </div>
+      ) : (
+        <div className="space-y-0">
+          {models.map((model, idx) => (
+            <Link
+              key={model.id}
+              href={ROUTES.ATLAS_EQUIPMENT_MODEL(
+                brand.slug || brand.id,
+                type.slug || type.id,
+                model.slug || model.id
+              )}
+              className="group grid grid-cols-[28px_1fr_auto_60px] gap-4 items-center py-4 px-2 border-b border-muted hover:bg-muted/40 transition-colors"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+                {String(idx + 1).padStart(2, "0")}
+              </span>
+              <div className="min-w-0">
+                <div className="font-heading font-semibold text-[17px] leading-[1.25] text-foreground group-hover:text-accent transition-colors truncate">
+                  {model.name}
+                </div>
+                {model.model_numbers && model.model_numbers.length > 0 && (
+                  <div className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground mt-1 truncate">
+                    {model.model_numbers.slice(0, 3).join(" · ")}
+                  </div>
+                )}
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground tabular-nums">
+                {counts[model.id] || 0} worked
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground group-hover:text-accent transition-colors text-right">
+                View →
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }

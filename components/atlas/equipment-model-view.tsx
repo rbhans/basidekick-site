@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { SiteBadge } from "@/components/site-badge";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
 import { getBabelIdsForAtlasType } from "@/lib/data/atlas-babel-map";
@@ -12,11 +10,9 @@ import { useBabelData } from "@/components/babel/use-babel-data";
 import { getBrandBySlug, getTypeBySlug, getModelBySlug } from "./atlas-utils";
 import { ROUTES } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/client";
-import { AtlasBreadcrumb } from "./atlas-breadcrumb";
 import { EquipmentImageUpload } from "./equipment-image-upload";
 import { EquipmentNotes } from "./equipment-notes";
 import { UserAvatar } from "@/components/user-avatar";
-import { PageHero } from "@/components/page-hero";
 
 interface EquipmentModelViewProps {
   brandSlug: string;
@@ -42,7 +38,7 @@ function formatBabelEquipmentLabel(babelId: string): string {
     .join(" ");
 }
 
-function PointStandardsCard({ atlasTypeId }: { atlasTypeId: string }) {
+function PointStandardsList({ atlasTypeId }: { atlasTypeId: string }) {
   const babelIds = useMemo(() => getBabelIdsForAtlasType(atlasTypeId), [atlasTypeId]);
   const { data: babelData, loading: babelLoading } = useBabelData();
 
@@ -65,21 +61,25 @@ function PointStandardsCard({ atlasTypeId }: { atlasTypeId: string }) {
   if (babelIds.length === 0) return null;
 
   return (
-    <div className="border border-border bg-card shadow-sm p-4">
-      <h2 className="text-sm font-semibold mb-3">Point Standards</h2>
+    <div>
+      <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-3 pb-2 border-b border-foreground">
+        Point standards
+      </div>
       <ul className="space-y-2">
         {linkedEquipment.map((entry) => (
           <li key={entry.id}>
             {entry.isBroken ? (
-              <span className="text-sm text-destructive">
-                {entry.name}
-                <span className="text-destructive/80"> (broken mapping)</span>
+              <span className="font-heading italic text-[14px] text-destructive">
+                {entry.name} (broken mapping)
               </span>
             ) : (
-              <Link href={ROUTES.ATLAS_ENTRY(entry.id)} className="text-sm text-primary hover:underline">
+              <Link
+                href={ROUTES.ATLAS_ENTRY(entry.id)}
+                className="font-heading text-[14px] text-foreground hover:text-accent transition-colors"
+              >
                 {entry.name}
                 {entry.abbreviation ? (
-                  <span className="text-muted-foreground"> ({entry.abbreviation})</span>
+                  <span className="text-muted-foreground italic"> ({entry.abbreviation})</span>
                 ) : null}
               </Link>
             )}
@@ -163,8 +163,6 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
     if (!supabase) return;
 
     if (!hasWorked) {
-      const ok = window.confirm("Add to your experience?");
-      if (!ok) return;
       const { error: insertError } = await supabase
         .from("equipment_experience")
         .insert({ equipment_id: model.id, user_id: user.id });
@@ -187,155 +185,243 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
 
   if (error) {
     return (
-      <div className="min-h-full flex items-center justify-center">
-        <p className="text-muted-foreground">Failed to load BAS Atlas data</p>
+      <div className="min-h-full flex items-center justify-center py-24">
+        <p className="font-heading italic text-[17px] text-muted-foreground">
+          Failed to load BAS Atlas data
+        </p>
       </div>
     );
   }
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Skeleton className="h-8 w-48 mb-4" />
-        <Skeleton className="h-4 w-64 mb-8" />
-        <Skeleton className="h-64" />
-      </div>
+      <section className="container mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-16 py-10">
+        <Skeleton className="h-6 w-32 mb-4" />
+        <Skeleton className="h-10 w-96 mb-8" />
+        <Skeleton className="h-64 w-full" />
+      </section>
     );
   }
 
   if (!model || !brand || !type) {
     return (
-      <div className="container mx-auto px-4 py-12 text-center text-muted-foreground">
+      <div className="py-24 text-center font-heading italic text-[18px] text-muted-foreground">
         Equipment model not found.
       </div>
     );
   }
 
-  return (
-    <div className="min-h-full">
-            <PageHero>
-          <SiteBadge label="EQUIPMENT" />
-          <AtlasBreadcrumb
-            items={[
-              { label: brand.name, href: ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id) },
-              { label: type.name, href: ROUTES.ATLAS_EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id) },
-              { label: model.name },
-            ]}
-          />
-          <div className="mt-4">
-            <h1 className="text-2xl md:text-3xl font-heading font-bold">{model.name}</h1>
-          </div>
-      </PageHero>
+  const statusLabel = (model.status || "current").toString();
 
-      <section className="py-8">
-        <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-8">
-          <div className="space-y-8">
-            {/* Image */}
-            <div className="border border-border bg-card shadow-sm p-4">
+  return (
+    <section className="container mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-16 py-10">
+      {/* Back link */}
+      <Link
+        href={ROUTES.ATLAS_EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id)}
+        className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors mb-6"
+      >
+        <span className="text-accent">←</span>
+        Back to {type.name}
+      </Link>
+
+      {/* Header */}
+      <div className="pb-5 border-b border-foreground mb-8">
+        <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-2">
+          <Link
+            href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
+            className="hover:text-accent transition-colors"
+          >
+            {brand.name}
+          </Link>
+          <span className="mx-2 text-border">/</span>
+          <Link
+            href={ROUTES.ATLAS_EQUIPMENT_TYPE(brand.slug || brand.id, type.slug || type.id)}
+            className="hover:text-accent transition-colors"
+          >
+            {type.name}
+          </Link>
+        </div>
+        <h1 className="font-heading font-semibold text-[32px] md:text-[40px] leading-[1.05] text-foreground">
+          {model.name}
+        </h1>
+        <div className="mt-3 flex flex-wrap items-center gap-4 font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+          {model.model_numbers && model.model_numbers.length > 0 && (
+            <span className="tabular-nums">{model.model_numbers.join(" · ")}</span>
+          )}
+          {model.protocols && model.protocols.length > 0 && (
+            <span className="text-accent">{model.protocols.join(" · ")}</span>
+          )}
+          <span className={statusLabel === "discontinued" ? "text-destructive" : "text-accent"}>
+            {statusLabel}
+          </span>
+          <span className="tabular-nums">
+            {experienceCount} worked with this
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-12">
+        <div className="space-y-12">
+          {/* 01 / Overview */}
+          <div>
+            <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+              <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
+              <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+                Overview
+              </h2>
+            </div>
+
+            {/* Primary image */}
+            <div className="border border-border bg-card mb-6">
               {primaryImage ? (
-                <img src={primaryImage} alt={model.name} className="w-full max-h-[320px] object-contain" />
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={primaryImage}
+                  alt={model.name}
+                  className="w-full max-h-[360px] object-contain p-4"
+                />
               ) : (
-                <div className="h-48 bg-muted flex items-center justify-center text-muted-foreground">
+                <div className="h-56 flex items-center justify-center font-heading italic text-[15px] text-muted-foreground">
                   No image yet
                 </div>
               )}
             </div>
 
-            {/* Info */}
-            <div className="border border-border bg-card shadow-sm p-6 space-y-3">
-              <div>
-                <p className="text-xs uppercase text-muted-foreground">Model numbers</p>
-                <p className="text-sm">{model.model_numbers?.join(", ") || "-"}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase text-muted-foreground">Protocols</p>
-                <p className="text-sm">{model.protocols?.length ? model.protocols.join(", ") : "-"}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase text-muted-foreground">Status</p>
-                <p className="text-sm capitalize">{model.status || "current"}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase text-muted-foreground">Manufacturer</p>
-                {model.manufacturer_url ? (
-                  <a href={model.manufacturer_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
-                    Visit manufacturer
-                  </a>
-                ) : (
-                  <p className="text-sm">-</p>
-                )}
-              </div>
-              <div>
-                <p className="text-xs uppercase text-muted-foreground">Description</p>
-                <p className="text-sm">{model.description || "-"}</p>
-              </div>
-            </div>
+            {/* Spec list */}
+            <dl className="border-t border-b border-foreground">
+              <SpecRow label="Model numbers" value={model.model_numbers?.join(", ") || "—"} />
+              <SpecRow label="Protocols" value={model.protocols?.length ? model.protocols.join(", ") : "—"} />
+              <SpecRow label="Status" value={statusLabel} />
+              <SpecRow
+                label="Manufacturer"
+                value={
+                  model.manufacturer_url ? (
+                    <a
+                      href={model.manufacturer_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors"
+                    >
+                      Visit manufacturer →
+                    </a>
+                  ) : (
+                    "—"
+                  )
+                }
+              />
+              {model.description && (
+                <SpecRow label="Description" value={model.description} />
+              )}
+            </dl>
+          </div>
 
-            {/* Photos */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold">Photos</h2>
+          {/* 02 / Photos */}
+          <div>
+            <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+              <span className="font-mono text-[11px] text-accent tracking-[1px]">02 /</span>
+              <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+                Photos
+              </h2>
+              <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+                {images.length} {images.length === 1 ? "photo" : "photos"}
+              </span>
+              <div className="ml-3.5">
                 <EquipmentImageUpload
                   equipmentId={model.id}
                   onUploaded={(image) => setImages((prev) => [{ id: image.id, url: image.url }, ...prev])}
                 />
               </div>
-              {images.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No photos yet.</p>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {images.map((img) => (
-                    <img key={img.id} src={img.url} alt="Equipment" className="w-full h-32 object-cover rounded" />
-                  ))}
-                </div>
-              )}
             </div>
 
-            {/* Notes */}
+            {images.length === 0 ? (
+              <p className="font-heading italic text-[15px] text-muted-foreground">No photos yet.</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {images.map((img) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={img.id}
+                    src={img.url}
+                    alt="Equipment"
+                    className="w-full h-36 object-cover border border-border"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 03 / Notes */}
+          <div>
             <EquipmentNotes equipmentId={model.id} />
           </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <div className="border border-border bg-card shadow-sm p-4">
-              <Button
-                onClick={toggleExperience}
-                disabled={!user}
-                className="w-full"
-                variant={hasWorked ? "secondary" : "default"}
-              >
-                {hasWorked ? "Worked with this" : "I've worked with this"}
-              </Button>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                {experienceCount} people have worked with this
-              </p>
-            </div>
-
-            <div className="border border-border bg-card shadow-sm p-4">
-              <h2 className="text-sm font-semibold mb-3">People</h2>
-              {people.length === 0 ? (
-                <p className="text-xs text-muted-foreground">No one yet. Be the first.</p>
-              ) : (
-                <div className="grid grid-cols-6 gap-2">
-                  {people.map((person) => (
-                    <Link
-                      key={person.user_id}
-                      href={ROUTES.POINTSTACK_PROFILE(person.user?.display_name || "")}
-                      className="block"
-                    >
-                      <UserAvatar name={person.user?.display_name || "Anonymous"} avatarUrl={person.user?.avatar_url} size="sm" />
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {getBabelIdsForAtlasType(model.type).length > 0 ? (
-              <PointStandardsCard atlasTypeId={model.type} />
-            ) : null}
-          </div>
         </div>
-      </section>
+
+        {/* Sidebar */}
+        <aside className="space-y-8">
+          {/* Experience button */}
+          <div>
+            <button
+              onClick={toggleExperience}
+              disabled={!user}
+              className={`w-full py-3 border font-mono text-[11px] uppercase tracking-[1.2px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                hasWorked
+                  ? "bg-accent text-accent-foreground border-foreground hover:bg-accent/90"
+                  : "bg-card text-foreground border-foreground hover:bg-muted"
+              }`}
+            >
+              {hasWorked ? "✓ Worked with this" : "I've worked with this"}
+            </button>
+            <p className="font-heading italic text-[13px] text-muted-foreground mt-2 text-center">
+              {experienceCount} {experienceCount === 1 ? "person has" : "people have"} worked with this
+            </p>
+          </div>
+
+          {/* People */}
+          <div>
+            <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-3 pb-2 border-b border-foreground">
+              People
+            </div>
+            {people.length === 0 ? (
+              <p className="font-heading italic text-[13px] text-muted-foreground">
+                No one yet. Be the first.
+              </p>
+            ) : (
+              <div className="grid grid-cols-6 gap-2">
+                {people.map((person) => (
+                  <Link
+                    key={person.user_id}
+                    href={ROUTES.POINTSTACK_PROFILE(person.user?.display_name || "")}
+                    className="block"
+                    title={person.user?.display_name || "Anonymous"}
+                  >
+                    <UserAvatar
+                      name={person.user?.display_name || "Anonymous"}
+                      avatarUrl={person.user?.avatar_url}
+                      size="sm"
+                    />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Point standards */}
+          {getBabelIdsForAtlasType(model.type).length > 0 ? (
+            <PointStandardsList atlasTypeId={model.type} />
+          ) : null}
+        </aside>
+      </div>
+    </section>
+  );
+}
+
+function SpecRow({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-border last:border-b-0">
+      <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="text-[14px] text-foreground leading-[1.55]">{value}</dd>
     </div>
   );
 }

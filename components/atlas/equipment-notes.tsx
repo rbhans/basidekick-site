@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { CaretUp, Clock } from "@phosphor-icons/react";
+import { CaretUp } from "@phosphor-icons/react";
 
 interface EquipmentNote {
   id: string;
@@ -17,6 +15,19 @@ interface EquipmentNote {
 
 interface EquipmentNotesProps {
   equipmentId: string;
+}
+
+function formatTimeAgo(dateStr: string): string {
+  const date = new Date(dateStr);
+  const diffMs = Date.now() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return "just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.floor(diffHr / 24);
+  if (diffDay < 30) return `${diffDay}d ago`;
+  return date.toLocaleDateString();
 }
 
 export function EquipmentNotes({ equipmentId }: EquipmentNotesProps) {
@@ -36,7 +47,9 @@ export function EquipmentNotes({ equipmentId }: EquipmentNotesProps) {
 
       const { data, error } = await supabase
         .from("equipment_notes")
-        .select("id, content, upvote_count, created_at, author:profiles(display_name, avatar_url)")
+        .select(
+          "id, content, upvote_count, created_at, author:profiles(display_name, avatar_url)"
+        )
         .eq("equipment_id", equipmentId)
         .order("upvote_count", { ascending: false })
         .order("created_at", { ascending: false });
@@ -65,7 +78,9 @@ export function EquipmentNotes({ equipmentId }: EquipmentNotesProps) {
 
   const sortedNotes = useMemo(() => {
     if (sortBy === "top") return notes;
-    return [...notes].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    return [...notes].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
   }, [notes, sortBy]);
 
   const handleUpvote = async (noteId: string) => {
@@ -110,7 +125,9 @@ export function EquipmentNotes({ equipmentId }: EquipmentNotesProps) {
         author_id: user.id,
         content: newNote.trim(),
       })
-      .select("id, content, upvote_count, created_at, author:profiles(display_name, avatar_url)")
+      .select(
+        "id, content, upvote_count, created_at, author:profiles(display_name, avatar_url)"
+      )
       .single();
 
     if (error) {
@@ -123,73 +140,108 @@ export function EquipmentNotes({ equipmentId }: EquipmentNotesProps) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Notes</h2>
-        <div className="flex gap-2">
-          <Button
-            variant={sortBy === "top" ? "default" : "outline"}
-            size="sm"
+    <div>
+      <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
+        <span className="font-mono text-[11px] text-accent tracking-[1px]">03 /</span>
+        <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+          Field notes
+        </h2>
+        <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+          {notes.length} {notes.length === 1 ? "note" : "notes"}
+        </span>
+        <div className="ml-3.5 flex items-center gap-1.5">
+          <button
             onClick={() => setSortBy("top")}
+            className={`font-mono text-[10px] uppercase tracking-[1.2px] px-2 py-1 border rounded-sm transition-colors ${
+              sortBy === "top"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground"
+            }`}
           >
             Top
-          </Button>
-          <Button
-            variant={sortBy === "recent" ? "default" : "outline"}
-            size="sm"
+          </button>
+          <button
             onClick={() => setSortBy("recent")}
+            className={`font-mono text-[10px] uppercase tracking-[1.2px] px-2 py-1 border rounded-sm transition-colors ${
+              sortBy === "recent"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground"
+            }`}
           >
-            <Clock className="size-3 mr-1" />
             Recent
-          </Button>
+          </button>
         </div>
       </div>
 
       {user && (
-        <div className="space-y-2">
-          <Textarea
+        <div className="mb-6">
+          <textarea
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
-            placeholder="Share a helpful note or tip..."
+            placeholder="Share a helpful note or field tip…"
             rows={3}
             maxLength={500}
+            className="w-full border border-border bg-card focus:border-foreground transition-colors outline-none p-3 text-[14px] text-foreground placeholder:text-muted-foreground/60 placeholder:italic font-sans resize-y"
           />
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>{newNote.length} / 500</span>
-            <Button size="sm" onClick={handleSubmit} disabled={!newNote.trim()}>
-              Add Note
-            </Button>
+          <div className="flex items-center justify-between mt-2">
+            <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground tabular-nums">
+              {newNote.length} / 500
+            </span>
+            <button
+              onClick={handleSubmit}
+              disabled={!newNote.trim()}
+              className="px-4 py-2 border border-foreground bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Add note
+            </button>
           </div>
-          {error && <p className="text-xs text-destructive">{error}</p>}
+          {error && (
+            <p className="font-mono text-[10px] uppercase tracking-[1.1px] text-destructive mt-2">
+              {error}
+            </p>
+          )}
         </div>
       )}
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Loading notes...</p>
+        <p className="font-heading italic text-[15px] text-muted-foreground">Loading notes…</p>
       ) : sortedNotes.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No notes yet. Be the first to add one.</p>
+        <p className="font-heading italic text-[15px] text-muted-foreground">
+          No notes yet. Be the first to add one.
+        </p>
       ) : (
-        <div className="space-y-3">
-          {sortedNotes.map((note) => (
-            <div key={note.id} className="border border-border rounded-lg p-4 bg-card">
-              <div className="flex items-center justify-between mb-2">
-                <div className="text-sm text-muted-foreground">
-                  {note.author?.display_name || "Anonymous"} · {new Date(note.created_at).toLocaleDateString()}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
+        <div className="space-y-0">
+          {sortedNotes.map((note) => {
+            const hasVoted = voted.has(note.id);
+            return (
+              <div
+                key={note.id}
+                className="grid grid-cols-[44px_1fr] gap-4 py-4 border-b border-muted"
+              >
+                <button
                   onClick={() => handleUpvote(note.id)}
-                  disabled={!user || voted.has(note.id)}
-                  className="text-muted-foreground"
+                  disabled={!user || hasVoted}
+                  className={`flex flex-col items-center justify-start pt-1 ${
+                    hasVoted ? "text-accent" : "text-muted-foreground hover:text-foreground"
+                  } disabled:cursor-not-allowed transition-colors`}
                 >
-                  <CaretUp className="size-4" />
-                  <span className="ml-1 text-xs">{note.upvote_count || 0}</span>
-                </Button>
+                  <CaretUp className="w-4 h-4" weight={hasVoted ? "fill" : "regular"} />
+                  <span className="font-mono text-[11px] tabular-nums mt-0.5">
+                    {note.upvote_count || 0}
+                  </span>
+                </button>
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground mb-1.5">
+                    {note.author?.display_name || "Anonymous"} ·{" "}
+                    <span className="tabular-nums">{formatTimeAgo(note.created_at)}</span>
+                  </div>
+                  <p className="text-[14px] text-foreground leading-[1.55] whitespace-pre-wrap">
+                    {note.content}
+                  </p>
+                </div>
               </div>
-              <p className="text-sm whitespace-pre-wrap">{note.content}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
