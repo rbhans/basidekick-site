@@ -25,70 +25,70 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ─── ARTICLES TO INSERT ───────────────────────────────────────────────────────
-// Curated April 8, 2026 — sources from April 6-8, 2026 and late March 2026
+// Curated April 9, 2026 — sources from April 7-9, 2026
 const ARTICLES = [
   {
-    title: "How HVAC Contractors Can Navigate the 'Age of Electricity'",
-    url: "https://www.achrnews.com/articles/166031-how-hvac-contractors-can-navigate-the-age-of-electricity",
-    slug: "how-hvac-contractors-can-navigate-the-age-of-elect-m2p7k4n9",
-    source_domain: "achrnews.com",
-    summary:
-      "As heat pump sales now outpace gas furnaces nationally, ACHR News examines the practical gaps for contractors: cold-climate sizing expertise, electrical panel coordination, and utility permitting workflows — plus the cash-flow math of why a 5% average net margin isn't sustainable as jobs grow more complex.",
-    tags: ["hvac", "controls", "energy", "sustainability"],
-  },
-  {
-    title: "Shaping Intelligence: How Our Built Environment Must Guide AI Before It Guides Us",
-    url: "https://www.automatedbuildings.com/2026/04/shaping-intelligence-how-our-built-environment-must-guide-ai-before-it-guides-us/",
-    slug: "shaping-intelligence-how-our-built-environment-mus-b4t8r2x6",
+    title: "In Conversation with Rudolf Erasmus",
+    url: "https://www.automatedbuildings.com/2026/04/in-conversation-with-rudolf-erasmus/",
+    slug: "in-conversation-with-rudolf-erasmus-k2m8p5n3",
     source_domain: "automatedbuildings.com",
     summary:
-      "AutomatedBuildings.com's April 2026 theme examines why the built environment's safety constraints, liability structures, and long asset lifecycles must actively shape AI deployment frameworks — not passively adapt to them — as agentic AI moves closer to autonomous building control.",
-    tags: ["ai", "smart-building", "controls", "analytics"],
+      "Reliable Controls Hardware Manager Rudolf Erasmus discusses millimeter-wave occupancy detection and 10BASE-T1L single-pair Ethernet as an emerging field-device connectivity layer for BAS networks — a hardware perspective on the sensors and wiring choices shaping next-generation installations.",
+    tags: ["controls", "iot", "bacnet", "smart-building"],
   },
   {
-    title: "The Building Revolution: Is AI About to Eat Your Smart Building Stack?",
-    url: "https://www.automatedbuildings.com/2026/04/the-building-revolution-is-ai-about-to-eat-your-smart-building-stack/",
-    slug: "the-building-revolution-is-ai-about-to-eat-your-sm-c9k3m5p1",
+    title: "Allies, Not Angels — Choosing to Embrace AI on Your Own Terms",
+    url: "https://www.automatedbuildings.com/2026/04/allies-not-angels-choosing-to-embrace-ai-on-your-own-terms/",
+    slug: "allies-not-angels-choosing-to-embrace-ai-on-your-w7x3b9c5",
     source_domain: "automatedbuildings.com",
     summary:
-      "AutomatedBuildings.com revisits its 'Smarter Stack' framework in the AI era, asking whether the layered architecture model integrators have relied on for technology selection still holds when AI can now span and subsume multiple stack layers simultaneously.",
-    tags: ["ai", "smart-building", "controls", "iot"],
+      "Part of AutomatedBuildings.com's April 'AI Across the Stack' theme, this piece argues controls professionals should treat AI as a practical tool—not a mystical force—and deliberately define their own adoption criteria before vendors define it for them.",
+    tags: ["ai", "smart-building", "controls"],
   },
   {
-    title: "Iran Conflict Highlights Cyberthreat Exposure of U.S. Facilities",
-    url: "https://www.facilitiesdive.com/news/iran-conflict-highlights-cyberthreat-exposure-of-us-facilities/816215/",
-    slug: "iran-conflict-highlights-cyberthreat-exposure-of-u-j7n3t5w8",
-    source_domain: "facilitiesdive.com",
+    title: "Convergence on AutomatedBuildings.com",
+    url: "https://www.automatedbuildings.com/2026/04/history-convergence-on-automatedbuildings-com/",
+    slug: "convergence-on-automatedbuildings-com-m4t7r2n6",
+    source_domain: "automatedbuildings.com",
     summary:
-      "State-backed actors linked to the Iran conflict are actively targeting cyber-physical building systems; a WiredScore resiliency report warns that BMS and connected building infrastructure — often not designed with security in mind — have dramatically expanded commercial real estate's attack surface.",
-    tags: ["cybersecurity", "smart-building", "iot", "controls"],
+      "Two decades of convergence coverage charted: how BAS shifted from 'Platform Wars' to 'Platform Peace' through open standards like Haystack and Brick Schema, creating the semantic layer AI now needs to meaningfully interpret building data.",
+    tags: ["smart-building", "controls", "iot", "analytics"],
   },
   {
-    title: "Iran-Linked Hackers Disrupt U.S. Critical Infrastructure by Targeting Internet-Exposed PLCs",
-    url: "https://thehackernews.com/2026/04/iran-linked-hackers-disrupt-us-critical.html",
-    slug: "iran-linked-hackers-disrupt-u-s-critical-infrastru-p9k2n4t6",
-    source_domain: "thehackernews.com",
+    title: "What 30 Years of Service Taught Tom Zaban About People",
+    url: "https://www.reliablecontrols.com/news/article/tom-zaban-on-people-and-purpose/",
+    slug: "what-30-years-of-service-taught-tom-zaban-about-d9k3m5p7",
+    source_domain: "reliablecontrols.com",
     summary:
-      "A joint CISA/FBI/NSA/DOE advisory released April 7 details how Iranian-affiliated group Handala exploited internet-exposed Rockwell Allen-Bradley PLCs across government facilities, water, and energy sectors since March 2026 — a direct call to action for any integrator with OT devices reachable from the internet.",
-    tags: ["cybersecurity", "controls", "ddc", "iot"],
+      "Reliable Controls President Tom Zaban reflects on three decades shaping the company's BAS product philosophy—simple, flexible, sustainable—and why investing in people and ongoing technical education is the defining challenge as building automation grows more complex.",
+    tags: ["controls", "smart-building"],
   },
   {
-    title: "Five Global Trends Reshaping Building Automation",
-    url: "https://www.johnsoncontrols.com/building-insights/2026/thought-leadership/five-global-trends-reshaping-building-automation",
-    slug: "five-global-trends-reshaping-building-automation-p4n6k8r2",
-    source_domain: "johnsoncontrols.com",
+    title: "Optigo Networks and Neeve Partner to Bring Next Generation BACnet Monitoring to the Neeve App Marketplace",
+    url: "https://www.prweb.com/releases/optigo-networks-and-neeve-partner-to-bring-next-generation-bacnet-monitoring-to-the-neeve-app-marketplace-302736628.html",
+    slug: "optigo-networks-and-neeve-partner-to-bring-next-r4k9j2m8",
+    source_domain: "prweb.com",
     summary:
-      "Johnson Controls' 2026 thought leadership piece identifies five forces reshaping BAS: rising energy costs, stricter decarbonization mandates, aging infrastructure (68% of U.S. offices predate 2000), AI-driven predictive maintenance, and workforce shortages — with 76% of organizations planning AI deployment for building operations.",
-    tags: ["hvac", "energy", "ai", "retrofit", "controls", "smart-building"],
+      "Optigo Networks' purpose-built BACnet packet-capture and diagnostics tool is now a one-click install on Neeve's OT network platform, giving integrators and IT teams clean, correctly parsed BACnet MS/TP and IP traffic data without manual setup.",
+    tags: ["bacnet", "iot", "controls", "cybersecurity"],
   },
   {
-    title: "Siemens and Viakoo Deliver Advanced OT/IoT Security Management",
-    url: "https://news.siemens.com/en-us/siemens-viakoo-deliver-advanced-security-management/",
-    slug: "siemens-and-viakoo-deliver-advanced-ot-iot-securit-r5k8m2p4",
-    source_domain: "news.siemens.com",
+    title: "House Panel Advances 5 Cybersecurity Bills Targeting Energy Infrastructure",
+    url: "https://www.meritalk.com/articles/house-panel-advances-five-cybersecurity-bills-targeting-energy-infrastructure/",
+    slug: "house-panel-advances-5-cybersecurity-bills-target-p5n2k8w3",
+    source_domain: "meritalk.com",
     summary:
-      "Siemens Smart Infrastructure has integrated Viakoo's Action Platform to offer customers automated OT/IoT security management — covering firmware updates, certificate enforcement, and password hygiene — for large, distributed fleets of physical security devices and building IoT systems.",
-    tags: ["cybersecurity", "iot", "smart-building", "controls"],
+      "The U.S. House Energy and Commerce Committee advanced five bipartisan bills—including the Energy Threat Analysis Center Act and Pipeline Cybersecurity Preparedness Act—signaling growing federal regulatory pressure on OT security for energy-connected building systems.",
+    tags: ["cybersecurity", "energy", "controls"],
+  },
+  {
+    title: "CxEnergy 2026 Technical Program and Keynote Announced",
+    url: "https://www.csemag.com/cxenergy-2026-technical-program-and-keynote-announced/",
+    slug: "cxenergy-2026-technical-program-and-keynote-announ-x7b4r9v5",
+    source_domain: "csemag.com",
+    summary:
+      "CxEnergy 2026 (April 21-24, Chicago) announces 30+ sessions and a keynote, 'From Checklists to Co-Pilots: Practical AI for Commissioning and Energy Professionals,' directly relevant for commissioning agents and energy managers navigating AI adoption.",
+    tags: ["commissioning", "energy", "ai", "analytics"],
   },
 ];
 
@@ -187,7 +187,7 @@ async function getActiveAiCount() {
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log("🤖 BASidekick News Curator — April 8, 2026 — " + new Date().toISOString());
+  console.log("🤖 BASidekick News Curator — April 9, 2026 — " + new Date().toISOString());
   console.log("=".repeat(60));
 
   const retiredCount = await retireStaleArticles();
