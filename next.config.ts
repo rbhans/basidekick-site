@@ -13,8 +13,8 @@ const cspDirectives = [
   `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""}`,
   // Styles: self + inline for styled-jsx and CSS-in-JS
   "style-src 'self' 'unsafe-inline'",
-  // Images: self + data URIs + Supabase storage + common image sources
-  "img-src 'self' data: blob: https://*.supabase.co",
+  // Images: self + data URIs + Supabase storage + Google favicons
+  "img-src 'self' data: blob: https://*.supabase.co https://www.google.com",
   // Fonts: self + Google Fonts
   "font-src 'self' data:",
   // Connect: self + Supabase + Google OAuth + Weather API + GitHub raw
