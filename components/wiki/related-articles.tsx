@@ -177,7 +177,7 @@ export function RelatedArticles({
                     {category.name}
                   </span>
                 )}
-                <h3 className="font-medium text-sm leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                <h3 className="font-medium text-sm leading-snug group-hover:text-accent transition-colors line-clamp-2">
                   {article.title}
                 </h3>
                 {article.summary && (

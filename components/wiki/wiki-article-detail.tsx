@@ -287,7 +287,7 @@ export function WikiArticleDetail({ article, tags, facets = [] }: WikiArticleDet
               {comments.map((comment) => (
                 <div key={comment.id} className="border border-border bg-card shadow-sm p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="size-8 bg-primary/10 flex items-center justify-center text-sm font-mono text-primary">
+                    <div className="size-8 bg-secondary flex items-center justify-center text-sm font-mono text-primary">
                       {(comment.author?.display_name || "A")[0].toUpperCase()}
                     </div>
                     <div>

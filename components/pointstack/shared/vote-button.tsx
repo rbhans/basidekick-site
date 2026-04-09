@@ -45,7 +45,7 @@ export function VoteButton({
         className={cn(
           buttonSize,
           "transition-all duration-200",
-          userVote === 1 && "text-primary bg-primary/10 hover:bg-primary/20",
+          userVote === 1 && "text-primary bg-secondary hover:bg-secondary",
           animating === "up" && "scale-125"
         )}
         onClick={() => handleVote(1)}

@@ -79,7 +79,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
         Back to Jobs
       </Link>
 
-      <div className="border border-border rounded-xl bg-card p-6">
+      <div className="border border-border rounded-md bg-card p-6">
         {/* Header */}
         <div className="flex items-start gap-4 mb-6">
           {job.company?.logo_url ? (
@@ -89,7 +89,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
               className="w-16 h-16 rounded-lg object-cover"
             />
           ) : (
-            <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center">
               <Briefcase className="w-8 h-8 text-primary" />
             </div>
           )}

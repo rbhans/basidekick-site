@@ -176,7 +176,7 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
                           <Link
                             key={brand.id}
                             href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
-                            className="flex items-center justify-between text-sm hover:text-primary"
+                            className="flex items-center justify-between text-sm hover:text-accent"
                           >
                             {brand.name}
                             <ArrowRight className="size-3" />
@@ -202,7 +202,7 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
                                 type.slug || type.id,
                                 model.slug || model.id,
                               )}
-                              className="flex items-center justify-between text-sm hover:text-primary"
+                              className="flex items-center justify-between text-sm hover:text-accent"
                             >
                               <span>{model.name}</span>
                               <span className="text-xs text-muted-foreground">{brand.name}</span>
@@ -240,7 +240,7 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
                 <Link
                   key={brand.id}
                   href={ROUTES.ATLAS_EQUIPMENT_BRAND(brand.slug || brand.id)}
-                  className="group p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
+                  className="group p-4 border border-border bg-card shadow-sm hover:border-foreground transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <AtlasBrandLogo
@@ -249,7 +249,7 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
                       fallbackClassName="size-8 rounded bg-muted flex items-center justify-center text-sm font-semibold"
                     />
                     <div>
-                      <p className="text-sm font-medium group-hover:text-primary transition-colors">{brand.name}</p>
+                      <p className="text-sm font-medium group-hover:text-accent transition-colors">{brand.name}</p>
                       <p className="text-xs text-muted-foreground">
                         {brand.count} model{brand.count === 1 ? "" : "s"}
                       </p>
@@ -285,7 +285,7 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
                       type.slug || type.id,
                       model.slug || model.id,
                     )}
-                    className="p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
+                    className="p-4 border border-border bg-card shadow-sm hover:border-foreground transition-colors"
                   >
                     <p className="text-sm font-semibold">{model.name}</p>
                     <p className="text-xs text-muted-foreground mt-1">
@@ -322,7 +322,7 @@ function EquipmentBrowseViewShell({ showHeader }: EquipmentBrowseViewShellProps)
                       type.slug || type.id,
                       model.slug || model.id,
                     )}
-                    className="p-4 border border-border bg-card shadow-sm hover:border-primary/30 transition-colors"
+                    className="p-4 border border-border bg-card shadow-sm hover:border-foreground transition-colors"
                   >
                     <p className="text-sm font-semibold">{model.name}</p>
                     <p className="text-xs text-muted-foreground mt-1">

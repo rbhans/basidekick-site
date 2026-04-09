@@ -34,7 +34,7 @@ export function GraphSidebar({ node, connectedNodes, onNavigate, onClose }: Grap
         <span
           className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${
             isEquip
-              ? "bg-primary/10 text-primary"
+              ? "bg-secondary text-primary"
               : "bg-muted text-muted-foreground"
           }`}
         >

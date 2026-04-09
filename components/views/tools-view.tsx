@@ -47,9 +47,9 @@ export function ToolsView() {
               </div>
 
               {/* Right: Demo Placeholder */}
-              <div className="aspect-video bg-card border border-border rounded-xl flex items-center justify-center">
+              <div className="aspect-video bg-card border border-border rounded-md flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <div className="w-14 h-14 bg-secondary rounded-md flex items-center justify-center mx-auto mb-3">
                     <Play className="w-7 h-7 text-primary" weight="fill" />
                   </div>
                   <p className="text-sm text-muted-foreground">{ssk.name} demo</p>
@@ -82,7 +82,7 @@ export function ToolsView() {
               </div>
               <div>
                 <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Requirements</h3>
-                <div className="bg-card border border-border rounded-xl p-5">
+                <div className="bg-card border border-border rounded-md p-5">
                   <dl className="space-y-3">
                     {ssk.requirements.map((r) => (
                       <div key={r.label} className="flex justify-between py-2 border-b border-border last:border-0">
@@ -125,9 +125,9 @@ export function ToolsView() {
               </div>
 
               {/* Right: Demo Placeholder */}
-              <div className="aspect-video bg-card border border-border rounded-xl flex items-center justify-center">
+              <div className="aspect-video bg-card border border-border rounded-md flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                  <div className="w-14 h-14 bg-secondary rounded-md flex items-center justify-center mx-auto mb-3">
                     <Play className="w-7 h-7 text-primary" weight="fill" />
                   </div>
                   <p className="text-sm text-muted-foreground">{qsk.name} demo</p>
@@ -160,7 +160,7 @@ export function ToolsView() {
               </div>
               <div>
                 <h3 className="font-mono text-[12px] font-bold text-muted-foreground tracking-[2px] uppercase mb-4">Requirements</h3>
-                <div className="bg-card border border-border rounded-xl p-5">
+                <div className="bg-card border border-border rounded-md p-5">
                   <dl className="space-y-3">
                     {qsk.requirements.map((r) => (
                       <div key={r.label} className="flex justify-between py-2 border-b border-border last:border-0">

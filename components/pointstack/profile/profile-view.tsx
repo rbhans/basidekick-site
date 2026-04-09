@@ -200,7 +200,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
       {/* Profile header */}
-      <div className="border border-border rounded-xl bg-card p-6 mb-6">
+      <div className="border border-border rounded-md bg-card p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Avatar */}
           <UserAvatar
@@ -286,7 +286,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
                   setFollowersDialogTab("followers");
                   setFollowersDialogOpen(true);
                 }}
-                className="hover:text-primary transition-colors"
+                className="hover:text-accent transition-colors"
               >
                 <span className="font-semibold">{followerCount}</span>
                 <span className="text-muted-foreground ml-1">followers</span>
@@ -296,7 +296,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
                   setFollowersDialogTab("following");
                   setFollowersDialogOpen(true);
                 }}
-                className="hover:text-primary transition-colors"
+                className="hover:text-accent transition-colors"
               >
                 <span className="font-semibold">{followingCount}</span>
                 <span className="text-muted-foreground ml-1">following</span>
@@ -454,7 +454,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
 function ProfileSkeleton() {
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="border border-border rounded-xl bg-card p-6">
+      <div className="border border-border rounded-md bg-card p-6">
         <div className="flex flex-col md:flex-row gap-6">
           <Skeleton className="h-16 w-16 rounded-full mx-auto md:mx-0" />
           <div className="flex-1">

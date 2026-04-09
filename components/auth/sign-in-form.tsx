@@ -100,7 +100,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
       )}
 
       {message && (
-        <div className="mb-4 border border-primary/20 bg-primary/10 p-3 text-sm text-primary">
+        <div className="mb-4 border border-primary/20 bg-secondary p-3 text-sm text-primary">
           {message}
         </div>
       )}
@@ -137,7 +137,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
                   <FormLabel>Password</FormLabel>
                   <Link
                     href={ROUTES.FORGOT_PASSWORD}
-                    className="text-xs text-muted-foreground hover:text-primary"
+                    className="text-xs text-muted-foreground hover:text-accent"
                   >
                     Forgot password?
                   </Link>

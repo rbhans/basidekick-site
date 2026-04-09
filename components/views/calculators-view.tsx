@@ -66,7 +66,7 @@ function Section({
 // Calculator Card
 function Calculator({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-card border border-border p-4 hover:border-primary/30 transition-colors">
+    <div className="bg-card border border-border p-4 hover:border-foreground transition-colors">
       <h3 className="text-xs font-medium text-primary mb-3 uppercase tracking-wide">{title}</h3>
       <div className="space-y-3">{children}</div>
     </div>
@@ -114,11 +114,11 @@ function CalcOutput({ label, value, unit }: { label: string; value: string; unit
     <div className="flex flex-col gap-1">
       <Label className="text-xs text-muted-foreground">{label}</Label>
       <div className="flex">
-        <div className="flex-1 bg-primary/10 border border-primary/30 px-2 py-1 text-primary text-sm font-mono min-h-[32px] flex items-center">
+        <div className="flex-1 bg-secondary border border-foreground px-2 py-1 text-primary text-sm font-mono min-h-[32px] flex items-center">
           {value || "—"}
         </div>
         {unit && (
-          <span className="bg-primary/5 border border-l-0 border-primary/30 px-2 py-1 text-xs text-primary min-w-[50px] text-center flex items-center justify-center">
+          <span className="bg-muted border border-l-0 border-foreground px-2 py-1 text-xs text-primary min-w-[50px] text-center flex items-center justify-center">
             {unit}
           </span>
         )}

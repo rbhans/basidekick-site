@@ -399,7 +399,7 @@ export function WikiView() {
                       <button
                         key={facet.id}
                         onClick={() => updateFilters({ platform: [facet.slug] })}
-                        className="px-4 py-2 rounded-xl border border-border bg-card hover:border-primary/30 transition-all text-sm text-foreground hover:text-primary"
+                        className="px-4 py-2 rounded-md border border-border bg-card hover:border-foreground transition-all text-sm text-foreground hover:text-accent"
                       >
                         {facet.name}
                         <span className="ml-2 text-[11px] text-muted-foreground">({facet.article_count})</span>
@@ -551,7 +551,7 @@ export function WikiView() {
                     <p className="text-muted-foreground font-mono">Loading articles...</p>
                   </div>
                 ) : articles.length === 0 ? (
-                  <div className="border border-dashed border-border rounded-xl p-8 text-center">
+                  <div className="border border-dashed border-border rounded-md p-8 text-center">
                     <List className="size-10 text-muted-foreground mx-auto mb-4" />
                     <p className="text-muted-foreground">No articles found.</p>
                     {(filters.q || activeFilterCount > 0) && (
@@ -606,7 +606,7 @@ export function WikiView() {
       <div className="lg:hidden fixed bottom-4 right-4 z-40">
         <Button
           size="lg"
-          className="shadow-lg rounded-xl"
+          className="shadow-lg rounded-md"
           onClick={() => setIsMobileOpen(true)}
         >
           <BookOpen className="size-5 mr-2" />

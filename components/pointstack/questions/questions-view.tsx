@@ -96,7 +96,7 @@ export function PointStackQuestionsView() {
 
       {/* Error state */}
       {feedError && (
-        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-xl bg-card text-center">
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-md bg-card text-center">
           <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
             <p className="font-medium mb-1">Something went wrong</p>
@@ -131,7 +131,7 @@ export function PointStackQuestionsView() {
               <Link
                 key={question.id}
                 href={getPointStackPostRoute(question.post_type, question.slug)}
-                className="block p-5 border border-border rounded-xl bg-card hover:border-primary/30 transition-colors"
+                className="block p-5 border border-border rounded-md bg-card hover:border-foreground transition-colors"
               >
                 <div className="flex gap-4">
                   {/* Stats */}
@@ -151,7 +151,7 @@ export function PointStackQuestionsView() {
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold mb-2 hover:text-primary">
+                    <h3 className="text-lg font-semibold mb-2 hover:text-accent">
                       {question.title}
                     </h3>
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-3">

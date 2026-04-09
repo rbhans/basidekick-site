@@ -41,7 +41,7 @@ export function ArticleCard({
   return (
     <Link
       href={ROUTES.WIKI_ARTICLE(slug)}
-      className={`group block bg-card border border-border rounded-xl p-5 hover:border-primary/30 transition-all ${className || ""}`}
+      className={`group block bg-card border border-border rounded-md p-5 hover:border-foreground transition-all ${className || ""}`}
       style={{ borderLeftWidth: "3px", borderLeftColor: color }}
     >
       {category && (
@@ -58,7 +58,7 @@ export function ArticleCard({
           </span>
         </div>
       )}
-      <h3 className="font-heading text-[15px] font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+      <h3 className="font-heading text-[15px] font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2">
         {title}
       </h3>
       {description && (

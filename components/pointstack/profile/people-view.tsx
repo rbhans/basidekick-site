@@ -49,7 +49,7 @@ export function PointStackPeopleView() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name..."
-          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/30 transition-colors"
+          className="w-full h-11 bg-card border border-border rounded-md pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors"
         />
       </div>
 
@@ -87,7 +87,7 @@ function PersonCard({ profile }: { profile: PointStackProfile }) {
   return (
     <Link
       href={ROUTES.POINTSTACK_PROFILE(profile.display_name || profile.id)}
-      className="block p-4 border border-border rounded-xl bg-card hover:border-primary/30 transition-colors"
+      className="block p-4 border border-border rounded-md bg-card hover:border-foreground transition-colors"
     >
       <div className="flex items-start gap-3">
         <UserAvatar
@@ -141,7 +141,7 @@ function PersonCard({ profile }: { profile: PointStackProfile }) {
 
 function PersonCardSkeleton() {
   return (
-    <div className="p-4 border border-border rounded-xl bg-card">
+    <div className="p-4 border border-border rounded-md bg-card">
       <div className="flex items-start gap-3">
         <Skeleton className="h-10 w-10 rounded-full" />
         <div className="flex-1">

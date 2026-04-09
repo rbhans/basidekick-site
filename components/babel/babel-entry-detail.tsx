@@ -250,7 +250,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
                   {haystack.tags.map((tag) => (
                     <span
                       key={tag.name}
-                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-mono bg-primary/10 text-primary rounded"
+                      className="inline-flex items-center gap-1 px-2 py-1 text-xs font-mono bg-secondary text-primary rounded"
                     >
                       {tag.name}
                       <span className="text-[10px] text-primary/50">{tag.kind}</span>
@@ -423,7 +423,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
                 <Link
                   key={relatedId}
                   href={ROUTES.ATLAS_ENTRY(relatedId)}
-                  className="text-sm px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded transition-colors"
+                  className="text-sm px-3 py-1.5 bg-secondary text-primary hover:bg-secondary rounded transition-colors"
                 >
                   {relatedId}
                 </Link>

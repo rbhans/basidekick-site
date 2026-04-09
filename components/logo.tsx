@@ -70,7 +70,7 @@ export function Logo({ size = "md", onClick }: LogoProps) {
       onClick={onClick}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      className={`font-mono font-medium ${sizeClasses[size]} transition-colors hover:text-primary cursor-pointer`}
+      className={`font-mono font-medium ${sizeClasses[size]} transition-colors hover:text-accent cursor-pointer`}
     >
       <span className="text-muted-foreground">[</span>
       <span className="inline-block min-w-[10ch] pointer-events-none">

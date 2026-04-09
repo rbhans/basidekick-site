@@ -84,7 +84,7 @@ export function WikiFilterBar({
           onChange={(e) => onSearchChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search articles..."
-          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm focus:outline-none focus:border-muted-foreground transition-colors"
+          className="w-full h-11 bg-card border border-border rounded-md pl-11 pr-4 text-sm focus:outline-none focus:border-muted-foreground transition-colors"
         />
       </div>
 
@@ -93,7 +93,7 @@ export function WikiFilterBar({
         <div className="relative" ref={sortRef}>
           <button
             onClick={() => setSortOpen(!sortOpen)}
-            className="h-11 px-4 bg-card border border-border rounded-xl flex items-center gap-2 text-muted-foreground hover:border-muted-foreground transition-colors"
+            className="h-11 px-4 bg-card border border-border rounded-md flex items-center gap-2 text-muted-foreground hover:border-muted-foreground transition-colors"
           >
             <span className="text-[13px]">
               {sortOptions.find((o) => o.value === sortBy)?.label}
@@ -102,7 +102,7 @@ export function WikiFilterBar({
           </button>
 
           {sortOpen && (
-            <div className="absolute right-0 top-full mt-1 z-50 min-w-[140px] border border-border bg-card rounded-xl shadow-lg overflow-hidden">
+            <div className="absolute right-0 top-full mt-1 z-50 min-w-[140px] border border-border bg-card rounded-md shadow-lg overflow-hidden">
               {sortOptions.map((option) => (
                 <button
                   key={option.value}
@@ -126,7 +126,7 @@ export function WikiFilterBar({
         <div className="relative" ref={filterRef}>
           <button
             onClick={() => setFilterOpen(!filterOpen)}
-            className="h-11 px-4 bg-card border border-border rounded-xl flex items-center gap-2 text-muted-foreground hover:border-muted-foreground transition-colors"
+            className="h-11 px-4 bg-card border border-border rounded-md flex items-center gap-2 text-muted-foreground hover:border-muted-foreground transition-colors"
           >
             <Funnel className="size-4" />
             <span className="text-[13px]">Filters</span>
@@ -139,7 +139,7 @@ export function WikiFilterBar({
           </button>
 
           {filterOpen && (
-            <div className="absolute right-0 top-full mt-1 z-50 w-[280px] border border-border bg-card rounded-xl shadow-lg overflow-hidden">
+            <div className="absolute right-0 top-full mt-1 z-50 w-[280px] border border-border bg-card rounded-md shadow-lg overflow-hidden">
               <div className="p-2 border-b border-border flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">Filter by facets</span>
                 {activeFilterCount > 0 && (
@@ -198,7 +198,7 @@ export function WikiFilterBar({
         </div>
 
         {/* Search Button */}
-        <Button onClick={onSearch} className="h-11 px-5 rounded-xl font-semibold">
+        <Button onClick={onSearch} className="h-11 px-5 rounded-md font-semibold">
           Search
         </Button>
       </div>

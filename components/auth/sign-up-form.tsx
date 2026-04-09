@@ -107,7 +107,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
       )}
 
       {message && (
-        <div className="mb-4 border border-primary/20 bg-primary/10 p-3 text-sm text-primary">
+        <div className="mb-4 border border-primary/20 bg-secondary p-3 text-sm text-primary">
           {message}
         </div>
       )}

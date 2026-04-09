@@ -89,7 +89,7 @@ export function FileUploadStep({ onFileReady }: FileUploadStepProps) {
         className={`
           relative flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed p-12
           cursor-pointer transition-colors
-          ${isDragging ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-muted/50"}
+          ${isDragging ? "border-primary bg-muted" : "border-border hover:border-foreground hover:bg-muted/50"}
           ${isParsing ? "pointer-events-none opacity-60" : ""}
         `}
       >

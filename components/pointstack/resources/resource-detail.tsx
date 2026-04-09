@@ -172,7 +172,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         </div>
       )}
 
-      <div className="border border-border rounded-xl bg-card p-6">
+      <div className="border border-border rounded-md bg-card p-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
@@ -205,7 +205,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         </div>
 
         {/* Author */}
-        <div className="flex items-center gap-3 p-4 bg-card border border-border rounded-xl mb-6">
+        <div className="flex items-center gap-3 p-4 bg-card border border-border rounded-md mb-6">
           <Link href={ROUTES.POINTSTACK_PROFILE(resource.author?.display_name || "")}>
             <UserAvatar
               displayName={resource.author?.display_name || null}
@@ -244,7 +244,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
               "flex items-center gap-1.5 transition-colors",
               resource.user_vote === 1
                 ? "text-primary"
-                : "text-muted-foreground hover:text-primary"
+                : "text-muted-foreground hover:text-accent"
             )}
           >
             <Heart className="w-4 h-4" weight={resource.user_vote === 1 ? "fill" : "regular"} />
@@ -305,7 +305,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         {comments.length > 0 ? (
           <div className="space-y-4">
             {comments.map((comment) => (
-              <div key={comment.id} className="border border-border rounded-xl bg-card p-4">
+              <div key={comment.id} className="border border-border rounded-md bg-card p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Link
                     href={ROUTES.POINTSTACK_PROFILE(comment.author?.display_name || "")}

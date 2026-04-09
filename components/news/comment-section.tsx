@@ -65,7 +65,7 @@ function CommentNode({ comment, articleId, depth }: CommentNodeProps) {
                 "flex items-center gap-1 transition-colors",
                 comment.user_vote === 1
                   ? "text-primary"
-                  : "text-muted-foreground/40 hover:text-primary"
+                  : "text-muted-foreground/40 hover:text-accent"
               )}
             >
               <ArrowUp className="w-3 h-3" weight={comment.user_vote === 1 ? "fill" : "regular"} />

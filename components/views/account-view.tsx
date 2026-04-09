@@ -238,7 +238,7 @@ export function AccountView() {
           {companies[0] ? (
             <Link
               href={ROUTES.POINTSTACK_COMPANY(companies[0].slug)}
-              className="flex items-start gap-3 p-4 border border-border rounded-lg hover:border-primary/30 transition-colors max-w-sm"
+              className="flex items-start gap-3 p-4 border border-border rounded-lg hover:border-foreground transition-colors max-w-sm"
             >
               {companies[0].logo_url ? (
                 <img
@@ -247,7 +247,7 @@ export function AccountView() {
                   className="w-10 h-10 rounded-lg object-cover"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center shrink-0">
                   <span className="text-lg font-bold text-primary">
                     {companies[0].name.charAt(0)}
                   </span>
@@ -464,7 +464,7 @@ export function AccountView() {
               {companies[0] ? (
                 <Link
                   href={ROUTES.POINTSTACK_COMPANY(companies[0].slug)}
-                  className="mt-1 block hover:text-primary transition-colors"
+                  className="mt-1 block hover:text-accent transition-colors"
                 >
                   {companies[0].name}
                 </Link>

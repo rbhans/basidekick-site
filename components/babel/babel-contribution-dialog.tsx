@@ -266,8 +266,8 @@ export function BabelContributionDialog({
                             onClick={() => field.onChange(option.value)}
                             className={`w-full rounded border p-3 text-left transition-colors ${
                               isSelected
-                                ? "border-primary bg-primary/5"
-                                : "border-border hover:border-primary/50"
+                                ? "border-primary bg-muted"
+                                : "border-border hover:border-foreground"
                             }`}
                           >
                             <div className="flex items-start gap-3">

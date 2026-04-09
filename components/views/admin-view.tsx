@@ -478,7 +478,7 @@ export function AdminView({
                           </div>
                         </div>
                         {user.role === "admin" && (
-                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5">
+                          <span className="text-xs bg-secondary text-primary px-2 py-0.5">
                             Admin
                           </span>
                         )}
@@ -555,7 +555,7 @@ export function AdminView({
                         </td>
                         <td className="p-4">
                           {user.role === "admin" ? (
-                            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5">
+                            <span className="text-xs bg-secondary text-primary px-2 py-0.5">
                               Yes
                             </span>
                           ) : (
@@ -605,7 +605,7 @@ export function AdminView({
                         <td className="p-4">
                           <Link
                             href={ROUTES.WIKI_ARTICLE(article.slug)}
-                            className="font-medium hover:text-primary transition-colors"
+                            className="font-medium hover:text-accent transition-colors"
                           >
                             {article.title}
                           </Link>
@@ -848,7 +848,7 @@ export function AdminView({
                                 href={submission.github_issue_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-muted-foreground hover:text-primary"
+                                className="text-muted-foreground hover:text-accent"
                                 title="View GitHub issue"
                               >
                                 <GithubLogo className="size-4" />
@@ -1020,7 +1020,7 @@ export function AdminView({
                                 href={contribution.github_issue_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-muted-foreground hover:text-primary"
+                                className="text-muted-foreground hover:text-accent"
                                 title="View GitHub issue"
                               >
                                 <GithubLogo className="size-4" />

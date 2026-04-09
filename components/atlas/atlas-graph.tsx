@@ -373,7 +373,7 @@ export function AtlasGraph() {
         {root && (
           <button
             onClick={() => router.push("/atlas/graph")}
-            className="rounded-lg border border-border bg-card px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+            className="rounded-lg border border-border bg-card px-3 py-2 text-xs text-muted-foreground hover:text-foreground hover:border-foreground transition-colors"
           >
             Show all
           </button>

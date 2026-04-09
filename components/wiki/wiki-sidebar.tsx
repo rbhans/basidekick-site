@@ -82,7 +82,7 @@ export function WikiSidebar({
             </div>
             <div className="flex flex-wrap gap-1.5 px-3">
               {selectedCategorySlug && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-mono">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary text-primary text-[11px] font-mono">
                   {categories.find((c) => c.slug === selectedCategorySlug)?.name || selectedCategorySlug}
                   <button onClick={() => onCategorySelect(null)} className="hover:text-foreground">
                     <X className="size-3" />
@@ -97,7 +97,7 @@ export function WikiSidebar({
                   {pill.label}
                   <button
                     onClick={() => onFacetToggle(pill.paramName, pill.slug)}
-                    className="hover:text-primary"
+                    className="hover:text-accent"
                   >
                     <X className="size-3" />
                   </button>
@@ -113,7 +113,7 @@ export function WikiSidebar({
           className={cn(
             "w-full text-left px-3 py-2 text-sm font-medium rounded-lg transition-colors",
             selectedCategorySlug === null
-              ? "bg-primary/10 text-primary"
+              ? "bg-secondary text-primary"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
           )}
         >
@@ -137,7 +137,7 @@ export function WikiSidebar({
                   className={cn(
                     "w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors",
                     isSelected
-                      ? "bg-primary/10 text-primary"
+                      ? "bg-secondary text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   )}
                 >

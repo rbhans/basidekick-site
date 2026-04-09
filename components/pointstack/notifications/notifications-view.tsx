@@ -94,8 +94,8 @@ export function PointStackNotificationsView() {
               <div
                 key={notification.id}
                 className={cn(
-                  "flex items-start gap-3 p-4 rounded-xl border border-border bg-card hover:border-primary/30 transition-colors",
-                  !notification.is_read && "bg-primary/5"
+                  "flex items-start gap-3 p-4 rounded-md border border-border bg-card hover:border-foreground transition-colors",
+                  !notification.is_read && "bg-muted"
                 )}
                 onClick={() => {
                   if (!notification.is_read) {
@@ -110,7 +110,7 @@ export function PointStackNotificationsView() {
                     size="md"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
                     <Icon className="w-4 h-4 text-primary" />
                   </div>
                 )}

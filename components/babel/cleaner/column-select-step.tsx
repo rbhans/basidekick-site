@@ -47,7 +47,7 @@ export function ColumnSelectStep({
                     px-3 py-2 text-left font-medium cursor-pointer transition-colors whitespace-nowrap
                     ${
                       selectedColumn === col
-                        ? "bg-primary/10 text-primary border-b-2 border-primary"
+                        ? "bg-secondary text-primary border-b-2 border-primary"
                         : "hover:bg-muted"
                     }
                   `}
@@ -60,7 +60,7 @@ export function ColumnSelectStep({
                       </span>
                     )}
                     {selectedColumn === col && (
-                      <span className="text-[10px] px-1 py-0.5 rounded bg-primary/20 text-primary">
+                      <span className="text-[10px] px-1 py-0.5 rounded bg-secondary text-primary">
                         selected
                       </span>
                     )}
@@ -78,7 +78,7 @@ export function ColumnSelectStep({
                     onClick={() => setSelectedColumn(col)}
                     className={`
                       px-3 py-1.5 cursor-pointer transition-colors whitespace-nowrap max-w-[200px] truncate
-                      ${selectedColumn === col ? "bg-primary/5 font-medium" : "hover:bg-muted/50"}
+                      ${selectedColumn === col ? "bg-muted font-medium" : "hover:bg-muted/50"}
                     `}
                   >
                     {row[col] || ""}

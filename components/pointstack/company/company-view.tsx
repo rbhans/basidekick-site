@@ -280,7 +280,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
       </Link>
 
       {/* Company header */}
-      <div className="border border-border rounded-xl bg-card p-6 mb-6">
+      <div className="border border-border rounded-md bg-card p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-6">
           {company.logo_url ? (
             <img
@@ -289,7 +289,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
               className="w-24 h-24 rounded-lg object-cover mx-auto md:mx-0"
             />
           ) : (
-            <div className="w-24 h-24 rounded-lg bg-primary/10 flex items-center justify-center mx-auto md:mx-0">
+            <div className="w-24 h-24 rounded-lg bg-secondary flex items-center justify-center mx-auto md:mx-0">
               <span className="text-3xl font-bold text-primary">
                 {company.name.charAt(0)}
               </span>
@@ -428,7 +428,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                     <Link
                       key={member.id}
                       href={ROUTES.POINTSTACK_PROFILE(member.profile.display_name)}
-                      className="flex items-center gap-3 p-3 border border-border rounded-xl bg-card hover:border-primary/30 transition-colors"
+                      className="flex items-center gap-3 p-3 border border-border rounded-md bg-card hover:border-foreground transition-colors"
                     >
                       {memberContent}
                     </Link>
@@ -438,7 +438,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                 return (
                   <div
                     key={member.id}
-                    className="flex items-center gap-3 p-3 border border-border rounded-xl bg-card"
+                    className="flex items-center gap-3 p-3 border border-border rounded-md bg-card"
                   >
                     {memberContent}
                   </div>
@@ -477,7 +477,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                 <Link
                   key={project.id}
                   href={getPointStackPostRoute(project.post_type, project.slug)}
-                  className="block rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-4"
+                  className="block rounded-md border border-border bg-card hover:border-foreground transition-colors p-4"
                 >
                   <div className="flex gap-4">
                     {(project.cover_image_url || project.images?.[0]) ? (
@@ -533,7 +533,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                 <Link
                   key={job.id}
                   href={ROUTES.POINTSTACK_JOB(job.slug)}
-                  className="block rounded-xl border border-border bg-card hover:border-primary/30 transition-colors p-4"
+                  className="block rounded-md border border-border bg-card hover:border-foreground transition-colors p-4"
                 >
                   <div className="flex items-start gap-3">
                     {job.company?.logo_url ? (
@@ -543,7 +543,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                         className="w-10 h-10 rounded object-cover shrink-0"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center shrink-0">
+                      <div className="w-10 h-10 rounded bg-secondary flex items-center justify-center shrink-0">
                         <Briefcase className="w-5 h-5 text-primary" />
                       </div>
                     )}
@@ -623,7 +623,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
                   return (
                     <div
                       key={request.id}
-                      className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 p-4 border border-border rounded-xl bg-card"
+                      className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 p-4 border border-border rounded-md bg-card"
                     >
                       <div className="flex items-start gap-3 min-w-0">
                         <Link href={profileHref}>

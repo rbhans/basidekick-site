@@ -68,13 +68,13 @@ export function PointStackCompaniesView() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search companies..."
-          className="w-full h-11 bg-card border border-border rounded-xl pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary/30 transition-colors"
+          className="w-full h-11 bg-card border border-border rounded-md pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-foreground transition-colors"
         />
       </div>
 
       {/* Error */}
       {error && !loading && (
-        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-xl bg-card text-center">
+        <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-md bg-card text-center">
           <WarningCircle className="w-8 h-8 text-destructive" />
           <div>
             <p className="font-medium mb-1">Something went wrong</p>
@@ -102,7 +102,7 @@ export function PointStackCompaniesView() {
             <Link
               key={company.id}
               href={ROUTES.POINTSTACK_COMPANY(company.slug)}
-              className="block p-4 border border-border rounded-xl bg-card hover:border-primary/30 transition-colors"
+              className="block p-4 border border-border rounded-md bg-card hover:border-foreground transition-colors"
             >
               <div className="flex items-start gap-3 mb-3">
                 {company.logo_url ? (
@@ -112,7 +112,7 @@ export function PointStackCompaniesView() {
                     className="w-12 h-12 rounded-lg object-cover"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center">
                     <span className="text-xl font-bold text-primary">
                       {company.name.charAt(0)}
                     </span>

@@ -166,7 +166,7 @@ export function PointStackOnboardingView() {
                   isComplete
                     ? "bg-primary text-primary-foreground"
                     : isActive
-                      ? "border-2 border-primary bg-primary/20 text-primary"
+                      ? "border-2 border-primary bg-secondary text-primary"
                       : "bg-muted text-muted-foreground"
                 )}
               >
@@ -185,7 +185,7 @@ export function PointStackOnboardingView() {
         })}
       </div>
 
-      <div className="rounded-xl border border-border bg-card p-6">
+      <div className="rounded-md border border-border bg-card p-6">
         <Form {...form}>
           <form className="space-y-6" onSubmit={(event) => event.preventDefault()}>
             {currentStep === 1 && (

@@ -144,7 +144,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
     <div className="space-y-4">
       {/* Atlas Terms Contributions */}
       {babelContributions.length > 0 && (
-        <div className="border border-border rounded-xl bg-card">
+        <div className="border border-border rounded-md bg-card">
           {renderSectionHeader("babel", babelContributions.length)}
           {expandedSections.has("babel") && (
             <div className="p-3 pt-0 space-y-2">
@@ -184,7 +184,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
 
       {/* Equipment Submissions */}
       {equipmentSubmissions.length > 0 && (
-        <div className="border border-border rounded-xl bg-card">
+        <div className="border border-border rounded-md bg-card">
           {renderSectionHeader("equipment", equipmentSubmissions.length)}
           {expandedSections.has("equipment") && (
             <div className="p-3 pt-0 space-y-2">
@@ -228,7 +228,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
 
       {/* Wiki Articles */}
       {wikiArticles.length > 0 && (
-        <div className="border border-border rounded-xl bg-card">
+        <div className="border border-border rounded-md bg-card">
           {renderSectionHeader("wiki", wikiArticles.length)}
           {expandedSections.has("wiki") && (
             <div className="p-3 pt-0 space-y-2">
@@ -236,7 +236,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
                 <Link
                   key={article.id}
                   href={ROUTES.WIKI_ARTICLE(article.slug)}
-                  className="block p-3 border border-border rounded-xl bg-card hover:bg-muted/50 transition-colors"
+                  className="block p-3 border border-border rounded-md bg-card hover:bg-muted/50 transition-colors"
                 >
                   <p className="font-medium text-sm truncate">{article.title}</p>
                   {article.summary && (

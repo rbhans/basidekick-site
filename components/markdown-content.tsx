@@ -195,7 +195,7 @@ const markdownComponents: Components = {
   ),
   // Style blockquotes
   blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-primary/30 pl-4 italic text-muted-foreground mb-4">
+    <blockquote className="border-l-4 border-foreground pl-4 italic text-muted-foreground mb-4">
       {children}
     </blockquote>
   ),

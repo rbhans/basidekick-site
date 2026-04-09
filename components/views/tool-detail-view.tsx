@@ -80,7 +80,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
           <div className="mt-6 max-w-3xl">
             <div className="aspect-video bg-muted border border-border flex items-center justify-center">
               <div className="text-center">
-                <div className="size-14 bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                <div className="size-14 bg-secondary flex items-center justify-center mx-auto mb-3">
                   <Play className="size-7 text-primary" weight="fill" />
                 </div>
                 <p className="text-muted-foreground text-sm">{tool.name} demo video</p>

@@ -31,7 +31,7 @@ export function UserAvatar({ displayName, avatarUrl, size = "md", className }: U
   return (
     <Avatar className={cn(sizeClasses[size], className)}>
       {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName || "User"} />}
-      <AvatarFallback className="bg-primary/10 text-primary font-medium">
+      <AvatarFallback className="bg-secondary text-primary font-medium">
         {initials}
       </AvatarFallback>
     </Avatar>

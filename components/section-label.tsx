@@ -11,7 +11,7 @@ export function SectionLabel({ children, variant = "default" }: SectionLabelProp
   return (
     <span
       className={cn(
-        "inline-flex items-center px-4 py-1.5 rounded-full border border-primary/50 bg-primary/5",
+        "inline-flex items-center px-4 py-1.5 rounded-full border border-foreground bg-muted",
         "font-mono text-[12px] font-bold text-primary tracking-[2px] uppercase"
       )}
     >
