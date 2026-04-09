@@ -248,160 +248,194 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
         <Skeleton className="h-4 w-24 mb-6" />
-        <Skeleton className="h-48 rounded-lg" />
-      </div>
+        <div className="grid grid-cols-[auto_1fr] gap-6">
+          <Skeleton className="h-24 w-24 rounded-sm" />
+          <div>
+            <Skeleton className="h-9 w-60 mb-2" />
+            <Skeleton className="h-5 w-48 mb-3" />
+            <Skeleton className="h-4 w-72" />
+          </div>
+        </div>
+      </section>
     );
   }
 
   if (!company) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-center py-12">
-          <h2 className="text-xl font-semibold mb-2">Company not found</h2>
-          <p className="text-muted-foreground mb-4">This company doesn&apos;t exist.</p>
-          <Button asChild>
-            <Link href={`${ROUTES.POINTSTACK}/companies`}>Back to Companies</Link>
-          </Button>
-        </div>
-      </div>
+      <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-16 text-center">
+        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+          This company isn&apos;t in the set.
+        </p>
+        <Link
+          href={`${ROUTES.POINTSTACK}/companies`}
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:text-accent transition-colors"
+        >
+          ← Back to companies
+        </Link>
+      </section>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
       <Link
         href={`${ROUTES.POINTSTACK}/companies`}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5 mb-6"
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Companies
+        <ArrowLeft className="w-3 h-3 text-accent" />
+        Back to companies
       </Link>
 
       {/* Company header */}
-      <div className="border border-border rounded-md bg-card p-6 mb-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          {company.logo_url ? (
-            <img
-              src={company.logo_url}
-              alt={company.name}
-              className="w-24 h-24 rounded-lg object-cover mx-auto md:mx-0"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-lg bg-secondary flex items-center justify-center mx-auto md:mx-0">
-              <span className="text-3xl font-bold text-primary">
-                {company.name.charAt(0)}
-              </span>
-            </div>
-          )}
-
-          <div className="flex-1 text-center md:text-left">
-            <div className="flex items-start justify-between gap-3 mb-2">
-              <div className="flex items-center gap-2 justify-center md:justify-start">
-                <h1 className="text-2xl font-bold">{company.name}</h1>
-                {company.is_verified && (
-                  <Badge variant="secondary">Verified</Badge>
-                )}
-              </div>
-              {canEditCompany && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0"
-                  onClick={() => setEditDialogOpen(true)}
-                >
-                  <PencilSimple className="w-4 h-4 mr-1.5" />
-                  Edit
-                </Button>
-              )}
-            </div>
-
-            {company.industry && (
-              <p className="text-lg text-muted-foreground mb-2">{company.industry}</p>
-            )}
-
-            <div className="flex items-center gap-4 justify-center md:justify-start text-sm text-muted-foreground">
-              {company.location && (
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{company.location}</span>
-                </div>
-              )}
-              {company.size_range && (
-                <div className="flex items-center gap-1">
-                  <Users className="w-4 h-4" />
-                  <span>{company.size_range} employees</span>
-                </div>
-              )}
-              {company.website_url && (
-                <a
-                  href={company.website_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 hover:text-foreground"
-                >
-                  <Globe className="w-4 h-4" />
-                  <span>Website</span>
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {company.description && (
-          <div className="mt-6 pt-6 border-t border-border">
-            <p className="text-muted-foreground">{company.description}</p>
+      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-6 items-start pb-6 mb-8 border-b border-foreground">
+        {company.logo_url ? (
+          <img
+            src={company.logo_url}
+            alt={company.name}
+            className="w-24 h-24 rounded-sm object-cover border border-border"
+          />
+        ) : (
+          <div className="w-24 h-24 rounded-sm bg-muted flex items-center justify-center border border-border font-mono text-[32px] font-bold text-foreground">
+            {company.name.charAt(0).toUpperCase()}
           </div>
         )}
 
-        {showJoinActions && (
-          <div className="mt-6 pt-6 border-t border-border">
-            <div className="flex flex-wrap items-center gap-2">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2.5 flex-wrap mb-1">
+            <h1 className="font-heading font-semibold text-[30px] md:text-[36px] leading-[1.1] tracking-[-0.015em] text-foreground">
+              {company.name}
+            </h1>
+            {company.is_verified && (
+              <span className="font-mono text-[9px] uppercase tracking-[1px] text-accent border border-accent px-1.5 py-0.5 rounded-sm">
+                Verified
+              </span>
+            )}
+          </div>
+
+          {company.industry && (
+            <p className="font-heading italic text-[17px] text-muted-foreground leading-[1.4] mb-3 max-w-[620px]">
+              {company.industry}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground">
+            {company.location && (
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="w-3 h-3" />
+                {company.location}
+              </span>
+            )}
+            {company.size_range && (
+              <span className="inline-flex items-center gap-1.5">
+                <Users className="w-3 h-3" />
+                {company.size_range} employees
+              </span>
+            )}
+            {company.website_url && (
+              <a
+                href={company.website_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-accent transition-colors"
+              >
+                <Globe className="w-3 h-3" />
+                Website
+              </a>
+            )}
+          </div>
+
+          {company.description && (
+            <p className="mt-4 text-[14px] text-muted-foreground leading-[1.6] max-w-[640px]">
+              {company.description}
+            </p>
+          )}
+
+          {showJoinActions && (
+            <div className="mt-5 flex flex-wrap items-center gap-2">
               {joinRequest?.status === "pending" && (
                 <>
-                  <Badge variant="secondary">Request Pending</Badge>
-                  <Button
-                    variant="outline"
-                    size="sm"
+                  <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-accent border border-accent px-2 py-1 rounded-sm">
+                    Request pending
+                  </span>
+                  <button
                     onClick={handleCancelJoinRequest}
                     disabled={joinSubmitting}
+                    className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground hover:text-accent transition-colors disabled:opacity-50"
                   >
-                    {joinSubmitting ? "Canceling..." : "Cancel Request"}
-                  </Button>
+                    {joinSubmitting ? "Canceling…" : "Cancel request"}
+                  </button>
                 </>
               )}
 
               {joinRequest?.status === "approved" && (
-                <Badge variant="secondary">Request Approved</Badge>
+                <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-accent border border-accent px-2 py-1 rounded-sm">
+                  Approved
+                </span>
               )}
 
               {joinRequest?.status === "rejected" && (
-                <Badge variant="destructive">Request Declined</Badge>
+                <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-destructive border border-destructive px-2 py-1 rounded-sm">
+                  Declined
+                </span>
               )}
 
               {!joinRequest && (
-                <Button onClick={handleOpenJoinDialog}>
-                  Request to Join
-                </Button>
+                <button
+                  onClick={handleOpenJoinDialog}
+                  className="bg-primary text-primary-foreground px-4 py-2 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] font-medium hover:bg-primary/90 transition-colors"
+                >
+                  Request to join
+                </button>
               )}
             </div>
+          )}
 
-            {joinActionError && (
-              <p className="mt-2 text-sm text-destructive">{joinActionError}</p>
-            )}
-          </div>
+          {joinActionError && (
+            <p className="mt-2 font-mono text-[11px] text-destructive">{joinActionError}</p>
+          )}
+        </div>
+
+        {canEditCompany && (
+          <button
+            onClick={() => setEditDialogOpen(true)}
+            className="inline-flex items-center gap-2 border-[1.5px] border-foreground px-4 py-2.5 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:border-accent hover:text-accent transition-colors shrink-0"
+          >
+            <PencilSimple className="w-3 h-3" />
+            Edit
+          </button>
         )}
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="team">
-        <TabsList>
-          <TabsTrigger value="team">Team ({company.members?.length || 0})</TabsTrigger>
-          <TabsTrigger value="projects">Projects ({companyProjects.length})</TabsTrigger>
-          <TabsTrigger value="jobs">Jobs ({companyJobs.length})</TabsTrigger>
+        <TabsList className="flex-wrap h-auto gap-1 bg-transparent border-b border-border rounded-none p-0 mb-6">
+          <TabsTrigger
+            value="team"
+            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+          >
+            Team ({company.members?.length || 0})
+          </TabsTrigger>
+          <TabsTrigger
+            value="projects"
+            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+          >
+            Projects ({companyProjects.length})
+          </TabsTrigger>
+          <TabsTrigger
+            value="jobs"
+            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+          >
+            Jobs ({companyJobs.length})
+          </TabsTrigger>
           {canManageRequests && (
-            <TabsTrigger value="requests">Requests ({pendingRequests.length})</TabsTrigger>
+            <TabsTrigger
+              value="requests"
+              className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+            >
+              Requests ({pendingRequests.length})
+            </TabsTrigger>
           )}
         </TabsList>
 
@@ -739,6 +773,6 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
           }}
         />
       )}
-    </div>
+    </section>
   );
 }

@@ -185,70 +185,98 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
 
   if (!profile) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-center py-12">
-          <h2 className="text-xl font-semibold mb-2">User not found</h2>
-          <p className="text-muted-foreground mb-4">This user doesn&apos;t exist or has been removed.</p>
-          <Button asChild>
-            <Link href={ROUTES.POINTSTACK}>Back to PointStack</Link>
-          </Button>
-        </div>
-      </div>
+      <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-16 text-center">
+        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+          This person isn&apos;t in the set.
+        </p>
+        <Link
+          href={ROUTES.POINTSTACK}
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:text-accent transition-colors"
+        >
+          ← Back to PointStack
+        </Link>
+      </section>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
       {/* Profile header */}
-      <div className="border border-border rounded-md bg-card p-6 mb-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Avatar */}
-          <UserAvatar
-            displayName={profile.display_name}
-            avatarUrl={profile.avatar_url}
-            size="xl"
-            className="mx-auto md:mx-0"
-          />
+      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-6 items-start pb-6 mb-8 border-b border-foreground">
+        {/* Avatar */}
+        <UserAvatar
+          displayName={profile.display_name}
+          avatarUrl={profile.avatar_url}
+          size="xl"
+        />
 
-          {/* Info */}
-          <div className="flex-1 text-center md:text-left">
-            <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-              <h1 className="text-2xl font-heading font-bold">{profile.display_name || "Anonymous"}</h1>
-              {profile.is_verified && (
-                <Badge className="gap-1 bg-blue-500/10 text-blue-600 border-blue-500/20 w-fit mx-auto md:mx-0">
-                  <Check className="w-3 h-3" />
-                  Verified
-                </Badge>
-              )}
-              {profile.availability_status === "available" && (
-                <Badge className="gap-1 bg-green-500/10 text-green-600 border-green-500/20 w-fit mx-auto md:mx-0">
-                  Available for work
-                </Badge>
-              )}
-            </div>
-
-            {profile.headline && (
-              <p className="text-lg text-muted-foreground mb-2">{profile.headline}</p>
+        {/* Info */}
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap mb-1">
+            <h1 className="font-heading font-semibold text-[30px] md:text-[36px] leading-[1.1] tracking-[-0.015em] text-foreground">
+              {profile.display_name || "Anonymous"}
+            </h1>
+            {profile.is_verified && (
+              <span className="font-mono text-[9px] uppercase tracking-[1px] text-accent border border-accent px-1.5 py-0.5 rounded-sm inline-flex items-center gap-1">
+                <Check className="w-2.5 h-2.5" weight="bold" />
+                Verified
+              </span>
             )}
+            {profile.availability_status === "available" && (
+              <span className="font-mono text-[9px] uppercase tracking-[1px] text-accent border border-accent px-1.5 py-0.5 rounded-sm">
+                Available for work
+              </span>
+            )}
+          </div>
 
+          {profile.headline && (
+            <p className="font-heading italic text-[17px] text-muted-foreground leading-[1.4] mb-3 max-w-[620px]">
+              {profile.headline}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground mb-4">
             {profile.location && (
-              <div className="flex items-center gap-1 text-sm text-muted-foreground justify-center md:justify-start mb-4">
-                <MapPin className="w-4 h-4" />
-                <span>{profile.location}</span>
-              </div>
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="w-3 h-3" />
+                {profile.location}
+              </span>
             )}
+            <span className="tabular-nums">
+              <span className="text-foreground font-bold">{profile.reputation_score}</span> rep
+            </span>
+            <button
+              onClick={() => {
+                setFollowersDialogTab("followers");
+                setFollowersDialogOpen(true);
+              }}
+              className="hover:text-accent transition-colors"
+            >
+              <span className="text-foreground font-bold tabular-nums">{followerCount}</span> followers
+            </button>
+            <button
+              onClick={() => {
+                setFollowersDialogTab("following");
+                setFollowersDialogOpen(true);
+              }}
+              className="hover:text-accent transition-colors"
+            >
+              <span className="text-foreground font-bold tabular-nums">{followingCount}</span> following
+            </button>
+          </div>
 
-            {/* Social links */}
-            <div className="flex items-center gap-2 justify-center md:justify-start mb-4">
+          {/* Social links */}
+          {(profile.website_url || profile.linkedin_url || profile.github_url) && (
+            <div className="flex items-center gap-3">
               {profile.website_url && (
                 <a
                   href={profile.website_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 hover:bg-muted rounded-md"
+                  className="w-8 h-8 border border-border rounded-sm flex items-center justify-center text-muted-foreground hover:border-foreground hover:text-accent transition-colors"
                   aria-label="Visit website"
                 >
-                  <Globe className="w-5 h-5" />
+                  <Globe className="w-4 h-4" />
                 </a>
               )}
               {profile.linkedin_url && (
@@ -256,10 +284,10 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
                   href={profile.linkedin_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 hover:bg-muted rounded-md"
+                  className="w-8 h-8 border border-border rounded-sm flex items-center justify-center text-muted-foreground hover:border-foreground hover:text-accent transition-colors"
                   aria-label="LinkedIn profile"
                 >
-                  <LinkedinLogo className="w-5 h-5" />
+                  <LinkedinLogo className="w-4 h-4" />
                 </a>
               )}
               {profile.github_url && (
@@ -267,101 +295,117 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
                   href={profile.github_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 hover:bg-muted rounded-md"
+                  className="w-8 h-8 border border-border rounded-sm flex items-center justify-center text-muted-foreground hover:border-foreground hover:text-accent transition-colors"
                   aria-label="GitHub profile"
                 >
-                  <GithubLogo className="w-5 h-5" />
+                  <GithubLogo className="w-4 h-4" />
                 </a>
               )}
             </div>
-
-            {/* Stats */}
-            <div className="flex items-center gap-6 text-sm justify-center md:justify-start">
-              <div>
-                <span className="font-semibold">{profile.reputation_score}</span>
-                <span className="text-muted-foreground ml-1">reputation</span>
-              </div>
-              <button
-                onClick={() => {
-                  setFollowersDialogTab("followers");
-                  setFollowersDialogOpen(true);
-                }}
-                className="hover:text-accent transition-colors"
-              >
-                <span className="font-semibold">{followerCount}</span>
-                <span className="text-muted-foreground ml-1">followers</span>
-              </button>
-              <button
-                onClick={() => {
-                  setFollowersDialogTab("following");
-                  setFollowersDialogOpen(true);
-                }}
-                className="hover:text-accent transition-colors"
-              >
-                <span className="font-semibold">{followingCount}</span>
-                <span className="text-muted-foreground ml-1">following</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-col gap-2">
-            {isOwnProfile ? (
-              <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
-                <PencilSimple className="w-4 h-4 mr-2" />
-                Edit Profile
-              </Button>
-            ) : user ? (
-              <>
-                <Button onClick={handleFollow} variant={isFollowing ? "outline" : "default"}>
-                  {isFollowing ? (
-                    <>
-                      <Check className="w-4 h-4 mr-2" />
-                      Following
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Follow
-                    </>
-                  )}
-                </Button>
-                <Button variant="outline" onClick={() => profile && messageUser(profile.id)}>
-                  Message
-                </Button>
-              </>
-            ) : null}
-          </div>
+          )}
         </div>
 
-        {/* Skills */}
-        {profile.skills && profile.skills.length > 0 && (
-          <div className="mt-6 pt-6 border-t border-border">
-            <h3 className="text-sm font-medium mb-2">Skills</h3>
-            <div className="flex flex-wrap gap-2">
-              {profile.skills.map((skill) => (
-                <Badge key={skill} variant="secondary">
-                  {skill}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Actions */}
+        <div className="flex flex-col gap-2 shrink-0">
+          {isOwnProfile ? (
+            <button
+              onClick={() => setEditDialogOpen(true)}
+              className="inline-flex items-center gap-2 border-[1.5px] border-foreground px-4 py-2.5 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:border-accent hover:text-accent transition-colors"
+            >
+              <PencilSimple className="w-3 h-3" />
+              Edit profile
+            </button>
+          ) : user ? (
+            <>
+              <button
+                onClick={handleFollow}
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] transition-colors ${
+                  isFollowing
+                    ? "border-[1.5px] border-foreground text-foreground hover:border-accent hover:text-accent"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90"
+                }`}
+              >
+                {isFollowing ? (
+                  <>
+                    <Check className="w-3 h-3" />
+                    Following
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-3 h-3" />
+                    Follow
+                  </>
+                )}
+              </button>
+              <button
+                onClick={() => profile && messageUser(profile.id)}
+                className="border-[1.5px] border-foreground px-4 py-2.5 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:border-accent hover:text-accent transition-colors"
+              >
+                Message
+              </button>
+            </>
+          ) : null}
+        </div>
       </div>
+
+      {/* Skills */}
+      {profile.skills && profile.skills.length > 0 && (
+        <div className="mb-10">
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3 pb-2.5 border-b border-border">
+            <span className="text-accent mr-1.5">·</span>
+            Skills
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {profile.skills.map((skill) => (
+              <span
+                key={skill}
+                className="font-mono text-[10px] uppercase tracking-[1.1px] text-foreground border border-border bg-card px-2 py-1 rounded-sm"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <Tabs defaultValue="posts">
-        <TabsList className="flex-wrap h-auto gap-1">
-          <TabsTrigger value="posts">Posts ({posts.length})</TabsTrigger>
-          <TabsTrigger value="equipment">Equipment</TabsTrigger>
-          <TabsTrigger value="projects">Projects ({showcaseProjects.length})</TabsTrigger>
-          <TabsTrigger value="contributions">Contributions</TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
+        <TabsList className="flex-wrap h-auto gap-1 bg-transparent border-b border-border rounded-none p-0 mb-6">
+          <TabsTrigger
+            value="posts"
+            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+          >
+            Posts ({posts.length})
+          </TabsTrigger>
+          <TabsTrigger
+            value="equipment"
+            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+          >
+            Equipment
+          </TabsTrigger>
+          <TabsTrigger
+            value="projects"
+            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+          >
+            Projects ({showcaseProjects.length})
+          </TabsTrigger>
+          <TabsTrigger
+            value="contributions"
+            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+          >
+            Contributions
+          </TabsTrigger>
+          <TabsTrigger
+            value="activity"
+            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+          >
+            Activity
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="posts" className="mt-6">
+        <TabsContent value="posts" className="mt-4">
           {posts.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {posts.map((post) => (
                 <FeedCard
                   key={post.id}
@@ -371,28 +415,33 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-muted-foreground">
+            <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
               No posts yet.
             </div>
           )}
         </TabsContent>
 
-        <TabsContent value="equipment" className="mt-6">
+        <TabsContent value="equipment" className="mt-4">
           {equipmentByBrand.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
+            <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
               No equipment experience yet.
             </div>
           ) : (
             <div className="space-y-6">
               {equipmentByBrand.map((group) => (
                 <div key={group.brandSlug}>
-                  <h3 className="text-sm font-semibold mb-2">{group.brandName}</h3>
+                  <h3 className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-3 pb-2 border-b border-border">
+                    <span className="text-accent mr-1.5">·</span>
+                    {group.brandName}
+                  </h3>
                   <div className="flex flex-wrap gap-2">
                     {group.items.map((item) => (
-                      <Link key={item.id} href={item.href}>
-                        <Badge variant="secondary" className="text-xs">
-                          {item.name}
-                        </Badge>
+                      <Link
+                        key={item.id}
+                        href={item.href}
+                        className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border bg-card px-2 py-1 rounded-sm hover:border-accent hover:text-accent transition-colors"
+                      >
+                        {item.name}
                       </Link>
                     ))}
                   </div>
@@ -402,9 +451,9 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
           )}
         </TabsContent>
 
-        <TabsContent value="projects" className="mt-6">
+        <TabsContent value="projects" className="mt-4">
           {showcaseProjects.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {showcaseProjects.map((project) => (
                 <FeedCard
                   key={project.id}
@@ -414,17 +463,17 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-muted-foreground">
+            <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
               No showcase projects yet.
             </div>
           )}
         </TabsContent>
 
-        <TabsContent value="contributions" className="mt-6">
+        <TabsContent value="contributions" className="mt-4">
           <ContributionsTab userId={profile.id} />
         </TabsContent>
 
-        <TabsContent value="activity" className="mt-6">
+        <TabsContent value="activity" className="mt-4">
           <ActivityFeed userId={profile.id} />
         </TabsContent>
       </Tabs>
@@ -447,23 +496,23 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
         followerCount={followerCount}
         followingCount={followingCount}
       />
-    </div>
+    </section>
   );
 }
 
 function ProfileSkeleton() {
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="border border-border rounded-md bg-card p-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          <Skeleton className="h-16 w-16 rounded-full mx-auto md:mx-0" />
-          <div className="flex-1">
-            <Skeleton className="h-8 w-48 mb-2 mx-auto md:mx-0" />
-            <Skeleton className="h-5 w-64 mb-4 mx-auto md:mx-0" />
-            <Skeleton className="h-4 w-32 mx-auto md:mx-0" />
-          </div>
+    <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
+      <div className="grid grid-cols-[auto_1fr] gap-6 pb-6 mb-8 border-b border-foreground">
+        <Skeleton className="h-20 w-20 rounded-full" />
+        <div>
+          <Skeleton className="h-9 w-60 mb-2" />
+          <Skeleton className="h-5 w-80 mb-3" />
+          <Skeleton className="h-3 w-60" />
         </div>
       </div>
-    </div>
+      <Skeleton className="h-10 w-full mb-4" />
+      <Skeleton className="h-32 w-full" />
+    </section>
   );
 }
