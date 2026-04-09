@@ -149,44 +149,135 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-10">
         <Skeleton className="h-4 w-24 mb-6" />
-        <Skeleton className="h-96 rounded-lg mb-6" />
-        <Skeleton className="h-8 w-3/4 mb-4" />
+        <Skeleton className="aspect-video rounded-md mb-6" />
+        <Skeleton className="h-10 w-3/4 mb-3" />
         <Skeleton className="h-4 w-full" />
-      </div>
+      </section>
     );
   }
 
   if (!project) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="text-center py-12">
-          <h2 className="text-xl font-semibold mb-2">Project not found</h2>
-          <p className="text-muted-foreground mb-4">This project doesn&apos;t exist.</p>
-          <Button asChild>
-            <Link href={`${ROUTES.POINTSTACK}/projects`}>Back to Projects</Link>
-          </Button>
-        </div>
-      </div>
+      <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-16 text-center">
+        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+          This project isn&apos;t in the set.
+        </p>
+        <Link
+          href={`${ROUTES.POINTSTACK}/projects`}
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5"
+        >
+          <ArrowLeft className="w-3 h-3 text-accent" />
+          Back to projects
+        </Link>
+      </section>
     );
   }
 
   const isAuthor = user?.id === project.author_id;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6">
+    <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-10">
+      {/* Back link */}
       <Link
         href={`${ROUTES.POINTSTACK}/projects`}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5 mb-6"
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Projects
+        <ArrowLeft className="w-3 h-3 text-accent" />
+        Back to projects
       </Link>
+
+      {/* Kind label */}
+      <div className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground mb-3">
+        <span className="text-accent mr-1">Project</span>
+        <span className="text-muted-foreground/40 mx-2">·</span>
+        <Link
+          href={ROUTES.POINTSTACK_PROFILE(project.author?.display_name || "")}
+          className="text-foreground font-medium hover:text-accent transition-colors"
+        >
+          @{project.author?.display_name || "anonymous"}
+        </Link>
+      </div>
+
+      {/* Title */}
+      <div className="flex items-start justify-between gap-4 mb-5">
+        <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.1] tracking-[-0.015em] text-foreground max-w-[720px]">
+          {project.title}
+        </h1>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleLike}
+            disabled={!user}
+            className="inline-flex items-center gap-1.5 border-[1.5px] border-foreground px-3.5 py-2 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:border-accent hover:text-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed tabular-nums"
+          >
+            <Heart className="w-3.5 h-3.5" weight={liked ? "fill" : "regular"} />
+            {likeCount}
+          </button>
+          {isAuthor && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Project options">
+                  <DotsThree className="w-4 h-4" weight="bold" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                  <PencilSimple className="w-3.5 h-3.5 mr-2" />
+                  Edit project
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={() => {
+                    setDeleteError(null);
+                    setDeleteOpen(true);
+                  }}
+                >
+                  <Trash className="w-3.5 h-3.5 mr-2" />
+                  Delete project
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+      </div>
+
+      {/* Meta row */}
+      <div className="flex flex-wrap items-center gap-4 mb-6 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
+        {project.location && (
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin className="w-3 h-3" />
+            {project.location}
+          </span>
+        )}
+        {project.completion_date && (
+          <span className="inline-flex items-center gap-1.5">
+            <Calendar className="w-3 h-3" />
+            {new Date(project.completion_date).getFullYear()}
+          </span>
+        )}
+        {project.square_footage && (
+          <span className="inline-flex items-center gap-1.5 tabular-nums">
+            <Ruler className="w-3 h-3" />
+            {project.square_footage.toLocaleString()} sq ft
+          </span>
+        )}
+        {project.company && (
+          <>
+            <span className="text-muted-foreground/40">·</span>
+            <Link
+              href={ROUTES.POINTSTACK_COMPANY(project.company.slug)}
+              className="text-foreground hover:text-accent transition-colors"
+            >
+              {project.company.name}
+            </Link>
+          </>
+        )}
+      </div>
 
       {/* Cover image */}
       {(project.cover_image_url || project.images?.length) && (
-        <div className="aspect-video rounded-lg overflow-hidden mb-6">
+        <div className="aspect-video rounded-md overflow-hidden mb-8 border border-border">
           <img
             src={project.cover_image_url || project.images?.[0] || ""}
             alt={project.title}
@@ -195,137 +286,81 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
         </div>
       )}
 
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">{project.title}</h1>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              {project.location && (
-                <div className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  <span>{project.location}</span>
-                </div>
-              )}
-              {project.completion_date && (
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>{new Date(project.completion_date).getFullYear()}</span>
-                </div>
-              )}
-              {project.square_footage && (
-                <div className="flex items-center gap-1">
-                  <Ruler className="w-4 h-4" />
-                  <span>{project.square_footage.toLocaleString()} sq ft</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant={liked ? "default" : "outline"}
-              onClick={handleLike}
-              disabled={!user}
-            >
-              <Heart className="w-4 h-4 mr-2" weight={liked ? "fill" : "regular"} />
-              {likeCount}
-            </Button>
-
-            {isAuthor && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Project options">
-                    <DotsThree className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setEditOpen(true)}>
-                    <PencilSimple className="w-4 h-4 mr-2" />
-                    Edit Project
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="text-destructive"
-                    onClick={() => {
-                      setDeleteError(null);
-                      setDeleteOpen(true);
-                    }}
-                  >
-                    <Trash className="w-4 h-4 mr-2" />
-                    Delete Project
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        </div>
-
-        {/* Author */}
-        <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
-          <Link href={ROUTES.POINTSTACK_PROFILE(project.author?.display_name || "")}>
-            <UserAvatar
-              displayName={project.author?.display_name || null}
-              avatarUrl={project.author?.avatar_url}
-              size="md"
-            />
-          </Link>
-          <div>
-            <Link
-              href={ROUTES.POINTSTACK_PROFILE(project.author?.display_name || "")}
-              className="font-medium hover:underline"
-            >
-              {project.author?.display_name || "Anonymous"}
-            </Link>
-            {project.company && (
-              <Link
-                href={ROUTES.POINTSTACK_COMPANY(project.company.slug)}
-                className="block text-sm text-muted-foreground hover:underline"
-              >
-                {project.company.name}
-              </Link>
-            )}
-          </div>
-        </div>
-      </div>
-
       {/* Tags */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {project.building_types?.map((type) => (
-          <Badge key={type} variant="outline">{type}</Badge>
-        ))}
-        {project.systems?.map((system) => (
-          <Badge key={system} variant="secondary">{system}</Badge>
-        ))}
-        {project.technologies?.map((tech) => (
-          <Badge key={tech}>{tech}</Badge>
-        ))}
-        {equipmentLinks.map((item) => (
-          <Link key={item.id} href={item.href}>
-            <Badge variant="secondary">{item.name}</Badge>
-          </Link>
-        ))}
-      </div>
+      {(project.building_types?.length ||
+        project.systems?.length ||
+        project.technologies?.length ||
+        equipmentLinks.length > 0) && (
+        <div className="flex flex-wrap gap-2 mb-8">
+          {project.building_types?.map((type) => (
+            <span
+              key={type}
+              className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border px-2 py-0.5 rounded-sm"
+            >
+              {type}
+            </span>
+          ))}
+          {project.systems?.map((system) => (
+            <span
+              key={system}
+              className="font-mono text-[10px] uppercase tracking-[1.1px] text-foreground border border-border bg-card px-2 py-0.5 rounded-sm"
+            >
+              {system}
+            </span>
+          ))}
+          {project.technologies?.map((tech) => (
+            <span
+              key={tech}
+              className="font-mono text-[10px] uppercase tracking-[1.1px] text-accent border border-accent px-2 py-0.5 rounded-sm"
+            >
+              {tech}
+            </span>
+          ))}
+          {equipmentLinks.map((item) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border px-2 py-0.5 rounded-sm hover:border-accent hover:text-accent transition-colors"
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* Content */}
       {project.content && (
-        <div className="prose prose-sm dark:prose-invert max-w-none">
-          {project.content.split("\n").map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
+        <div className="max-w-[680px] mb-10">
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3.5 pb-2.5 border-b border-foreground">
+            <span className="text-accent mr-1.5">01 /</span>
+            Overview
+          </div>
+          <div className="text-[15px] md:text-[16px] leading-[1.7] text-foreground">
+            {project.content.split("\n").map((paragraph, i) =>
+              paragraph.trim() ? (
+                <p key={i} className="mb-4">
+                  {paragraph}
+                </p>
+              ) : null,
+            )}
+          </div>
         </div>
       )}
 
       {/* Image gallery */}
       {project.images && project.images.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Gallery</h2>
-          <div className="grid gap-4 md:grid-cols-2">
+        <div className="mb-10">
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3.5 pb-2.5 border-b border-foreground">
+            <span className="text-accent mr-1.5">02 /</span>
+            Gallery
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
             {project.images.map((image, i) => (
               <img
                 key={i}
                 src={image}
                 alt={`${project.title} image ${i + 1}`}
-                className="rounded-lg"
+                className="rounded-sm border border-border w-full"
               />
             ))}
           </div>
@@ -334,8 +369,11 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
 
       {/* Documents */}
       {project.documents && project.documents.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Documents</h2>
+        <div className="mb-10">
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3.5 pb-2.5 border-b border-foreground">
+            <span className="text-accent mr-1.5">03 /</span>
+            Documents
+          </div>
           <div className="space-y-2">
             {project.documents.map((doc) => (
               <a
@@ -343,9 +381,9 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
                 href={doc}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-sm text-primary hover:underline"
+                className="block font-mono text-[12px] text-foreground hover:text-accent transition-colors"
               >
-                {getDocumentName(doc)}
+                → {getDocumentName(doc)}
               </a>
             ))}
           </div>
@@ -354,19 +392,29 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
 
       {/* Credits */}
       {project.credits && project.credits.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Project Team</h2>
-          <div className="grid gap-3 md:grid-cols-2">
+        <div className="mb-10">
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3.5 pb-2.5 border-b border-foreground">
+            <span className="text-accent mr-1.5">04 /</span>
+            Project team
+          </div>
+          <div className="space-y-0">
             {project.credits.map((credit) => (
-              <div key={credit.id} className="flex items-center gap-3 p-3 border border-border rounded-md bg-card">
+              <div
+                key={credit.id}
+                className="flex items-center gap-3 py-3 border-b border-muted"
+              >
                 <UserAvatar
                   displayName={credit.display_name || credit.user?.display_name || null}
                   avatarUrl={credit.user?.avatar_url}
-                  size="sm"
+                  size="md"
                 />
-                <div>
-                  <p className="font-medium">{credit.display_name || credit.user?.display_name || "Unknown"}</p>
-                  <p className="text-sm text-muted-foreground">{credit.role}</p>
+                <div className="min-w-0">
+                  <p className="font-heading font-semibold text-[14px] text-foreground leading-tight">
+                    {credit.display_name || credit.user?.display_name || "Unknown"}
+                  </p>
+                  <p className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground mt-0.5">
+                    {credit.role}
+                  </p>
                 </div>
               </div>
             ))}
@@ -413,6 +461,6 @@ export function PointStackProjectDetail({ slug }: ProjectDetailProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </section>
   );
 }

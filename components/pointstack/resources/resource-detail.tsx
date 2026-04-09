@@ -3,9 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { ArrowLeft, DownloadSimple, Link as LinkIcon, Heart, ChatCircle } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, DownloadSimple, Link as LinkIcon, Heart } from "@phosphor-icons/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { UserAvatar } from "../shared/user-avatar";
@@ -75,7 +73,6 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
   const handleVote = async () => {
     if (!resource || !user) return;
     const newVoteType = resource.user_vote === 1 ? -1 : 1;
-    // Optimistic update
     setResource((prev) =>
       prev
         ? {
@@ -86,13 +83,13 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
                 ? prev.upvote_count - 1
                 : prev.upvote_count + 1,
           }
-        : prev
+        : prev,
     );
     try {
       await api.voteResource(resource.id, newVoteType);
     } catch (error) {
       console.error("Error voting:", error);
-      void fetchData(); // Revert on error
+      void fetchData();
     }
   };
 
@@ -116,11 +113,11 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
       setComments((prev) => [...prev, newComment]);
       setCommentContent("");
       setResource((prev) =>
-        prev ? { ...prev, comment_count: prev.comment_count + 1 } : prev
+        prev ? { ...prev, comment_count: prev.comment_count + 1 } : prev,
       );
     } catch (err) {
       console.error("Error creating comment:", err);
-      setCommentError(err instanceof Error ? err.message : "Failed to post. Please try again.");
+      setCommentError(err instanceof Error ? err.message : "Failed to post.");
     } finally {
       setCommentLoading(false);
     }
@@ -128,42 +125,91 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto p-6">
+      <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-10">
         <Skeleton className="h-4 w-24 mb-6" />
-        <Skeleton className="h-64 rounded-lg mb-6" />
-        <Skeleton className="h-8 w-3/4 mb-4" />
-        <Skeleton className="h-4 w-full" />
-      </div>
+        <Skeleton className="h-10 w-3/4 mb-3" />
+        <Skeleton className="h-4 w-full mb-2" />
+        <Skeleton className="h-4 w-5/6" />
+      </section>
     );
   }
 
   if (!resource) {
     return (
-      <div className="max-w-3xl mx-auto p-6">
-        <div className="text-center py-12">
-          <h2 className="text-xl font-semibold mb-2">Resource not found</h2>
-          <p className="text-muted-foreground mb-4">This resource doesn&apos;t exist.</p>
-          <Button asChild>
-            <Link href={`${ROUTES.POINTSTACK}/resources`}>Back to Resources</Link>
-          </Button>
-        </div>
-      </div>
+      <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-16 text-center">
+        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+          This resource isn&apos;t in the set.
+        </p>
+        <Link
+          href={`${ROUTES.POINTSTACK}/resources`}
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5"
+        >
+          <ArrowLeft className="w-3 h-3 text-accent" />
+          Back to resources
+        </Link>
+      </section>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-6">
+    <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-10">
       <Link
         href={`${ROUTES.POINTSTACK}/resources`}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5 mb-6"
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Resources
+        <ArrowLeft className="w-3 h-3 text-accent" />
+        Back to resources
       </Link>
 
-      {/* Preview images */}
+      {/* Kind label */}
+      <div className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground mb-3 flex items-center gap-2.5 flex-wrap">
+        <span className="text-accent">{CATEGORY_LABELS[resource.category]}</span>
+        <span className="text-muted-foreground/40">·</span>
+        <span>{resource.is_free ? "Free" : <span className="text-accent">Premium</span>}</span>
+        <span className="text-muted-foreground/40">·</span>
+        <Link
+          href={ROUTES.POINTSTACK_PROFILE(resource.author?.display_name || "")}
+          className="flex items-center gap-1.5"
+        >
+          <UserAvatar
+            displayName={resource.author?.display_name || null}
+            avatarUrl={resource.author?.avatar_url}
+            size="sm"
+          />
+          <span className="text-foreground font-medium hover:text-accent transition-colors">
+            @{resource.author?.display_name || "anonymous"}
+          </span>
+        </Link>
+        <span className="text-muted-foreground/40">·</span>
+        <span>Shared {formatDistanceToNow(new Date(resource.created_at), { addSuffix: true })}</span>
+      </div>
+
+      {/* Title + download */}
+      <div className="flex items-start justify-between gap-4 mb-6">
+        <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.1] tracking-[-0.015em] text-foreground max-w-[680px]">
+          {resource.title}
+        </h1>
+        <button
+          onClick={handleDownload}
+          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-3 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] font-medium hover:bg-primary/90 transition-colors shrink-0"
+        >
+          {resource.external_link ? (
+            <>
+              <LinkIcon className="w-3.5 h-3.5" />
+              Visit link
+            </>
+          ) : (
+            <>
+              <DownloadSimple className="w-3.5 h-3.5" />
+              Download
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Preview image */}
       {resource.preview_images && resource.preview_images.length > 0 && (
-        <div className="aspect-video rounded-lg overflow-hidden mb-6">
+        <div className="aspect-video rounded-md overflow-hidden mb-8 border border-border">
           <img
             src={resource.preview_images[0]}
             alt={resource.title}
@@ -172,172 +218,145 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
         </div>
       )}
 
-      <div className="border border-border rounded-md bg-card p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">{resource.title}</h1>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">
-                {CATEGORY_LABELS[resource.category]}
-              </Badge>
-              {resource.is_free ? (
-                <Badge variant="secondary">Free</Badge>
-              ) : (
-                <Badge>Premium</Badge>
-              )}
-            </div>
+      {/* Description */}
+      {resource.description && (
+        <div className="max-w-[680px] mb-8">
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3.5 pb-2.5 border-b border-foreground">
+            <span className="text-accent mr-1.5">01 /</span>
+            About
           </div>
-
-          <Button onClick={handleDownload}>
-            {resource.external_link ? (
-              <>
-                <LinkIcon className="w-4 h-4 mr-2" />
-                Visit Link
-              </>
-            ) : (
-              <>
-                <DownloadSimple className="w-4 h-4 mr-2" />
-                Download
-              </>
+          <div className="text-[15px] md:text-[16px] leading-[1.7] text-foreground">
+            {resource.description.split("\n").map((paragraph, i) =>
+              paragraph.trim() ? (
+                <p key={i} className="mb-4">
+                  {paragraph}
+                </p>
+              ) : null,
             )}
-          </Button>
-        </div>
-
-        {/* Author */}
-        <div className="flex items-center gap-3 p-4 bg-card border border-border rounded-md mb-6">
-          <Link href={ROUTES.POINTSTACK_PROFILE(resource.author?.display_name || "")}>
-            <UserAvatar
-              displayName={resource.author?.display_name || null}
-              avatarUrl={resource.author?.avatar_url}
-              size="md"
-            />
-          </Link>
-          <div>
-            <Link
-              href={ROUTES.POINTSTACK_PROFILE(resource.author?.display_name || "")}
-              className="font-medium hover:underline"
-            >
-              {resource.author?.display_name || "Anonymous"}
-            </Link>
-            <p className="text-sm text-muted-foreground">
-              Shared {formatDistanceToNow(new Date(resource.created_at), { addSuffix: true })}
-            </p>
           </div>
         </div>
+      )}
 
-        {/* Description */}
-        {resource.description && (
-          <div className="prose prose-sm dark:prose-invert max-w-none mb-6">
-            {resource.description.split("\n").map((paragraph, i) => (
-              <p key={i}>{paragraph}</p>
-            ))}
-          </div>
-        )}
-
-        {/* Stats & Like */}
-        <div className="flex items-center gap-4 pt-4 border-t border-border text-sm text-muted-foreground">
-          <button
-            onClick={handleVote}
-            disabled={!user}
-            className={cn(
-              "flex items-center gap-1.5 transition-colors",
-              resource.user_vote === 1
-                ? "text-primary"
-                : "text-muted-foreground hover:text-accent"
-            )}
-          >
-            <Heart className="w-4 h-4" weight={resource.user_vote === 1 ? "fill" : "regular"} />
-            <span>{resource.upvote_count}</span>
-          </button>
-          <div className="flex items-center gap-1.5">
-            <ChatCircle className="w-4 h-4" />
-            <span>{resource.comment_count} comments</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <DownloadSimple className="w-4 h-4" />
-            <span>{resource.download_count} downloads</span>
-          </div>
-        </div>
+      {/* Stats + vote row */}
+      <div className="flex items-center gap-5 mb-10 pb-5 border-b border-border font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
+        <button
+          onClick={handleVote}
+          disabled={!user}
+          className={cn(
+            "inline-flex items-center gap-1.5 tabular-nums transition-colors",
+            resource.user_vote === 1
+              ? "text-accent"
+              : "hover:text-accent disabled:hover:text-muted-foreground",
+          )}
+        >
+          <Heart
+            className="w-3.5 h-3.5"
+            weight={resource.user_vote === 1 ? "fill" : "regular"}
+          />
+          {resource.upvote_count}
+        </button>
+        <span className="tabular-nums">{resource.comment_count} comments</span>
+        <span className="tabular-nums">{resource.download_count} downloads</span>
       </div>
 
       {/* More preview images */}
       {resource.preview_images && resource.preview_images.length > 1 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">Preview</h2>
-          <div className="grid gap-4 md:grid-cols-2">
+        <div className="mb-10">
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3.5 pb-2.5 border-b border-foreground">
+            <span className="text-accent mr-1.5">02 /</span>
+            Preview
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
             {resource.preview_images.slice(1).map((image, i) => (
               <img
                 key={i}
                 src={image}
                 alt={`${resource.title} preview ${i + 2}`}
-                className="rounded-lg"
+                className="rounded-sm border border-border w-full"
               />
             ))}
           </div>
         </div>
       )}
 
-      {/* Comments section */}
-      <div className="mt-8 space-y-4">
-        <h2 className="text-lg font-semibold">Comments ({comments.length})</h2>
+      {/* Comments */}
+      <div>
+        <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-6">
+          <span className="font-mono text-[11px] text-accent tracking-[1px]">03 /</span>
+          <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+            Discussion
+          </h2>
+          <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+            {comments.length} {comments.length === 1 ? "comment" : "comments"}
+          </span>
+        </div>
 
-        {/* Comment form */}
         {user && (
-          <form onSubmit={handleSubmitComment} className="space-y-3">
+          <form onSubmit={handleSubmitComment} className="mb-8">
             <Textarea
               value={commentContent}
               onChange={(e) => setCommentContent(e.target.value)}
-              placeholder="Write a comment..."
+              placeholder="Share what you know. Be kind."
               rows={4}
               maxLength={10000}
+              className="font-sans text-[14px] placeholder:italic"
             />
-            {commentError && <p className="text-sm text-destructive">{commentError}</p>}
-            <div className="flex justify-end">
-              <Button type="submit" disabled={commentLoading || !commentContent.trim()}>
-                {commentLoading ? "Posting..." : "Post Comment"}
-              </Button>
+            {commentError && (
+              <p className="mt-2 font-mono text-[11px] text-destructive">{commentError}</p>
+            )}
+            <div className="mt-3 flex justify-end">
+              <button
+                type="submit"
+                disabled={commentLoading || !commentContent.trim()}
+                className="bg-primary text-primary-foreground px-5 py-2.5 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] font-medium hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                {commentLoading ? "Posting…" : "Post comment"}
+              </button>
             </div>
           </form>
         )}
 
-        {/* Comments list */}
         {comments.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-0">
             {comments.map((comment) => (
-              <div key={comment.id} className="border border-border rounded-md bg-card p-4">
-                <div className="flex items-center gap-2 mb-2">
+              <div key={comment.id} className="py-5 border-b border-muted">
+                <div className="flex items-center gap-2.5 mb-2 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
                   <Link
                     href={ROUTES.POINTSTACK_PROFILE(comment.author?.display_name || "")}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-1.5"
                   >
                     <UserAvatar
                       displayName={comment.author?.display_name || null}
                       avatarUrl={comment.author?.avatar_url}
                       size="sm"
                     />
-                    <span className="text-sm font-medium hover:underline">
-                      {comment.author?.display_name || "Anonymous"}
+                    <span className="text-foreground font-medium hover:text-accent transition-colors">
+                      @{comment.author?.display_name || "anonymous"}
                     </span>
                   </Link>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground/40">·</span>
+                  <span>
                     {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                   </span>
                 </div>
-                <div className="prose prose-sm dark:prose-invert max-w-none">
-                  {comment.content.split("\n").map((paragraph, i) => (
-                    <p key={i}>{paragraph}</p>
-                  ))}
+                <div className="text-[14px] leading-[1.65] text-foreground">
+                  {comment.content.split("\n").map((paragraph, i) =>
+                    paragraph.trim() ? (
+                      <p key={i} className="mb-2">
+                        {paragraph}
+                      </p>
+                    ) : null,
+                  )}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground py-4">
-            No comments yet. {user ? "Be the first to comment!" : "Sign in to comment."}
-          </p>
+          <div className="py-12 text-center font-heading italic text-[18px] text-muted-foreground">
+            {user ? "No comments yet. Be the first." : "Sign in to comment."}
+          </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }

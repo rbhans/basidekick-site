@@ -3,15 +3,13 @@
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { getPostTypeClasses } from "@/lib/tag-colors";
-import { ArrowLeft, ChatCircle, Eye, Share, Check } from "@phosphor-icons/react";
+import { ArrowLeft, Eye, Share, Check } from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { usePointStackStore } from "../pointstack-store";
 import { UserAvatar } from "../shared/user-avatar";
 import { VoteButton } from "../shared/vote-button";
 import { CommentForm } from "./comment-form";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ROUTES } from "@/lib/routes";
@@ -22,12 +20,12 @@ interface PostDetailProps {
   slug: string;
 }
 
-const POST_TYPE_LABELS: Record<PointStackPostType, { label: string }> = {
-  discussion: { label: "Discussion" },
-  question: { label: "Question" },
-  project: { label: "Project" },
-  job: { label: "Job" },
-  tip: { label: "Tip" },
+const POST_TYPE_LABELS: Record<PointStackPostType, string> = {
+  discussion: "Discussion",
+  question: "Question",
+  project: "Project",
+  job: "Job",
+  tip: "Tip",
 };
 
 export function PointStackPostDetail({ slug }: PostDetailProps) {
@@ -58,11 +56,10 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
         await navigator.clipboard.writeText(url);
       }
     } catch {
-      // User cancelled share or clipboard access denied - silently ignore
+      // User cancelled
     }
   };
 
-  // Helper to get safe profile link
   const getProfileLink = (displayName: string | null | undefined) =>
     displayName ? ROUTES.POINTSTACK_PROFILE(displayName) : ROUTES.POINTSTACK;
 
@@ -88,7 +85,11 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
         return {
           id,
           name: model.name,
-          href: ROUTES.ATLAS_EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
+          href: ROUTES.ATLAS_EQUIPMENT_MODEL(
+            brand.slug || brand.id,
+            type.slug || type.id,
+            model.slug || model.id,
+          ),
         };
       })
       .filter(Boolean) as { id: string; name: string; href: string }[];
@@ -100,37 +101,93 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
 
   if (!post) {
     return (
-      <div className="max-w-3xl mx-auto p-6">
-        <div className="text-center py-12">
-          <h2 className="text-xl font-semibold mb-2">Post not found</h2>
-          <p className="text-muted-foreground mb-4">This post may have been deleted or moved.</p>
-          <Button asChild>
-            <Link href={ROUTES.POINTSTACK}>Back to Feed</Link>
-          </Button>
-        </div>
-      </div>
+      <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-16 text-center">
+        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+          This post isn&apos;t in the set.
+        </p>
+        <Link
+          href={ROUTES.POINTSTACK}
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5"
+        >
+          <ArrowLeft className="w-3 h-3 text-accent" />
+          Back to feed
+        </Link>
+      </section>
     );
   }
 
-  const typeInfo = POST_TYPE_LABELS[post.post_type];
+  const typeLabel = POST_TYPE_LABELS[post.post_type];
   const isAuthor = user?.id === post.author_id;
   const isQuestion = post.post_type === "question";
 
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-6">
+    <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-10">
       {/* Back link */}
       <Link
         href={ROUTES.POINTSTACK}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-6"
+        className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5 mb-6"
       >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Feed
+        <ArrowLeft className="w-3 h-3 text-accent" />
+        Back to feed
       </Link>
 
-      {/* Post */}
-      <article className="border border-border rounded-md bg-card p-6 mb-6">
-        {/* Header */}
-        <div className="flex items-start gap-3 mb-4">
+      {/* Kind + author + time */}
+      <div className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground mb-3 flex items-center gap-2.5 flex-wrap">
+        <span>
+          {isQuestion && <span className="text-accent mr-0.5">?</span>}
+          {typeLabel}
+        </span>
+        <span className="text-muted-foreground/40">·</span>
+        <Link
+          href={getProfileLink(post.author?.display_name)}
+          className="flex items-center gap-1.5"
+        >
+          <UserAvatar
+            displayName={post.author?.display_name || null}
+            avatarUrl={post.author?.avatar_url}
+            size="sm"
+          />
+          <span className="text-foreground font-medium hover:text-accent transition-colors">
+            @{post.author?.display_name || "anonymous"}
+          </span>
+        </Link>
+        <span className="text-muted-foreground/40">·</span>
+        <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
+        <span className="text-muted-foreground/40">·</span>
+        <span className="tabular-nums">{post.view_count} views</span>
+      </div>
+
+      {/* Title */}
+      <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.1] tracking-[-0.015em] text-foreground mb-5 max-w-[760px]">
+        {post.title}
+      </h1>
+
+      {/* Tags + equipment row */}
+      {(post.tags.length > 0 || equipmentLinks.length > 0) && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {post.tags.map((tag) => (
+            <span
+              key={tag}
+              className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border px-2 py-0.5 rounded-sm"
+            >
+              {tag}
+            </span>
+          ))}
+          {equipmentLinks.map((item) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border px-2 py-0.5 rounded-sm hover:border-accent hover:text-accent transition-colors"
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* Vote + body */}
+      <div className="flex gap-5 mb-8">
+        <div className="shrink-0">
           <VoteButton
             count={post.upvote_count}
             userVote={post.user_vote}
@@ -138,135 +195,115 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
             disabled={!user}
             vertical
           />
+        </div>
+        <div className="flex-1 min-w-0">
+          {/* Summary label */}
+          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3.5 pb-2.5 border-b border-foreground">
+            <span className="text-accent mr-1.5">01 /</span>
+            Post
+          </div>
 
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono ${getPostTypeClasses(post.post_type)}`}>
-                {typeInfo.label}
-              </span>
-              {post.tags.map((tag) => (
-                <span key={tag} className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground">
-                  {tag}
-                </span>
-              ))}
-            </div>
-            {equipmentLinks.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-2">
-                {equipmentLinks.map((item) => (
-                  <Link key={item.id} href={item.href} className="px-3 py-1 rounded-full border border-border text-[11px] font-mono text-muted-foreground hover:border-foreground transition-colors">
-                    {item.name}
-                  </Link>
+          <div className="text-[15px] md:text-[16px] leading-[1.7] text-foreground max-w-[640px]">
+            {post.content.split("\n").map((paragraph, i) =>
+              paragraph.trim() ? (
+                <p key={i} className="mb-4">
+                  {paragraph}
+                </p>
+              ) : null,
+            )}
+          </div>
+
+          {/* Images */}
+          {post.images && post.images.length > 0 && (
+            <div className="mt-8">
+              <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3">
+                <span className="text-accent mr-1.5">·</span>
+                Images
+              </div>
+              <div className="grid gap-3 grid-cols-2 md:grid-cols-3">
+                {post.images.map((image, i) => (
+                  <img
+                    key={i}
+                    src={image}
+                    alt={`${post.title} image ${i + 1}`}
+                    className="w-full h-32 object-cover rounded-sm border border-border"
+                  />
                 ))}
               </div>
-            )}
-
-            <h1 className="text-2xl font-bold mb-3">{post.title}</h1>
-
-            <div className="flex items-center gap-3">
-              <Link
-                href={getProfileLink(post.author?.display_name)}
-                className="flex items-center gap-2"
-              >
-                <UserAvatar
-                  displayName={post.author?.display_name || null}
-                  avatarUrl={post.author?.avatar_url}
-                  size="sm"
-                />
-                <span className="text-sm font-medium hover:underline">
-                  {post.author?.display_name || "Anonymous"}
-                </span>
-              </Link>
-              <span className="text-sm text-muted-foreground">
-                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-              </span>
             </div>
+          )}
+
+          {/* Documents */}
+          {post.documents && post.documents.length > 0 && (
+            <div className="mt-8">
+              <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3">
+                <span className="text-accent mr-1.5">·</span>
+                Documents
+              </div>
+              <div className="space-y-1">
+                {post.documents.map((doc) => (
+                  <a
+                    key={doc}
+                    href={doc}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block font-mono text-[12px] text-foreground hover:text-accent transition-colors border-b border-accent/40 inline-block"
+                  >
+                    {getDocumentName(doc)}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Engagement row */}
+          <div className="flex items-center gap-5 pt-5 mt-8 border-t border-border font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 tabular-nums">
+              <Eye className="w-3.5 h-3.5" />
+              {post.view_count} views
+            </span>
+            <span className="inline-flex items-center gap-1.5 tabular-nums">
+              <Check className="w-3.5 h-3.5" />
+              {post.comment_count} {isQuestion ? "answers" : "comments"}
+            </span>
+            <button
+              onClick={handleShare}
+              className="ml-auto inline-flex items-center gap-1.5 hover:text-accent transition-colors"
+            >
+              <Share className="w-3.5 h-3.5" />
+              Share
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Content */}
-        <div className="prose prose-sm dark:prose-invert max-w-none mb-6">
-          {post.content.split("\n").map((paragraph, i) => (
-            <p key={i}>{paragraph}</p>
-          ))}
+      {/* Comments / Discussion section */}
+      <div>
+        <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-6">
+          <span className="font-mono text-[11px] text-accent tracking-[1px]">02 /</span>
+          <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
+            {isQuestion ? "Answers" : "Discussion"}
+          </h2>
+          <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+            {comments.length} {comments.length === 1 ? (isQuestion ? "answer" : "reply") : isQuestion ? "answers" : "replies"}
+          </span>
         </div>
-
-        {/* Attachments */}
-        {post.images && post.images.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-sm font-semibold mb-3">Images</h2>
-            <div className="grid gap-3 grid-cols-2 md:grid-cols-3">
-              {post.images.map((image, i) => (
-                <img
-                  key={i}
-                  src={image}
-                  alt={`${post.title} image ${i + 1}`}
-                  className="w-full h-32 object-cover rounded"
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {post.documents && post.documents.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-sm font-semibold mb-3">Documents</h2>
-            <div className="space-y-2">
-              {post.documents.map((doc) => (
-                <a
-                  key={doc}
-                  href={doc}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-sm text-primary hover:underline"
-                >
-                  {getDocumentName(doc)}
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Engagement */}
-        <div className="flex items-center gap-6 pt-4 mt-2 border-t border-border">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Eye className="w-4 h-4" />
-            <span className="text-[13px]">{post.view_count}</span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <ChatCircle className="w-4 h-4" />
-            <span className="text-[13px]">{post.comment_count}</span>
-          </div>
-          <button
-            onClick={handleShare}
-            className="flex items-center gap-2 text-muted-foreground hover:text-accent transition-colors ml-auto"
-          >
-            <Share className="w-4 h-4" />
-            <span className="text-[13px]">Share</span>
-          </button>
-        </div>
-      </article>
-
-      {/* Comments section */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">
-          {isQuestion ? "Answers" : "Comments"} ({comments.length})
-        </h2>
 
         {/* Comment form */}
         {user && <CommentForm postId={post.id} isQuestion={isQuestion} />}
 
         {/* Comments list */}
         {comments.length > 0 ? (
-          <div className="space-y-4">
+          <div className="mt-6 space-y-0">
             {comments.map((comment) => (
               <div
                 key={comment.id}
                 className={cn(
-                  "border border-border rounded-md bg-card p-4",
-                  comment.is_accepted && "border-green-500/50 bg-green-500/5"
+                  "py-5 border-b border-muted",
+                  comment.is_accepted && "bg-muted/30 border-l-2 border-l-accent pl-4",
                 )}
               >
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                   <VoteButton
                     count={comment.upvote_count}
                     userVote={comment.user_vote}
@@ -276,48 +313,52 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
                     vertical
                   />
 
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2.5 mb-2 flex-wrap font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
                       <Link
                         href={getProfileLink(comment.author?.display_name)}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-1.5"
                       >
                         <UserAvatar
                           displayName={comment.author?.display_name || null}
                           avatarUrl={comment.author?.avatar_url}
                           size="sm"
                         />
-                        <span className="text-sm font-medium hover:underline">
-                          {comment.author?.display_name || "Anonymous"}
+                        <span className="text-foreground font-medium hover:text-accent transition-colors">
+                          @{comment.author?.display_name || "anonymous"}
                         </span>
                       </Link>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-muted-foreground/40">·</span>
+                      <span>
                         {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
                       </span>
                       {comment.is_accepted && (
-                        <Badge className="gap-1 bg-green-500/10 text-green-600 border-green-500/20">
-                          <Check className="w-3 h-3" />
+                        <span className="inline-flex items-center gap-1 text-accent border border-accent px-1.5 py-0.5 rounded-sm">
+                          <Check className="w-2.5 h-2.5" weight="bold" />
                           Accepted
-                        </Badge>
+                        </span>
                       )}
                     </div>
 
-                    <div className="prose prose-sm dark:prose-invert max-w-none">
-                      {comment.content.split("\n").map((paragraph, i) => (
-                        <p key={i}>{paragraph}</p>
-                      ))}
+                    <div className="text-[14px] leading-[1.65] text-foreground">
+                      {comment.content.split("\n").map((paragraph, i) =>
+                        paragraph.trim() ? (
+                          <p key={i} className="mb-2">
+                            {paragraph}
+                          </p>
+                        ) : null,
+                      )}
                     </div>
 
-                    {/* Accept answer button */}
                     {isQuestion && isAuthor && !comment.is_accepted && (
                       <Button
                         variant="outline"
                         size="sm"
-                        className="mt-3"
+                        className="mt-3 rounded-sm"
                         onClick={() => acceptAnswer(comment.id)}
                       >
-                        <Check className="w-4 h-4 mr-1.5" />
-                        Accept Answer
+                        <Check className="w-3.5 h-3.5 mr-1.5" />
+                        Accept answer
                       </Button>
                     )}
                   </div>
@@ -326,42 +367,31 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
             {isQuestion
-              ? "No answers yet. Be the first to help!"
-              : "No comments yet. Start the conversation!"}
+              ? "No answers yet. Be the first to help."
+              : "No comments yet. Start the conversation."}
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 }
 
 function PostDetailSkeleton() {
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-10">
       <Skeleton className="h-4 w-24 mb-6" />
-      <div className="border border-border rounded-md bg-card p-6">
-        <div className="flex gap-3">
-          <div className="flex flex-col items-center gap-1">
-            <Skeleton className="h-8 w-8" />
-            <Skeleton className="h-4 w-6" />
-            <Skeleton className="h-8 w-8" />
-          </div>
-          <div className="flex-1">
-            <Skeleton className="h-6 w-20 mb-2" />
-            <Skeleton className="h-8 w-3/4 mb-3" />
-            <div className="flex items-center gap-3 mb-4">
-              <Skeleton className="h-6 w-6 rounded-full" />
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-20" />
-            </div>
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-2/3" />
-          </div>
+      <Skeleton className="h-3 w-60 mb-4" />
+      <Skeleton className="h-10 w-3/4 mb-5" />
+      <div className="flex gap-5">
+        <Skeleton className="h-16 w-8 shrink-0" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-2/3" />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
