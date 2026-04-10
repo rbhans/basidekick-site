@@ -61,7 +61,7 @@ export function StaggerItem({
         visible: {
           opacity: 1,
           y: 0,
-          transition: { duration: duration.normal, ease: ease.out as unknown as number[] },
+          transition: { duration: duration.normal, ease: ease.out },
         },
       }}
     >

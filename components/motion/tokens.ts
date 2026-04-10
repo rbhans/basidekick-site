@@ -5,7 +5,7 @@ export const duration = {
 } as const;
 
 export const ease = {
-  out: [0.25, 0.46, 0.45, 0.94] as const,
+  out: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number],
   spring: { type: "spring" as const, stiffness: 300, damping: 30 },
 } as const;
 
