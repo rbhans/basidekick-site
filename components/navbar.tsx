@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { List, X, SignOut, Gear, ShieldCheck } from "@phosphor-icons/react";
+import { motion, AnimatePresence } from "motion/react";
+import { ease } from "@/components/motion";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -81,13 +83,20 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-[14px] font-medium transition-colors ${
+              className={`relative text-[14px] font-medium transition-colors ${
                 isActive(link.href)
                   ? "text-accent"
                   : "text-foreground hover:text-accent"
               }`}
             >
               {link.label}
+              {isActive(link.href) && (
+                <motion.span
+                  layoutId="nav-active"
+                  className="absolute -bottom-[21px] left-0 right-0 h-[2px] bg-accent"
+                  transition={ease.spring}
+                />
+              )}
             </Link>
           ))}
         </nav>
@@ -162,48 +171,63 @@ export function Navbar() {
       </header>
 
       {/* Mobile drawer */}
-      {mobileOpen && (
-        <>
-          <div className="fixed inset-0 z-50 bg-foreground/50" onClick={() => setMobileOpen(false)} />
-          <div className="fixed top-0 right-0 bottom-0 z-50 w-[280px] bg-background border-l border-border flex flex-col">
-            <div className="px-4 py-5 flex items-center justify-between border-b border-border">
-              <span className="font-heading italic text-[20px] font-semibold tracking-tight">BASidekick</span>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(false)} aria-label="Close menu">
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-            <nav className="flex-1 p-4 space-y-1">
-              {NAV_LINKS.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-3 rounded-md text-[15px] font-medium transition-colors ${
-                    isActive(link.href)
-                      ? "text-accent"
-                      : "text-foreground hover:text-accent hover:bg-secondary"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-            <div className="p-4 border-t border-border">
-              <div className="sm:hidden mb-3">
-                <HeaderSearch />
-              </div>
-              {!authLoading && !user && (
-                <Button
-                  className="w-full"
-                  onClick={() => { router.push(ROUTES.SIGNIN); setMobileOpen(false); }}
-                >
-                  Sign in
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-50 bg-foreground/50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.div
+              className="fixed top-0 right-0 bottom-0 z-50 w-[280px] bg-background border-l border-border flex flex-col"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={ease.spring}
+            >
+              <div className="px-4 py-5 flex items-center justify-between border-b border-border">
+                <span className="font-heading italic text-[20px] font-semibold tracking-tight">BASidekick</span>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(false)} aria-label="Close menu">
+                  <X className="w-5 h-5" />
                 </Button>
-              )}
-            </div>
-          </div>
-        </>
-      )}
+              </div>
+              <nav className="flex-1 p-4 space-y-1">
+                {NAV_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block px-4 py-3 rounded-md text-[15px] font-medium transition-colors ${
+                      isActive(link.href)
+                        ? "text-accent"
+                        : "text-foreground hover:text-accent hover:bg-secondary"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+              <div className="p-4 border-t border-border">
+                <div className="sm:hidden mb-3">
+                  <HeaderSearch />
+                </div>
+                {!authLoading && !user && (
+                  <Button
+                    className="w-full"
+                    onClick={() => { router.push(ROUTES.SIGNIN); setMobileOpen(false); }}
+                  >
+                    Sign in
+                  </Button>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

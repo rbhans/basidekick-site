@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 import { getWikiCategoryColor } from "@/lib/wiki-colors";
+import { HoverLift } from "@/components/motion";
 
 interface FacetPill {
   name: string;
@@ -39,6 +40,7 @@ export function ArticleCard({
   const displayFacets = facets?.slice(0, 2);
 
   return (
+    <HoverLift>
     <Link
       href={ROUTES.WIKI_ARTICLE(slug)}
       className={`group block bg-card border border-border rounded-md p-5 hover:border-foreground transition-all ${className || ""}`}
@@ -95,5 +97,6 @@ export function ArticleCard({
         </div>
       )}
     </Link>
+    </HoverLift>
   );
 }
