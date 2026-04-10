@@ -25,70 +25,79 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ─── ARTICLES TO INSERT ───────────────────────────────────────────────────────
-// Curated April 10, 2026 — sources from April 6-10, 2026 (with select March items)
+// Curated April 10, 2026 — sources from April 6-10, 2026
 const ARTICLES = [
   {
-    title: "SANS 2026 Report Flags Cybersecurity Skills Crisis, Putting Critical Infrastructure and OT Sectors at Measurable Breach Risk",
-    url: "https://industrialcyber.co/reports/sans-2026-report-flags-cybersecurity-skills-crisis-putting-critical-infrastructure-and-ot-sectors-at-measurable-breach-risk/",
-    slug: "sans-2026-report-flags-cybersecurity-skills-crisis-x9b4m7k2",
-    source_domain: "industrialcyber.co",
+    title: "Ten Years of IoT in Building Automation: 2016 to 2026",
+    url: "https://www.automatedbuildings.com/2026/04/ten-years-of-iot-in-building-automation-2016-to-2026/",
+    slug: "ten-years-of-iot-in-building-automation-2016-m4k9r2j7",
+    source_domain: "automatedbuildings.com",
     summary:
-      "The SANS/GIAC 2026 Cybersecurity Workforce Research Report, released at RSAC 2026, finds that skills gaps have overtaken headcount shortages as the top workforce challenge — with 60% of organizations lacking adequate OT security skills and 27% reporting breaches directly linked to capability deficits.",
-    tags: ["cybersecurity", "controls", "iot"],
+      "A decade-spanning retrospective from AutomatedBuildings.com examines how IoT has transformed BAS — from isolated field controllers and proprietary buses to cloud-connected, AI-augmented systems monitoring HVAC, lighting, and energy in real time across entire portfolios.",
+    tags: ["iot", "smart-building", "analytics", "controls"],
   },
   {
-    title: "All Emerging Cyber Threats Targeting Power Infrastructure at a Glance",
-    url: "https://pv-magazine-usa.com/2026/04/06/all-emerging-cyber-threats-targeting-power-infrastructure-at-a-glance/",
-    slug: "all-emerging-cyber-threats-targeting-power-infrast-p4q8n3j6",
-    source_domain: "pv-magazine-usa.com",
+    title: "The Building Revolution: Is AI About to Eat Your Smart Building Stack?",
+    url: "https://www.automatedbuildings.com/2026/04/the-building-revolution-is-ai-about-to-eat-your-smart-building-stack/",
+    slug: "the-building-revolution-is-ai-about-to-eat-your-sm-b9v4w2c5",
+    source_domain: "automatedbuildings.com",
     summary:
-      "A comprehensive April 6 roundup of active threat actors targeting power and energy infrastructure — covering ransomware groups, nation-state APTs, and supply chain attacks — with direct relevance for building operators managing grid-connected HVAC, solar, and EV charging systems.",
-    tags: ["cybersecurity", "energy", "iot"],
+      "AutomatedBuildings.com examines how AI agents and large language models are beginning to automate tasks — from BAS programming and commissioning to fault detection — that traditional middleware layers currently handle, challenging integrators and controls vendors to redefine their value proposition.",
+    tags: ["ai", "smart-building", "controls", "analytics"],
   },
   {
-    title: "2026: The Year Buildings Come of Age",
-    url: "https://new.abb.com/news/detail/132579/2026-the-year-buildings-come-of-age",
-    slug: "2026-the-year-buildings-come-of-age-n7k2w5p1",
-    source_domain: "new.abb.com",
+    title: "In Conversation with Rudolf Erasmus, Hardware Manager at Reliable Controls",
+    url: "https://www.automatedbuildings.com/2026/04/in-conversation-with-rudolf-erasmus/",
+    slug: "in-conversation-with-rudolf-erasmus-p2j6n4k8",
+    source_domain: "automatedbuildings.com",
     summary:
-      "ABB's 2026 outlook frames this year as the moment buildings reach operational maturity — with AI, electrified HVAC, grid flexibility, and interoperable data infrastructure shifting from pilots to standard practice as commercial buildings face pressure to cut energy use 10–30% by 2030.",
-    tags: ["smart-building", "energy", "ai", "iot"],
+      "Reliable Controls Hardware Manager Rudolf Erasmus discusses the company's BACnet controller roadmap — including 10BASE-T1L Ethernet field devices showcased at Niagara Summit 2026 — and the engineering philosophy behind open-protocol, long-lifecycle BAS hardware.",
+    tags: ["bacnet", "controls", "iot", "smart-building"],
   },
   {
-    title: "Five Global Trends Reshaping Building Automation",
-    url: "https://www.johnsoncontrols.com/building-insights/2026/thought-leadership/five-global-trends-reshaping-building-automation",
-    slug: "five-global-trends-reshaping-building-automation-m3v9t7c1",
-    source_domain: "johnsoncontrols.com",
+    title: "Lowering Peak Energy Demand Can Provide Outsized Benefit, Executive Tells Facilities Managers",
+    url: "https://www.utilitydive.com/news/nfmt-east-2026-lowering-peak-energy-demand-can-provide-outsized-benefit/814803/",
+    slug: "lowering-peak-energy-demand-can-provide-outsized-b-r7m3v9k1",
+    source_domain: "utilitydive.com",
     summary:
-      "Johnson Controls identifies data center growth, AI integration, grid flexibility, sustainability mandates, and workforce transformation as the five forces reshaping global building automation investment and system design throughout 2026.",
-    tags: ["smart-building", "ai", "energy", "controls"],
+      "At NFMT East 2026, a Sanalife executive presented data showing that peak demand reduction through BAS scheduling and load-shifting delivers higher ROI than base load efficiency measures, with commercial buildings achieving 15–30% cuts in peak demand charges through optimized HVAC sequencing.",
+    tags: ["energy", "smart-building", "controls", "analytics"],
   },
   {
-    title: "HVAC Equipment Sector M&A Update – April 2026",
-    url: "https://www.capstonepartners.com/insights/article-hvac-equipment-sector-ma-update/",
-    slug: "hvac-equipment-sector-m-a-update-april-2026-r8k4v2p5",
-    source_domain: "capstonepartners.com",
+    title: "Energy Savings to Push Electrification Forward in 2026 Despite Federal Headwinds",
+    url: "https://www.facilitiesdive.com/news/electrification-outlook-trends-heat-pumps-ev-/810541/",
+    slug: "energy-savings-to-push-electrification-forward-in-q5k8t2w3",
+    source_domain: "facilitiesdive.com",
     summary:
-      "Capstone Partners' April 2026 report shows 17 acquisitions YTD in HVAC equipment with deal flow accelerating around controls/AI and data center cooling — including Trane Technologies' completed Stellar Energy buy and NexCore's tuck-in of building controls firm FX Automation.",
+      "Despite the expiration of federal heat pump tax credits under the Big Beautiful Bill, facilities managers are advancing electrification projects in 2026 driven by state rebate programs, utility incentives, and mandatory building performance standards — with heat pump and EV charging integration requiring updated BAS sequences.",
+    tags: ["hvac", "energy", "retrofit", "sustainability"],
+  },
+  {
+    title: "Inflation Reduction Act Rollbacks Could Reshape Heat Pump Demand",
+    url: "https://www.contractingbusiness.com/industry-news/news/55360531/inflation-reduction-act-rollbacks-could-reshape-heat-pump-demand",
+    slug: "inflation-reduction-act-rollbacks-could-reshape-he-n6b3p7m4",
+    source_domain: "contractingbusiness.com",
+    summary:
+      "Contracting Business reports on how the elimination of the federal 30% heat pump tax credit effective January 2026 is shifting commercial HVAC electrification momentum, even as state rebate programs and building performance mandates continue to sustain demand for heat pump retrofits and associated controls upgrades.",
+    tags: ["hvac", "energy", "retrofit"],
+  },
+  {
+    title: "Manufacturers Brace for a Slow Start — but See HVACR Growth Ahead in 2026",
+    url: "https://www.achrnews.com/articles/165635-manufacturers-brace-for-a-slow-start-but-see-hvacr-growth-ahead-in-2026",
+    slug: "manufacturers-brace-for-a-slow-start-but-see-hvacr-j8w2k9v5",
+    source_domain: "achrnews.com",
+    summary:
+      "ACHR News surveys HVACR manufacturers who entered 2026 cautiously after IRA rollbacks and tariff uncertainty, but project growth accelerating through mid-year as commercial construction, data center cooling demand, and the A2L refrigerant transition deadline drive equipment and controls upgrades.",
     tags: ["hvac", "energy", "controls"],
   },
   {
-    title: "Building Operations Are Increasingly Strategic: NFMT East 2026",
-    url: "https://www.facilitiesdive.com/news/building-operations-are-increasingly-strategic-nfmt-east-2026/815275/",
-    slug: "building-operations-are-increasingly-strategic-nfm-t3j7v9k5",
-    source_domain: "facilitiesdive.com",
+    title: "New Software Could Cut Cooling Energy Use by 25% in Data Centers",
+    url: "https://www.psu.edu/news/research/story/new-software-could-cut-cooling-energy-use-25-data-centers",
+    slug: "new-software-could-cut-cooling-energy-use-by-25-c3q7v1p9",
+    source_domain: "psu.edu",
     summary:
-      "Coverage from NFMT East 2026 highlights how facilities leaders are elevating building operations as a core organizational asset, with sessions from Johnson Controls and Automated Logic on BMS best practices and how real-time data-driven operations support resilience and sustainability goals.",
-    tags: ["smart-building", "energy", "analytics", "controls"],
-  },
-  {
-    title: "Blog: Latest from Tridium and What's Ahead",
-    url: "https://www.stromquist.com/blog/1009/blog-latest-from-tridium-and-what-s-ahead",
-    slug: "blog-latest-from-tridium-and-what-s-ahead-q2n8m4r7",
-    source_domain: "stromquist.com",
-    summary:
-      "Stromquist's Niagara Summit 2026 recap covers Tridium's Niagara 5 roadmap — confirming Niagara 4.15 as the final N4 release and laying out N5's timeline with a Java 21 base, built-in AI for auto-discovery and FDD, and general availability targeted for Q4 2026.",
-    tags: ["niagara", "tridium", "controls", "smart-building"],
+      "Penn State researchers announced a physics-based AI system that dynamically adjusts data center cooling based on real-time weather and electricity pricing, achieving up to 25% cooling energy reductions — a technique directly applicable to BAS-managed chiller and CRAC unit sequencing in large facilities.",
+    tags: ["analytics", "ai", "energy", "hvac"],
   },
 ];
 
@@ -187,7 +196,7 @@ async function getActiveAiCount() {
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log("BASidekick News Curator — April 10, 2026 — " + new Date().toISOString());
+  console.log("BASidekick News Curator — April 10, 2026 (batch 2) — " + new Date().toISOString());
   console.log("=".repeat(60));
 
   const retiredCount = await retireStaleArticles();
