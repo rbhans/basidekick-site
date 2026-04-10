@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { PageTransition } from "@/components/motion";
 
 const FloatingMessenger = dynamic(
   () => import("@/components/pointstack/messenger").then((mod) => mod.FloatingMessenger),
@@ -28,7 +29,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <Navbar />
 
       <main id="main-content" className="flex-1" tabIndex={-1}>
-        {children}
+        <PageTransition>{children}</PageTransition>
       </main>
 
       <Footer />
