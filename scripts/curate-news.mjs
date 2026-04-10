@@ -25,70 +25,70 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 // ─── ARTICLES TO INSERT ───────────────────────────────────────────────────────
-// Curated April 9, 2026 — sources from April 7-9, 2026
+// Curated April 10, 2026 — sources from April 7-10, 2026 (with select March items)
 const ARTICLES = [
   {
-    title: "In Conversation with Rudolf Erasmus",
-    url: "https://www.automatedbuildings.com/2026/04/in-conversation-with-rudolf-erasmus/",
-    slug: "in-conversation-with-rudolf-erasmus-k2m8p5n3",
+    title: "The Building Revolution: Is AI About to Eat Your Smart Building Stack?",
+    url: "https://www.automatedbuildings.com/2026/04/the-building-revolution-is-ai-about-to-eat-your-smart-building-stack/",
+    slug: "the-building-revolution-is-ai-about-to-eat-your-sm-p4w9k3n7",
     source_domain: "automatedbuildings.com",
     summary:
-      "Reliable Controls Hardware Manager Rudolf Erasmus discusses millimeter-wave occupancy detection and 10BASE-T1L single-pair Ethernet as an emerging field-device connectivity layer for BAS networks — a hardware perspective on the sensors and wiring choices shaping next-generation installations.",
-    tags: ["controls", "iot", "bacnet", "smart-building"],
+      "AutomatedBuildings.com's April 'AI Across the Stack' series examines whether AI is making the 'Smarter Stack' framework obsolete, challenging controls professionals to reconsider how traditional integration layers between building owners, occupants, and operators actually function in an AI-augmented world.",
+    tags: ["ai", "smart-building", "controls", "analytics"],
   },
   {
-    title: "Allies, Not Angels — Choosing to Embrace AI on Your Own Terms",
-    url: "https://www.automatedbuildings.com/2026/04/allies-not-angels-choosing-to-embrace-ai-on-your-own-terms/",
-    slug: "allies-not-angels-choosing-to-embrace-ai-on-your-w7x3b9c5",
+    title: "Shaping Intelligence: How Our Built Environment Must Guide AI Before It Guides Us",
+    url: "https://www.automatedbuildings.com/2026/04/shaping-intelligence-how-our-built-environment-must-guide-ai-before-it-guides-us/",
+    slug: "shaping-intelligence-how-our-built-environment-mus-q5t8r2x6",
     source_domain: "automatedbuildings.com",
     summary:
-      "Part of AutomatedBuildings.com's April 'AI Across the Stack' theme, this piece argues controls professionals should treat AI as a practical tool—not a mystical force—and deliberately define their own adoption criteria before vendors define it for them.",
-    tags: ["ai", "smart-building", "controls"],
+      "This piece argues that AI applied to buildings demands semantic data foundations first — most buildings today cannot explain their own systems — and calls on industry bodies including the Asset Leadership Network and Linux Foundation's Coalition for Smarter Buildings to standardize before AI value can be realized.",
+    tags: ["ai", "smart-building", "iot", "analytics"],
   },
   {
-    title: "Convergence on AutomatedBuildings.com",
-    url: "https://www.automatedbuildings.com/2026/04/history-convergence-on-automatedbuildings-com/",
-    slug: "convergence-on-automatedbuildings-com-m4t7r2n6",
-    source_domain: "automatedbuildings.com",
+    title: "Iran-Linked Hackers Target Water and Energy — FBI and CISA Warn",
+    url: "https://www.cybersecuritydive.com/news/iran-linked-hackers-targeting-water-energy-in-us-fbi-and-cisa-warn/816949/",
+    slug: "iran-linked-hackers-target-water-and-energy-fbi-an-n2t7v8m5",
+    source_domain: "cybersecuritydive.com",
     summary:
-      "Two decades of convergence coverage charted: how BAS shifted from 'Platform Wars' to 'Platform Peace' through open standards like Haystack and Brick Schema, creating the semantic layer AI now needs to meaningfully interpret building data.",
-    tags: ["smart-building", "controls", "iot", "analytics"],
+      "CISA, FBI, and NSA jointly warned on April 7, 2026 that Iranian-affiliated actors are actively exploiting internet-facing PLCs at U.S. water, energy, and government facilities — a direct call for building operators to audit OT device internet exposure and review firmware on all field-connected equipment.",
+    tags: ["cybersecurity", "controls", "energy"],
   },
   {
-    title: "What 30 Years of Service Taught Tom Zaban About People",
-    url: "https://www.reliablecontrols.com/news/article/tom-zaban-on-people-and-purpose/",
-    slug: "what-30-years-of-service-taught-tom-zaban-about-d9k3m5p7",
-    source_domain: "reliablecontrols.com",
+    title: "New MultiTech Niagara Driver Enables the Convergence of IoT and BMS for Smart Buildings",
+    url: "https://www.prnewswire.com/news-releases/new-multitech-niagara-driver-enables-the-convergence-of-iot-and-bms-for-smart-buildings-302735940.html",
+    slug: "new-multitech-niagara-driver-enables-convergence-o-k7r3n9t1",
+    source_domain: "prnewswire.com",
     summary:
-      "Reliable Controls President Tom Zaban reflects on three decades shaping the company's BAS product philosophy—simple, flexible, sustainable—and why investing in people and ongoing technical education is the defining challenge as building automation grows more complex.",
-    tags: ["controls", "smart-building"],
+      "Unveiled at Niagara Summit 2026, MultiTech's new Niagara Framework driver brings drag-and-drop LoRaWAN sensor onboarding directly into the Niagara environment, letting integrators manage wireless field devices alongside traditional BAS points in a unified dashboard — available free on the Tridium Marketplace after the Summit.",
+    tags: ["niagara", "tridium", "iot", "smart-building"],
   },
   {
-    title: "Optigo Networks and Neeve Partner to Bring Next Generation BACnet Monitoring to the Neeve App Marketplace",
-    url: "https://www.prweb.com/releases/optigo-networks-and-neeve-partner-to-bring-next-generation-bacnet-monitoring-to-the-neeve-app-marketplace-302736628.html",
-    slug: "optigo-networks-and-neeve-partner-to-bring-next-r4k9j2m8",
-    source_domain: "prweb.com",
+    title: "Forescout 2026 Riskiest Connected Devices: BACnet Routers Among 11 New High-Risk Types",
+    url: "https://www.forescout.com/press-releases/forescouts-2026-riskiest-connected-devices-report-highlights-11-new-device-types-as-network-infrastructure-surpasses-endpoints-in-overall-risk/",
+    slug: "forescout-2026-riskiest-connected-devices-bacnet-r-k8t5v2c9",
+    source_domain: "forescout.com",
     summary:
-      "Optigo Networks' purpose-built BACnet packet-capture and diagnostics tool is now a one-click install on Neeve's OT network platform, giving integrators and IT teams clean, correctly parsed BACnet MS/TP and IP traffic data without manual setup.",
-    tags: ["bacnet", "iot", "controls", "cybersecurity"],
+      "Forescout's 2026 annual risk report names BACnet routers, serial-to-IP converters, and RFID readers among 11 newly high-risk device categories, with network infrastructure now outranking endpoints as the highest-risk category — a direct warning for BAS integrators about OT gateway device exposure.",
+    tags: ["cybersecurity", "bacnet", "iot", "controls"],
   },
   {
-    title: "House Panel Advances 5 Cybersecurity Bills Targeting Energy Infrastructure",
-    url: "https://www.meritalk.com/articles/house-panel-advances-five-cybersecurity-bills-targeting-energy-infrastructure/",
-    slug: "house-panel-advances-5-cybersecurity-bills-target-p5n2k8w3",
-    source_domain: "meritalk.com",
+    title: "MITRE Caldera Releases HVACSim to Train OT Security Defenders Without Physical Hardware",
+    url: "https://industrialcyber.co/ics-security-framework/mitre-caldera-releases-hvacsim-to-train-ot-security-defenders-without-physical-hardware/",
+    slug: "mitre-caldera-releases-hvacsim-to-train-ot-securit-m7n3p9x2",
+    source_domain: "industrialcyber.co",
     summary:
-      "The U.S. House Energy and Commerce Committee advanced five bipartisan bills—including the Energy Threat Analysis Center Act and Pipeline Cybersecurity Preparedness Act—signaling growing federal regulatory pressure on OT security for energy-connected building systems.",
-    tags: ["cybersecurity", "energy", "controls"],
+      "MITRE's Caldera team released HVACSim, an open-source BACnet-based HVAC controller simulator that integrates with Caldera for OT, enabling security defenders and students to practice BACnet adversary emulation — discovery, data collection, and process impact — without requiring access to physical building equipment.",
+    tags: ["cybersecurity", "bacnet", "hvac", "controls"],
   },
   {
-    title: "CxEnergy 2026 Technical Program and Keynote Announced",
-    url: "https://www.csemag.com/cxenergy-2026-technical-program-and-keynote-announced/",
-    slug: "cxenergy-2026-technical-program-and-keynote-announ-x7b4r9v5",
-    source_domain: "csemag.com",
+    title: "Siemens Showcases Journey from Smart to Autonomous Buildings at Light + Building 2026",
+    url: "https://press.siemens.com/global/en/pressrelease/siemens-showcases-journey-smart-autonomous-buildings-light-building-2026",
+    slug: "siemens-showcases-journey-from-smart-to-autonomous-x3p6r8w4",
+    source_domain: "press.siemens.com",
     summary:
-      "CxEnergy 2026 (April 21-24, Chicago) announces 30+ sessions and a keynote, 'From Checklists to Co-Pilots: Practical AI for Commissioning and Energy Professionals,' directly relevant for commissioning agents and energy managers navigating AI adoption.",
-    tags: ["commissioning", "energy", "ai", "analytics"],
+      "At Light + Building 2026 in Frankfurt, Siemens presented its roadmap for human-centric autonomous building technology including an updated LOGO! 9 logic module and AI-driven systems that dynamically adjust HVAC and other building functions — offering a vendor-level signal on where major BAS platforms are heading in the next product cycle.",
+    tags: ["smart-building", "hvac", "ai", "controls"],
   },
 ];
 
@@ -187,7 +187,7 @@ async function getActiveAiCount() {
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log("🤖 BASidekick News Curator — April 9, 2026 — " + new Date().toISOString());
+  console.log("🤖 BASidekick News Curator — April 10, 2026 — " + new Date().toISOString());
   console.log("=".repeat(60));
 
   const retiredCount = await retireStaleArticles();
