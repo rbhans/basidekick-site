@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { List, X, SignOut, Gear, ShieldCheck } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "motion/react";
 import { ease } from "@/components/motion";
+import { BrandLogo } from "./brand-logo";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -69,12 +70,9 @@ export function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-50 px-4 sm:px-6 lg:px-16 py-5 border-b border-border bg-background flex items-center gap-8">
-        {/* Brand — italic Fraunces */}
-        <Link
-          href="/"
-          className="font-heading italic text-[22px] font-semibold tracking-tight text-foreground hover:text-accent transition-colors shrink-0"
-        >
-          BASidekick
+        {/* Brand */}
+        <Link href="/" className="shrink-0 hover:opacity-80 transition-opacity">
+          <BrandLogo />
         </Link>
 
         {/* Desktop nav links */}
@@ -190,7 +188,7 @@ export function Navbar() {
               transition={ease.spring}
             >
               <div className="px-4 py-5 flex items-center justify-between border-b border-border">
-                <span className="font-heading italic text-[20px] font-semibold tracking-tight">BASidekick</span>
+                <BrandLogo size="sm" />
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(false)} aria-label="Close menu">
                   <X className="w-5 h-5" />
                 </Button>
