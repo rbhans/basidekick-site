@@ -65,13 +65,6 @@ export function HomeView({
       {/* ============ HERO / MANIFESTO ============ */}
       <div className="hero-wrap">
         <div className="hero-bg" aria-hidden="true" />
-        <div className="hero-floaters" aria-hidden="true">
-          <span className="f-1" />
-          <span className="f-2" />
-          <span className="f-3" />
-          <span className="f-4" />
-          <span className="f-5" />
-        </div>
         <section className="relative z-[2] container mx-auto px-4 sm:px-6 lg:px-16 py-24 md:py-28 max-w-[1100px]">
           <div className="max-w-[980px]">
             {/* Pulse line */}
