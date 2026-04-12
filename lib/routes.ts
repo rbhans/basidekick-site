@@ -10,6 +10,7 @@ export const ROUTES = {
   WIKI_TAG: (tagSlug: string) => `/wiki/tags/${encodeURIComponent(tagSlug)}`,
   WIKI_COLLECTION: (slug: string) => `/wiki/collections/${encodeURIComponent(slug)}`,
   WIKI_FACET: (group: string, slug: string) => `/wiki/${encodeURIComponent(group)}/${encodeURIComponent(slug)}`,
+  WIKI_VIDEOS: "/wiki/videos",
   RESOURCES: "/resources",
   RESOURCES_RUST: "/resources/rust",
   OPEN_SOURCE: "/open-source",
