@@ -94,6 +94,9 @@
   text-transform: uppercase;
   letter-spacing: 1.4px;
   color: var(--muted-foreground);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
 }
 .title-block .field { display: flex; align-items: center; }
 .title-block .field + .field {
