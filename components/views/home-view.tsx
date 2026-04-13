@@ -1,10 +1,12 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ArrowRight, GithubLogo } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
 import { formatDistanceToNow } from "date-fns";
-import { Reveal, CountUp, StaggerGroup, StaggerItem, HoverLift } from "@/components/motion";
+import { motion, AnimatePresence } from "motion/react";
+import { Reveal, CountUp, StaggerGroup, StaggerItem, HoverLift, TextScramble } from "@/components/motion";
 
 // Types ----------------------------------------------------------------
 
@@ -37,6 +39,7 @@ interface HomeViewProps {
     newPointStackThisWeek: number;
   };
   featuredAtlas: FeaturedAtlasEntry | null;
+  atlasSpecimens?: FeaturedAtlasEntry[];
   pointStackPosts: RecentPostItem[];
   pointStackStats: {
     members: number;
@@ -56,10 +59,31 @@ interface HomeViewProps {
 export function HomeView({
   pulse,
   featuredAtlas,
+  atlasSpecimens,
   pointStackPosts,
   pointStackStats,
   alsoHere,
 }: HomeViewProps) {
+  const specimens = atlasSpecimens && atlasSpecimens.length > 0 ? atlasSpecimens : (featuredAtlas ? [featuredAtlas] : []);
+  const [specimenIndex, setSpecimenIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const currentSpecimen = specimens[specimenIndex] || featuredAtlas;
+
+  const advanceSpecimen = useCallback(() => {
+    if (specimens.length <= 1) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setSpecimenIndex((i) => (i + 1) % specimens.length);
+      setIsTransitioning(false);
+    }, 100);
+  }, [specimens.length]);
+
+  useEffect(() => {
+    if (specimens.length <= 1) return;
+    const timer = setInterval(advanceSpecimen, 60000);
+    return () => clearInterval(timer);
+  }, [advanceSpecimen, specimens.length]);
+
   return (
     <div className="min-h-full">
       {/* ============ HERO / MANIFESTO ============ */}
@@ -116,47 +140,86 @@ export function HomeView({
             </p>
           </Reveal>
 
-          {/* Specimen card */}
-          {featuredAtlas && (
+          {/* Specimen card — cycles through atlas points */}
+          {currentSpecimen && (
             <Reveal delay={0.1}>
-              <div className="mt-9 bg-card border border-border rounded-md p-9 grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="mt-9 bg-card border border-border rounded-md p-9 grid grid-cols-1 md:grid-cols-2 gap-10 relative overflow-hidden">
                 <div className="md:pr-6 md:border-r md:border-border">
-                  <h3 className="font-heading font-semibold text-[26px] leading-[1.15] text-foreground mb-2">
-                    {featuredAtlas.name}
-                  </h3>
+                  <TextScramble
+                    text={currentSpecimen.name}
+                    as="h3"
+                    className="font-heading font-semibold text-[26px] leading-[1.15] text-foreground mb-2"
+                    duration={1000}
+                  />
                   <div className="font-mono text-[12px] text-muted-foreground leading-[1.6] mb-6">
-                    {featuredAtlas.aliases.join(" · ")}
+                    <TextScramble
+                      text={currentSpecimen.aliases.join(" · ")}
+                      duration={1200}
+                    />
                   </div>
-                  {featuredAtlas.description && (
-                    <p className="text-[14px] leading-[1.55] text-foreground">
-                      {featuredAtlas.description}
-                    </p>
-                  )}
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={currentSpecimen.name + "-desc"}
+                      className="text-[14px] leading-[1.55] text-foreground"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {currentSpecimen.description}
+                    </motion.p>
+                  </AnimatePresence>
                 </div>
 
-                <div>
-                  <SpecimenField label="Type" value={featuredAtlas.type} />
-                  <SpecimenField
-                    label="Haystack"
-                    value={
-                      <div className="flex flex-wrap gap-1">
-                        {featuredAtlas.haystackTags.map((t) => (
-                          <span
-                            key={t}
-                            className="inline-block bg-muted px-2 py-0.5 rounded-sm text-[11px]"
-                          >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    }
-                  />
-                  {featuredAtlas.brick && (
-                    <SpecimenField label="Brick" value={featuredAtlas.brick} />
-                  )}
-                  <SpecimenField label="Found on" value={featuredAtlas.foundOn.join(" · ")} />
-                  <SpecimenField label="Aliases" value={`${featuredAtlas.aliasCount} known variants`} last />
-                </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentSpecimen.name + "-meta"}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                  >
+                    <SpecimenField label="Type" value={currentSpecimen.type} />
+                    <SpecimenField
+                      label="Haystack"
+                      value={
+                        <div className="flex flex-wrap gap-1">
+                          {currentSpecimen.haystackTags.map((t) => (
+                            <span
+                              key={t}
+                              className="inline-block bg-muted px-2 py-0.5 rounded-sm text-[11px]"
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      }
+                    />
+                    {currentSpecimen.brick && (
+                      <SpecimenField label="Brick" value={currentSpecimen.brick} />
+                    )}
+                    {currentSpecimen.foundOn.length > 0 && (
+                      <SpecimenField label="Found on" value={currentSpecimen.foundOn.join(" · ")} />
+                    )}
+                    <SpecimenField label="Aliases" value={`${currentSpecimen.aliasCount} known variants`} last />
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Cycle indicator */}
+                {specimens.length > 1 && (
+                  <div className="absolute bottom-3 right-4 flex gap-1">
+                    {specimens.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => { setSpecimenIndex(i); }}
+                        className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                          i === specimenIndex ? "bg-accent" : "bg-border"
+                        }`}
+                        aria-label={`Show specimen ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
             </Reveal>
           )}

@@ -1,6 +1,7 @@
 import { HomeView } from "@/components/views/home-view";
 import { createClient } from "@supabase/supabase-js";
 import { ROUTES } from "@/lib/routes";
+import { dbAll, dbGet } from "@/lib/data/atlas-db";
 
 // ISR: Revalidate daily — content updates come via redeployments
 export const revalidate = 86400;
@@ -12,10 +13,63 @@ function getSupabaseClient() {
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
-// Hand-curated featured Atlas entry. Rotate manually by editing this constant.
-// The spec explicitly calls for "Featured manually · changes weekly" — a constant
-// is the honest implementation until a featuring UI is added in a follow-up.
-const FEATURED_ATLAS = {
+interface AtlasPointRow {
+  id: string;
+  name: string;
+  description: string | null;
+  kind: string | null;
+  point_function: string | null;
+  brick: string | null;
+  haystack_tag_string: string | null;
+}
+
+function getAtlasSpecimens(count: number) {
+  const points = dbAll<AtlasPointRow>(
+    `SELECT id, name, description, kind, point_function, brick, haystack_tag_string
+     FROM points
+     WHERE description IS NOT NULL AND description != ''
+     ORDER BY RANDOM()
+     LIMIT ?`,
+    count
+  );
+
+  return points.map((p) => {
+    const aliases = dbAll<{ alias: string }>(
+      "SELECT alias FROM point_aliases WHERE point_id = ? LIMIT 6",
+      p.id
+    );
+    const aliasCount =
+      dbGet<{ c: number }>(
+        "SELECT COUNT(*) as c FROM point_aliases WHERE point_id = ?",
+        p.id
+      )?.c ?? 0;
+    const equipment = dbAll<{ name: string }>(
+      `SELECT e.name FROM equipment_typical_points etp
+       JOIN equipment e ON e.id = etp.equipment_id
+       WHERE etp.point_id = ? LIMIT 5`,
+      p.id
+    );
+    const tags = p.haystack_tag_string
+      ? p.haystack_tag_string.split(",").map((t) => t.trim()).filter(Boolean)
+      : [];
+    const typeStr = [p.kind, p.point_function].filter(Boolean).join(" · ") || "Point";
+
+    return {
+      name: p.name,
+      aliases: aliases.map((a) => a.alias),
+      description: p.description,
+      type: typeStr,
+      haystackTags: tags.slice(0, 5),
+      brick: p.brick,
+      foundOn: equipment.map((e) => e.name),
+      aliasCount,
+      url: ROUTES.ATLAS,
+    };
+  });
+}
+
+// Fallback if DB isn't available
+const FALLBACK_ATLAS = {
   name: "Discharge Air Temperature",
   aliases: ["DAT", "DA-T", "SAT", "SaTemp", "DischrgAirTmp", "DA_TEMP"],
   description:
@@ -34,7 +88,8 @@ async function getHomePageData() {
   if (!supabase) {
     return {
       pulse: { newWikiThisWeek: 0, newAtlasThisWeek: 0, newPointStackThisWeek: 0 },
-      featuredAtlas: FEATURED_ATLAS,
+      featuredAtlas: FALLBACK_ATLAS,
+      atlasSpecimens: [FALLBACK_ATLAS],
       pointStackPosts: [],
       pointStackStats: { members: 0, posts: 0, openJobs: 0, onlineNow: 0 },
       alsoHere: { wikiCount: 0, newsLatest: null, crateCount: 3 },
@@ -135,7 +190,15 @@ async function getHomePageData() {
       newAtlasThisWeek: 0, // Atlas data is file-based, no "added this week" query yet
       newPointStackThisWeek: pointStackThisWeekResult.count ?? 0,
     },
-    featuredAtlas: FEATURED_ATLAS,
+    featuredAtlas: FALLBACK_ATLAS,
+    atlasSpecimens: (() => {
+      try {
+        const specimens = getAtlasSpecimens(8);
+        return specimens.length > 0 ? specimens : [FALLBACK_ATLAS];
+      } catch {
+        return [FALLBACK_ATLAS];
+      }
+    })(),
     pointStackPosts,
     pointStackStats: {
       members: pointStackMemberCountResult.count ?? 0,

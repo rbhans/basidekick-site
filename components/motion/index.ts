@@ -4,4 +4,5 @@ export { HoverLift } from "./hover-lift";
 export { PressScale } from "./press-scale";
 export { CountUp } from "./count-up";
 export { PageTransition } from "./page-transition";
+export { TextScramble } from "./text-scramble";
 export { duration, ease, stagger, distance } from "./tokens";
