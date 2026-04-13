@@ -39,7 +39,6 @@ interface HomeViewProps {
     newPointStackThisWeek: number;
   };
   featuredAtlas: FeaturedAtlasEntry | null;
-  atlasSpecimens?: FeaturedAtlasEntry[];
   pointStackPosts: RecentPostItem[];
   pointStackStats: {
     members: number;
@@ -59,28 +58,48 @@ interface HomeViewProps {
 export function HomeView({
   pulse,
   featuredAtlas,
-  atlasSpecimens,
   pointStackPosts,
   pointStackStats,
   alsoHere,
 }: HomeViewProps) {
-  const specimens = atlasSpecimens && atlasSpecimens.length > 0 ? atlasSpecimens : (featuredAtlas ? [featuredAtlas] : []);
+  const [specimens, setSpecimens] = useState<FeaturedAtlasEntry[]>(featuredAtlas ? [featuredAtlas] : []);
   const [specimenIndex, setSpecimenIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const currentSpecimen = specimens[specimenIndex] || featuredAtlas;
+
+  // Fetch random atlas points client-side for cycling
+  useEffect(() => {
+    fetch("/api/atlas/points?limit=8")
+      .then((r) => r.json())
+      .then((data) => {
+        const points = data.points || [];
+        if (points.length > 1) {
+          const mapped = points.map((p: Record<string, unknown>) => ({
+            name: p.name as string,
+            aliases: [],
+            description: (p.description as string) || null,
+            type: [p.kind, p.point_function].filter(Boolean).join(" · ") || "Point",
+            haystackTags: typeof p.haystack_tag_string === "string"
+              ? p.haystack_tag_string.split(",").map((t: string) => t.trim()).filter(Boolean).slice(0, 5)
+              : [],
+            brick: (p.brick as string) || null,
+            foundOn: [] as string[],
+            aliasCount: 0,
+            url: "/atlas",
+          }));
+          setSpecimens(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const advanceSpecimen = useCallback(() => {
     if (specimens.length <= 1) return;
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setSpecimenIndex((i) => (i + 1) % specimens.length);
-      setIsTransitioning(false);
-    }, 100);
+    setSpecimenIndex((i) => (i + 1) % specimens.length);
   }, [specimens.length]);
 
   useEffect(() => {
     if (specimens.length <= 1) return;
-    const timer = setInterval(advanceSpecimen, 60000);
+    const timer = setInterval(advanceSpecimen, 30000);
     return () => clearInterval(timer);
   }, [advanceSpecimen, specimens.length]);
 
@@ -239,9 +258,6 @@ export function HomeView({
             >
               Suggest a point
             </Link>
-            <span className="md:ml-auto font-heading italic text-[13px] text-muted-foreground">
-              Featured manually · changes weekly
-            </span>
           </div>
         </div>
       </section>
