@@ -66,14 +66,25 @@ export function HomeView({
   const [specimenIndex, setSpecimenIndex] = useState(0);
   const currentSpecimen = specimens[specimenIndex] || featuredAtlas;
 
-  // Fetch random atlas points client-side for cycling
+  // Fetch atlas points client-side, shuffle, and filter for cycling variety
   useEffect(() => {
-    fetch("/api/atlas/points?limit=8")
+    fetch("/api/atlas/points?limit=500")
       .then((r) => r.json())
       .then((data) => {
-        const points = data.points || [];
-        if (points.length > 1) {
-          const mapped = points.map((p: Record<string, unknown>) => ({
+        const all = (data.points || []) as Record<string, unknown>[];
+        // Keep only points with descriptions — better specimens
+        const withDescriptions = all.filter(
+          (p) => typeof p.description === "string" && (p.description as string).trim().length > 20
+        );
+        // Shuffle (Fisher-Yates)
+        for (let i = withDescriptions.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [withDescriptions[i], withDescriptions[j]] = [withDescriptions[j], withDescriptions[i]];
+        }
+        // Take up to 25 random specimens
+        const picked = withDescriptions.slice(0, 25);
+        if (picked.length > 1) {
+          const mapped = picked.map((p) => ({
             name: p.name as string,
             aliases: [],
             description: (p.description as string) || null,
@@ -224,20 +235,15 @@ export function HomeView({
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Cycle indicator */}
+                {/* Manual advance — click the card footer to skip to next */}
                 {specimens.length > 1 && (
-                  <div className="absolute bottom-3 right-4 flex gap-1">
-                    {specimens.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => { setSpecimenIndex(i); }}
-                        className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                          i === specimenIndex ? "bg-accent" : "bg-border"
-                        }`}
-                        aria-label={`Show specimen ${i + 1}`}
-                      />
-                    ))}
-                  </div>
+                  <button
+                    onClick={advanceSpecimen}
+                    className="absolute bottom-3 right-4 font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors"
+                    aria-label="Next specimen"
+                  >
+                    Next →
+                  </button>
                 )}
               </div>
             </Reveal>
