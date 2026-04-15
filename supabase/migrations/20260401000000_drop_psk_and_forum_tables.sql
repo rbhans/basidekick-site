@@ -42,10 +42,14 @@ DROP TRIGGER IF EXISTS refresh_forum_thread_stats_trigger ON forum_posts;
 -- Remove from realtime publication first
 DO $$
 BEGIN
-  ALTER PUBLICATION supabase_realtime DROP TABLE IF EXISTS psk_companies;
-  ALTER PUBLICATION supabase_realtime DROP TABLE IF EXISTS psk_company_members;
-EXCEPTION WHEN OTHERS THEN
-  NULL; -- ignore if not in publication
+  BEGIN
+    ALTER PUBLICATION supabase_realtime DROP TABLE psk_companies;
+  EXCEPTION WHEN OTHERS THEN NULL;
+  END;
+  BEGIN
+    ALTER PUBLICATION supabase_realtime DROP TABLE psk_company_members;
+  EXCEPTION WHEN OTHERS THEN NULL;
+  END;
 END $$;
 
 DROP TABLE IF EXISTS public.psk_notes CASCADE;

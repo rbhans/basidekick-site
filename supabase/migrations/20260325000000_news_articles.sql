@@ -46,7 +46,7 @@ CREATE POLICY "Admins can update articles"
   USING (
     EXISTS (
       SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND is_admin = true
+      WHERE id = auth.uid() AND role = 'admin'
     )
   );
 
@@ -55,7 +55,7 @@ CREATE POLICY "Admins can delete articles"
   USING (
     EXISTS (
       SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND is_admin = true
+      WHERE id = auth.uid() AND role = 'admin'
     )
   );
 
