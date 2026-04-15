@@ -7,6 +7,8 @@ import { ROUTES } from "@/lib/routes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBabelAll } from "./use-babel-data";
 import { BabelEntryRow } from "./babel-entry-row";
+import { ReportButton } from "@/components/feedback/report-button";
+import { useAuth } from "@/hooks/use-auth";
 import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
 
 export type AtlasScope = "all" | "points" | "equipment";
@@ -70,6 +72,7 @@ function equipmentMatches(entry: BabelEquipmentEntry, query: string): boolean {
 
 export function BabelView({ scope, onScopeChange }: BabelViewProps) {
   const { data, categories, loading, error } = useBabelAll();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
@@ -220,6 +223,15 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
           <span className="font-mono text-[11px] text-muted-foreground">
             <strong className="text-foreground tabular-nums">{totalVisible}</strong> shown
           </span>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <ReportButton
+            targetType="new_atlas_entry"
+            isAuthenticated={!!user}
+            variant="outline"
+            size="sm"
+          />
         </div>
       </section>
 

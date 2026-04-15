@@ -6,14 +6,11 @@ import {
   ArrowLeft,
   Tag,
   Copy,
-  Bug,
-  PencilSimple,
 } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { toast } from "sonner";
-import type { BabelPointEntry, BabelEquipmentEntry, BabelContributionType } from "@/lib/types";
-import { BabelContributionDialog } from "./babel-contribution-dialog";
+import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
+import { ReportButton } from "@/components/feedback/report-button";
 import { useAtlasData } from "@/components/atlas/use-atlas-data";
 import { getAtlasTypeIdForBabelEquipment } from "@/lib/data/atlas-babel-map";
 import { inferBabelPointKind } from "@/lib/data/babel-kind";
@@ -137,9 +134,6 @@ function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
 }
 
 export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBackLink = false }: BabelEntryDetailProps) {
-  const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
-  const [contributionType, setContributionType] = useState<BabelContributionType>("edit");
-
   const isPoint = type === "point";
   const pointEntry = entry as BabelPointEntry;
   const equipEntry = entry as BabelEquipmentEntry;
@@ -172,11 +166,6 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
   const copyToClipboard = async (text: string) => {
     await navigator.clipboard.writeText(text);
     toast.success("Alias copied");
-  };
-
-  const openContributionDialog = (dialogType: BabelContributionType) => {
-    setContributionType(dialogType);
-    setContributionDialogOpen(true);
   };
 
   return (
@@ -476,27 +465,14 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
 
       {/* Actions */}
       <div className="flex items-center gap-3 pt-6 border-t border-border">
-        <Button variant="outline" onClick={() => openContributionDialog("edit")}>
-          <PencilSimple className="size-4 mr-2" />
-          Suggest Edit
-        </Button>
-        <Button variant="ghost" onClick={() => openContributionDialog("error")}>
-          <Bug className="size-4 mr-2" />
-          Report Issue
-        </Button>
+        <ReportButton
+          targetType={isPoint ? "atlas_point" : "atlas_equipment"}
+          targetId={id}
+          targetLabel={name}
+          targetUrl={ROUTES.ATLAS_ENTRY(id)}
+          isAuthenticated={isAuthenticated}
+        />
       </div>
-
-      {/* Contribution Dialog */}
-      <BabelContributionDialog
-        open={contributionDialogOpen}
-        onOpenChange={setContributionDialogOpen}
-        initialType={contributionType}
-        entryId={id}
-        entryType={type}
-        entryCategory={category}
-        entryName={name}
-        isAuthenticated={isAuthenticated}
-      />
     </div>
   );
 }

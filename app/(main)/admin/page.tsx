@@ -35,6 +35,7 @@ export default async function AdminPage() {
     companiesResult,
     babelContributionsResult,
     equipmentSubmissionsResult,
+    contentReportsResult,
     statsResult,
   ] = await Promise.all([
     // Users with profiles
@@ -83,6 +84,16 @@ export default async function AdminPage() {
       `)
       .order("created_at", { ascending: false })
       .limit(50),
+    // Content reports
+    supabase
+      .from("content_reports")
+      .select(`
+        id, user_id, target_type, target_id, target_label, target_url, message,
+        status, admin_notes, resolved_by, resolved_at, created_at,
+        submitter:profiles!content_reports_user_id_fkey(display_name)
+      `)
+      .order("created_at", { ascending: false })
+      .limit(100),
     // Stats
     Promise.all([
       supabase.from("profiles").select("id", { count: "exact", head: true }),
@@ -90,6 +101,9 @@ export default async function AdminPage() {
       supabase.from("pointstack_companies").select("id", { count: "exact", head: true }),
       supabase.from("babel_contributions").select("id", { count: "exact", head: true }).eq("status", "pending"),
       supabase.from("equipment_submissions").select("id", { count: "exact", head: true }).eq("review_status", "pending"),
+      supabase.from("content_reports").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      supabase.from("pointstack_companies").select("id", { count: "exact", head: true }).eq("is_verified", false),
+      supabase.from("wiki_articles").select("id", { count: "exact", head: true }).eq("is_published", true),
     ]),
   ]);
 
@@ -99,6 +113,9 @@ export default async function AdminPage() {
     companyCount: statsResult[2].count || 0,
     pendingBabelContributions: statsResult[3].count || 0,
     pendingEquipmentSubmissions: statsResult[4].count || 0,
+    pendingReports: statsResult[5].count || 0,
+    unverifiedCompanies: statsResult[6].count || 0,
+    publishedArticles: statsResult[7].count || 0,
   };
 
   return (
@@ -108,6 +125,7 @@ export default async function AdminPage() {
       companies={companiesResult.data || []}
       babelContributions={babelContributionsResult.data || []}
       equipmentSubmissions={equipmentSubmissionsResult.data || []}
+      contentReports={contentReportsResult.data || []}
       stats={stats}
     />
   );

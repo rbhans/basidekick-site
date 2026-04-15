@@ -26,7 +26,9 @@ import {
   GithubLogo,
   Gauge,
   Buildings,
+  Flag,
 } from "@phosphor-icons/react";
+import { ReportsQueue, type AdminContentReport } from "@/components/admin/reports-queue";
 
 interface AdminUser {
   id: string;
@@ -104,6 +106,9 @@ interface AdminStats {
   companyCount: number;
   pendingBabelContributions: number;
   pendingEquipmentSubmissions: number;
+  pendingReports: number;
+  unverifiedCompanies: number;
+  publishedArticles: number;
 }
 
 interface AdminViewProps {
@@ -112,10 +117,11 @@ interface AdminViewProps {
   companies: AdminCompany[];
   babelContributions: AdminBabelContribution[];
   equipmentSubmissions: AdminEquipmentSubmission[];
+  contentReports: AdminContentReport[];
   stats: AdminStats;
 }
 
-type TabId = "overview" | "users" | "wiki" | "babel" | "equipment" | "companies";
+type TabId = "overview" | "reports" | "users" | "wiki" | "babel" | "equipment" | "companies";
 
 export function AdminView({
   users: initialUsers,
@@ -123,6 +129,7 @@ export function AdminView({
   companies: initialCompanies,
   babelContributions: initialBabelContributions,
   equipmentSubmissions: initialEquipmentSubmissions,
+  contentReports,
   stats,
 }: AdminViewProps) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
@@ -341,6 +348,12 @@ export function AdminView({
 
   const tabs: { id: TabId; label: string; icon: React.ReactNode; count?: number }[] = [
     { id: "overview", label: "Overview", icon: <ChartBar className="size-4" /> },
+    {
+      id: "reports",
+      label: "Reports",
+      icon: <Flag className="size-4" />,
+      count: stats.pendingReports,
+    },
     { id: "users", label: "Users", icon: <Users className="size-4" />, count: stats.userCount },
     { id: "wiki", label: "Wiki", icon: <Article className="size-4" />, count: stats.articleCount },
     {
@@ -438,7 +451,7 @@ export function AdminView({
           {activeTab === "overview" && (
             <div className="space-y-8">
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Users className="size-4" />
@@ -452,29 +465,97 @@ export function AdminView({
                     <span className="text-sm">Articles</span>
                   </div>
                   <p className="text-3xl font-bold">{stats.articleCount}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{stats.publishedArticles} published</p>
                 </div>
                 <div className="p-6 border border-border bg-card shadow-sm">
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Buildings className="size-4" />
                     <span className="text-sm">Companies</span>
                   </div>
-                  <p className="text-3xl font-bold">{companies.length}</p>
+                  <p className="text-3xl font-bold">{stats.companyCount}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{stats.unverifiedCompanies} unverified</p>
                 </div>
-                <div className="p-6 border border-border bg-card shadow-sm">
+                <button
+                  onClick={() => setActiveTab("reports")}
+                  className="p-6 border border-border bg-card shadow-sm text-left hover:border-accent transition-colors"
+                >
+                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                    <Flag className="size-4" />
+                    <span className="text-sm">Reports</span>
+                  </div>
+                  <p className={`text-3xl font-bold ${stats.pendingReports > 0 ? "text-primary" : ""}`}>
+                    {stats.pendingReports}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">pending review</p>
+                </button>
+                <button
+                  onClick={() => setActiveTab("babel")}
+                  className="p-6 border border-border bg-card shadow-sm text-left hover:border-accent transition-colors"
+                >
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Translate className="size-4" />
-                    <span className="text-sm">Atlas Terms Pending</span>
+                    <span className="text-sm">Atlas Terms</span>
                   </div>
-                  <p className="text-3xl font-bold text-primary">{stats.pendingBabelContributions}</p>
-                </div>
-                <div className="p-6 border border-border bg-card shadow-sm">
+                  <p className={`text-3xl font-bold ${stats.pendingBabelContributions > 0 ? "text-primary" : ""}`}>
+                    {stats.pendingBabelContributions}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">pending review</p>
+                </button>
+                <button
+                  onClick={() => setActiveTab("equipment")}
+                  className="p-6 border border-border bg-card shadow-sm text-left hover:border-accent transition-colors"
+                >
                   <div className="flex items-center gap-2 text-muted-foreground mb-2">
                     <Gauge className="size-4" />
-                    <span className="text-sm">Atlas Pending</span>
+                    <span className="text-sm">Atlas Equipment</span>
                   </div>
-                  <p className="text-3xl font-bold text-primary">{stats.pendingEquipmentSubmissions}</p>
-                </div>
+                  <p className={`text-3xl font-bold ${stats.pendingEquipmentSubmissions > 0 ? "text-primary" : ""}`}>
+                    {stats.pendingEquipmentSubmissions}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">pending review</p>
+                </button>
               </div>
+
+              {/* Recent Reports */}
+              {contentReports.length > 0 && (
+                <div className="border border-border bg-card shadow-sm p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold flex items-center gap-2">
+                      <Flag className="size-4 text-primary" />
+                      Recent Reports
+                    </h3>
+                    <button
+                      onClick={() => setActiveTab("reports")}
+                      className="text-xs font-mono uppercase tracking-[1px] text-muted-foreground hover:text-foreground"
+                    >
+                      View all →
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    {contentReports.slice(0, 5).map((report) => (
+                      <div key={report.id} className="flex items-start gap-3 text-sm">
+                        <span className={`flex-shrink-0 px-2 py-0.5 text-xs font-mono uppercase tracking-[1px] ${
+                          report.status === "pending" ? "bg-amber-500/10 text-amber-600" :
+                          report.status === "resolved" ? "bg-emerald-500/10 text-emerald-600" :
+                          "bg-muted text-muted-foreground"
+                        }`}>
+                          {report.status}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate">
+                            <span className="text-muted-foreground">{report.target_label || report.target_type.replace(/_/g, " ")}</span>
+                            {" — "}
+                            {report.message}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            {report.submitter?.display_name || "Anonymous"} · {formatDate(report.created_at)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Recent Activity */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -541,6 +622,11 @@ export function AdminView({
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Reports Tab */}
+          {activeTab === "reports" && (
+            <ReportsQueue reports={contentReports} />
           )}
 
           {/* Users Tab */}

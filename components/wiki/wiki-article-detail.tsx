@@ -17,6 +17,7 @@ import {
 import { MarkdownContent } from "@/components/markdown-content";
 import { RelatedArticles } from "@/components/wiki/related-articles";
 import { BookmarkButton } from "@/components/bookmark-button";
+import { ReportButton } from "@/components/feedback/report-button";
 
 // Map facet group slugs to URL route prefixes
 const GROUP_ROUTE_MAP: Record<string, string> = {
@@ -216,16 +217,27 @@ export function WikiArticleDetail({ article, tags, facets = [] }: WikiArticleDet
               {viewCount} views
             </span>
           </div>
-          <BookmarkButton
-            item={{
-              id: article.id,
-              type: "wiki",
-              title: article.title,
-              slug: article.slug,
-              category: article.category?.name,
-            }}
-            size="sm"
-          />
+          <div className="flex items-center gap-2">
+            <BookmarkButton
+              item={{
+                id: article.id,
+                type: "wiki",
+                title: article.title,
+                slug: article.slug,
+                category: article.category?.name,
+              }}
+              size="sm"
+            />
+            <ReportButton
+              targetType="wiki_article"
+              targetId={article.id}
+              targetLabel={article.title}
+              targetUrl={ROUTES.WIKI_ARTICLE(article.slug)}
+              isAuthenticated={!!user}
+              variant="ghost"
+              size="sm"
+            />
+          </div>
         </div>
 
         {/* Tags / facets */}
