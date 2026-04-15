@@ -61,6 +61,9 @@ export const ROUTES = {
   NEWS: "/news",
   NEWS_ARTICLE: (slug: string) => `/news/${encodeURIComponent(slug)}`,
   ADMIN: "/admin",
+  EXPERTS: "/experts",
+  EXPERTS_TOPIC: (slug: string) => `/experts/${encodeURIComponent(slug)}`,
+  ADMIN_ENDORSEMENT_TOPICS: "/admin/endorsement-topics",
 } as const;
 
 export function getPointStackPostRoute(postType: string, slug: string): string {

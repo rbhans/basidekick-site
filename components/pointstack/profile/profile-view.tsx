@@ -24,6 +24,7 @@ import { ProfileEditDialog } from "./profile-edit-dialog";
 import { FollowersDialog } from "./followers-dialog";
 import { ActivityFeed } from "./activity-feed";
 import { ContributionsTab } from "./contributions-tab";
+import { ExpertiseSection } from "./expertise-section";
 import { PointStackProfile, PointStackPost } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import { usePointStackStore } from "../pointstack-store";
@@ -347,6 +348,9 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
           ) : null}
         </div>
       </div>
+
+      {/* Expertise (peer endorsements) */}
+      <ExpertiseSection profileId={profile.id} isOwnProfile={Boolean(isOwnProfile)} />
 
       {/* Skills */}
       {profile.skills && profile.skills.length > 0 && (

@@ -416,6 +416,14 @@ export function AdminView({
           <p className="font-heading italic text-[15px] text-muted-foreground mt-2">
             Manage users, content, and site settings.
           </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a
+              href={ROUTES.ADMIN_ENDORSEMENT_TOPICS}
+              className="font-mono text-[10px] uppercase tracking-[1.2px] border border-border px-3 py-1.5 rounded-sm hover:border-accent hover:text-accent transition-colors"
+            >
+              Endorsement Topics →
+            </a>
+          </div>
         </div>
       </section>
 
