@@ -23,6 +23,23 @@ interface SignUpFormProps {
   onSuccess?: () => void;
 }
 
+function ConfirmationNotice({ email }: { email: string }) {
+  return (
+    <div className="mx-auto max-w-sm p-8 text-center">
+      <h1 className="mb-4 text-2xl font-semibold">Check your email</h1>
+      <p className="mb-4 text-muted-foreground">
+        We sent a confirmation link to <span className="font-medium text-foreground">{email}</span>.
+      </p>
+      <p className="mb-6 text-sm text-muted-foreground">
+        Click the link in that email to activate your account. You won&apos;t be able to sign in until your email is confirmed.
+      </p>
+      <p className="text-xs text-muted-foreground">
+        Didn&apos;t get it? Check spam, or wait a minute and try signing up again.
+      </p>
+    </div>
+  );
+}
+
 const defaultValues: SignUpValues = {
   email: "",
   password: "",
@@ -32,7 +49,7 @@ const defaultValues: SignUpValues = {
 export function SignUpForm({ onSuccess }: SignUpFormProps) {
   const [oauthLoading, setOauthLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [confirmationEmail, setConfirmationEmail] = useState<string | null>(null);
 
   const supabase = useMemo(() => createClient(), []);
 
@@ -43,14 +60,13 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
 
   const onSubmit = async (values: SignUpValues) => {
     setError(null);
-    setMessage(null);
 
     if (!supabase) {
       setError("Unable to connect to authentication service");
       return;
     }
 
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
       options: {
@@ -63,14 +79,17 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
       return;
     }
 
-    setMessage("Check your email for the confirmation link!");
-    onSuccess?.();
+    if (data.session) {
+      onSuccess?.();
+      return;
+    }
+
+    setConfirmationEmail(values.email);
   };
 
   const handleGoogleSignUp = async () => {
     setOauthLoading(true);
     setError(null);
-    setMessage(null);
 
     if (!supabase) {
       setError("Unable to connect to authentication service");
@@ -93,6 +112,10 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
 
   const isBusy = form.formState.isSubmitting || oauthLoading;
 
+  if (confirmationEmail) {
+    return <ConfirmationNotice email={confirmationEmail} />;
+  }
+
   return (
     <div className="mx-auto max-w-sm p-8">
       <h1 className="mb-4 text-2xl font-semibold">Sign Up</h1>
@@ -103,12 +126,6 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
       {error && (
         <div className="mb-4 border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
           {error}
-        </div>
-      )}
-
-      {message && (
-        <div className="mb-4 border border-primary/20 bg-secondary p-3 text-sm text-primary">
-          {message}
         </div>
       )}
 
