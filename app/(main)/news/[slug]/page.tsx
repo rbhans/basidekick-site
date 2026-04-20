@@ -7,7 +7,7 @@ interface ArticlePageProps {
 export async function generateMetadata({ params }: ArticlePageProps) {
   const { slug } = await params;
   return {
-    title: `${slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} - News`,
+    title: `${slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} — BASidekick`,
     description: "Discussion on BAS industry news article.",
   };
 }

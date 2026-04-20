@@ -24,12 +24,12 @@ interface ResultsTableProps {
 
 function ConfidenceBadge({ confidence }: { confidence: string }) {
   const styles: Record<string, string> = {
-    high: "bg-green-500/10 text-green-700 dark:text-green-400",
-    medium: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
-    low: "bg-orange-500/10 text-orange-700 dark:text-orange-400",
-    none: "bg-red-500/10 text-red-700 dark:text-red-400",
-    manual: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
-    new: "bg-purple-500/10 text-purple-700 dark:text-purple-400",
+    high: "bg-secondary text-foreground",
+    medium: "bg-accent/15 text-accent",
+    low: "bg-muted text-muted-foreground",
+    none: "bg-destructive/10 text-destructive",
+    manual: "bg-card border border-border text-foreground",
+    new: "bg-accent/10 text-accent italic",
   };
 
   const icons: Record<string, typeof CheckCircle> = {
@@ -125,7 +125,7 @@ export function ResultsTable({
                   </td>
                   <td className="px-3 py-2">
                     {row.flaggedAsNew ? (
-                      <span className="text-xs text-purple-600 dark:text-purple-400 italic">
+                      <span className="text-xs text-accent italic">
                         Flagged as new entry
                       </span>
                     ) : displayName ? (

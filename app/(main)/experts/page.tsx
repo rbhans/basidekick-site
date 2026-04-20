@@ -8,7 +8,7 @@ import { EndorsementTopic } from "@/lib/schemas/endorsements";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Experts · Basidekick",
+  title: "Experts — BASidekick",
   description:
     "Browse BAS experts ranked by peer endorsements across Niagara, BACnet, Metasys, and more.",
 };

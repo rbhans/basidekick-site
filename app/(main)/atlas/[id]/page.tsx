@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: BabelEntryPageProps): Promise
 
   if (!entry) {
     return {
-      title: "Entry Not Found | BAS Atlas",
+      title: "Entry not found — BASidekick",
     };
   }
 
@@ -39,10 +39,10 @@ export async function generateMetadata({ params }: BabelEntryPageProps): Promise
   const canonical = `${BASE_URL}/atlas/${id}`;
 
   return {
-    title: `${name} | BAS Atlas`,
+    title: `${name} — BASidekick`,
     description: description || fallbackDescription,
     openGraph: {
-      title: `${name} - BAS Atlas`,
+      title: `${name} — BASidekick`,
       description: description || fallbackDescription,
       type: "website",
       siteName: "BASidekick",
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: BabelEntryPageProps): Promise
     },
     twitter: {
       card: "summary_large_image",
-      title: `${name} - BAS Atlas`,
+      title: `${name} — BASidekick`,
       description: description || fallbackDescription,
     },
     alternates: {

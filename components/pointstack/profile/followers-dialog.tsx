@@ -144,7 +144,7 @@ export function FollowersDialog({
                 {profile.display_name || "Anonymous"}
               </p>
               {profile.is_verified && (
-                <Badge className="gap-0.5 px-1 py-0 text-[10px] bg-blue-500/10 text-blue-600 border-blue-500/20">
+                <Badge className="gap-0.5 px-1 py-0 text-[10px] bg-accent/15 text-accent border-accent/20">
                   <Check className="w-2.5 h-2.5" />
                 </Badge>
               )}

@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: WikiArticlePageProps): Promis
 
   if (!supabase) {
     return {
-      title: "Article Not Found | BASidekick Wiki",
+      title: "Article not found — BASidekick",
     };
   }
 
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: WikiArticlePageProps): Promis
 
   if (!article) {
     return {
-      title: "Article Not Found | BASidekick Wiki",
+      title: "Article not found — BASidekick",
     };
   }
 
@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: WikiArticlePageProps): Promis
   const authorName = Array.isArray(author) ? author[0]?.display_name : author?.display_name;
 
   return {
-    title: `${article.title} | BASidekick Wiki`,
+    title: `${article.title} — BASidekick`,
     description,
     authors: authorName ? [{ name: authorName }] : undefined,
     openGraph: {

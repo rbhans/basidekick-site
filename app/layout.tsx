@@ -29,13 +29,12 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "BASidekick — BAS info, community, and resources",
   description:
-    "BAS info, community, and resources collected from next to the industry. Curated by Rob Hansen in Tucson.",
-  keywords: ["BAS", "building automation", "Niagara", "Metasys", "BACnet", "atlas", "wiki"],
+    "Independent BAS reference, community, and open-source toolkit. Maintained by Rob Hansen in Tucson.",
   metadataBase: new URL("https://basidekick.com"),
   openGraph: {
     title: "BASidekick — BAS info, community, and resources",
     description:
-      "BAS info, community, and resources collected from next to the industry.",
+      "Independent BAS reference, community, and open-source toolkit.",
     siteName: "BASidekick",
     type: "website",
   },
@@ -43,7 +42,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "BASidekick — BAS info, community, and resources",
     description:
-      "BAS info, community, and resources collected from next to the industry.",
+      "Independent BAS reference, community, and open-source toolkit.",
   },
   alternates: {
     canonical: "https://basidekick.com",
@@ -69,8 +68,14 @@ export default function RootLayout({
                   "@id": "https://basidekick.com/#organization",
                   name: "BASidekick",
                   url: "https://basidekick.com",
+                  logo: "https://basidekick.com/brand/wordmark-light.svg",
                   description:
-                    "BAS info, community, and resources collected from next to the industry. Curated by Rob Hansen in Tucson.",
+                    "Independent BAS reference, community, and open-source toolkit. Maintained by Rob Hansen in Tucson.",
+                  founder: {
+                    "@type": "Person",
+                    name: "Rob Hansen",
+                  },
+                  sameAs: ["https://github.com/rbhans"],
                 },
                 {
                   "@type": "WebSite",

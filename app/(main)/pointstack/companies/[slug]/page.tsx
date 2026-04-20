@@ -7,7 +7,7 @@ interface CompanyPageProps {
 export async function generateMetadata({ params }: CompanyPageProps) {
   const { slug } = await params;
   return {
-    title: `${slug} - PointStack Companies`,
+    title: `${slug} — BASidekick`,
     description: `View company profile on PointStack`,
   };
 }

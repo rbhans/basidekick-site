@@ -1,7 +1,7 @@
 import { PointStackNotificationsView } from "@/components/pointstack/notifications/notifications-view";
 
 export const metadata = {
-  title: "Notifications - PointStack",
+  title: "Notifications — BASidekick",
   description: "Your notifications on PointStack.",
 };
 

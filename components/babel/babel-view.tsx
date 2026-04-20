@@ -367,7 +367,7 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
               <br />
               Curated by Rob Hansen
               <br />
-              Collected from next to the industry
+              Independent of any vendor
             </div>
             <div>
               Sources: Project Haystack, Brick Schema, vendor docs, community submissions.

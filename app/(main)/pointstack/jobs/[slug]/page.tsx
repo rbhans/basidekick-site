@@ -7,7 +7,7 @@ interface JobPageProps {
 export async function generateMetadata({ params }: JobPageProps) {
   const { slug } = await params;
   return {
-    title: `Job - PointStack`,
+    title: `Job — BASidekick`,
     description: `View job details and apply on PointStack`,
   };
 }

@@ -543,8 +543,8 @@ export function AdminView({
                     {contentReports.slice(0, 5).map((report) => (
                       <div key={report.id} className="flex items-start gap-3 text-sm">
                         <span className={`flex-shrink-0 px-2 py-0.5 text-xs font-mono uppercase tracking-[1px] ${
-                          report.status === "pending" ? "bg-amber-500/10 text-amber-600" :
-                          report.status === "resolved" ? "bg-emerald-500/10 text-emerald-600" :
+                          report.status === "pending" ? "bg-accent/15 text-accent" :
+                          report.status === "resolved" ? "bg-secondary text-foreground" :
                           "bg-muted text-muted-foreground"
                         }`}>
                           {report.status}
@@ -617,7 +617,7 @@ export function AdminView({
                           </p>
                         </div>
                         {company.is_verified && (
-                          <span className="text-xs bg-emerald-500/10 text-emerald-600 px-2 py-0.5">
+                          <span className="text-xs bg-secondary text-foreground px-2 py-0.5">
                             Verified
                           </span>
                         )}
@@ -738,11 +738,11 @@ export function AdminView({
                         <td className="p-4 hidden lg:table-cell">{article.view_count}</td>
                         <td className="p-4">
                           {article.is_published ? (
-                            <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-0.5">
+                            <span className="text-xs bg-secondary text-foreground px-2 py-0.5">
                               Published
                             </span>
                           ) : (
-                            <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5">
+                            <span className="text-xs bg-accent/15 text-accent px-2 py-0.5">
                               Draft
                             </span>
                           )}
@@ -818,7 +818,7 @@ export function AdminView({
                         </td>
                         <td className="p-4 hidden sm:table-cell">
                           {company.is_verified ? (
-                            <span className="text-xs bg-emerald-500/10 text-emerald-600 px-2 py-0.5">
+                            <span className="text-xs bg-secondary text-foreground px-2 py-0.5">
                               Verified
                             </span>
                           ) : (
@@ -838,7 +838,7 @@ export function AdminView({
                               onClick={() => toggleVerified(company.id, company.is_verified)}
                               disabled={loading === `verify-${company.id}`}
                               title={company.is_verified ? "Unverify" : "Verify"}
-                              className={company.is_verified ? "text-emerald-600" : ""}
+                              className={company.is_verified ? "text-foreground" : ""}
                             >
                               {company.is_verified ? (
                                 <X className="size-4" />
@@ -923,12 +923,12 @@ export function AdminView({
                           </td>
                           <td className="p-4">
                             {submission.review_status === "pending" && (
-                              <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5">
+                              <span className="text-xs bg-accent/15 text-accent px-2 py-0.5">
                                 Pending
                               </span>
                             )}
                             {submission.review_status === "approved" && (
-                              <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-0.5">
+                              <span className="text-xs bg-secondary text-foreground px-2 py-0.5">
                                 Approved
                               </span>
                             )}
@@ -946,7 +946,7 @@ export function AdminView({
                                   size="sm"
                                   onClick={() => handleEquipmentSubmissionAction(submission.id, "approve")}
                                   disabled={loading === `equipment-${submission.id}`}
-                                  className="text-emerald-500 hover:text-emerald-600"
+                                  className="text-foreground hover:text-accent"
                                   title="Approve and create GitHub issue"
                                 >
                                   <Check className="size-4" />
@@ -1095,12 +1095,12 @@ export function AdminView({
                           </td>
                           <td className="p-4">
                             {contribution.status === "pending" && (
-                              <span className="text-xs bg-yellow-500/10 text-yellow-500 px-2 py-0.5">
+                              <span className="text-xs bg-accent/15 text-accent px-2 py-0.5">
                                 Pending
                               </span>
                             )}
                             {contribution.status === "approved" && (
-                              <span className="text-xs bg-emerald-500/10 text-emerald-500 px-2 py-0.5">
+                              <span className="text-xs bg-secondary text-foreground px-2 py-0.5">
                                 Approved
                               </span>
                             )}
@@ -1118,7 +1118,7 @@ export function AdminView({
                                   size="sm"
                                   onClick={() => handleBabelContributionAction(contribution.id, "approve")}
                                   disabled={loading === `babel-${contribution.id}`}
-                                  className="text-emerald-500 hover:text-emerald-600"
+                                  className="text-foreground hover:text-accent"
                                   title="Approve and create GitHub issue"
                                 >
                                   <Check className="size-4" />

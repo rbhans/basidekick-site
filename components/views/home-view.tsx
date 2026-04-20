@@ -135,9 +135,9 @@ export function HomeView({
               <h1 className="font-heading font-semibold text-[34px] md:text-[44px] lg:text-[52px] leading-[1.08] tracking-[-0.015em] text-foreground">
                 BAS info, community, and resources —{" "}
                 <em className="italic font-medium text-accent">
-                  collected from next to the industry
+                  built by a working engineer
                 </em>
-                , not from inside it.
+                , independent of any vendor.
               </h1>
             </Reveal>
 
@@ -336,7 +336,7 @@ export function HomeView({
             href={ROUTES.POINTSTACK}
             className="font-heading italic text-[16px] font-medium text-foreground hover:text-accent transition-colors"
           >
-            Join the community →
+            See what&apos;s on PointStack →
           </Link>
         </div>
       </section>

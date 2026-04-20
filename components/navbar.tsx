@@ -117,7 +117,7 @@ export function Navbar() {
                     className="h-8 w-8 relative"
                     aria-label="User menu"
                   >
-                    <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-mono text-xs font-medium">
+                    <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-heading font-semibold text-[13px]">
                       {getUserInitials()}
                     </div>
                   </Button>

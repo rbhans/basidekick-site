@@ -214,8 +214,8 @@ export function BabelContributionDialog({
       <Dialog open={open} onOpenChange={handleDialogOpenChange}>
         <DialogContent className="max-w-md">
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-green-500/10">
-              <Check className="size-6 text-green-500" weight="bold" />
+            <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-accent/15">
+              <Check className="size-6 text-accent" weight="bold" />
             </div>
             <DialogTitle className="mb-2">Thank you!</DialogTitle>
             <DialogDescription>

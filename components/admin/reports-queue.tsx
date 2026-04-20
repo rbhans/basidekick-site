@@ -162,8 +162,8 @@ export function ReportsQueue({ reports: initial }: ReportsQueueProps) {
                       <span>{formatDate(r.created_at)}</span>
                       <span>·</span>
                       <span className={
-                        r.status === "pending" ? "text-amber-600" :
-                        r.status === "resolved" ? "text-emerald-600" : "text-muted-foreground"
+                        r.status === "pending" ? "text-accent" :
+                        r.status === "resolved" ? "text-foreground" : "text-muted-foreground"
                       }>
                         {r.status}
                       </span>

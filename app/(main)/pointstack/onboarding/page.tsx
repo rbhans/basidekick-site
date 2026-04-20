@@ -1,7 +1,7 @@
 import { PointStackOnboardingView } from "@/components/pointstack/onboarding/onboarding-flow";
 
 export const metadata = {
-  title: "Welcome to PointStack",
+  title: "Welcome to PointStack — BASidekick",
   description: "Set up your PointStack profile and get started.",
 };
 

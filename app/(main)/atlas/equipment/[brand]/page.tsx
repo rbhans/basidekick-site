@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
 
   if (!brandEntry) {
     return {
-      title: "Brand Not Found | BAS Atlas",
+      title: "Brand not found — BASidekick",
     };
   }
 
@@ -29,10 +29,10 @@ export async function generateMetadata({ params }: BrandPageProps): Promise<Meta
   const canonical = `https://basidekick.com/atlas/equipment/${brandSlug}`;
 
   return {
-    title: `${brandEntry.name} Equipment | BAS Atlas`,
+    title: `${brandEntry.name} Equipment — BASidekick`,
     description,
     openGraph: {
-      title: `${brandEntry.name} Equipment - BAS Atlas`,
+      title: `${brandEntry.name} Equipment — BASidekick`,
       description,
       type: "website",
       siteName: "BASidekick",

@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: TypePageProps): Promise<Metad
 
   if (!brandEntry || !typeEntry) {
     return {
-      title: "Type Not Found | BAS Atlas",
+      title: "Type not found — BASidekick",
     };
   }
 
@@ -34,10 +34,10 @@ export async function generateMetadata({ params }: TypePageProps): Promise<Metad
   const canonical = `https://basidekick.com/atlas/equipment/${brandSlug}/${typeSlug}`;
 
   return {
-    title: `${brandEntry.name} ${typeEntry.name} | BAS Atlas`,
+    title: `${brandEntry.name} ${typeEntry.name} — BASidekick`,
     description,
     openGraph: {
-      title: `${brandEntry.name} ${typeEntry.name} - BAS Atlas`,
+      title: `${brandEntry.name} ${typeEntry.name} — BASidekick`,
       description,
       type: "website",
       siteName: "BASidekick",

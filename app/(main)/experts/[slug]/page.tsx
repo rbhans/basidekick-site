@@ -73,9 +73,9 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const topic = await loadTopic(slug);
-  if (!topic) return { title: "Topic not found" };
+  if (!topic) return { title: "Topic not found — BASidekick" };
   return {
-    title: `${topic.name} experts · Basidekick`,
+    title: `${topic.name} experts — BASidekick`,
     description:
       topic.description ?? `Top ${topic.name} contributors by peer endorsements.`,
   };

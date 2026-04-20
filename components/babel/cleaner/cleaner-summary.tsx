@@ -146,38 +146,38 @@ export function CleanerSummary({
       {/* Stats */}
       <div className="flex flex-wrap gap-3 text-sm">
         {stats.high > 0 && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-500/10 text-green-700 dark:text-green-400">
-            <span className="size-2 rounded-full bg-green-500" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-secondary text-foreground">
+            <span className="size-2 rounded-full bg-foreground" />
             {stats.high} high
           </span>
         )}
         {stats.medium > 0 && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-700 dark:text-yellow-400">
-            <span className="size-2 rounded-full bg-yellow-500" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-accent/15 text-accent">
+            <span className="size-2 rounded-full bg-accent" />
             {stats.medium} medium
           </span>
         )}
         {stats.low > 0 && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-500/10 text-orange-700 dark:text-orange-400">
-            <span className="size-2 rounded-full bg-orange-500" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-muted text-muted-foreground">
+            <span className="size-2 rounded-full bg-muted-foreground" />
             {stats.low} low
           </span>
         )}
         {stats.unmatched > 0 && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/10 text-red-700 dark:text-red-400">
-            <span className="size-2 rounded-full bg-red-500" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-destructive/10 text-destructive">
+            <span className="size-2 rounded-full bg-destructive" />
             {stats.unmatched} unmatched
           </span>
         )}
         {stats.manual > 0 && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-700 dark:text-blue-400">
-            <span className="size-2 rounded-full bg-blue-500" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-card border border-border text-foreground">
+            <span className="size-2 rounded-full bg-foreground" />
             {stats.manual} manual
           </span>
         )}
         {stats.flaggedNew > 0 && (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-700 dark:text-purple-400">
-            <span className="size-2 rounded-full bg-purple-500" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm bg-accent/10 text-accent italic">
+            <span className="size-2 rounded-full bg-accent" />
             {stats.flaggedNew} new
           </span>
         )}
@@ -216,7 +216,7 @@ export function CleanerSummary({
         )}
 
         {contributionsSubmitted && (
-          <span className="inline-flex items-center gap-1.5 text-sm text-green-600 dark:text-green-400">
+          <span className="inline-flex items-center gap-1.5 text-sm text-accent">
             <Check className="size-4" weight="bold" />
             Contributions submitted
           </span>

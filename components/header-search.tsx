@@ -294,11 +294,11 @@ export function HeaderSearch() {
   const getIcon = (type: SearchResult["type"]) => {
     switch (type) {
       case "babel":
-        return <Translate className="size-4 text-amber-500" />;
+        return <Translate className="size-4 text-accent" />;
       case "atlas":
-        return <Gauge className="size-4 text-sky-500" />;
+        return <Gauge className="size-4 text-foreground" />;
       case "article":
-        return <Article className="size-4 text-blue-500" />;
+        return <Article className="size-4 text-muted-foreground" />;
     }
   };
 
@@ -358,7 +358,7 @@ export function HeaderSearch() {
             <div className="py-1">
               {/* Error banner if partial failure */}
               {searchError && (
-                <div className="px-3 py-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 flex items-center gap-2">
+                <div className="px-3 py-2 text-xs text-accent bg-accent/10 flex items-center gap-2">
                   <WarningCircle className="size-3.5" />
                   {searchError}
                 </div>

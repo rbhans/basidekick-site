@@ -1,9 +1,14 @@
+import Link from "next/link";
+
 export function Footer() {
   const lastUpdated = new Date().toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   });
+
+  const legalLinkClass =
+    "text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors";
 
   return (
     <footer className="border-t border-border bg-secondary mt-auto">
@@ -26,22 +31,31 @@ export function Footer() {
               href="https://rbhans.github.io"
               target="_blank"
               rel="noreferrer"
-              className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors"
+              className={legalLinkClass}
             >
               rbhans.github.io
             </a>
             {" · "}
             <a
               href="mailto:rob@basidekick.com"
-              className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent transition-colors"
+              className={legalLinkClass}
             >
               rob@basidekick.com
             </a>
           </div>
 
-          {/* Right: last updated */}
-          <div className="md:text-right">
-            Last updated · {lastUpdated}
+          {/* Right: last updated + legal */}
+          <div className="md:text-right space-y-2">
+            <div>Last updated · {lastUpdated}</div>
+            <div>
+              <Link href="/privacy" className={legalLinkClass}>
+                Privacy
+              </Link>
+              {" · "}
+              <Link href="/terms" className={legalLinkClass}>
+                Terms
+              </Link>
+            </div>
           </div>
         </div>
       </div>

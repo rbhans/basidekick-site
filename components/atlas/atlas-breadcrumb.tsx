@@ -31,7 +31,7 @@ export function AtlasBreadcrumb({ items }: AtlasBreadcrumbProps) {
             ) : (
               <Link
                 href={item.href}
-                className="text-muted-foreground hover:text-violet-500 dark:hover:text-violet-400 transition-colors truncate"
+                className="text-muted-foreground hover:text-accent transition-colors truncate"
               >
                 {item.label}
               </Link>

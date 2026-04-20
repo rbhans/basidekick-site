@@ -51,7 +51,7 @@ export function BookmarkButton({
         className={cn(
           "p-2 rounded-md transition-colors",
           bookmarked
-            ? "text-yellow-500 hover:text-yellow-600"
+            ? "text-accent hover:text-accent/80"
             : "text-muted-foreground hover:text-foreground",
           className
         )}
@@ -71,7 +71,7 @@ export function BookmarkButton({
       size={size === "sm" ? "sm" : "default"}
       onClick={handleClick}
       className={cn(
-        bookmarked && "bg-yellow-500 hover:bg-yellow-600 text-yellow-950",
+        bookmarked && "bg-accent hover:bg-accent/90 text-accent-foreground",
         className
       )}
     >
