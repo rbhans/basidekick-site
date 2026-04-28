@@ -10,6 +10,8 @@
     "postbuild": "bash scripts/postbuild-copy-db.sh",
     "dev:fetch-db": "bash scripts/fetch-atlas-db.sh",
     "start": "next start",
+    "curate:news": "node scripts/curate-news.mjs",
+    "test:curate-news": "node --test scripts/curate-news.test.mjs",
     "validate:atlas-brand-logos": "node scripts/validate-atlas-brand-logos.mjs",
     "lint": "pnpm validate:atlas-brand-logos && eslint",
     "analyze": "ANALYZE=true next build"
