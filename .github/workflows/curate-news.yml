@@ -1,9 +1,7 @@
-name: Curate BAS News
+name: Curate BAS News (Manual Fallback)
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "15 13 * * *"
 
 permissions:
   contents: read
