@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import { getBabelData } from "@/lib/data/babel";
 import { getAtlasData } from "@/lib/data/atlas";
 
+export const dynamic = "force-dynamic";
+
 const BASE_URL = "https://basidekick.com";
 
 // Create a Supabase client for sitemap generation (no cookies needed)

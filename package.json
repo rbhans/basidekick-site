@@ -11,6 +11,8 @@
     "dev:fetch-db": "bash scripts/fetch-atlas-db.sh",
     "start": "next start",
     "curate:news": "node scripts/curate-news.mjs",
+    "wiki:audit": "node scripts/wiki-bulk-curate.mjs",
+    "wiki:import": "node scripts/wiki-bulk-curate.mjs --apply --fix-weak",
     "test:curate-news": "node --test scripts/curate-news.test.mjs",
     "validate:atlas-brand-logos": "node scripts/validate-atlas-brand-logos.mjs",
     "lint": "pnpm validate:atlas-brand-logos && eslint",
