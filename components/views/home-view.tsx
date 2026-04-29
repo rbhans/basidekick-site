@@ -64,6 +64,7 @@ export function HomeView({
 }: HomeViewProps) {
   const [specimens, setSpecimens] = useState<FeaturedAtlasEntry[]>(featuredAtlas ? [featuredAtlas] : []);
   const [specimenIndex, setSpecimenIndex] = useState(0);
+  const [atlasTotal, setAtlasTotal] = useState<number | null>(null);
   const currentSpecimen = specimens[specimenIndex] || featuredAtlas;
   const revLabel = useMemo(() => {
     const d = new Date();
@@ -76,6 +77,7 @@ export function HomeView({
     fetch("/api/atlas/points?limit=500")
       .then((r) => r.json())
       .then((data) => {
+        if (typeof data.total === "number") setAtlasTotal(data.total);
         const all = (data.points || []) as Record<string, unknown>[];
         // Keep only points with descriptions — better specimens
         const withDescriptions = all.filter(
@@ -178,22 +180,24 @@ export function HomeView({
             <Reveal delay={0.1}>
               <div className="mt-9 bg-card border border-border rounded-md grid grid-cols-1 md:grid-cols-2 gap-y-0 md:gap-x-10 relative overflow-hidden">
                 {/* RIBBON — full-width row across both columns */}
-                <div className="col-span-full bg-secondary border-b border-border px-9 py-2.5 flex items-center gap-5 flex-wrap font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground">
-                  <span className="flex items-center">
-                    <span className="text-accent mr-1.5">Cat.</span>
-                    <span className="text-foreground font-medium normal-case tracking-[.4px] tabular-nums">
-                      ATL-{String(specimenIndex + 1).padStart(4, "0")}
+                <div className="col-span-full px-9 pt-7 pb-4 mb-2 flex items-center gap-7 flex-wrap font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground border-b border-dashed border-border">
+                  <span className="flex items-center gap-2">
+                    <span className="text-brass">ATL</span>
+                    <span className="text-border">·</span>
+                    <span className="text-foreground tabular-nums tracking-[.4px]">
+                      {String(specimenIndex + 1).padStart(4, "0")}
                     </span>
                   </span>
-                  <span className="flex items-center pl-5 border-l border-border">
-                    <span className="text-accent mr-1.5">Specimen</span>
-                    <span className="text-foreground font-medium normal-case tracking-[.4px] tabular-nums">
-                      {specimenIndex + 1} of {specimens.length}
+                  <span className="flex items-center gap-2.5">
+                    <span className="text-brass">Specimen</span>
+                    <span className="text-foreground tabular-nums tracking-[.4px]">
+                      {specimenIndex + 1} <span className="text-border mx-0.5">/</span> {atlasTotal ?? specimens.length}
                     </span>
                   </span>
-                  <span className="ml-auto flex items-center">
-                    <span className="text-brass mr-1.5">Rev</span>
-                    <span className="text-foreground font-medium normal-case tracking-[.4px] tabular-nums">
+                  <span className="ml-auto flex items-center gap-2">
+                    <span className="inline-block w-[7px] h-[7px] rounded-full bg-brass" aria-hidden />
+                    <span className="text-brass">Rev</span>
+                    <span className="text-foreground tabular-nums tracking-[.4px]">
                       {revLabel}
                     </span>
                   </span>
