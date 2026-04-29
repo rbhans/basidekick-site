@@ -22,6 +22,7 @@
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-brass: var(--brass);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -56,6 +57,7 @@
   --muted-foreground: #4a5648;
   --accent: #c08621;
   --accent-foreground: #1f2920;
+  --brass: #9a7a3a;
   --destructive: #8b2914;
   --destructive-foreground: #f1efe6;
   --border: #d8d9c5;
@@ -104,7 +106,7 @@
   margin-left: 24px;
   border-left: 1px solid var(--border);
 }
-.title-block .field-label { color: var(--accent); margin-right: 8px; }
+.title-block .field-label { color: var(--brass); margin-right: 8px; }
 .title-block .field-value { color: var(--foreground); font-weight: 500; }
 .title-block .spacer { flex: 1; }
 .title-block .live-dot {

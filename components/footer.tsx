@@ -46,7 +46,7 @@ export function Footer() {
 
           {/* Right: last updated + legal */}
           <div className="md:text-right space-y-2">
-            <div>Last updated · {lastUpdated}</div>
+            <div><span className="text-brass">Last updated</span> · {lastUpdated}</div>
             <div>
               <Link href="/privacy" className={legalLinkClass}>
                 Privacy

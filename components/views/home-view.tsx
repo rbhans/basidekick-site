@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { ArrowRight, GithubLogo } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
@@ -65,6 +65,11 @@ export function HomeView({
   const [specimens, setSpecimens] = useState<FeaturedAtlasEntry[]>(featuredAtlas ? [featuredAtlas] : []);
   const [specimenIndex, setSpecimenIndex] = useState(0);
   const currentSpecimen = specimens[specimenIndex] || featuredAtlas;
+  const revLabel = useMemo(() => {
+    const d = new Date();
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${pad(d.getMonth() + 1)}·${pad(d.getDate())}·${String(d.getFullYear()).slice(-2)}`;
+  }, []);
 
   // Fetch atlas points client-side, shuffle, and filter for cycling variety
   useEffect(() => {
@@ -116,6 +121,7 @@ export function HomeView({
 
   return (
     <div className="min-h-full">
+      <GlyphSprite />
       {/* ============ HERO / MANIFESTO ============ */}
       <div className="hero-wrap">
         <div className="hero-bg" aria-hidden="true" />
@@ -158,10 +164,7 @@ export function HomeView({
       <section className="bg-secondary border-y border-border">
         <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-20 max-w-[1100px]">
           <Reveal>
-            <div className="font-mono text-[11px] uppercase tracking-[1.4px] text-muted-foreground mb-3">
-              <span className="text-accent mr-1.5">01 /</span>
-              Atlas, today
-            </div>
+            <SectionEyebrow num="01 /" label="Atlas, today" glyph="compass" />
             <h2 className="font-heading font-semibold text-[28px] md:text-[34px] leading-[1.15] tracking-[-0.01em] text-foreground max-w-[760px]">
               An open reference for points, equipment, and the messy names they show up under.
             </h2>
@@ -173,8 +176,30 @@ export function HomeView({
           {/* Specimen card — cycles through atlas points */}
           {currentSpecimen && (
             <Reveal delay={0.1}>
-              <div className="mt-9 bg-card border border-border rounded-md p-9 grid grid-cols-1 md:grid-cols-2 gap-10 relative overflow-hidden">
-                <div className="md:pr-6 md:border-r md:border-border">
+              <div className="mt-9 bg-card border border-border rounded-md grid grid-cols-1 md:grid-cols-2 gap-y-0 md:gap-x-10 relative overflow-hidden">
+                {/* RIBBON — full-width row across both columns */}
+                <div className="col-span-full bg-secondary border-b border-border px-9 py-2.5 flex items-center gap-5 flex-wrap font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground">
+                  <span className="flex items-center">
+                    <span className="text-accent mr-1.5">Cat.</span>
+                    <span className="text-foreground font-medium normal-case tracking-[.4px] tabular-nums">
+                      ATL-{String(specimenIndex + 1).padStart(4, "0")}
+                    </span>
+                  </span>
+                  <span className="flex items-center pl-5 border-l border-border">
+                    <span className="text-accent mr-1.5">Specimen</span>
+                    <span className="text-foreground font-medium normal-case tracking-[.4px] tabular-nums">
+                      {specimenIndex + 1} of {specimens.length}
+                    </span>
+                  </span>
+                  <span className="ml-auto flex items-center">
+                    <span className="text-brass mr-1.5">Rev</span>
+                    <span className="text-foreground font-medium normal-case tracking-[.4px] tabular-nums">
+                      {revLabel}
+                    </span>
+                  </span>
+                </div>
+
+                <div className="p-9 md:pr-6 md:border-r md:border-border">
                   <TextScramble
                     text={currentSpecimen.name}
                     as="h3"
@@ -204,6 +229,7 @@ export function HomeView({
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentSpecimen.name + "-meta"}
+                    className="p-9 md:pl-0"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -271,10 +297,7 @@ export function HomeView({
       {/* ============ 02 / POINTSTACK ============ */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-16 py-24 max-w-[1100px]">
         <Reveal>
-          <div className="font-mono text-[11px] uppercase tracking-[1.4px] text-muted-foreground mb-3">
-            <span className="text-accent mr-1.5">02 /</span>
-            PointStack
-          </div>
+          <SectionEyebrow num="02 /" label="PointStack" glyph="talk" />
         </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-end mb-11">
@@ -353,6 +376,7 @@ export function HomeView({
               <AlsoHereItem
                 num="03"
                 title="Wiki"
+                glyph="book"
                 description={`Field-tested guides on grounding, sequencing, commissioning, and the things nobody writes down. ${alsoHere.wikiCount} articles and counting.`}
                 linkLabel="Browse the wiki"
                 href={ROUTES.WIKI}
@@ -362,6 +386,7 @@ export function HomeView({
               <AlsoHereItem
                 num="04"
                 title="News"
+                glyph="news"
                 description="A small daily-ish feed of the BAS industry — standards updates, vendor news, security advisories. No hot takes."
                 linkLabel="Read the feed"
                 href={ROUTES.NEWS}
@@ -371,6 +396,7 @@ export function HomeView({
               <AlsoHereItem
                 num="05"
                 title="Open Source"
+                glyph="code"
                 description={
                   <>
                     Rust crates and tools for building BAS software from the ground up. <em>rustbac</em>, <em>rustmod</em>, and an experimental BMS.
@@ -409,7 +435,7 @@ function SpecimenField({
         last ? "" : "border-b border-muted"
       }`}
     >
-      <div className="font-mono text-[11px] uppercase tracking-[1px] text-muted-foreground pt-0.5">
+      <div className="font-mono text-[11px] uppercase tracking-[1px] text-brass pt-0.5">
         {label}
       </div>
       <div className="font-mono text-[12px] leading-[1.5] text-foreground">{value}</div>
@@ -442,19 +468,36 @@ function PointStackStat({
 function AlsoHereItem({
   num,
   title,
+  glyph,
   description,
   linkLabel,
   href,
 }: {
   num: string;
   title: string;
+  glyph: GlyphName;
   description: React.ReactNode;
   linkLabel: React.ReactNode;
   href: string;
 }) {
   return (
     <div className="border-t border-foreground pt-5">
-      <div className="font-mono text-[11px] tracking-[1px] text-accent">{num}</div>
+      <div className="font-mono text-[11px] tracking-[1px] flex items-center gap-2 text-brass">
+        <span className="inline-grid place-items-center w-[18px] h-[18px] border border-current rounded-full">
+          <svg
+            viewBox="0 0 24 24"
+            className="w-[10px] h-[10px]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.7}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <use href={`#bsk-glyph-${glyph}`} />
+          </svg>
+        </span>
+        <span className="text-accent">{num}</span>
+      </div>
       <h4 className="font-heading font-semibold text-[24px] mt-1.5 mb-2 text-foreground leading-[1.2]">
         {title}
       </h4>
@@ -468,5 +511,66 @@ function AlsoHereItem({
         {linkLabel}
       </Link>
     </div>
+  );
+}
+
+type GlyphName = "compass" | "talk" | "book" | "news" | "code";
+
+function SectionEyebrow({
+  num,
+  label,
+  glyph,
+}: {
+  num: string;
+  label: string;
+  glyph: GlyphName;
+}) {
+  return (
+    <div className="font-mono text-[11px] uppercase tracking-[1.4px] text-brass mb-3 flex items-center gap-2.5">
+      <span className="inline-grid place-items-center w-[18px] h-[18px] border border-current rounded-full">
+        <svg
+          viewBox="0 0 24 24"
+          className="w-[10px] h-[10px]"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.7}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <use href={`#bsk-glyph-${glyph}`} />
+        </svg>
+      </span>
+      <span className="text-accent">{num}</span>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function GlyphSprite() {
+  return (
+    <svg width="0" height="0" className="absolute" aria-hidden>
+      <defs>
+        <symbol id="bsk-glyph-compass" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 5 L13.5 12 L12 12 Z" fill="currentColor" stroke="none" />
+          <circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none" />
+        </symbol>
+        <symbol id="bsk-glyph-talk" viewBox="0 0 24 24">
+          <path d="M3 5 H21 V17 H10 L5 21 V17 H3 Z" />
+        </symbol>
+        <symbol id="bsk-glyph-book" viewBox="0 0 24 24">
+          <path d="M3 5 Q9 3 12 5 Q15 3 21 5 V20 Q15 18 12 20 Q9 18 3 20 Z" />
+          <path d="M12 5 V20" />
+        </symbol>
+        <symbol id="bsk-glyph-news" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="16" />
+          <path d="M7 8 H17 M7 12 H13 M7 16 H17" />
+        </symbol>
+        <symbol id="bsk-glyph-code" viewBox="0 0 24 24">
+          <path d="M9 5 Q5 5 5 9 Q5 12 3 12 Q5 12 5 15 Q5 19 9 19" />
+          <path d="M15 5 Q19 5 19 9 Q19 12 21 12 Q19 12 19 15 Q19 19 15 19" />
+        </symbol>
+      </defs>
+    </svg>
   );
 }
