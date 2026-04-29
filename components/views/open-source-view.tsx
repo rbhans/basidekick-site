@@ -110,7 +110,7 @@ export function OpenSourceView() {
               <br />
               Built and maintained by
               <br />
-              Rob Hansen, Tucson
+              Rob, Tucson
             </div>
             <div>
               Protocol-first, MIT-licensed, Rust-native. Pull requests welcome on every public repo.

@@ -31,10 +31,10 @@ export function NewsList() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    fetchFeed({ sortBy: "top" });
+    fetchFeed({ sortBy: "recent" });
   }, [fetchFeed]);
 
-  const currentSort = feedFilter.sortBy || "top";
+  const currentSort = feedFilter.sortBy || "recent";
 
   const lastUpdated = useMemo(
     () =>

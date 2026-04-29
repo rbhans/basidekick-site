@@ -11,6 +11,7 @@ interface PointRow {
   point_function: string | null;
   haystack_tag_string: string | null;
   brick: string | null;
+  alias_count: number;
 }
 
 export async function GET(request: NextRequest) {
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
   const limit = Math.min(parseInt(searchParams.get("limit") || "500"), 1000);
   const offset = parseInt(searchParams.get("offset") || "0");
 
-  let sql = "SELECT * FROM points WHERE 1=1";
+  let sql = "SELECT *, (SELECT COUNT(*) FROM point_aliases WHERE point_id = points.id) AS alias_count FROM points WHERE 1=1";
   const params: unknown[] = [];
 
   if (category) {

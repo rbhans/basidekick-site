@@ -20,7 +20,7 @@ export function Footer() {
             <br />
             Built and maintained by
             <br />
-            Rob Hansen, Tucson
+            Rob, Tucson
           </div>
 
           {/* Middle: open source statement + contact */}

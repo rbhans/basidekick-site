@@ -169,7 +169,7 @@ export function TermsView() {
 
         <PolicySection num="08" title="Liability">
           <p>
-            To the extent allowed by law, BASidekick and Rob Hansen aren&apos;t
+            To the extent allowed by law, BASidekick and Rob aren&apos;t
             liable for any indirect, incidental, or consequential damages
             arising from your use of the site or the information on it.
           </p>

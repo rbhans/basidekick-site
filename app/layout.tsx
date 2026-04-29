@@ -29,7 +29,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "BASidekick — BAS info, community, and resources",
   description:
-    "Independent BAS reference, community, and open-source toolkit. Maintained by Rob Hansen in Tucson.",
+    "Independent BAS reference, community, and open-source toolkit. Maintained by Rob in Tucson.",
   metadataBase: new URL("https://basidekick.com"),
   openGraph: {
     title: "BASidekick — BAS info, community, and resources",
@@ -70,10 +70,10 @@ export default function RootLayout({
                   url: "https://basidekick.com",
                   logo: "https://basidekick.com/brand/wordmark-light.svg",
                   description:
-                    "Independent BAS reference, community, and open-source toolkit. Maintained by Rob Hansen in Tucson.",
+                    "Independent BAS reference, community, and open-source toolkit. Maintained by Rob in Tucson.",
                   founder: {
                     "@type": "Person",
-                    name: "Rob Hansen",
+                    name: "Rob",
                   },
                   sameAs: ["https://github.com/rbhans"],
                 },

@@ -365,7 +365,7 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
             <div>
               <strong className="text-foreground font-bold">Atlas</strong>
               <br />
-              Curated by Rob Hansen
+              Curated by Rob
               <br />
               Independent of any vendor
             </div>

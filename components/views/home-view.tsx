@@ -94,7 +94,7 @@ export function HomeView({
               : [],
             brick: (p.brick as string) || null,
             foundOn: [] as string[],
-            aliasCount: 0,
+            aliasCount: typeof p.alias_count === "number" ? p.alias_count : 0,
             url: "/atlas",
           }));
           setSpecimens(mapped);
