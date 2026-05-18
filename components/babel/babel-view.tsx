@@ -429,18 +429,13 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
                   {group.desc && <p className="at-cat-desc">{group.desc}</p>}
                   {expanded && (
                     <div className="at-rows">
-                      {group.points.slice(0, 5).map((entry) => (
+                      {group.points.map((entry) => (
                         <BabelEntryRow key={`pt-${entry.concept.id}`} entry={entry} type="point" />
                       ))}
-                      {group.equipment.slice(0, 5).map((entry) => (
+                      {group.equipment.map((entry) => (
                         <BabelEntryRow key={`eq-${entry.id}`} entry={entry} type="equipment" />
                       ))}
                     </div>
-                  )}
-                  {expanded && itemCount > 5 && (
-                    <Link href={ROUTES.ATLAS_ENTRY(`?category=${group.catId}`)} className="at-cat-more">
-                      View all {itemCount} in {group.name.toLowerCase()} <span className="arr">→</span>
-                    </Link>
                   )}
                 </section>
               );
