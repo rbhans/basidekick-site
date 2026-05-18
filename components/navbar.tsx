@@ -20,14 +20,10 @@ import { createClient } from "@/lib/supabase/client";
 import { NotificationBell } from "@/components/pointstack/notifications/notification-bell";
 import { HeaderSearch } from "./header-search";
 import { ROUTES } from "@/lib/routes";
+import { MegaMenu } from "./nav/mega-menu";
+import { NAV_GROUPS } from "./nav/nav-config";
 
-const NAV_LINKS: { href: string; label: string }[] = [
-  { href: ROUTES.ATLAS, label: "Atlas" },
-  { href: ROUTES.POINTSTACK, label: "PointStack" },
-  { href: ROUTES.WIKI, label: "Wiki" },
-  { href: ROUTES.NEWS, label: "News" },
-  { href: ROUTES.OPEN_SOURCE, label: "Open Source" },
-];
+const PRIMARY_LINK = { href: ROUTES.ATLAS, label: "Atlas" };
 
 export function Navbar() {
   const pathname = usePathname();
@@ -95,19 +91,18 @@ export function Navbar() {
           {/* Right cluster */}
           <div className="flex items-center gap-2 shrink-0">
             <nav className="hidden lg:flex items-center gap-[2px]">
-              {NAV_LINKS.map((link) => {
-                const active = isActive(link.href);
+              {(() => {
+                const active = isActive(PRIMARY_LINK.href);
                 return (
                   <Link
-                    key={link.href}
-                    href={link.href}
+                    href={PRIMARY_LINK.href}
                     className={`relative px-3 py-2 rounded-sm font-sans text-[13.5px] font-medium transition-colors ${
                       active
                         ? "text-ink"
                         : "text-ink-2 hover:text-ink hover:bg-[var(--sand-2)]"
                     }`}
                   >
-                    {link.label}
+                    {PRIMARY_LINK.label}
                     {active && (
                       <motion.span
                         layoutId="nav-active"
@@ -117,7 +112,10 @@ export function Navbar() {
                     )}
                   </Link>
                 );
-              })}
+              })()}
+              {NAV_GROUPS.map((group) => (
+                <MegaMenu key={group.id} group={group} />
+              ))}
             </nav>
 
             {/* Mobile-only inline search */}
@@ -227,20 +225,40 @@ export function Navbar() {
                   <X className="w-5 h-5" />
                 </Button>
               </div>
-              <nav className="flex-1 p-4 space-y-1">
-                {NAV_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={`block px-4 py-3 rounded-md text-[15px] font-medium transition-colors ${
-                      isActive(link.href)
-                        ? "text-foreground bg-secondary"
-                        : "text-foreground hover:text-punch hover:bg-secondary"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
+              <nav className="flex-1 p-4 overflow-y-auto">
+                <Link
+                  href={PRIMARY_LINK.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`block px-4 py-3 rounded-md text-[15px] font-medium transition-colors ${
+                    isActive(PRIMARY_LINK.href)
+                      ? "text-foreground bg-secondary"
+                      : "text-foreground hover:text-punch hover:bg-secondary"
+                  }`}
+                >
+                  {PRIMARY_LINK.label}
+                </Link>
+                {NAV_GROUPS.map((group) => (
+                  <div key={group.id} className="mt-5">
+                    <div className="px-4 pb-2 font-mono text-[10.5px] uppercase tracking-[0.18em] text-ink-3">
+                      {group.label}
+                    </div>
+                    <div className="space-y-0.5">
+                      {group.items.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setMobileOpen(false)}
+                          className={`block px-4 py-2.5 rounded-md text-[14.5px] transition-colors ${
+                            isActive(item.href)
+                              ? "text-foreground bg-secondary font-medium"
+                              : "text-foreground hover:text-punch hover:bg-secondary"
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </nav>
               <div className="p-4 border-t border-border">

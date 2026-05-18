@@ -39,6 +39,10 @@ export const ROUTES = {
 
   REFERENCES: "/references",
   CALCULATORS: "/calculators",
+  COURSES: "/courses",
+  API_ATLAS: "/api/atlas",
+  POINTSTACK_PEOPLE: "/pointstack/people",
+  POINTSTACK_JOBS: "/pointstack/jobs",
   ACCOUNT: "/account",
   SIGNIN: "/signin",
   SIGNUP: "/signup",
