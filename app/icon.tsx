@@ -11,19 +11,20 @@ export default function Icon() {
     (
       <div
         style={{
-          fontSize: 16,
-          background: "#000000",
+          fontSize: 20,
+          background: "#d11a36",
           width: "100%",
           height: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#ffffff",
+          color: "#fafaf8",
           fontFamily: "monospace",
           fontWeight: 900,
+          letterSpacing: "-0.05em",
         }}
       >
-        [b]
+        BSK
       </div>
     ),
     {

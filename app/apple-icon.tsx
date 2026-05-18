@@ -11,19 +11,20 @@ export default function AppleIcon() {
     (
       <div
         style={{
-          fontSize: 72,
-          background: "#000000",
+          fontSize: 96,
+          background: "#d11a36",
           width: "100%",
           height: "100%",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#ffffff",
+          color: "#fafaf8",
           fontFamily: "monospace",
-          fontWeight: 700,
+          fontWeight: 900,
+          letterSpacing: "-0.05em",
         }}
       >
-        [b]
+        BSK
       </div>
     ),
     {

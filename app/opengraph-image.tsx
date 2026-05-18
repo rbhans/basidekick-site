@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "BASidekick - Tools for BAS Professionals";
+export const alt = "BASidekick — BAS info, community, and resources";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -14,82 +14,104 @@ export default async function Image() {
           width: "100%",
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#09090b",
-          background: "linear-gradient(145deg, #09090b 0%, #18181b 100%)",
+          justifyContent: "space-between",
+          padding: "72px 80px",
+          backgroundColor: "#fafaf8",
+          color: "#0a0a0a",
+          fontFamily: "monospace",
         }}
       >
-        {/* Grid pattern overlay */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgba(161, 161, 170, 0.15) 1px, transparent 0)",
-            backgroundSize: "24px 24px",
-          }}
-        />
-
-        {/* Logo/Brand */}
+        {/* Top status strip */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             gap: "16px",
-            marginBottom: "32px",
+            fontSize: "14px",
+            color: "rgba(10,10,10,0.44)",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+          }}
+        >
+          <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span
+              style={{
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: "#d11a36",
+              }}
+            />
+            SYS NOMINAL
+          </span>
+          <span style={{ color: "rgba(10,10,10,0.22)" }}>·</span>
+          <span>INDEPENDENT BAS TOOLKIT</span>
+        </div>
+
+        {/* Manifesto */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "24px",
+            fontFamily: "sans-serif",
           }}
         >
           <div
             style={{
-              width: "48px",
-              height: "48px",
-              backgroundColor: "#22c55e",
-              borderRadius: "8px",
+              fontSize: "20px",
+              color: "rgba(10,10,10,0.44)",
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              fontFamily: "monospace",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
+              gap: "10px",
             }}
           >
-            <span style={{ fontSize: "28px", color: "#09090b", fontWeight: "bold" }}>B</span>
+            <span style={{ color: "#d11a36" }}>.01</span>
+            BASIDEKICK
           </div>
-          <span
+          <div
             style={{
-              fontSize: "48px",
-              fontWeight: "bold",
-              color: "#fafafa",
-              fontFamily: "monospace",
+              fontSize: "64px",
+              fontWeight: 800,
+              lineHeight: 1.02,
+              letterSpacing: "-0.025em",
+              color: "#0a0a0a",
+              maxWidth: "950px",
+              display: "flex",
+              flexWrap: "wrap",
             }}
           >
-            BASidekick
-          </span>
+            BAS info, community, and resources —{" "}
+            <span style={{ color: "#d11a36", fontStyle: "italic", fontWeight: 800 }}>
+              built by a working engineer
+            </span>
+            , independent of any vendor.
+          </div>
         </div>
 
-        {/* Tagline */}
-        <div
-          style={{
-            fontSize: "28px",
-            color: "#a1a1aa",
-            marginBottom: "48px",
-            fontFamily: "monospace",
-          }}
-        >
-          Tools for BAS Professionals
-        </div>
-
-        {/* Features row */}
+        {/* Footer row */}
         <div
           style={{
             display: "flex",
-            gap: "48px",
-            color: "#71717a",
-            fontSize: "20px",
-            fontFamily: "monospace",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: "16px",
+            color: "rgba(10,10,10,0.44)",
+            letterSpacing: "0.14em",
+            textTransform: "uppercase",
+            paddingTop: "24px",
+            borderTop: "1px solid rgba(10,10,10,0.08)",
           }}
         >
-          <span>SimulatorSidekick</span>
-          <span style={{ color: "#3f3f46" }}>|</span>
-          <span>QR Sidekick</span>
+          <span>
+            <span style={{ color: "#d11a36" }}>BASIDEKICK</span>
+            <span style={{ color: "rgba(10,10,10,0.22)", margin: "0 14px" }}>·</span>
+            <span style={{ color: "#0a0a0a" }}>BASIDEKICK.COM</span>
+          </span>
+          <span>ATLAS · POINTSTACK · WIKI · NEWS · SOURCE</span>
         </div>
       </div>
     ),
