@@ -22,10 +22,6 @@ interface BabelEntryDetailProps {
   hideBackLink?: boolean;
 }
 
-function EmptyState({ text = "-" }: { text?: string }) {
-  return <span className="text-muted-foreground/50">{text}</span>;
-}
-
 function AtlasEquipmentSection({ atlasTypeId }: { atlasTypeId: string }) {
   const { data: atlasData, loading, error } = useAtlasData();
 
@@ -163,9 +159,12 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
   const typicalPoints = !isPoint ? equipEntry.typical_points : undefined;
   const atlasTypeId = !isPoint ? getAtlasTypeIdForBabelEquipment(equipEntry.id) : null;
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = async (text: string, evt: React.MouseEvent<HTMLButtonElement>) => {
     await navigator.clipboard.writeText(text);
     toast.success("Alias copied");
+    const el = evt.currentTarget;
+    el.setAttribute("data-copied", "true");
+    setTimeout(() => el.removeAttribute("data-copied"), 900);
   };
 
   return (
@@ -333,10 +332,10 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
               {aliases.common.map((alias, index) => (
                 <button
                   key={index}
-                  onClick={() => copyToClipboard(alias)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-muted/50 hover:bg-muted rounded font-mono transition-colors group"
+                  onClick={(e) => copyToClipboard(alias, e)}
+                  className="em-chip inline-flex items-center gap-1.5 px-3 py-1.5 text-sm bg-card border border-[var(--sand-line-2)] rounded-sm font-mono text-ink hover:border-ink hover:bg-[var(--card-2)] transition-colors group"
                 >
-                  <Tag className="size-3.5 opacity-50" />
+                  <Tag className="size-3.5 text-ink-3" />
                   {alias}
                   <Copy className="size-3.5 opacity-0 group-hover:opacity-50 transition-opacity" />
                 </button>

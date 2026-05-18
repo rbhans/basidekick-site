@@ -11,8 +11,6 @@ import { WikiArticleRow } from "@/components/wiki/wiki-article-row";
 import { createClient } from "@/lib/supabase/client";
 import { WikiCategory, WikiArticle, WikiFacetGroup, WikiCollection } from "@/lib/types";
 import { sanitizeSearchInput } from "@/lib/security";
-import { getWikiCategoryColor } from "@/lib/wiki-colors";
-import { ROUTES } from "@/lib/routes";
 import {
   parseWikiFilters,
   serializeWikiFilters,
@@ -311,56 +309,34 @@ export function WikiView() {
   const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE);
 
   return (
-    <div className="min-h-full">
-      {/* Title block strip */}
-      <div className="title-block">
-        <div className="field">
-          <span className="field-label">Drawing</span>
-          <span className="field-value">Wiki</span>
+    <section className="sand-section">
+      <div className="wk-page">
+        {/* Page head */}
+        <div className="nw-head" style={{ padding: "0 0 14px", margin: "0 0 28px" }}>
+          <span className="num">.02</span>
+          <h1>Wiki / Field Guide &amp; Reference</h1>
+          <span className="id">
+            <span className="live-dot" /> <b>{totalArticles}</b> articles · <b>{categories.length}</b> categories
+          </span>
         </div>
-        <div className="field">
-          <span className="field-label">Title</span>
-          <span className="field-value">Field Guide &amp; Reference</span>
-        </div>
-        <div className="field">
-          <span className="field-label">Articles</span>
-          <span className="field-value tabular-nums">{totalArticles}</span>
-        </div>
-        <div className="field hidden md:flex">
-          <span className="field-label">Categories</span>
-          <span className="field-value tabular-nums">{categories.length}</span>
-        </div>
-        <div className="spacer" />
-        <div className="field">
-          <span className="field-label">Drawn by</span>
-          <span className="field-value">R.H.</span>
-        </div>
-      </div>
 
-      {/* Tagline */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-16 pt-14 pb-4 max-w-[1100px]">
-        <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5]">
-          Field-tested guides on grounding, sequencing, commissioning, and the things nobody writes down.
+        <p className="wk-tagline">
+          Field-tested guides on grounding, sequencing, commissioning, and the things <em>nobody writes down</em>.
         </p>
-      </div>
 
-      {/* Landing Sections — shown only when no filters are active */}
-      {isLanding && initialDataLoaded && (
-        <section className="py-10 pb-2">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-16 max-w-[1100px] space-y-12">
-            {/* Browse by Category */}
+        {/* Landing Sections — shown only when no filters are active */}
+        {isLanding && initialDataLoaded && (
+          <>
             {categories.length > 0 && (
-              <div>
-                <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
-                  <span className="font-mono text-[11px] text-accent tracking-[1px]">01 /</span>
-                  <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
-                    Browse by category
-                  </h2>
-                  <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
-                    {categories.length} {categories.length === 1 ? "category" : "categories"}
+              <div className="wk-section">
+                <div className="wk-section-head">
+                  <span className="num">.01</span>
+                  <h2>Browse by category</h2>
+                  <span className="meta tabular-nums">
+                    <b>{categories.length}</b> {categories.length === 1 ? "category" : "categories"}
                   </span>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                <div className="wk-cat-grid">
                   {categories.map((cat) => (
                     <WikiCategoryBlock
                       key={cat.id}
@@ -374,16 +350,16 @@ export function WikiView() {
               </div>
             )}
 
-            {/* Featured Collections */}
             {featuredCollections.length > 0 && (
-              <div>
-                <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
-                  <span className="font-mono text-[11px] text-accent tracking-[1px]">02 /</span>
-                  <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
-                    Featured collections
-                  </h2>
+              <div className="wk-section">
+                <div className="wk-section-head">
+                  <span className="num">.02</span>
+                  <h2>Featured collections</h2>
+                  <span className="meta tabular-nums">
+                    <b>{featuredCollections.length}</b> {featuredCollections.length === 1 ? "collection" : "collections"}
+                  </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="wk-coll-grid">
                   {featuredCollections.map((col) => (
                     <WikiCollectionCard key={col.id} collection={col} />
                   ))}
@@ -391,28 +367,26 @@ export function WikiView() {
               </div>
             )}
 
-            {/* Popular Platforms */}
             {(() => {
               const platformGroup = facetGroups.find((g) => g.slug === "platform_vendor");
               const platforms = platformGroup?.facets?.filter((f) => f.article_count > 0) || [];
               if (platforms.length === 0) return null;
               return (
-                <div>
-                  <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">
-                    <span className="font-mono text-[11px] text-accent tracking-[1px]">03 /</span>
-                    <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
-                      Popular platforms
-                    </h2>
+                <div className="wk-section">
+                  <div className="wk-section-head">
+                    <span className="num">.03</span>
+                    <h2>Popular platforms</h2>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="wk-pill-row">
                     {platforms.map((facet) => (
                       <button
                         key={facet.id}
+                        type="button"
                         onClick={() => updateFilters({ platform: [facet.slug] })}
-                        className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground border border-border bg-card px-3 py-1.5 rounded-sm hover:border-foreground hover:text-foreground transition-colors"
+                        className="wk-platform-pill"
                       >
                         {facet.name}
-                        <span className="ml-2 text-accent tabular-nums">{facet.article_count}</span>
+                        <span className="ct">{facet.article_count}</span>
                       </button>
                     ))}
                   </div>
@@ -420,16 +394,13 @@ export function WikiView() {
               );
             })()}
 
-            {/* Recently Updated */}
             {recentArticles.length > 0 && (
-              <div>
-                <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-0">
-                  <span className="font-mono text-[11px] text-accent tracking-[1px]">04 /</span>
-                  <h2 className="font-heading font-semibold text-[22px] leading-none text-foreground">
-                    Recently updated
-                  </h2>
-                  <span className="ml-auto font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground inline-flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
+              <div className="wk-section">
+                <div className="wk-section-head">
+                  <span className="num">.04</span>
+                  <h2>Recently updated</h2>
+                  <span className="meta">
+                    <Clock className="w-3 h-3 inline mr-1" />
                     Latest
                   </span>
                 </div>
@@ -440,9 +411,8 @@ export function WikiView() {
                 </div>
               </div>
             )}
-          </div>
-        </section>
-      )}
+          </>
+        )}
 
       {/* Main Content — Sidebar + Filter Bar + Results */}
       <section className="py-8 pb-16">
@@ -593,6 +563,7 @@ export function WikiView() {
           </div>
         </div>
       </section>
+      </div>
 
       {/* Mobile Sidebar Toggle */}
       <div className="lg:hidden fixed bottom-4 right-4 z-40">
@@ -648,6 +619,6 @@ export function WikiView() {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

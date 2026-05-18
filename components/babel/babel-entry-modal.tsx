@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog as DialogPrimitive } from "radix-ui";
-import { X } from "@phosphor-icons/react";
+import { X, Copy } from "@phosphor-icons/react";
 import { BabelEntryPageClient } from "./babel-entry-page-client";
+import { ROUTES } from "@/lib/routes";
 import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
 
 interface BabelEntryModalProps {
@@ -13,6 +15,7 @@ interface BabelEntryModalProps {
 
 export function BabelEntryModal({ entry, type }: BabelEntryModalProps) {
   const router = useRouter();
+  const [copied, setCopied] = useState(false);
 
   const id =
     type === "point"
@@ -22,58 +25,78 @@ export function BabelEntryModal({ entry, type }: BabelEntryModalProps) {
     type === "point"
       ? (entry as BabelPointEntry).concept.name
       : (entry as BabelEquipmentEntry).name;
+  const category =
+    type === "point"
+      ? (entry as BabelPointEntry).concept.category
+      : (entry as BabelEquipmentEntry).category;
 
   const handleClose = () => router.back();
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}${ROUTES.ATLAS_ENTRY(id)}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1200);
+    } catch {
+      // ignore
+    }
+  };
 
   return (
     <DialogPrimitive.Root open onOpenChange={handleClose}>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
-          className="fixed inset-0 z-50 bg-foreground/55 backdrop-blur-[2px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-100"
+          className="fixed inset-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-150"
+          style={{ background: "rgba(8,8,8,.42)", backdropFilter: "blur(2px)" }}
         />
         <DialogPrimitive.Content
-          className="fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-[calc(100vw-32px)] max-w-4xl max-h-[90vh] bg-card border-[1.5px] border-foreground rounded-md overflow-hidden flex flex-col outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-100"
+          className="fixed right-0 top-0 bottom-0 z-50 w-full sm:w-[min(960px,100%)] max-w-full bg-sand border-l border-[var(--sand-line-2)] overflow-y-auto overflow-x-hidden outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right-8 data-[state=open]:slide-in-from-right-8 data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-200"
+          style={{ boxShadow: "-20px 0 40px -10px rgba(0,0,0,.18)" }}
         >
           <DialogPrimitive.Title className="sr-only">{name}</DialogPrimitive.Title>
 
-          {/* Mini title block strip */}
-          <div className="title-block !py-3 !px-6 shrink-0">
-            <div className="field">
-              <span className="field-label">Drawing</span>
-              <span className="field-value">Atlas</span>
+          {/* Modal header bar */}
+          <div className="em-bar">
+            <div className="crumbs">
+              <span>Atlas</span>
+              <span className="sep">/</span>
+              <b className="truncate max-w-[140px]">{category.replace("-", " ")}</b>
+              <span className="sep">/</span>
+              <b className="truncate max-w-[180px]">{id}</b>
             </div>
-            <div className="field">
-              <span className="field-label">Sheet</span>
-              <span className="field-value truncate max-w-[220px]">{id}</span>
-            </div>
-            <div className="field hidden sm:flex">
-              <span className="field-label">Type</span>
-              <span className="field-value">{type === "point" ? "Point" : "Equipment"}</span>
-            </div>
-            <div className="spacer" />
-            <div className="field">
-              <span className="field-label">Drawn by</span>
-              <span className="field-value">R.H.</span>
-            </div>
-            <DialogPrimitive.Close
-              aria-label="Close"
-              className="ml-4 w-6 h-6 border border-foreground rounded-sm flex items-center justify-center text-foreground hover:bg-foreground hover:text-background transition-colors shrink-0"
+            <span className="url hidden md:inline">
+              basidekick.com/atlas/<b>{id}</b>
+            </span>
+            <span className="spacer" />
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="em-action"
+              aria-label="Copy link"
             >
+              <Copy className="w-3 h-3" weight="regular" />
+              {copied ? "Copied!" : "Copy link"}
+            </button>
+            <DialogPrimitive.Close aria-label="Close" className="em-action em-close">
+              <span>Close</span>
+              <kbd>esc</kbd>
               <X className="w-3 h-3" weight="bold" />
             </DialogPrimitive.Close>
           </div>
 
-          {/* Body — the existing BabelEntryDetail content, scrollable */}
-          <div className="flex-1 overflow-y-auto p-6 sm:p-8">
+          {/* Body */}
+          <div className="px-5 sm:px-8 py-6 sm:py-8">
             <BabelEntryPageClient entry={entry} type={type} hideBackLink />
           </div>
 
-          {/* URL hint footer */}
-          <div className="shrink-0 border-t border-border bg-secondary px-6 py-3 font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground flex items-center justify-between">
+          {/* Modal footer */}
+          <div className="em-foot">
             <span>
-              URL · <span className="text-foreground normal-case tracking-normal">basidekick.com/atlas/{id}</span>
+              URL · <b>basidekick.com/atlas/{id}</b>
             </span>
-            <span className="hidden sm:inline">Press ESC to close</span>
+            <span className="right">
+              Press <kbd>esc</kbd> to close
+            </span>
           </div>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

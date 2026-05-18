@@ -1,10 +1,8 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import { BabelEntryPageClient } from "@/components/babel/babel-entry-page-client";
 import { escapeJsonLd } from "@/lib/security";
 import { getAllBabelIds, getBabelEntry, type BabelEntryLookup } from "@/lib/data/babel";
 import type { BabelEquipmentEntry, BabelPointEntry } from "@/lib/types";
-import { ROUTES } from "@/lib/routes";
 
 const BASE_URL = "https://basidekick.com";
 
@@ -179,45 +177,8 @@ export default async function BabelEntryPage({ params }: BabelEntryPageProps) {
         dangerouslySetInnerHTML={{ __html: escapeJsonLd(breadcrumbJsonLd) }}
       />
       <div className="min-h-full">
-        {/* Title block strip */}
-        <div className="title-block">
-          <div className="field">
-            <span className="field-label">Drawing</span>
-            <span className="field-value">Atlas</span>
-          </div>
-          <div className="field">
-            <span className="field-label">Sheet</span>
-            <span className="field-value truncate max-w-[260px]">{id}</span>
-          </div>
-          <div className="field">
-            <span className="field-label">Type</span>
-            <span className="field-value">{entry.type === "point" ? "Point" : "Equipment"}</span>
-          </div>
-          <div className="field hidden md:flex">
-            <span className="field-label">Title</span>
-            <span className="field-value truncate max-w-[320px]">{name}</span>
-          </div>
-          <div className="spacer" />
-          <div className="field">
-            <span className="field-label">Drawn by</span>
-            <span className="field-value">R.H.</span>
-          </div>
-        </div>
-
-        {/* Back link */}
-        <div className="container mx-auto px-4 sm:px-6 lg:px-16 pt-5 max-w-[880px]">
-          <Link
-            href={ROUTES.ATLAS}
-            className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors"
-          >
-            <span className="text-accent mr-1.5">←</span>
-            Back to Atlas
-          </Link>
-        </div>
-
-        {/* Content */}
-        <section className="py-8 pb-16">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-16 max-w-[880px]">
+        <section className="py-12 pb-16">
+          <div className="bsk-wrap" style={{ maxWidth: 880 }}>
             <BabelEntryPageClient entry={entry.data} type={entry.type} />
           </div>
         </section>

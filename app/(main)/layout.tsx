@@ -4,7 +4,10 @@ import { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { StatusStrip } from "@/components/status-strip";
+import { Colophon } from "@/components/colophon";
 import { PageTransition } from "@/components/motion";
+import pkg from "../../package.json";
 
 const FloatingMessenger = dynamic(
   () => import("@/components/pointstack/messenger").then((mod) => mod.FloatingMessenger),
@@ -16,6 +19,8 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
+  const buildTime = process.env.BUILD_TIME ?? new Date().toISOString();
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Skip to content link for accessibility */}
@@ -26,11 +31,15 @@ export default function MainLayout({ children }: MainLayoutProps) {
         Skip to main content
       </a>
 
+      <StatusStrip version={pkg.version} buildTime={buildTime} />
+
       <Navbar />
 
       <main id="main-content" className="flex-1" tabIndex={-1}>
         <PageTransition>{children}</PageTransition>
       </main>
+
+      <Colophon />
 
       <Footer />
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MagnifyingGlass, Spinner, WarningCircle } from "@phosphor-icons/react";
+import { Spinner, WarningCircle } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { useNewsStore } from "./news-store";
 import { NewsCard } from "./news-card";
@@ -36,16 +36,6 @@ export function NewsList() {
 
   const currentSort = feedFilter.sortBy || "recent";
 
-  const lastUpdated = useMemo(
-    () =>
-      new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
-    [],
-  );
-
   // Client-side search filtering
   const filteredArticles = useMemo(() => {
     if (!searchQuery.trim()) return articles;
@@ -67,85 +57,63 @@ export function NewsList() {
   }, [articles]);
 
   return (
-    <div className="min-h-full flex-1">
-      {/* Title block strip */}
-      <div className="title-block">
-        <div className="field">
-          <span className="field-label">Drawing</span>
-          <span className="field-value">News</span>
+    <section className="sand-section">
+      <div className="nw-page">
+        <div className="nw-head" style={{ padding: "0 0 14px", margin: "0 0 28px" }}>
+          <span className="num">.04</span>
+          <h1>News / Industry Feed</h1>
+          <span className="id">
+            <span className="live-dot" /> LIVE · <b>{articles.length}</b> articles · <b>{uniqueSources}</b> sources
+          </span>
         </div>
-        <div className="field">
-          <span className="field-label">Title</span>
-          <span className="field-value">Industry Feed</span>
-        </div>
-        <div className="field">
-          <span className="field-label">Rev</span>
-          <span className="field-value">{lastUpdated}</span>
-        </div>
-        <div className="field">
-          <span className="field-label">Articles</span>
-          <span className="field-value tabular-nums">{articles.length}</span>
-        </div>
-        <div className="field hidden md:flex">
-          <span className="field-label">Sources</span>
-          <span className="field-value tabular-nums">{uniqueSources}</span>
-        </div>
-        <div className="spacer" />
-        <div className="field">
-          <span className="field-label">Drawn by</span>
-          <span className="field-value">R.H.</span>
-        </div>
-      </div>
 
-      {/* Main body */}
-      <section className="container mx-auto px-4 sm:px-6 lg:px-16 pt-16 pb-16 max-w-[900px]">
-        {/* Tagline */}
-        <p className="font-heading italic text-[17px] text-muted-foreground text-center mb-8 leading-[1.5]">
-          A daily-ish feed of what&apos;s moving in the industry. Read the summary here, read the original there.
+        <p className="nw-tagline">
+          A daily-ish feed of what&apos;s moving in the industry. <em>Read the summary here</em>, read the original there.
         </p>
 
-        {/* Submit box (for authenticated users) */}
+        {/* Submit box */}
         {user && (
-          <div className="flex items-center justify-between border border-border rounded-md bg-card p-4 mb-6">
-            <p className="text-[13px] text-muted-foreground">
-              Know a good article? Share it with the community.
-            </p>
+          <div className="nw-submit">
+            <span className="icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 3v10M3 8h10" />
+              </svg>
+            </span>
+            <p>Know a good article? <b>Share it with the community.</b></p>
             <SubmitArticleDialog />
           </div>
         )}
 
         {/* Search */}
-        <div className="relative border-[1.5px] border-foreground rounded-md bg-card focus-within:border-accent transition-colors mb-5">
-          <MagnifyingGlass className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+        <div className="nw-search">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="7" cy="7" r="4.5" />
+            <path d="m13 13-2.8-2.8" />
+          </svg>
           <input
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by title, source, or tag…"
-            className="w-full bg-transparent border-none outline-none font-sans text-[15px] text-foreground placeholder:text-muted-foreground/60 placeholder:italic py-3.5 pl-[46px] pr-5"
             aria-label="Search news"
           />
         </div>
 
-        {/* Sort chips */}
-        <div className="flex items-center gap-3 mb-10 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground">
-          <span>Sort</span>
+        {/* Sort row */}
+        <div className="nw-sortrow">
+          <span className="label">Sort</span>
           {SORT_TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setFeedFilter({ ...feedFilter, sortBy: tab.key })}
-              className={`px-3 py-1.5 border rounded-sm font-mono text-[11px] uppercase tracking-[1.2px] transition-colors ${
-                currentSort === tab.key
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground"
-              }`}
+              aria-selected={currentSort === tab.key}
+              className="nw-pill"
             >
               {tab.label}
             </button>
           ))}
-          <span className="flex-1" />
-          <span className="font-mono text-[11px] text-muted-foreground">
-            <strong className="text-foreground tabular-nums">{filteredArticles.length}</strong> shown
+          <span className="count">
+            <b>{filteredArticles.length}</b>shown
           </span>
         </div>
 
@@ -172,7 +140,7 @@ export function NewsList() {
 
         {/* Article list */}
         {filteredArticles.length > 0 && (
-          <div className="space-y-3">
+          <div className="nw-list">
             {filteredArticles.map((article) => (
               <NewsCard key={article.id} article={article} />
             ))}
@@ -209,28 +177,7 @@ export function NewsList() {
             <Spinner className="w-5 h-5 animate-spin text-muted-foreground" />
           </div>
         )}
-      </section>
-
-      {/* Colophon */}
-      <div className="border-t border-border bg-secondary">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-16 py-14 max-w-[1100px]">
-          <div className="grid grid-cols-1 md:grid-cols-[240px_1fr_220px] gap-10 font-mono text-[12px] text-muted-foreground leading-relaxed">
-            <div>
-              <strong className="text-foreground font-bold">News</strong>
-              <br />
-              Curated daily-ish by Rob
-              <br />
-              and an AI first-pass
-            </div>
-            <div>
-              No hot takes. Sources include standards bodies, vendor blogs, CISA advisories, and community submissions.
-            </div>
-            <div className="md:text-right">
-              Last updated · {lastUpdated}
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
+    </section>
   );
 }

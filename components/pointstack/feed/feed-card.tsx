@@ -102,168 +102,145 @@ export function FeedCard({ post, equipmentLinks = [], onTagClick }: FeedCardProp
 
   const isQuestion = post.post_type === "question";
 
+  const liked = post.user_vote === 1;
+
   return (
     <>
-      <article className="group border border-border rounded-md bg-card hover:border-foreground transition-colors">
-        <div className="p-5">
-          {/* Kind + author row */}
-          <div className="flex items-center gap-2.5 mb-3 flex-wrap">
-            <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
-              {isQuestion && <span className="text-accent mr-0.5">?</span>}
-              {POST_TYPE_LABEL[post.post_type]}
-            </span>
-            <span className="text-muted-foreground/40">·</span>
-            <Link
-              href={profileLink}
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1.5"
-            >
-              <UserAvatar
-                displayName={post.author?.display_name || null}
-                avatarUrl={post.author?.avatar_url}
-                size="sm"
-              />
-              <span className="font-mono text-[11px] text-foreground font-medium hover:text-accent transition-colors truncate">
-                @{post.author?.display_name || "anonymous"}
-              </span>
-            </Link>
-            <span className="text-muted-foreground/40">·</span>
-            <time
-              dateTime={post.created_at}
-              title={fullTimestamp}
-              className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground"
-            >
-              {relativeTime}
-            </time>
-
-            {isAuthor && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="ml-auto h-7 w-7 text-muted-foreground hover:text-foreground"
-                    aria-label="Post options"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <DotsThree className="w-4 h-4" weight="bold" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link href={`${postHref}?edit=true`} className="gap-2">
-                      <PencilSimple className="w-3.5 h-3.5" />
-                      Edit
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="text-destructive gap-2"
-                    onClick={() => setDeleteDialogOpen(true)}
-                  >
-                    <Trash className="w-3.5 h-3.5" />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-
-          {/* Title + body */}
-          <Link href={postHref} className="block">
-            <h3 className="font-heading font-semibold text-[17px] leading-[1.3] text-foreground group-hover:text-accent transition-colors mb-1.5">
-              {post.title}
-            </h3>
-            {postContent && (
-              <p className="text-[13px] text-muted-foreground leading-[1.55] line-clamp-2 max-w-[640px]">
-                {postContent.slice(0, 280)}
-                {postContent.length > 280 && "…"}
-              </p>
-            )}
+      <article className="post">
+        <div className="meta-row">
+          <span className="kind">
+            {isQuestion && <span className="q-mark">?</span>}
+            {POST_TYPE_LABEL[post.post_type]}
+          </span>
+          <span className="meta-sep">·</span>
+          <Link href={profileLink} onClick={(e) => e.stopPropagation()} className="author">
+            <UserAvatar
+              displayName={post.author?.display_name || null}
+              avatarUrl={post.author?.avatar_url}
+              size="sm"
+            />
+            <span className="truncate">@{post.author?.display_name || "anonymous"}</span>
           </Link>
+          <span className="meta-sep">·</span>
+          <time
+            dateTime={post.created_at}
+            title={fullTimestamp}
+            className="ts"
+          >
+            {relativeTime}
+          </time>
 
-          {/* Tags + equipment */}
-          {(postTags.length > 0 || equipmentLinks.length > 0) && (
-            <div className="flex items-center gap-2 mt-3.5 flex-wrap">
-              {postTags.slice(0, 5).map((tag) => (
-                <button
-                  key={tag}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onTagClick?.(tag);
-                  }}
-                  className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border rounded-sm px-2 py-0.5 hover:border-foreground hover:text-foreground transition-colors"
-                >
-                  {tag}
-                </button>
-              ))}
-              {postTags.length > 5 && (
-                <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
-                  +{postTags.length - 5}
-                </span>
-              )}
-              {equipmentLinks.slice(0, 3).map((item) => (
-                <Link
-                  key={item.id}
-                  href={item.href}
+          {isAuthor && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="opts ml-auto"
+                  aria-label="Post options"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border rounded-sm px-2 py-0.5 hover:border-accent hover:text-accent transition-colors"
                 >
-                  <LinkSimple className="w-2.5 h-2.5" />
-                  {item.name}
-                </Link>
-              ))}
-            </div>
+                  <DotsThree className="w-4 h-4" weight="bold" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link href={`${postHref}?edit=true`} className="gap-2">
+                    <PencilSimple className="w-3.5 h-3.5" />
+                    Edit
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive gap-2"
+                  onClick={() => setDeleteDialogOpen(true)}
+                >
+                  <Trash className="w-3.5 h-3.5" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
+        </div>
 
-          {/* Engagement */}
-          <div className="flex items-center gap-5 pt-4 mt-4 border-t border-muted">
-            <button
-              onClick={handleVote}
-              disabled={!user}
-              className={cn(
-                "flex items-center gap-1.5 font-mono text-[11px] tabular-nums transition-colors",
-                post.user_vote === 1
-                  ? "text-accent"
-                  : "text-muted-foreground hover:text-accent disabled:hover:text-muted-foreground",
-              )}
-              aria-label="Upvote"
-            >
-              <Heart
-                className="w-3.5 h-3.5"
-                weight={post.user_vote === 1 ? "fill" : "regular"}
-              />
-              {post.upvote_count}
-            </button>
-            <Link
-              href={postHref}
-              className="flex items-center gap-1.5 font-mono text-[11px] tabular-nums text-muted-foreground hover:text-accent transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <ChatCircle className="w-3.5 h-3.5" />
-              {post.comment_count}
-            </Link>
-            <button
-              onClick={handleShare}
-              className={cn(
-                "flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[1.1px] transition-colors",
-                shareSuccess ? "text-accent" : "text-muted-foreground hover:text-accent",
-              )}
-              aria-label="Share"
-            >
-              {shareSuccess ? (
-                <>
-                  <CheckCircle className="w-3.5 h-3.5" weight="fill" />
-                  Copied
-                </>
-              ) : (
-                <>
-                  <Share className="w-3.5 h-3.5" />
-                  Share
-                </>
-              )}
-            </button>
+        <Link href={postHref} className="block">
+          <h3>{post.title}</h3>
+          {postContent && (
+            <p className="body">
+              {postContent.slice(0, 280)}
+              {postContent.length > 280 && "…"}
+            </p>
+          )}
+        </Link>
+
+        {(postTags.length > 0 || equipmentLinks.length > 0) && (
+          <div className="chip-row">
+            {postTags.slice(0, 5).map((tag) => (
+              <button
+                key={tag}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onTagClick?.(tag);
+                }}
+                className="tag"
+              >
+                {tag}
+              </button>
+            ))}
+            {postTags.length > 5 && (
+              <span className="tag">+{postTags.length - 5}</span>
+            )}
+            {equipmentLinks.slice(0, 3).map((item) => (
+              <Link
+                key={item.id}
+                href={item.href}
+                onClick={(e) => e.stopPropagation()}
+                className="eqp"
+              >
+                <LinkSimple className="w-2.5 h-2.5" />
+                {item.name}
+              </Link>
+            ))}
           </div>
+        )}
+
+        <div className="actions">
+          <button
+            type="button"
+            onClick={handleVote}
+            disabled={!user}
+            className={cn("act", liked && "liked")}
+            aria-label="Upvote"
+          >
+            <Heart weight={liked ? "fill" : "regular"} />
+            {post.upvote_count}
+          </button>
+          <Link
+            href={postHref}
+            className="act"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ChatCircle weight="regular" />
+            {post.comment_count}
+          </Link>
+          <button
+            type="button"
+            onClick={handleShare}
+            className={cn("act share", shareSuccess && "liked")}
+            aria-label="Share"
+          >
+            {shareSuccess ? (
+              <>
+                <CheckCircle weight="fill" />
+                Copied
+              </>
+            ) : (
+              <>
+                <Share weight="regular" />
+                Share
+              </>
+            )}
+          </button>
         </div>
       </article>
 

@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { List, X, SignOut, Gear, ShieldCheck } from "@phosphor-icons/react";
+import { List, X, SignOut, Gear, ShieldCheck, MagnifyingGlass } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "motion/react";
 import { ease } from "@/components/motion";
-import { BrandLogo } from "./brand-logo";
+import { BrandMark } from "./brand-mark";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -69,102 +69,131 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 px-4 sm:px-6 lg:px-16 py-5 border-b border-border bg-background flex items-center gap-8">
-        {/* Brand */}
-        <Link href="/" className="shrink-0 hover:opacity-80 transition-opacity">
-          <BrandLogo />
-        </Link>
+      <header
+        className="sticky top-0 z-40 border-b border-[var(--sand-line)]"
+        style={{ background: "rgba(250,250,248,.85)", backdropFilter: "blur(6px)" }}
+      >
+        <div className="bsk-wrap grid grid-cols-[auto_1fr_auto] items-center gap-7 h-[68px] max-md:gap-3 max-md:h-[60px]">
+          {/* Brand */}
+          <Link href="/" className="flex items-center gap-3 shrink-0 hover:opacity-90 transition-opacity">
+            <BrandMark />
+            <span className="font-sans font-extrabold text-[18px] tracking-[-0.005em] text-ink">
+              BASidekick
+            </span>
+            <span className="hidden lg:inline ml-3.5 pl-3.5 border-l border-[var(--sand-line-2)] font-mono text-[10.5px] uppercase tracking-[0.18em] text-ink-3">
+              Independent BAS Toolkit
+            </span>
+          </Link>
 
-        {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-8 ml-auto">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`relative text-[14px] font-medium transition-colors ${
-                isActive(link.href)
-                  ? "text-accent"
-                  : "text-foreground hover:text-accent"
-              }`}
-            >
-              {link.label}
-              {isActive(link.href) && (
-                <motion.span
-                  layoutId="nav-active"
-                  className="absolute -bottom-[21px] left-0 right-0 h-[2px] bg-accent"
-                  transition={ease.spring}
-                />
-              )}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Right cluster: search, notifications, user menu */}
-        <div className="flex items-center gap-3 shrink-0 md:ml-6 ml-auto">
-          <div className="hidden sm:block">
-            <HeaderSearch />
+          {/* Center — search button */}
+          <div className="hidden md:flex justify-center items-center min-w-0">
+            <div className="w-full max-w-[380px]">
+              <HeaderSearch />
+            </div>
           </div>
 
-          {user && <NotificationBell />}
-
-          {!authLoading && (
-            user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 relative"
-                    aria-label="User menu"
+          {/* Right cluster */}
+          <div className="flex items-center gap-2 shrink-0">
+            <nav className="hidden lg:flex items-center gap-[2px]">
+              {NAV_LINKS.map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`relative px-3 py-2 rounded-sm font-sans text-[13.5px] font-medium transition-colors ${
+                      active
+                        ? "text-ink"
+                        : "text-ink-2 hover:text-ink hover:bg-[var(--sand-2)]"
+                    }`}
                   >
-                    <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-heading font-semibold text-[13px]">
-                      {getUserInitials()}
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <div className="px-2 py-1.5">
-                    <p className="text-sm font-medium truncate">{user.email}</p>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push(ROUTES.ACCOUNT)}>
-                    <Gear className="w-4 h-4 mr-2" />
-                    Account
-                  </DropdownMenuItem>
-                  {isAdmin && (
-                    <DropdownMenuItem onClick={() => router.push(ROUTES.ADMIN)}>
-                      <ShieldCheck className="w-4 h-4 mr-2" />
-                      Admin
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
-                    <SignOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button
-                size="sm"
-                onClick={() => router.push(ROUTES.SIGNIN)}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-sm px-4 rounded-md"
-              >
-                Sign in
-              </Button>
-            )
-          )}
+                    {link.label}
+                    {active && (
+                      <motion.span
+                        layoutId="nav-active"
+                        className="absolute left-3 right-3 -bottom-px h-[2px] bg-punch rounded-[2px]"
+                        transition={ease.spring}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
 
-          {/* Mobile hamburger */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden h-8 w-8"
-            onClick={() => setMobileOpen(true)}
-            aria-label="Open menu"
-          >
-            <List className="w-5 h-5" />
-          </Button>
+            {/* Mobile-only inline search */}
+            <div className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                aria-label="Search"
+                onClick={() => setMobileOpen(true)}
+              >
+                <MagnifyingGlass className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {user && <NotificationBell />}
+
+            {!authLoading && (
+              user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 relative"
+                      aria-label="User menu"
+                    >
+                      <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-sans font-semibold text-[13px]">
+                        {getUserInitials()}
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <div className="px-2 py-1.5">
+                      <p className="text-sm font-medium truncate">{user.email}</p>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => router.push(ROUTES.ACCOUNT)}>
+                      <Gear className="w-4 h-4 mr-2" />
+                      Account
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem onClick={() => router.push(ROUTES.ADMIN)}>
+                        <ShieldCheck className="w-4 h-4 mr-2" />
+                        Admin
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                      <SignOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={() => router.push(ROUTES.SIGNIN)}
+                  className="bg-primary text-primary-foreground hover:bg-[#000] font-semibold text-[12.5px] h-[30px] px-3 rounded-sm"
+                >
+                  Sign in
+                </Button>
+              )
+            )}
+
+            {/* Mobile hamburger */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden h-8 w-8"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+            >
+              <List className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -188,7 +217,12 @@ export function Navbar() {
               transition={ease.spring}
             >
               <div className="px-4 py-5 flex items-center justify-between border-b border-border">
-                <BrandLogo size="sm" />
+                <div className="flex items-center gap-2.5">
+                  <BrandMark />
+                  <span className="font-sans font-extrabold text-[16px] tracking-[-0.005em] text-ink">
+                    BASidekick
+                  </span>
+                </div>
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setMobileOpen(false)} aria-label="Close menu">
                   <X className="w-5 h-5" />
                 </Button>
@@ -201,8 +235,8 @@ export function Navbar() {
                     onClick={() => setMobileOpen(false)}
                     className={`block px-4 py-3 rounded-md text-[15px] font-medium transition-colors ${
                       isActive(link.href)
-                        ? "text-accent"
-                        : "text-foreground hover:text-accent hover:bg-secondary"
+                        ? "text-foreground bg-secondary"
+                        : "text-foreground hover:text-punch hover:bg-secondary"
                     }`}
                   >
                     {link.label}
@@ -210,7 +244,7 @@ export function Navbar() {
                 ))}
               </nav>
               <div className="p-4 border-t border-border">
-                <div className="sm:hidden mb-3">
+                <div className="mb-3">
                   <HeaderSearch />
                 </div>
                 {!authLoading && !user && (

@@ -33,6 +33,9 @@ const cspDirectives = [
 ];
 
 const nextConfig: NextConfig = {
+  env: {
+    BUILD_TIME: new Date().toISOString(),
+  },
   serverExternalPackages: ["better-sqlite3"],
   outputFileTracingIncludes: {
     "/api/atlas": ["./data/bas-atlas.db"],

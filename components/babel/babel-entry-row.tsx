@@ -17,39 +17,47 @@ export function BabelEntryRow({ entry, type }: BabelEntryRowProps) {
   const id = isPoint ? pointEntry.concept.id : equipEntry.id;
   const name = isPoint ? pointEntry.concept.name : equipEntry.name;
   const aliases = isPoint ? pointEntry.aliases.common : equipEntry.aliases.common;
-
-  const aliasString = aliases.slice(0, 6).join(" · ");
-  const totalAliases = aliases.length;
-
+  const brick = isPoint ? pointEntry.concept.brick : equipEntry.brick;
   const haystackTagString = isPoint
     ? pointEntry.concept.haystack?.tagString
     : equipEntry.haystack?.tagString;
 
+  const totalAliases = aliases.length;
+  const previewAliases = aliases.slice(0, 6);
+
   return (
-    <Link
-      href={ROUTES.ATLAS_ENTRY(id)}
-      className="group grid grid-cols-1 md:grid-cols-[280px_1fr_200px] gap-6 items-baseline px-1 py-3.5 border-b border-muted hover:bg-muted/40 transition-colors"
-    >
-      <div className="font-heading font-semibold text-[16px] leading-[1.25] text-foreground group-hover:text-accent transition-colors">
-        {name}
+    <Link href={ROUTES.ATLAS_ENTRY(id)} className="at-row" data-type={type}>
+      <div className="lead">
+        <span className="nm">{name}</span>
+        <span className="meta">
+          {brick && (
+            <>
+              <span className="brick">brick:{brick}</span>
+              <span className="sep">·</span>
+            </>
+          )}
+          <span>{totalAliases} {totalAliases === 1 ? "alias" : "aliases"}</span>
+        </span>
       </div>
-      <div className="font-mono text-[12px] text-muted-foreground leading-[1.5] min-w-0 truncate">
-        {aliasString || <span className="text-muted-foreground/40">no aliases</span>}
+      <div className="aliases">
+        {previewAliases.length > 0 ? (
+          previewAliases.map((alias, idx) => (
+            <span key={idx}>
+              {idx === 0 ? <span className="pp">{alias}</span> : alias}
+              {idx < previewAliases.length - 1 && <span className="sep">·</span>}
+            </span>
+          ))
+        ) : (
+          <span className="text-ink-4">no aliases</span>
+        )}
       </div>
-      <div className="font-mono text-[11px] text-muted-foreground uppercase tracking-[1.2px] md:text-right truncate">
-        {totalAliases > 0 && (
-          <>
-            <span className="text-foreground tabular-nums font-bold">{totalAliases}</span>
-            {" alias"}
-            {totalAliases !== 1 ? "es" : ""}
-          </>
-        )}
-        {haystackTagString && (
-          <>
-            {totalAliases > 0 && " · "}
-            <span className="normal-case tracking-normal text-[10px]">{haystackTagString}</span>
-          </>
-        )}
+      <div className="right">
+        <span className="ct">
+          <b>{totalAliases}</b>
+          {totalAliases === 1 ? "alias" : "aliases"}
+        </span>
+        {haystackTagString && <span className="haystack">{haystackTagString}</span>}
+        <span className="arr">→</span>
       </div>
     </Link>
   );
