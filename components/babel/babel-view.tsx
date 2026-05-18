@@ -56,6 +56,7 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const expandedGroupsInitialized = useRef(false);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   // "/" outside any input focuses search
@@ -180,11 +181,13 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
     return [...pointGroups, ...equipGroups];
   }, [data, categories, filtered, scope, searchQuery]);
 
-  // Default-expand first 2 groups
+  // Default-expand first 2 groups on first load only
   useEffect(() => {
-    if (groups.length === 0 || expandedGroups.size > 0) return;
+    if (expandedGroupsInitialized.current) return;
+    if (groups.length === 0) return;
+    expandedGroupsInitialized.current = true;
     setExpandedGroups(new Set(groups.slice(0, 2).map((g) => g.id)));
-  }, [groups, expandedGroups.size]);
+  }, [groups]);
 
   const toggleGroup = (id: string) => {
     setExpandedGroups((prev) => {
