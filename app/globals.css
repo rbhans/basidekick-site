@@ -1779,7 +1779,7 @@
 }
 .wk-article {
   display: grid;
-  grid-template-columns: 90px 1fr auto;
+  grid-template-columns: 120px 1fr auto;
   gap: 18px;
   align-items: start;
   padding: 16px 0;
@@ -1814,11 +1814,13 @@
 }
 .wk-article .cat-label {
   font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: .14em;
+  font-size: 9px;
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--ink-3);
-  line-height: 1.2;
+  line-height: 1.25;
+  word-break: keep-all;
+  white-space: nowrap;
 }
 .wk-article .main { min-width: 0; }
 .wk-article h4 {
