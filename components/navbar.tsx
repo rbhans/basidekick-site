@@ -23,8 +23,6 @@ import { ROUTES } from "@/lib/routes";
 import { MegaMenu } from "./nav/mega-menu";
 import { NAV_GROUPS } from "./nav/nav-config";
 
-const PRIMARY_LINK = { href: ROUTES.ATLAS, label: "Atlas" };
-
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -91,28 +89,6 @@ export function Navbar() {
           {/* Right cluster */}
           <div className="flex items-center gap-2 shrink-0">
             <nav className="hidden lg:flex items-center gap-[2px]">
-              {(() => {
-                const active = isActive(PRIMARY_LINK.href);
-                return (
-                  <Link
-                    href={PRIMARY_LINK.href}
-                    className={`relative px-3 py-2 rounded-sm font-sans text-[13.5px] font-medium transition-colors ${
-                      active
-                        ? "text-ink"
-                        : "text-ink-2 hover:text-ink hover:bg-[var(--sand-2)]"
-                    }`}
-                  >
-                    {PRIMARY_LINK.label}
-                    {active && (
-                      <motion.span
-                        layoutId="nav-active"
-                        className="absolute left-3 right-3 -bottom-px h-[2px] bg-punch rounded-[2px]"
-                        transition={ease.spring}
-                      />
-                    )}
-                  </Link>
-                );
-              })()}
               {NAV_GROUPS.map((group) => (
                 <MegaMenu key={group.id} group={group} />
               ))}
@@ -226,19 +202,8 @@ export function Navbar() {
                 </Button>
               </div>
               <nav className="flex-1 p-4 overflow-y-auto">
-                <Link
-                  href={PRIMARY_LINK.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`block px-4 py-3 rounded-md text-[15px] font-medium transition-colors ${
-                    isActive(PRIMARY_LINK.href)
-                      ? "text-foreground bg-secondary"
-                      : "text-foreground hover:text-punch hover:bg-secondary"
-                  }`}
-                >
-                  {PRIMARY_LINK.label}
-                </Link>
-                {NAV_GROUPS.map((group) => (
-                  <div key={group.id} className="mt-5">
+                {NAV_GROUPS.map((group, idx) => (
+                  <div key={group.id} className={idx === 0 ? "" : "mt-5"}>
                     <div className="px-4 pb-2 font-mono text-[10.5px] uppercase tracking-[0.18em] text-ink-3">
                       {group.label}
                     </div>

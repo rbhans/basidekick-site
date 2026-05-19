@@ -62,7 +62,7 @@ export function MegaMenu({ group }: MegaMenuProps) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.14, ease: [0.2, 0.8, 0.2, 1] }}
-                className="w-[480px] bg-[var(--sand-1)] border border-[var(--sand-line)] shadow-[0_18px_48px_-12px_rgba(20,18,16,0.18)] rounded-sm overflow-hidden"
+                className="w-[480px] bg-background border border-[var(--sand-line)] shadow-[0_18px_48px_-12px_rgba(20,18,16,0.18)] rounded-sm overflow-hidden"
               >
                 {/* Eyebrow */}
                 <div className="px-5 pt-4 pb-2 border-b border-[var(--sand-line-2)]">
@@ -76,7 +76,7 @@ export function MegaMenu({ group }: MegaMenuProps) {
                   {group.items.map((item) => {
                     const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                     return (
-                      <li key={item.href} className="bg-[var(--sand-1)]">
+                      <li key={item.href} className="bg-background">
                         <Link
                           href={item.href}
                           onClick={() => setOpen(false)}
