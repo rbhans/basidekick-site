@@ -12,9 +12,6 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Generated/build artifacts:
-    "pencilsite/dist/**",
-    "pencilsite/build/**",
   ]),
 ]);
 
