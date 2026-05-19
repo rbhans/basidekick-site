@@ -27,14 +27,14 @@ const resources = [
   {
     title: "Calculators",
     description:
-      "CFM, BTU, duct sizing, and other common calculations for BAS professionals.",
+      "Signal scaling, psychrometrics, hydronics, power, schedules, and quick BAS math.",
     href: ROUTES.CALCULATORS,
     letter: "D",
   },
   {
     title: "References",
     description:
-      "Protocol specs, wiring diagrams, and cheat sheets for common BAS tasks.",
+      "Protocol tables, signal notes, abbreviations, and source-backed BAS field sheets.",
     href: ROUTES.REFERENCES,
     letter: "E",
   },

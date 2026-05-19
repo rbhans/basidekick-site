@@ -37,9 +37,9 @@ function Section({
           }`}
         />
       </button>
-      {open && (
-        <div className="pt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">{children}</div>
-      )}
+      <div className={open ? "pt-5 grid grid-cols-1 lg:grid-cols-2 gap-5" : "hidden"}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -81,7 +81,7 @@ function CalcInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           step="any"
-          className="flex-1 border border-border bg-background focus:border-foreground transition-colors outline-none px-2.5 py-2 text-[13px] text-foreground font-mono tabular-nums"
+          className="flex-1 min-w-0 border border-border bg-background focus:border-foreground transition-colors outline-none px-2.5 py-2 text-[13px] text-foreground font-mono tabular-nums"
         />
         {unit && (
           <span className="bg-muted border border-l-0 border-border px-2.5 py-2 font-mono text-[10px] text-muted-foreground min-w-[54px] text-center flex items-center justify-center">
@@ -101,7 +101,7 @@ function CalcOutput({ label, value, unit }: { label: string; value: string; unit
         {label}
       </label>
       <div className="flex">
-        <div className="flex-1 bg-secondary border border-foreground px-2.5 py-2 text-foreground text-[13px] font-mono tabular-nums min-h-[36px] flex items-center">
+        <div className="flex-1 min-w-0 bg-secondary border border-foreground px-2.5 py-2 text-foreground text-[13px] font-mono tabular-nums min-h-[36px] flex items-center break-words">
           {value || "—"}
         </div>
         {unit && (
@@ -112,6 +112,52 @@ function CalcOutput({ label, value, unit }: { label: string; value: string; unit
       </div>
     </div>
   );
+}
+
+function CalculatorNote({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="border-l-2 border-accent pl-3 font-heading italic text-[12px] leading-[1.45] text-muted-foreground">
+      {children}
+    </p>
+  );
+}
+
+const STANDARD_ATMOSPHERE_PSI = 14.696;
+
+const thermistorPresets: Record<string, { label: string; r25: number; beta: number }> = {
+  "10k-3892": { label: "10K NTC beta 3892", r25: 10000, beta: 3892 },
+  "10k-3977": { label: "10K NTC beta 3977", r25: 10000, beta: 3977 },
+  "3k-3977": { label: "3K NTC beta 3977", r25: 3000, beta: 3977 },
+};
+
+const wireGaugeTable = [
+  { gauge: "20", ohmsPer1000Ft: 10.15 },
+  { gauge: "18", ohmsPer1000Ft: 6.385 },
+  { gauge: "16", ohmsPer1000Ft: 4.016 },
+  { gauge: "14", ohmsPer1000Ft: 2.525 },
+  { gauge: "12", ohmsPer1000Ft: 1.588 },
+  { gauge: "10", ohmsPer1000Ft: 0.999 },
+];
+
+function hasInvalidNumbers(values: number[]) {
+  return values.some((value) => Number.isNaN(value) || !Number.isFinite(value));
+}
+
+function saturationVaporPressurePsi(tempF: number) {
+  const rankine = tempF + 459.67;
+  return Math.exp(77.345 + 0.0057 * rankine - 7235 / rankine) / Math.pow(rankine, 8.2);
+}
+
+function getHumidityRatio(tempF: number, relativeHumidity: number, pressurePsi = STANDARD_ATMOSPHERE_PSI) {
+  const vaporPressure = Math.max(0, Math.min(1, relativeHumidity / 100)) * saturationVaporPressurePsi(tempF);
+  if (vaporPressure >= pressurePsi) return Number.NaN;
+  return (0.62198 * vaporPressure) / (pressurePsi - vaporPressure);
+}
+
+function getMoistAirEnthalpy(tempF: number, relativeHumidity: number) {
+  const humidityRatio = getHumidityRatio(tempF, relativeHumidity);
+  if (!Number.isFinite(humidityRatio)) return Number.NaN;
+  return 0.24 * tempF + humidityRatio * (1061 + 0.444 * tempF);
 }
 
 // Select Component — styled native select
@@ -165,23 +211,22 @@ export function CalculatorsView() {
     const engMin = parseFloat(analogEngMin),
       engMax = parseFloat(analogEngMax);
     const raw = parseFloat(analogRawValue);
-    if ([rawMin, rawMax, engMin, engMax, raw].some(isNaN)) return "";
+    if (hasInvalidNumbers([rawMin, rawMax, engMin, engMax, raw]) || rawMax === rawMin) {
+      return "";
+    }
     const scaled = ((raw - rawMin) / (rawMax - rawMin)) * (engMax - engMin) + engMin;
     return scaled.toFixed(2);
   })();
 
   // Thermistor Calculator
   const [thermResistance, setThermResistance] = useState("10000");
-  const [thermType, setThermType] = useState("10k-type2");
+  const [thermType, setThermType] = useState("10k-3892");
 
   const thermTemp = (() => {
     const r = parseFloat(thermResistance);
-    if (isNaN(r)) return "";
-    const a = 0.001129148,
-      b = 0.000234125,
-      c = 0.0000000876741;
-    const lnR = Math.log(r);
-    const tKelvin = 1 / (a + b * lnR + c * Math.pow(lnR, 3));
+    const preset = thermistorPresets[thermType];
+    if (!preset || Number.isNaN(r) || r <= 0) return "";
+    const tKelvin = 1 / (1 / 298.15 + Math.log(r / preset.r25) / preset.beta);
     const tCelsius = tKelvin - 273.15;
     const tFahrenheit = (tCelsius * 9) / 5 + 32;
     return `${tCelsius.toFixed(1)}°C / ${tFahrenheit.toFixed(1)}°F`;
@@ -194,9 +239,10 @@ export function CalculatorsView() {
   const pressureCorrected = (() => {
     const p = parseFloat(pressureRaw),
       elev = parseFloat(elevation);
-    if (isNaN(p) || isNaN(elev)) return "";
-    const correction = Math.exp(-elev / 27000);
-    const corrected = p / correction;
+    if (hasInvalidNumbers([p, elev]) || p <= 0) return "";
+    const atmosphereRatio = Math.pow(1 - 0.00000687535 * elev, 5.2559);
+    if (atmosphereRatio <= 0) return "";
+    const corrected = p / atmosphereRatio;
     return corrected.toFixed(3);
   })();
 
@@ -211,7 +257,7 @@ export function CalculatorsView() {
     const l = parseFloat(achLength),
       w = parseFloat(achWidth),
       h = parseFloat(achHeight);
-    if ([cfm, l, w, h].some(isNaN)) return "";
+    if (hasInvalidNumbers([cfm, l, w, h]) || l <= 0 || w <= 0 || h <= 0) return "";
     const volume = l * w * h;
     const ach = (cfm * 60) / volume;
     return ach.toFixed(2);
@@ -225,9 +271,10 @@ export function CalculatorsView() {
   const matResult = (() => {
     const oa = parseFloat(matOaTemp),
       ra = parseFloat(matRaTemp),
-      damper = parseFloat(matOaDamper);
-    if ([oa, ra, damper].some(isNaN)) return "";
-    const mat = oa * (damper / 100) + ra * (1 - damper / 100);
+      oaFraction = parseFloat(matOaDamper);
+    if (hasInvalidNumbers([oa, ra, oaFraction])) return "";
+    const boundedFraction = Math.max(0, Math.min(100, oaFraction)) / 100;
+    const mat = oa * boundedFraction + ra * (1 - boundedFraction);
     return mat.toFixed(1);
   })();
 
@@ -238,12 +285,9 @@ export function CalculatorsView() {
   const econEnthalpy = (() => {
     const t = parseFloat(econTemp),
       rh = parseFloat(econRh);
-    if (isNaN(t) || isNaN(rh)) return "";
-    const pws =
-      Math.exp(77.345 + 0.0057 * (t + 459.67) - 7235 / (t + 459.67)) /
-      Math.pow(t + 459.67, 8.2);
-    const w = (0.62198 * (rh / 100) * pws) / (14.696 - (rh / 100) * pws);
-    const h = 0.24 * t + w * (1061 + 0.444 * t);
+    if (hasInvalidNumbers([t, rh])) return "";
+    const h = getMoistAirEnthalpy(t, rh);
+    if (!Number.isFinite(h)) return "";
     return h.toFixed(2);
   })();
 
@@ -253,7 +297,7 @@ export function CalculatorsView() {
 
   const optStartTime = (() => {
     const dt = parseFloat(optStartDeltaT);
-    if (isNaN(dt)) return "";
+    if (Number.isNaN(dt)) return "";
     const factors: Record<string, number> = { light: 3, medium: 5, heavy: 8 };
     const time = dt * factors[optStartMass];
     return `${time} minutes`;
@@ -268,23 +312,25 @@ export function CalculatorsView() {
     const bldg = parseInt(bacnetBuilding),
       floor = parseInt(bacnetFloor),
       dev = parseInt(bacnetDevice);
-    if ([bldg, floor, dev].some(isNaN)) return "";
+    if ([bldg, floor, dev].some(Number.isNaN)) return "";
     const instance = bldg * 100000 + floor * 1000 + dev;
     return instance.toString();
   })();
 
-  // MS/TP Trunk Length
-  const [mstpBaud, setMstpBaud] = useState("76800");
-  const [mstpDevices, setMstpDevices] = useState("10");
+  // MS/TP Segment Check
+  const [mstpLengthFt, setMstpLengthFt] = useState("1200");
+  const [mstpUnitLoads, setMstpUnitLoads] = useState("16");
 
-  const mstpLength = (() => {
-    const baud = parseInt(mstpBaud),
-      devices = parseInt(mstpDevices);
-    if (isNaN(baud) || isNaN(devices)) return "";
-    const baseLengths: Record<number, number> = { 9600: 4000, 19200: 4000, 38400: 4000, 76800: 4000 };
-    const maxLength = baseLengths[baud] || 4000;
-    const derating = Math.max(0.5, 1 - (devices - 1) * 0.02);
-    return `${Math.round(maxLength * derating)} ft max`;
+  const mstpSegment = (() => {
+    const length = parseFloat(mstpLengthFt),
+      unitLoads = parseFloat(mstpUnitLoads);
+    if (hasInvalidNumbers([length, unitLoads])) return { status: "", limit: "" };
+    const lengthOk = length <= 4000;
+    const loadOk = unitLoads <= 32;
+    return {
+      status: lengthOk && loadOk ? "Within typical segment limits" : "Split segment or add repeater",
+      limit: "4000 ft / 32 unit loads",
+    };
   })();
 
   // Trend Log Storage
@@ -296,7 +342,7 @@ export function CalculatorsView() {
     const points = parseInt(trendPoints),
       interval = parseInt(trendInterval),
       days = parseInt(trendRetention);
-    if ([points, interval, days].some(isNaN)) return "";
+    if ([points, interval, days].some(Number.isNaN) || interval <= 0) return "";
     const samplesPerDay = (24 * 60) / interval;
     const totalSamples = points * samplesPerDay * days;
     const bytesPerSample = 20;
@@ -308,14 +354,17 @@ export function CalculatorsView() {
   const [pumpGpm, setPumpGpm] = useState("100");
   const [pumpLength, setPumpLength] = useState("200");
   const [pumpSize, setPumpSize] = useState("2");
+  const [pumpCfactor, setPumpCfactor] = useState("140");
 
   const pumpHead = (() => {
     const gpm = parseFloat(pumpGpm),
       length = parseFloat(pumpLength),
-      size = parseFloat(pumpSize);
-    if ([gpm, length, size].some(isNaN)) return "";
-    const velocity = (gpm * 0.408) / (size * size);
-    const frictionLoss = 0.2 * Math.pow(velocity, 1.85) * (length / 100);
+      size = parseFloat(pumpSize),
+      cFactor = parseFloat(pumpCfactor);
+    if (hasInvalidNumbers([gpm, length, size, cFactor]) || size <= 0 || cFactor <= 0) return "";
+    const frictionLoss =
+      (4.52 * Math.pow(gpm, 1.85) * length) /
+      (Math.pow(cFactor, 1.85) * Math.pow(size, 4.87));
     return frictionLoss.toFixed(1);
   })();
 
@@ -324,9 +373,10 @@ export function CalculatorsView() {
 
   const glycolEffect = (() => {
     const pct = parseFloat(glycolPercent);
-    if (isNaN(pct)) return { capacity: "", flow: "" };
-    const capacityLoss = pct * 0.5;
-    const flowIncrease = pct * 0.3;
+    if (Number.isNaN(pct)) return { capacity: "", flow: "" };
+    const boundedPct = Math.max(0, Math.min(60, pct));
+    const capacityLoss = boundedPct * 0.5;
+    const flowIncrease = boundedPct * 0.3;
     return {
       capacity: `${(100 - capacityLoss).toFixed(0)}%`,
       flow: `+${flowIncrease.toFixed(0)}%`,
@@ -336,14 +386,24 @@ export function CalculatorsView() {
   // Expansion Tank
   const [expVolume, setExpVolume] = useState("100");
   const [expDeltaT, setExpDeltaT] = useState("40");
+  const [expFillPressure, setExpFillPressure] = useState("12");
+  const [expMaxPressure, setExpMaxPressure] = useState("28");
 
   const expTankSize = (() => {
     const vol = parseFloat(expVolume),
-      dt = parseFloat(expDeltaT);
-    if (isNaN(vol) || isNaN(dt)) return "";
-    const expansion = vol * (dt * 0.00012);
-    const tankSize = expansion * 2.5;
-    return tankSize.toFixed(1);
+      dt = parseFloat(expDeltaT),
+      fill = parseFloat(expFillPressure),
+      max = parseFloat(expMaxPressure);
+    if (hasInvalidNumbers([vol, dt, fill, max]) || max <= fill) {
+      return { expansion: "", tank: "" };
+    }
+    const expansion = vol * dt * 0.00023;
+    const acceptance = (max - fill) / (max + STANDARD_ATMOSPHERE_PSI);
+    const tankSize = acceptance > 0 ? expansion / acceptance : Number.NaN;
+    return {
+      expansion: expansion.toFixed(2),
+      tank: Number.isFinite(tankSize) ? tankSize.toFixed(1) : "",
+    };
   })();
 
   // Cv Calculator
@@ -355,7 +415,7 @@ export function CalculatorsView() {
     const flow = parseFloat(cvFlow),
       dp = parseFloat(cvDeltaP),
       sg = parseFloat(cvSg);
-    if ([flow, dp, sg].some(isNaN) || dp === 0) return "";
+    if (hasInvalidNumbers([flow, dp, sg]) || dp === 0 || sg <= 0) return "";
     const cv = flow / Math.sqrt(dp / sg);
     return cv.toFixed(1);
   })();
@@ -369,7 +429,7 @@ export function CalculatorsView() {
     const v = parseFloat(powerVolts),
       a = parseFloat(powerAmps),
       pf = parseFloat(powerPf);
-    if ([v, a, pf].some(isNaN)) return "";
+    if (hasInvalidNumbers([v, a, pf])) return "";
     const kw = (v * a * Math.sqrt(3) * pf) / 1000;
     return kw.toFixed(2);
   })();
@@ -381,7 +441,7 @@ export function CalculatorsView() {
   const xfmrSize = (() => {
     const loads = parseInt(xfmrLoads),
       va = parseFloat(xfmrVaEach);
-    if (isNaN(loads) || isNaN(va)) return "";
+    if (Number.isNaN(loads) || Number.isNaN(va)) return "";
     const total = loads * va * 1.25;
     const sizes = [50, 75, 100, 150, 200, 300, 500, 750, 1000];
     const recommended = sizes.find((s) => s >= total) || sizes[sizes.length - 1];
@@ -391,27 +451,36 @@ export function CalculatorsView() {
   // Wire Gauge
   const [wireLength, setWireLength] = useState("100");
   const [wireAmps, setWireAmps] = useState("2");
+  const [wireVoltage, setWireVoltage] = useState("24");
+  const [wireDropPct, setWireDropPct] = useState("5");
 
   const wireGauge = (() => {
     const len = parseFloat(wireLength),
-      amps = parseFloat(wireAmps);
-    if (isNaN(len) || isNaN(amps)) return "";
-    const vDrop = 2 * len * amps * 0.00328;
-    if (vDrop > 2.4) return "14 AWG (consider larger)";
-    if (vDrop > 1.5) return "16 AWG";
-    if (vDrop > 0.9) return "18 AWG";
-    return "20 AWG";
+      amps = parseFloat(wireAmps),
+      volts = parseFloat(wireVoltage),
+      dropPct = parseFloat(wireDropPct);
+    if (hasInvalidNumbers([len, amps, volts, dropPct]) || volts <= 0 || dropPct <= 0) return "";
+    const maxDrop = volts * (dropPct / 100);
+    const selected = wireGaugeTable.find((wire) => {
+      const drop = (2 * len * amps * wire.ohmsPer1000Ft) / 1000;
+      return drop <= maxDrop;
+    });
+    if (!selected) return ">10 AWG or shorten run";
+    const drop = (2 * len * amps * selected.ohmsPer1000Ft) / 1000;
+    return `${selected.gauge} AWG (${drop.toFixed(2)} V drop)`;
   })();
 
   // UPS Runtime
-  const [upsVa, setUpsVa] = useState("1500");
-  const [upsLoad, setUpsLoad] = useState("500");
+  const [upsWh, setUpsWh] = useState("216");
+  const [upsLoadWatts, setUpsLoadWatts] = useState("500");
+  const [upsEfficiency, setUpsEfficiency] = useState("85");
 
   const upsRuntime = (() => {
-    const va = parseFloat(upsVa),
-      load = parseFloat(upsLoad);
-    if (isNaN(va) || isNaN(load) || load === 0) return "";
-    const runtime = (va / load) * 5;
+    const wh = parseFloat(upsWh),
+      load = parseFloat(upsLoadWatts),
+      efficiency = parseFloat(upsEfficiency);
+    if (hasInvalidNumbers([wh, load, efficiency]) || load <= 0) return "";
+    const runtime = ((wh * (efficiency / 100)) / load) * 60;
     return `~${Math.round(runtime)} minutes`;
   })();
 
@@ -422,7 +491,7 @@ export function CalculatorsView() {
   const dewPoint = (() => {
     const t = parseFloat(dpTemp),
       rh = parseFloat(dpRh);
-    if (isNaN(t) || isNaN(rh)) return "";
+    if (hasInvalidNumbers([t, rh]) || rh <= 0) return "";
     const tc = ((t - 32) * 5) / 9;
     const a = 17.27,
       b = 237.7;
@@ -439,12 +508,9 @@ export function CalculatorsView() {
   const enthalpyResult = (() => {
     const t = parseFloat(enthalpyTemp),
       rh = parseFloat(enthalpyRh);
-    if (isNaN(t) || isNaN(rh)) return "";
-    const pws =
-      Math.exp(77.345 + 0.0057 * (t + 459.67) - 7235 / (t + 459.67)) /
-      Math.pow(t + 459.67, 8.2);
-    const w = (0.62198 * (rh / 100) * pws) / (14.696 - (rh / 100) * pws);
-    const h = 0.24 * t + w * (1061 + 0.444 * t);
+    if (hasInvalidNumbers([t, rh])) return "";
+    const h = getMoistAirEnthalpy(t, rh);
+    if (!Number.isFinite(h)) return "";
     return h.toFixed(2);
   })();
 
@@ -455,7 +521,7 @@ export function CalculatorsView() {
   const wetBulb = (() => {
     const t = parseFloat(wbTemp),
       rh = parseFloat(wbRh);
-    if (isNaN(t) || isNaN(rh)) return "";
+    if (hasInvalidNumbers([t, rh]) || rh < 0 || rh > 100) return "";
     const tc = ((t - 32) * 5) / 9;
     const wb =
       tc * Math.atan(0.151977 * Math.sqrt(rh + 8.313659)) +
@@ -474,11 +540,9 @@ export function CalculatorsView() {
   const humidityRatio = (() => {
     const t = parseFloat(hrTemp),
       rh = parseFloat(hrRh);
-    if (isNaN(t) || isNaN(rh)) return { grains: "", lbm: "" };
-    const pws =
-      Math.exp(77.345 + 0.0057 * (t + 459.67) - 7235 / (t + 459.67)) /
-      Math.pow(t + 459.67, 8.2);
-    const w = (0.62198 * (rh / 100) * pws) / (14.696 - (rh / 100) * pws);
+    if (hasInvalidNumbers([t, rh])) return { grains: "", lbm: "" };
+    const w = getHumidityRatio(t, rh);
+    if (!Number.isFinite(w)) return { grains: "", lbm: "" };
     const grains = w * 7000;
     return { grains: grains.toFixed(1), lbm: (w * 1000).toFixed(3) };
   })();
@@ -489,7 +553,7 @@ export function CalculatorsView() {
 
   const optStopTime = (() => {
     const coast = parseInt(osCoastTime);
-    if (isNaN(coast) || !osOccEnd) return "";
+    if (Number.isNaN(coast) || !osOccEnd) return "";
     const [h, m] = osOccEnd.split(":").map(Number);
     let stopM = h * 60 + m - coast;
     if (stopM < 0) stopM += 24 * 60;
@@ -502,14 +566,27 @@ export function CalculatorsView() {
   const [holidayMonth, setHolidayMonth] = useState("11");
   const [holidayNth, setHolidayNth] = useState("4");
   const [holidayDay, setHolidayDay] = useState("4");
-  const [holidayYear, setHolidayYear] = useState("2025");
+  const [holidayYear, setHolidayYear] = useState("2026");
 
   const holidayDate = (() => {
     const month = parseInt(holidayMonth),
       nth = parseInt(holidayNth);
     const dayOfWeek = parseInt(holidayDay),
       year = parseInt(holidayYear);
-    if ([month, nth, dayOfWeek, year].some(isNaN)) return "";
+    if ([month, nth, dayOfWeek, year].some(Number.isNaN)) return "";
+    if (nth === -1) {
+      for (let d = 31; d >= 1; d--) {
+        const date = new Date(year, month - 1, d);
+        if (date.getMonth() !== month - 1) continue;
+        if (date.getDay() === dayOfWeek) {
+          return date.toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          });
+        }
+      }
+    }
     let count = 0;
     for (let d = 1; d <= 31; d++) {
       const date = new Date(year, month - 1, d);
@@ -538,8 +615,10 @@ export function CalculatorsView() {
     const [sh, sm] = occStart.split(":").map(Number);
     const [eh, em] = occEnd.split(":").map(Number);
     const days = parseInt(occDays);
-    if (isNaN(days)) return "";
-    const hoursPerDay = (eh * 60 + em - sh * 60 - sm) / 60;
+    if (Number.isNaN(days)) return "";
+    let minutesPerDay = eh * 60 + em - (sh * 60 + sm);
+    if (minutesPerDay < 0) minutesPerDay += 24 * 60;
+    const hoursPerDay = minutesPerDay / 60;
     const weeksPerYear = 52;
     const total = hoursPerDay * days * weeksPerYear;
     return total.toFixed(0);
@@ -554,7 +633,7 @@ export function CalculatorsView() {
     const exp = parseFloat(driftExpected),
       act = parseFloat(driftActual),
       tol = parseFloat(driftTolerance);
-    if ([exp, act, tol].some(isNaN)) return { diff: "", status: "" };
+    if (hasInvalidNumbers([exp, act, tol])) return { diff: "", status: "" };
     const diff = act - exp;
     const status = Math.abs(diff) <= tol ? "Within tolerance" : "Exceeds tolerance";
     return { diff: diff.toFixed(2), status };
@@ -567,7 +646,7 @@ export function CalculatorsView() {
   const strokeTime = (() => {
     const travel = parseFloat(actTravel),
       speed = parseFloat(actSpeed);
-    if (isNaN(travel) || isNaN(speed) || speed === 0) return "";
+    if (hasInvalidNumbers([travel, speed]) || speed === 0) return "";
     const time = travel / speed;
     return `${time.toFixed(0)} seconds`;
   })();
@@ -581,7 +660,7 @@ export function CalculatorsView() {
     const designCfm = parseFloat(ductDesignCfm),
       designSp = parseFloat(ductDesignSp);
     const actualCfm = parseFloat(ductActualCfm);
-    if ([designCfm, designSp, actualCfm].some(isNaN) || designCfm === 0) return "";
+    if (hasInvalidNumbers([designCfm, designSp, actualCfm]) || designCfm === 0) return "";
     const newSp = designSp * Math.pow(actualCfm / designCfm, 2);
     return newSp.toFixed(2);
   })();
@@ -593,7 +672,7 @@ export function CalculatorsView() {
   const btuResult = (() => {
     const gpm = parseFloat(btuGpm),
       dt = parseFloat(btuDeltaT);
-    if (isNaN(gpm) || isNaN(dt)) return { btu: "", tons: "" };
+    if (hasInvalidNumbers([gpm, dt])) return { btu: "", tons: "" };
     const btu = gpm * dt * 500;
     const tons = btu / 12000;
     return { btu: btu.toLocaleString(), tons: tons.toFixed(2) };
@@ -606,7 +685,7 @@ export function CalculatorsView() {
   const chillerEfficiency = (() => {
     const kw = parseFloat(chillerKw),
       tons = parseFloat(chillerTons);
-    if (isNaN(kw) || isNaN(tons) || tons === 0) return "";
+    if (hasInvalidNumbers([kw, tons]) || tons === 0) return "";
     return (kw / tons).toFixed(3);
   })();
 
@@ -621,7 +700,7 @@ export function CalculatorsView() {
       hp = parseFloat(vfdMotorHp);
     const hours = parseFloat(vfdHoursYear),
       cost = parseFloat(vfdKwhCost);
-    if ([reduction, hp, hours, cost].some(isNaN)) return { kwh: "", dollars: "" };
+    if (hasInvalidNumbers([reduction, hp, hours, cost])) return { kwh: "", dollars: "" };
     const fullKw = hp * 0.746;
     const reducedKw = fullKw * Math.pow(1 - reduction / 100, 3);
     const savedKw = fullKw - reducedKw;
@@ -642,7 +721,7 @@ export function CalculatorsView() {
     const entering = parseFloat(ctEntering),
       leaving = parseFloat(ctLeaving),
       wb = parseFloat(ctWetBulb);
-    if ([entering, leaving, wb].some(isNaN)) return { range: "", approach: "" };
+    if (hasInvalidNumbers([entering, leaving, wb])) return { range: "", approach: "" };
     return {
       range: (entering - leaving).toFixed(1),
       approach: (leaving - wb).toFixed(1),
@@ -656,7 +735,7 @@ export function CalculatorsView() {
   const pidParams = (() => {
     const ku = parseFloat(pidKu),
       tu = parseFloat(pidTu);
-    if (isNaN(ku) || isNaN(tu)) return { kp: "", ki: "", kd: "" };
+    if (hasInvalidNumbers([ku, tu]) || tu === 0) return { kp: "", ki: "", kd: "" };
     return {
       kp: (0.6 * ku).toFixed(3),
       ki: ((1.2 * ku) / tu).toFixed(4),
@@ -677,7 +756,7 @@ export function CalculatorsView() {
     const spMin = parseFloat(resetSpMin),
       spMax = parseFloat(resetSpMax);
     const oat = parseFloat(resetOatCurrent);
-    if ([oatMin, oatMax, spMin, spMax, oat].some(isNaN)) return "";
+    if (hasInvalidNumbers([oatMin, oatMax, spMin, spMax, oat]) || oatMax === oatMin) return "";
     const ratio = Math.max(0, Math.min(1, (oat - oatMin) / (oatMax - oatMin)));
     const sp = spMin + ratio * (spMax - spMin);
     return sp.toFixed(1);
@@ -689,7 +768,7 @@ export function CalculatorsView() {
 
   const pressureConversions = (() => {
     const val = parseFloat(pressureValue);
-    if (isNaN(val)) return { iwc: "", pa: "", psi: "", kpa: "" };
+    if (Number.isNaN(val)) return { iwc: "", pa: "", psi: "", kpa: "" };
     let iwc;
     switch (pressureUnit) {
       case "iwc":
@@ -721,7 +800,7 @@ export function CalculatorsView() {
 
   const flowConversions = (() => {
     const val = parseFloat(flowValue);
-    if (isNaN(val)) return { cfm: "", ls: "", m3h: "" };
+    if (Number.isNaN(val)) return { cfm: "", ls: "", m3h: "" };
     let cfm;
     switch (flowUnit) {
       case "cfm":
@@ -749,7 +828,7 @@ export function CalculatorsView() {
 
   const tempConversions = (() => {
     const val = parseFloat(tempValue);
-    if (isNaN(val)) return { f: "", c: "", k: "" };
+    if (Number.isNaN(val)) return { f: "", c: "", k: "" };
     let f;
     switch (tempUnit) {
       case "f":
@@ -777,16 +856,33 @@ export function CalculatorsView() {
 
   const subnetInfo = (() => {
     const mask = parseInt(subnetMask);
-    if (isNaN(mask) || mask < 0 || mask > 32) return { hosts: "", range: "" };
-    const hosts = Math.pow(2, 32 - mask) - 2;
+    if (Number.isNaN(mask) || mask < 0 || mask > 32) return { hosts: "", range: "" };
+    const hosts = mask === 32 ? 1 : mask === 31 ? 2 : Math.pow(2, 32 - mask) - 2;
     const octets = subnetIp.split(".").map(Number);
-    if (octets.length !== 4 || octets.some(isNaN)) return { hosts: "", range: "" };
+    if (
+      octets.length !== 4 ||
+      octets.some((octet) => Number.isNaN(octet) || octet < 0 || octet > 255)
+    ) {
+      return { hosts: "", range: "" };
+    }
     const ipNum = octets.reduce((acc, oct, i) => acc + (oct << (24 - i * 8)), 0) >>> 0;
-    const maskNum = (0xffffffff << (32 - mask)) >>> 0;
+    const maskNum = mask === 0 ? 0 : (0xffffffff << (32 - mask)) >>> 0;
     const network = ipNum & maskNum;
     const broadcast = network | (~maskNum >>> 0);
     const toIp = (n: number) =>
       [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join(".");
+    if (mask === 32) {
+      return {
+        hosts: hosts.toLocaleString(),
+        range: toIp(network),
+      };
+    }
+    if (mask === 31) {
+      return {
+        hosts: hosts.toLocaleString(),
+        range: `${toIp(network)} - ${toIp(broadcast)}`,
+      };
+    }
     return {
       hosts: hosts.toLocaleString(),
       range: `${toIp(network + 1)} - ${toIp(broadcast - 1)}`,
@@ -822,7 +918,7 @@ export function CalculatorsView() {
         </div>
         <div className="field">
           <span className="field-label">Sections</span>
-          <span className="field-value tabular-nums">08</span>
+          <span className="field-value tabular-nums">11</span>
         </div>
         <div className="spacer" />
         <div className="field">
@@ -848,6 +944,9 @@ export function CalculatorsView() {
               </div>
               <CalcInput label="Raw Input Value" value={analogRawValue} onChange={setAnalogRawValue} unit="mA/V" />
               <CalcOutput label="Scaled Output" value={analogScaled} unit="eng" />
+              <CalculatorNote>
+                Linear scaling only. For live-zero signals, verify fault handling separately.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Thermistor Temperature">
@@ -856,19 +955,26 @@ export function CalculatorsView() {
                 value={thermType}
                 onChange={setThermType}
                 options={[
-                  { value: "10k-type2", label: "10K Type II" },
-                  { value: "10k-type3", label: "10K Type III" },
-                  { value: "3k", label: "3K NTC" },
+                  ...Object.entries(thermistorPresets).map(([value, preset]) => ({
+                    value,
+                    label: preset.label,
+                  })),
                 ]}
               />
               <CalcInput label="Resistance" value={thermResistance} onChange={setThermResistance} unit="Ω" />
               <CalcOutput label="Temperature" value={thermTemp} />
+              <CalculatorNote>
+                Beta-curve approximation. Use the sensor manufacturer table for commissioning.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Pressure with Elevation">
-              <CalcInput label="Measured Pressure" value={pressureRaw} onChange={setPressureRaw} unit="PSI" />
+              <CalcInput label="Station Pressure" value={pressureRaw} onChange={setPressureRaw} unit="psia" />
               <CalcInput label="Elevation" value={elevation} onChange={setElevation} unit="ft" />
-              <CalcOutput label="Corrected (sea level)" value={pressureCorrected} unit="PSI" />
+              <CalcOutput label="Sea-Level Equivalent" value={pressureCorrected} unit="psia" />
+              <CalculatorNote>
+                Uses the standard atmosphere pressure relation; enter absolute station pressure.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
@@ -887,14 +993,20 @@ export function CalculatorsView() {
             <Calculator title="Mixed Air Temperature">
               <CalcInput label="Outside Air Temp" value={matOaTemp} onChange={setMatOaTemp} unit="°F" />
               <CalcInput label="Return Air Temp" value={matRaTemp} onChange={setMatRaTemp} unit="°F" />
-              <CalcInput label="OA Damper Position" value={matOaDamper} onChange={setMatOaDamper} unit="%" />
+              <CalcInput label="OA Air Fraction" value={matOaDamper} onChange={setMatOaDamper} unit="%" />
               <CalcOutput label="Mixed Air Temp" value={matResult} unit="°F" />
+              <CalculatorNote>
+                Uses actual outdoor-air fraction, not damper blade position.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Economizer Enthalpy">
               <CalcInput label="Dry Bulb Temp" value={econTemp} onChange={setEconTemp} unit="°F" />
               <CalcInput label="Relative Humidity" value={econRh} onChange={setEconRh} unit="%" />
               <CalcOutput label="Enthalpy" value={econEnthalpy} unit="BTU/lb" />
+              <CalculatorNote>
+                Sea-level moist-air estimate. Compare OA and RA at the same pressure basis.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Optimal Start Time">
@@ -910,6 +1022,9 @@ export function CalculatorsView() {
                 ]}
               />
               <CalcOutput label="Start Before Occupancy" value={optStartTime} />
+              <CalculatorNote>
+                Rule-of-thumb setup value. Real optimal start should learn from recovery history.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
@@ -922,20 +1037,14 @@ export function CalculatorsView() {
               <CalcOutput label="Device Instance" value={bacnetInstance} />
             </Calculator>
 
-            <Calculator title="MS/TP Trunk Length">
-              <CalcSelect
-                label="Baud Rate"
-                value={mstpBaud}
-                onChange={setMstpBaud}
-                options={[
-                  { value: "9600", label: "9600" },
-                  { value: "19200", label: "19200" },
-                  { value: "38400", label: "38400" },
-                  { value: "76800", label: "76800" },
-                ]}
-              />
-              <CalcInput label="Device Count" value={mstpDevices} onChange={setMstpDevices} />
-              <CalcOutput label="Max Trunk Length" value={mstpLength} />
+            <Calculator title="MS/TP Segment Check">
+              <CalcInput label="Segment Length" value={mstpLengthFt} onChange={setMstpLengthFt} unit="ft" />
+              <CalcInput label="Unit Loads" value={mstpUnitLoads} onChange={setMstpUnitLoads} />
+              <CalcOutput label="Status" value={mstpSegment.status} />
+              <CalcOutput label="Typical Limit" value={mstpSegment.limit} />
+              <CalculatorNote>
+                Quick RS-485 screen only. Cable type, transceiver loading, termination, and biasing still matter.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Trend Log Storage">
@@ -943,6 +1052,9 @@ export function CalculatorsView() {
               <CalcInput label="Sample Interval" value={trendInterval} onChange={setTrendInterval} unit="min" />
               <CalcInput label="Retention Period" value={trendRetention} onChange={setTrendRetention} unit="days" />
               <CalcOutput label="Storage Required" value={trendStorage} unit="MB" />
+              <CalculatorNote>
+                Assumes 20 bytes per sample before database/index overhead.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="IP Subnet Calculator">
@@ -950,6 +1062,9 @@ export function CalculatorsView() {
               <CalcInput label="CIDR Mask" value={subnetMask} onChange={setSubnetMask} unit="bits" />
               <CalcOutput label="Usable Hosts" value={subnetInfo.hosts} />
               <CalcOutput label="Host Range" value={subnetInfo.range} />
+              <CalculatorNote>
+                Useful for BAS VLAN planning; verify gateway, DHCP reservations, and vendor discovery needs.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
@@ -958,20 +1073,33 @@ export function CalculatorsView() {
             <Calculator title="Pump Head Pressure">
               <CalcInput label="Flow Rate" value={pumpGpm} onChange={setPumpGpm} unit="GPM" />
               <CalcInput label="Pipe Run Length" value={pumpLength} onChange={setPumpLength} unit="ft" />
-              <CalcInput label="Pipe Diameter" value={pumpSize} onChange={setPumpSize} unit="in" />
+              <CalcInput label="Inside Diameter" value={pumpSize} onChange={setPumpSize} unit="in" />
+              <CalcInput label="Hazen-Williams C" value={pumpCfactor} onChange={setPumpCfactor} />
               <CalcOutput label="Friction Loss" value={pumpHead} unit="ft H₂O" />
+              <CalculatorNote>
+                Water-only Hazen-Williams estimate for straight pipe. Add fittings, valves, coils, strainers, and glycol correction separately.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Glycol Effects">
               <CalcInput label="Glycol Concentration" value={glycolPercent} onChange={setGlycolPercent} unit="%" />
               <CalcOutput label="Heat Transfer Capacity" value={glycolEffect.capacity} />
               <CalcOutput label="Required Flow Increase" value={glycolEffect.flow} />
+              <CalculatorNote>
+                Screening estimate only. Use glycol manufacturer data for freeze point, viscosity, and pump correction.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Expansion Tank Sizing">
               <CalcInput label="System Volume" value={expVolume} onChange={setExpVolume} unit="gal" />
               <CalcInput label="Temperature Rise" value={expDeltaT} onChange={setExpDeltaT} unit="°F" />
-              <CalcOutput label="Minimum Tank Size" value={expTankSize} unit="gal" />
+              <CalcInput label="Fill Pressure" value={expFillPressure} onChange={setExpFillPressure} unit="psig" />
+              <CalcInput label="Max Pressure" value={expMaxPressure} onChange={setExpMaxPressure} unit="psig" />
+              <CalcOutput label="Expanded Volume" value={expTankSize.expansion} unit="gal" />
+              <CalcOutput label="Minimum Tank Size" value={expTankSize.tank} unit="gal" />
+              <CalculatorNote>
+                Water estimate with diaphragm-tank acceptance. Confirm fill pressure, relief setting, and tank manufacturer selection.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Valve Cv Calculator">
@@ -979,6 +1107,9 @@ export function CalculatorsView() {
               <CalcInput label="Pressure Drop" value={cvDeltaP} onChange={setCvDeltaP} unit="PSI" />
               <CalcInput label="Specific Gravity" value={cvSg} onChange={setCvSg} />
               <CalcOutput label="Required Cv" value={cvResult} />
+              <CalculatorNote>
+                Liquid Cv estimate. Check valve authority, closeoff pressure, and manufacturer sizing.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="BTU from Flow">
@@ -986,6 +1117,9 @@ export function CalculatorsView() {
               <CalcInput label="Temperature Difference" value={btuDeltaT} onChange={setBtuDeltaT} unit="°F" />
               <CalcOutput label="Heat Transfer" value={btuResult.btu} unit="BTU/hr" />
               <CalcOutput label="Cooling Tons" value={btuResult.tons} unit="tons" />
+              <CalculatorNote>
+                Uses the common water constant 500. Adjust for glycol or unusual fluid properties.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
@@ -996,24 +1130,39 @@ export function CalculatorsView() {
               <CalcInput label="Current" value={powerAmps} onChange={setPowerAmps} unit="A" />
               <CalcInput label="Power Factor" value={powerPf} onChange={setPowerPf} />
               <CalcOutput label="Power" value={power3Phase} unit="kW" />
+              <CalculatorNote>
+                Balanced three-phase estimate: kW = V x A x sqrt(3) x PF / 1000.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Transformer Sizing">
               <CalcInput label="Number of Loads" value={xfmrLoads} onChange={setXfmrLoads} />
               <CalcInput label="VA per Load" value={xfmrVaEach} onChange={setXfmrVaEach} unit="VA" />
               <CalcOutput label="Recommended Size" value={xfmrSize} />
+              <CalculatorNote>
+                Adds 25% spare capacity before selecting the next listed transformer size.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="24VAC Wire Gauge">
               <CalcInput label="One-Way Distance" value={wireLength} onChange={setWireLength} unit="ft" />
               <CalcInput label="Load Current" value={wireAmps} onChange={setWireAmps} unit="A" />
+              <CalcInput label="Control Voltage" value={wireVoltage} onChange={setWireVoltage} unit="V" />
+              <CalcInput label="Max Voltage Drop" value={wireDropPct} onChange={setWireDropPct} unit="%" />
               <CalcOutput label="Recommended Gauge" value={wireGauge} />
+              <CalculatorNote>
+                Copper two-conductor loop using NEC-style AWG resistance values; check local code and device minimum voltage.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="UPS Runtime">
-              <CalcInput label="UPS Capacity" value={upsVa} onChange={setUpsVa} unit="VA" />
-              <CalcInput label="Connected Load" value={upsLoad} onChange={setUpsLoad} unit="VA" />
+              <CalcInput label="Battery Energy" value={upsWh} onChange={setUpsWh} unit="Wh" />
+              <CalcInput label="Connected Load" value={upsLoadWatts} onChange={setUpsLoadWatts} unit="W" />
+              <CalcInput label="Inverter Efficiency" value={upsEfficiency} onChange={setUpsEfficiency} unit="%" />
               <CalcOutput label="Estimated Runtime" value={upsRuntime} />
+              <CalculatorNote>
+                Runtime from battery Wh is more honest than VA nameplate. Use vendor curves for final backup claims.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
@@ -1023,18 +1172,27 @@ export function CalculatorsView() {
               <CalcInput label="Dry Bulb Temp" value={dpTemp} onChange={setDpTemp} unit="°F" />
               <CalcInput label="Relative Humidity" value={dpRh} onChange={setDpRh} unit="%" />
               <CalcOutput label="Dew Point" value={dewPoint} />
+              <CalculatorNote>
+                Magnus approximation, suitable for quick HVAC checks.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Enthalpy">
               <CalcInput label="Dry Bulb Temp" value={enthalpyTemp} onChange={setEnthalpyTemp} unit="°F" />
               <CalcInput label="Relative Humidity" value={enthalpyRh} onChange={setEnthalpyRh} unit="%" />
               <CalcOutput label="Enthalpy" value={enthalpyResult} unit="BTU/lb" />
+              <CalculatorNote>
+                Sea-level moist-air estimate. Use a psychrometric tool when elevation matters.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Wet Bulb Temperature">
               <CalcInput label="Dry Bulb Temp" value={wbTemp} onChange={setWbTemp} unit="°F" />
               <CalcInput label="Relative Humidity" value={wbRh} onChange={setWbRh} unit="%" />
               <CalcOutput label="Wet Bulb" value={wetBulb} />
+              <CalculatorNote>
+                Approximation for normal meteorological ranges, not a replacement for a psychrometric chart.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Humidity Ratio">
@@ -1042,6 +1200,9 @@ export function CalculatorsView() {
               <CalcInput label="Relative Humidity" value={hrRh} onChange={setHrRh} unit="%" />
               <CalcOutput label="Grains/lb dry air" value={humidityRatio.grains} unit="gr/lb" />
               <CalcOutput label="lb moisture/1000 lb air" value={humidityRatio.lbm} />
+              <CalculatorNote>
+                Sea-level pressure basis; humidity ratio changes with barometric pressure.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
@@ -1051,6 +1212,9 @@ export function CalculatorsView() {
               <CalcInput label="Coast Time" value={osCoastTime} onChange={setOsCoastTime} unit="min" />
               <CalcInput label="Occupancy End" value={osOccEnd} onChange={setOsOccEnd} type="time" />
               <CalcOutput label="Equipment Stop Time" value={optStopTime} />
+              <CalculatorNote>
+                Simple coast-time subtraction. Validate comfort drift before enabling stop optimization.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Holiday Date (nth Weekday)">
@@ -1073,6 +1237,7 @@ export function CalculatorsView() {
                     { value: "2", label: "2nd" },
                     { value: "3", label: "3rd" },
                     { value: "4", label: "4th" },
+                    { value: "-1", label: "Last" },
                   ]}
                 />
                 <CalcSelect
@@ -1092,6 +1257,9 @@ export function CalculatorsView() {
                 <CalcInput label="Year" value={holidayYear} onChange={setHolidayYear} />
               </div>
               <CalcOutput label="Date" value={holidayDate} />
+              <CalculatorNote>
+                Useful for BAS exception schedule dates like fourth Thursday or last Monday.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Occupied Hours per Year">
@@ -1101,6 +1269,9 @@ export function CalculatorsView() {
               </div>
               <CalcInput label="Days per Week" value={occDays} onChange={setOccDays} />
               <CalcOutput label="Hours per Year" value={occHoursYear} unit="hrs" />
+              <CalculatorNote>
+                Handles overnight schedules by rolling the end time into the next day.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Trend Sample Rate">
@@ -1118,6 +1289,9 @@ export function CalculatorsView() {
                 ]}
               />
               <CalcOutput label="Recommended Interval" value={trendRecommendation} />
+              <CalculatorNote>
+                Starting point for trend setup. Alarms, diagnostics, and metering may need faster or COV logging.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
@@ -1129,12 +1303,18 @@ export function CalculatorsView() {
               <CalcInput label="Tolerance" value={driftTolerance} onChange={setDriftTolerance} unit="±" />
               <CalcOutput label="Deviation" value={driftStatus.diff} />
               <CalcOutput label="Status" value={driftStatus.status} />
+              <CalculatorNote>
+                Compare against a calibrated reference, not another unverified BAS value.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Actuator Stroke Time">
               <CalcInput label="Travel (degrees or %)" value={actTravel} onChange={setActTravel} />
               <CalcInput label="Speed (per second)" value={actSpeed} onChange={setActSpeed} unit="/sec" />
               <CalcOutput label="Full Stroke Time" value={strokeTime} />
+              <CalculatorNote>
+                Use actuator nameplate speed under load where available.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Duct Static Setpoint">
@@ -1142,6 +1322,9 @@ export function CalculatorsView() {
               <CalcInput label="Design Static" value={ductDesignSp} onChange={setDuctDesignSp} unit="in WC" />
               <CalcInput label="Actual CFM" value={ductActualCfm} onChange={setDuctActualCfm} unit="CFM" />
               <CalcOutput label="Adjusted Setpoint" value={ductSpSetpoint} unit="in WC" />
+              <CalculatorNote>
+                Fan-law square relationship for a rough reset curve point, not a balancing substitute.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
@@ -1151,6 +1334,9 @@ export function CalculatorsView() {
               <CalcInput label="Power Input" value={chillerKw} onChange={setChillerKw} unit="kW" />
               <CalcInput label="Cooling Output" value={chillerTons} onChange={setChillerTons} unit="tons" />
               <CalcOutput label="Efficiency" value={chillerEfficiency} unit="kW/ton" />
+              <CalculatorNote>
+                Use total chiller input power and measured tons at the same operating condition.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="VFD Energy Savings">
@@ -1160,6 +1346,9 @@ export function CalculatorsView() {
               <CalcInput label="Electricity Cost" value={vfdKwhCost} onChange={setVfdKwhCost} unit="$/kWh" />
               <CalcOutput label="Annual kWh Saved" value={vfdSavings.kwh} unit="kWh" />
               <CalcOutput label="Annual Savings" value={vfdSavings.dollars} />
+              <CalculatorNote>
+                Cube-law fan/pump estimate. Real savings depend on static reset, minimum speeds, and operating profile.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="Cooling Tower Performance">
@@ -1168,6 +1357,9 @@ export function CalculatorsView() {
               <CalcInput label="Wet Bulb Temp" value={ctWetBulb} onChange={setCtWetBulb} unit="°F" />
               <CalcOutput label="Range" value={ctResults.range} unit="°F" />
               <CalcOutput label="Approach" value={ctResults.approach} unit="°F" />
+              <CalculatorNote>
+                Range is entering minus leaving water. Approach is leaving water minus entering wet bulb.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
@@ -1179,6 +1371,9 @@ export function CalculatorsView() {
               <CalcOutput label="Kp (Proportional)" value={pidParams.kp} />
               <CalcOutput label="Ki (Integral)" value={pidParams.ki} />
               <CalcOutput label="Kd (Derivative)" value={pidParams.kd} />
+              <CalculatorNote>
+                Ziegler-Nichols can be aggressive. Use cautiously on real equipment and trend the result.
+              </CalculatorNote>
             </Calculator>
 
             <Calculator title="OAT Reset Schedule">
@@ -1190,6 +1385,9 @@ export function CalculatorsView() {
               </div>
               <CalcInput label="Current OAT" value={resetOatCurrent} onChange={setResetOatCurrent} unit="°F" />
               <CalcOutput label="Calculated Setpoint" value={resetSetpoint} unit="°F" />
+              <CalculatorNote>
+                Linear reset only. Clamp limits and equipment safeties still belong in the controller logic.
+              </CalculatorNote>
             </Calculator>
           </Section>
 
