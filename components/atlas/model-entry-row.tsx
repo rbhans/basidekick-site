@@ -7,9 +7,10 @@ import type { AtlasModel } from "@/lib/types";
 interface ModelEntryRowProps {
   model: AtlasModel;
   showBrand?: boolean;
+  workedCount?: number;
 }
 
-export function ModelEntryRow({ model, showBrand = false }: ModelEntryRowProps) {
+export function ModelEntryRow({ model, showBrand = false, workedCount }: ModelEntryRowProps) {
   const brandSlug = model.brand_slug ?? model.brand;
   const typeSlug = model.type_slug ?? model.type;
   const href =
@@ -51,6 +52,12 @@ export function ModelEntryRow({ model, showBrand = false }: ModelEntryRowProps) 
             <>
               <span className="sep">·</span>
               <span className="model-discontinued">discontinued</span>
+            </>
+          )}
+          {workedCount !== undefined && workedCount > 0 && (
+            <>
+              <span className="sep">·</span>
+              <span className="model-worked">{workedCount} worked</span>
             </>
           )}
         </span>

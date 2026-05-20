@@ -10,6 +10,7 @@ import { BabelEntryRow } from "./babel-entry-row";
 import { ModelEntryRow } from "@/components/atlas/model-entry-row";
 import { ReportButton } from "@/components/feedback/report-button";
 import { useAuth } from "@/hooks/use-auth";
+import { createClient } from "@/lib/supabase/client";
 import type { BabelPointEntry, BabelEquipmentEntry, AtlasModel, AtlasBrand } from "@/lib/types";
 
 export type AtlasScope = "all" | "points" | "equipment" | "models";
@@ -70,8 +71,34 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [modelWorkedCounts, setModelWorkedCounts] = useState<Record<string, number>>({});
   const expandedGroupsInitialized = useRef(false);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Fetch "worked with" counts for all models from Supabase
+  useEffect(() => {
+    if (!atlasData?.models?.length) return;
+    let cancelled = false;
+    const fetchCounts = async () => {
+      const supabase = createClient();
+      if (!supabase) return;
+      const ids = atlasData.models.map((m) => m.id);
+      const { data: rows, error: fetchError } = await supabase
+        .from("equipment_experience")
+        .select("equipment_id")
+        .in("equipment_id", ids);
+      if (fetchError || !rows || cancelled) return;
+      const next: Record<string, number> = {};
+      for (const row of rows as Array<{ equipment_id: string }>) {
+        next[row.equipment_id] = (next[row.equipment_id] || 0) + 1;
+      }
+      if (!cancelled) setModelWorkedCounts(next);
+    };
+    fetchCounts();
+    return () => {
+      cancelled = true;
+    };
+  }, [atlasData]);
 
   // "/" outside any input focuses search
   useEffect(() => {
@@ -494,7 +521,7 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
                         <BabelEntryRow key={`eq-${entry.id}`} entry={entry} type="equipment" />
                       ))}
                       {group.models.map((m) => (
-                        <ModelEntryRow key={`md-${m.id}`} model={m} />
+                        <ModelEntryRow key={`md-${m.id}`} model={m} workedCount={modelWorkedCounts[m.id] ?? 0} />
                       ))}
                     </div>
                   )}

@@ -3446,6 +3446,10 @@
   text-transform: none;
   letter-spacing: 0;
 }
+.at-row[data-type="model"] .meta .model-worked {
+  color: #3a7a3a;
+  font-weight: 600;
+}
 .at-cat[data-cat-kind="model"] .at-cat-head .num { color: #b8762a; }
 .at-cat[data-cat-kind="model"] .at-cat-head .kind { color: #b8762a; }
 .at-row .lead {
