@@ -61,7 +61,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
   if (!job) {
     return (
       <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-16 text-center">
-        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+        <p className="italic text-[20px] text-muted-foreground mb-5">
           This job isn&apos;t in the set.
         </p>
         <Link
@@ -123,7 +123,7 @@ export function PointStackJobDetail({ slug }: JobDetailProps) {
           {job.company && (
             <Link
               href={ROUTES.POINTSTACK_COMPANY(job.company.slug)}
-              className="font-heading italic text-[17px] text-muted-foreground hover:text-accent transition-colors"
+              className="italic text-[17px] text-muted-foreground hover:text-accent transition-colors"
             >
               {job.company.name}
             </Link>

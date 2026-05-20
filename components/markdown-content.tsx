@@ -211,16 +211,16 @@ const markdownComponents: Components = {
   pre: ({ children }) => <pre className="mb-5 overflow-hidden">{children}</pre>,
   // Style blockquotes
   blockquote: ({ children }) => (
-    <blockquote className="border-l-[3px] border-accent pl-5 my-6 font-heading italic text-[16px] leading-[1.6] text-muted-foreground">
+    <blockquote className="border-l-[3px] border-accent pl-5 my-6 italic text-[16px] leading-[1.6] text-muted-foreground">
       {children}
     </blockquote>
   ),
   // Style strong/bold
   strong: ({ children }) => (
-    <strong className="font-heading font-semibold text-foreground">{children}</strong>
+    <strong className="font-semibold text-foreground">{children}</strong>
   ),
   // Style em/italic
-  em: ({ children }) => <em className="font-heading italic">{children}</em>,
+  em: ({ children }) => <em className="italic">{children}</em>,
   // Style horizontal rules
   hr: () => <hr className="my-10 border-t border-foreground" />,
   // Style tables

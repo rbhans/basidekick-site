@@ -187,7 +187,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
   if (!profile) {
     return (
       <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-16 text-center">
-        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+        <p className="italic text-[20px] text-muted-foreground mb-5">
           This person isn&apos;t in the set.
         </p>
         <Link
@@ -231,7 +231,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
           </div>
 
           {profile.headline && (
-            <p className="font-heading italic text-[17px] text-muted-foreground leading-[1.4] mb-3 max-w-[620px]">
+            <p className="italic text-[17px] text-muted-foreground leading-[1.4] mb-3 max-w-[620px]">
               {profile.headline}
             </p>
           )}
@@ -419,7 +419,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
               ))}
             </div>
           ) : (
-            <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
+            <div className="py-16 text-center italic text-[18px] text-muted-foreground">
               No posts yet.
             </div>
           )}
@@ -427,7 +427,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
 
         <TabsContent value="equipment" className="mt-4">
           {equipmentByBrand.length === 0 ? (
-            <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
+            <div className="py-16 text-center italic text-[18px] text-muted-foreground">
               No equipment experience yet.
             </div>
           ) : (
@@ -467,7 +467,7 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
               ))}
             </div>
           ) : (
-            <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
+            <div className="py-16 text-center italic text-[18px] text-muted-foreground">
               No showcase projects yet.
             </div>
           )}

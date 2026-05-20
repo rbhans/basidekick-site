@@ -162,7 +162,7 @@ export function CommentSection({ articleId }: CommentSectionProps) {
       {user ? (
         <NewsCommentForm articleId={articleId} />
       ) : (
-        <p className="font-heading italic text-[15px] text-muted-foreground">
+        <p className="italic text-[15px] text-muted-foreground">
           Sign in to join the discussion.
         </p>
       )}

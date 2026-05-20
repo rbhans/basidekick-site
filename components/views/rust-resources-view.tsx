@@ -65,7 +65,7 @@ export function RustResourcesView() {
           <h1 className="font-heading font-semibold text-[32px] md:text-[40px] leading-[1.05] text-foreground">
             Open source Rust crates for BAS
           </h1>
-          <p className="font-heading italic text-[16px] text-muted-foreground mt-3 max-w-[680px] leading-[1.5]">
+          <p className="italic text-[16px] text-muted-foreground mt-3 max-w-[680px] leading-[1.5]">
             Protocol-first Rust crates for open source BAS software. Start with BACnet and expand
             into a full Rust-native protocol stack.
           </p>
@@ -102,7 +102,7 @@ export function RustResourcesView() {
                     {crate.protocol}
                   </span>
                 </div>
-                <p className="font-heading italic text-[14px] text-muted-foreground leading-[1.5]">
+                <p className="italic text-[14px] text-muted-foreground leading-[1.5]">
                   {crate.description}
                 </p>
               </div>

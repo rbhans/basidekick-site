@@ -64,7 +64,7 @@ export function PointStackCompaniesView() {
         )}
       </div>
 
-      <p className="font-heading italic text-[15px] text-muted-foreground mb-7">
+      <p className="italic text-[15px] text-muted-foreground mb-7">
         BAS companies and organizations — the shops behind the names you see on job sites.
       </p>
 
@@ -85,7 +85,7 @@ export function PointStackCompaniesView() {
       {error && !loading && (
         <div className="p-6 mb-6 border border-border rounded-md bg-card text-center">
           <WarningCircle className="w-7 h-7 text-destructive mx-auto mb-2" />
-          <p className="font-heading italic text-[16px] mb-1">Something went wrong.</p>
+          <p className="italic text-[16px] mb-1">Something went wrong.</p>
           <p className="text-sm text-muted-foreground mb-3">{error}</p>
           <Button variant="outline" size="sm" onClick={() => fetchCompanies()}>
             Try again
@@ -178,7 +178,7 @@ export function PointStackCompaniesView() {
 
       {/* Empty state */}
       {!loading && companies.length === 0 && !error && (
-        <div className="py-20 text-center font-heading italic text-[18px] text-muted-foreground">
+        <div className="py-20 text-center italic text-[18px] text-muted-foreground">
           {search ? `No companies match "${search}".` : "No companies yet."}
         </div>
       )}

@@ -71,7 +71,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
 
   if (totalContributions === 0) {
     return (
-      <div className="py-16 text-center font-heading italic text-[16px] text-muted-foreground">
+      <div className="py-16 text-center italic text-[16px] text-muted-foreground">
         No contributions yet.
       </div>
     );
@@ -150,7 +150,7 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
                   {article.title}
                 </h4>
                 {article.summary && (
-                  <p className="font-heading italic text-[13px] text-muted-foreground mt-1 line-clamp-2 leading-[1.5]">
+                  <p className="italic text-[13px] text-muted-foreground mt-1 line-clamp-2 leading-[1.5]">
                     {article.summary}
                   </p>
                 )}
@@ -227,7 +227,7 @@ function ContributionRow({
           {title}
         </div>
         {description && (
-          <p className="font-heading italic text-[13px] text-muted-foreground mt-1 line-clamp-2 leading-[1.5]">
+          <p className="italic text-[13px] text-muted-foreground mt-1 line-clamp-2 leading-[1.5]">
             {description}
           </p>
         )}

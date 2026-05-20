@@ -47,7 +47,7 @@ export function MessengerConversation() {
   if (!user) {
     return (
       <div className="flex-1 flex items-center justify-center p-4">
-        <p className="font-heading italic text-[14px] text-muted-foreground">
+        <p className="italic text-[14px] text-muted-foreground">
           Sign in required
         </p>
       </div>

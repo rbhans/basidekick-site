@@ -296,7 +296,7 @@ export function WikiArticleDetail({ article, tags, facets = [] }: WikiArticleDet
         </div>
 
         {comments.length === 0 ? (
-          <p className="font-heading italic text-[15px] text-muted-foreground mb-8">
+          <p className="italic text-[15px] text-muted-foreground mb-8">
             No comments yet. Be the first.
           </p>
         ) : (
@@ -361,7 +361,7 @@ export function WikiArticleDetail({ article, tags, facets = [] }: WikiArticleDet
           </div>
         ) : (
           <div className="py-8 text-center border border-dashed border-border">
-            <p className="font-heading italic text-[15px] text-muted-foreground mb-4">
+            <p className="italic text-[15px] text-muted-foreground mb-4">
               Sign in to leave a comment.
             </p>
             <Link

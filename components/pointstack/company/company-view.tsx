@@ -265,7 +265,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
   if (!company) {
     return (
       <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-16 text-center">
-        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+        <p className="italic text-[20px] text-muted-foreground mb-5">
           This company isn&apos;t in the set.
         </p>
         <Link
@@ -315,7 +315,7 @@ export function PointStackCompanyView({ slug }: CompanyViewProps) {
           </div>
 
           {company.industry && (
-            <p className="font-heading italic text-[17px] text-muted-foreground leading-[1.4] mb-3 max-w-[620px]">
+            <p className="italic text-[17px] text-muted-foreground leading-[1.4] mb-3 max-w-[620px]">
               {company.industry}
             </p>
           )}

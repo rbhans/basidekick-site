@@ -143,7 +143,7 @@ export function AccountView() {
           <h1 className="font-heading font-semibold text-[32px] md:text-[40px] leading-[1.05] text-foreground">
             Sign in required
           </h1>
-          <p className="font-heading italic text-[16px] text-muted-foreground mt-3">
+          <p className="italic text-[16px] text-muted-foreground mt-3">
             Sign in or create an account to view your purchases and manage your profile.
           </p>
         </div>
@@ -171,7 +171,7 @@ export function AccountView() {
   if (authLoading || loading) {
     return (
       <div className="min-h-full flex items-center justify-center py-24">
-        <p className="font-heading italic text-[16px] text-muted-foreground">Loading…</p>
+        <p className="italic text-[16px] text-muted-foreground">Loading…</p>
       </div>
     );
   }
@@ -263,7 +263,7 @@ export function AccountView() {
             </div>
           </Link>
         ) : (
-          <div className="py-10 text-center font-heading italic text-[15px] text-muted-foreground border border-dashed border-border">
+          <div className="py-10 text-center italic text-[15px] text-muted-foreground border border-dashed border-border">
             You&apos;re not a member of a company yet.{" "}
             <Link
               href={`${ROUTES.POINTSTACK}/companies`}
@@ -278,7 +278,7 @@ export function AccountView() {
       {/* 02 / Owned software */}
       <NumberedSection num="02" title="Owned software">
         {licenses.length === 0 ? (
-          <div className="py-10 text-center font-heading italic text-[15px] text-muted-foreground border border-dashed border-border">
+          <div className="py-10 text-center italic text-[15px] text-muted-foreground border border-dashed border-border">
             You haven&apos;t purchased any software yet.{" "}
             <Link
               href={ROUTES.TOOLS}

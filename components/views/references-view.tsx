@@ -101,7 +101,7 @@ function AbbreviationList({
             <dd>
               <div className="text-[13px] text-foreground leading-[1.35]">{item.full}</div>
               {item.description && (
-                <div className="font-heading italic text-[12px] text-muted-foreground mt-0.5 leading-[1.4]">
+                <div className="italic text-[12px] text-muted-foreground mt-0.5 leading-[1.4]">
                   {item.description}
                 </div>
               )}
@@ -122,7 +122,7 @@ function SourceNote({
 }) {
   return (
     <div className="mt-3 border-l-2 border-accent pl-3">
-      <p className="font-heading italic text-[12px] leading-[1.45] text-muted-foreground">
+      <p className="italic text-[12px] leading-[1.45] text-muted-foreground">
         {children}
       </p>
       {sources && sources.length > 0 && (
@@ -369,7 +369,7 @@ export function ReferencesView() {
       </div>
 
       <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-14">
-        <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[680px] mx-auto">
+        <p className="italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[680px] mx-auto">
           Practical BAS reference sheets for protocol lookup, signal checks, field terminology,
           and source-backed reminders that are easy to scan on site.
         </p>

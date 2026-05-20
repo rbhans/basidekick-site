@@ -94,7 +94,7 @@ export function PointStackResourcesView() {
         )}
       </div>
 
-      <p className="font-heading italic text-[15px] text-muted-foreground mb-7">
+      <p className="italic text-[15px] text-muted-foreground mb-7">
         Templates, scripts, and tools the community has open-sourced.
       </p>
 
@@ -200,7 +200,7 @@ export function PointStackResourcesView() {
 
       {/* Empty state */}
       {!loading && filteredResources.length === 0 && (
-        <div className="py-20 text-center font-heading italic text-[18px] text-muted-foreground">
+        <div className="py-20 text-center italic text-[18px] text-muted-foreground">
           {searchQuery
             ? `Nothing matches "${searchQuery}".`
             : category

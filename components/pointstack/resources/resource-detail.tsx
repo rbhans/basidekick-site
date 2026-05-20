@@ -137,7 +137,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
   if (!resource) {
     return (
       <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-16 text-center">
-        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+        <p className="italic text-[20px] text-muted-foreground mb-5">
           This resource isn&apos;t in the set.
         </p>
         <Link
@@ -352,7 +352,7 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
             ))}
           </div>
         ) : (
-          <div className="py-12 text-center font-heading italic text-[18px] text-muted-foreground">
+          <div className="py-12 text-center italic text-[18px] text-muted-foreground">
             {user ? "No comments yet. Be the first." : "Sign in to comment."}
           </div>
         )}

@@ -43,7 +43,7 @@ function BabelTypeLink({ atlasTypeId }: { atlasTypeId: string }) {
   if (babelIds.length === 0) return null;
 
   return (
-    <div className="font-heading italic text-[14px] text-muted-foreground leading-[1.5]">
+    <div className="italic text-[14px] text-muted-foreground leading-[1.5]">
       Point standards:{" "}
       {linkedEquipment.map((entry, index) => (
         <span key={entry.id}>
@@ -101,7 +101,7 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
   if (error) {
     return (
       <div className="min-h-full flex items-center justify-center py-24">
-        <p className="font-heading italic text-[17px] text-muted-foreground">
+        <p className="italic text-[17px] text-muted-foreground">
           Failed to load BAS Atlas data
         </p>
       </div>
@@ -124,7 +124,7 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
 
   if (!brand || !type) {
     return (
-      <div className="py-24 text-center font-heading italic text-[18px] text-muted-foreground">
+      <div className="py-24 text-center italic text-[18px] text-muted-foreground">
         Type not found.
       </div>
     );
@@ -153,7 +153,7 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
           {getBabelIdsForAtlasType(type.id).length > 0 ? (
             <BabelTypeLink atlasTypeId={type.id} />
           ) : (
-            <p className="font-heading italic text-[14px] text-muted-foreground">
+            <p className="italic text-[14px] text-muted-foreground">
               {models.length} model{models.length === 1 ? "" : "s"} in this type.
             </p>
           )}
@@ -178,7 +178,7 @@ export function EquipmentTypeView({ brandSlug, typeSlug }: EquipmentTypeViewProp
       </div>
 
       {models.length === 0 ? (
-        <div className="py-12 text-center font-heading italic text-[16px] text-muted-foreground">
+        <div className="py-12 text-center italic text-[16px] text-muted-foreground">
           No models yet. Be the first to add one.
         </div>
       ) : (

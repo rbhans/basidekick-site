@@ -182,7 +182,7 @@ export function RelatedArticles({
                   {article.title}
                 </div>
                 {article.summary && (
-                  <p className="font-heading italic text-[13px] text-muted-foreground mt-1 leading-[1.5] line-clamp-2">
+                  <p className="italic text-[13px] text-muted-foreground mt-1 leading-[1.5] line-clamp-2">
                     {article.summary}
                   </p>
                 )}

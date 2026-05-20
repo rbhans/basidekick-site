@@ -56,7 +56,7 @@ export function PointStackConversationView({ conversationId }: ConversationViewP
   if (!user) {
     return (
       <div className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-16 text-center">
-        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+        <p className="italic text-[20px] text-muted-foreground mb-5">
           Sign in to view this conversation.
         </p>
         <Link
@@ -99,7 +99,7 @@ export function PointStackConversationView({ conversationId }: ConversationViewP
             </div>
           </div>
         ) : (
-          <div className="font-heading italic text-[14px] text-muted-foreground">
+          <div className="italic text-[14px] text-muted-foreground">
             Loading conversation…
           </div>
         )}

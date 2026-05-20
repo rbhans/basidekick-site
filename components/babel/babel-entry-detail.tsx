@@ -191,7 +191,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
           {name}
         </h1>
         {fullName && fullName !== name && (
-          <p className="font-heading italic text-[17px] text-muted-foreground mt-1.5">
+          <p className="italic text-[17px] text-muted-foreground mt-1.5">
             {fullName}
           </p>
         )}
@@ -200,7 +200,7 @@ export function BabelEntryDetail({ entry, type, isAuthenticated = false, hideBac
             {description}
           </p>
         ) : (
-          <p className="font-heading italic text-[14px] text-muted-foreground mt-4">
+          <p className="italic text-[14px] text-muted-foreground mt-4">
             No description yet.
           </p>
         )}

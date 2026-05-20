@@ -15,7 +15,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
 
   if (!tool) {
     return (
-      <div className="py-24 text-center font-heading italic text-[18px] text-muted-foreground">
+      <div className="py-24 text-center italic text-[18px] text-muted-foreground">
         Tool not found.
       </div>
     );
@@ -45,7 +45,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
             Coming soon
           </span>
         </div>
-        <p className="font-heading italic text-[17px] text-muted-foreground mt-3 max-w-[680px] leading-[1.5]">
+        <p className="italic text-[17px] text-muted-foreground mt-3 max-w-[680px] leading-[1.5]">
           {tool.tagline}. {tool.description}
         </p>
 
@@ -104,7 +104,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
                 <h3 className="font-heading font-semibold text-[17px] text-foreground leading-[1.3]">
                   {feature.title}
                 </h3>
-                <p className="font-heading italic text-[14px] text-muted-foreground mt-1 leading-[1.5]">
+                <p className="italic text-[14px] text-muted-foreground mt-1 leading-[1.5]">
                   {feature.description}
                 </p>
               </div>
@@ -187,7 +187,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
       {/* Pricing */}
       {tool.pricing && tool.pricing.length > 0 && (
         <NumberedSection num="07" title="Pricing">
-          <p className="font-heading italic text-[14px] text-muted-foreground mb-5 max-w-[640px]">
+          <p className="italic text-[14px] text-muted-foreground mb-5 max-w-[640px]">
             Free to scan and use. Upgrade for more equipment.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 max-w-[760px]">
@@ -211,7 +211,7 @@ export function ToolDetailView({ toolId }: ToolDetailViewProps) {
                 <p className="font-heading font-semibold text-[22px] text-foreground tabular-nums">
                   {tier.price}
                 </p>
-                <p className="font-heading italic text-[12px] text-muted-foreground mt-0.5">
+                <p className="italic text-[12px] text-muted-foreground mt-0.5">
                   {tier.limit}
                 </p>
               </div>

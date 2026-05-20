@@ -201,7 +201,7 @@ export function EquipmentAddForm() {
           </h1>
         </div>
         <div className="border border-border bg-card p-8 text-center">
-          <p className="font-heading italic text-[16px] text-muted-foreground mb-4">
+          <p className="italic text-[16px] text-muted-foreground mb-4">
             Sign in to submit new equipment for review.
           </p>
           <Link
@@ -234,7 +234,7 @@ export function EquipmentAddForm() {
         <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.05] text-foreground">
           Add equipment
         </h1>
-        <p className="font-heading italic text-[15px] text-muted-foreground mt-2">
+        <p className="italic text-[15px] text-muted-foreground mt-2">
           Submissions go through a quick review before they show up in the catalog.
         </p>
       </div>

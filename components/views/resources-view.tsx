@@ -72,7 +72,7 @@ export function ResourcesView() {
       </div>
 
       <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-14">
-        <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[640px] mx-auto">
+        <p className="italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[640px] mx-auto">
           A working set of references and tools — built alongside the industry, free to use.
         </p>
 
@@ -100,7 +100,7 @@ export function ResourcesView() {
                 <h3 className="font-heading font-semibold text-[18px] leading-[1.25] text-foreground group-hover:text-accent transition-colors">
                   {resource.title}
                 </h3>
-                <p className="font-heading italic text-[14px] text-muted-foreground mt-1 leading-[1.5]">
+                <p className="italic text-[14px] text-muted-foreground mt-1 leading-[1.5]">
                   {resource.description}
                 </p>
               </div>

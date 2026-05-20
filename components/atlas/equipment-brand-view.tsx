@@ -66,7 +66,7 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
   if (error) {
     return (
       <div className="min-h-full flex items-center justify-center py-24">
-        <p className="font-heading italic text-[17px] text-muted-foreground">
+        <p className="italic text-[17px] text-muted-foreground">
           Failed to load BAS Atlas data
         </p>
       </div>
@@ -89,7 +89,7 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
 
   if (!brand) {
     return (
-      <div className="py-24 text-center font-heading italic text-[18px] text-muted-foreground">
+      <div className="py-24 text-center italic text-[18px] text-muted-foreground">
         Brand not found.
       </div>
     );
@@ -123,7 +123,7 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
             <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.05] text-foreground">
               {brand.name}
             </h1>
-            <p className="font-heading italic text-[15px] text-muted-foreground mt-2">
+            <p className="italic text-[15px] text-muted-foreground mt-2">
               {models.length} model{models.length === 1 ? "" : "s"} across {typeCards.length} type
               {typeCards.length === 1 ? "" : "s"}
               {peopleCount > 0 && (
@@ -146,7 +146,7 @@ export function EquipmentBrandView({ brandSlug }: EquipmentBrandViewProps) {
       </div>
 
       {typeCards.length === 0 ? (
-        <div className="py-12 text-center font-heading italic text-[16px] text-muted-foreground">
+        <div className="py-12 text-center italic text-[16px] text-muted-foreground">
           No types yet for this brand.
         </div>
       ) : (

@@ -84,7 +84,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
           </div>
         </div>
         <div className="max-w-[680px] mx-auto p-16 text-center">
-          <p className="font-heading italic text-[20px] text-muted-foreground mb-4">
+          <p className="italic text-[20px] text-muted-foreground mb-4">
             This drawing isn&apos;t in the set.
           </p>
           <Link
@@ -219,7 +219,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
               {article.summary}
             </p>
           ) : (
-            <p className="font-heading italic text-[16px] text-muted-foreground mb-4">
+            <p className="italic text-[16px] text-muted-foreground mb-4">
               No summary yet — read the original on {article.source_domain}.
             </p>
           )}
@@ -265,7 +265,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
         </a>
 
         {/* Byline */}
-        <p className="mt-10 pt-6 border-t border-border font-heading italic text-[14px] text-muted-foreground max-w-[680px] leading-[1.55]">
+        <p className="mt-10 pt-6 border-t border-border italic text-[14px] text-muted-foreground max-w-[680px] leading-[1.55]">
           — Summary drawn by the BASidekick news script and reviewed by Rob. This is a paraphrase, not the full article. Corrections welcome below.
         </p>
 

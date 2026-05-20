@@ -204,9 +204,9 @@ export function EquipmentNotes({ equipmentId }: EquipmentNotesProps) {
       )}
 
       {loading ? (
-        <p className="font-heading italic text-[15px] text-muted-foreground">Loading notes…</p>
+        <p className="italic text-[15px] text-muted-foreground">Loading notes…</p>
       ) : sortedNotes.length === 0 ? (
-        <p className="font-heading italic text-[15px] text-muted-foreground">
+        <p className="italic text-[15px] text-muted-foreground">
           No notes yet. Be the first to add one.
         </p>
       ) : (

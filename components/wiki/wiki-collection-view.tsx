@@ -55,7 +55,7 @@ export function WikiCollectionView({ collection, articles }: WikiCollectionViewP
 
         <div className="mt-10 space-y-2">
           {articles.length === 0 ? (
-            <p className="font-heading italic text-[18px] text-muted-foreground py-12 text-center">
+            <p className="italic text-[18px] text-muted-foreground py-12 text-center">
               No articles in this collection yet.
             </p>
           ) : (

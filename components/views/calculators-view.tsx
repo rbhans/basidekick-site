@@ -116,7 +116,7 @@ function CalcOutput({ label, value, unit }: { label: string; value: string; unit
 
 function CalculatorNote({ children }: { children: React.ReactNode }) {
   return (
-    <p className="border-l-2 border-accent pl-3 font-heading italic text-[12px] leading-[1.45] text-muted-foreground">
+    <p className="border-l-2 border-accent pl-3 italic text-[12px] leading-[1.45] text-muted-foreground">
       {children}
     </p>
   );
@@ -928,7 +928,7 @@ export function CalculatorsView() {
       </div>
 
       <section className="container mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-16 py-14">
-        <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[680px] mx-auto">
+        <p className="italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[680px] mx-auto">
           Quick reference calculators for building automation professionals. For estimation
           purposes — verify critical calculations.
         </p>

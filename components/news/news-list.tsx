@@ -122,7 +122,7 @@ export function NewsList() {
           <div className="flex flex-col items-center gap-3 p-6 mb-6 border border-border rounded-md bg-card text-center">
             <WarningCircle className="w-8 h-8 text-destructive" />
             <div>
-              <p className="font-heading italic text-[16px] mb-1">Something went wrong.</p>
+              <p className="italic text-[16px] mb-1">Something went wrong.</p>
               <p className="text-sm text-muted-foreground">{feedError}</p>
               <Button variant="outline" size="sm" className="mt-3" onClick={() => fetchFeed()}>
                 Try Again
@@ -149,14 +149,14 @@ export function NewsList() {
 
         {/* Empty state (no articles) */}
         {!feedLoading && !feedError && filteredArticles.length === 0 && articles.length === 0 && (
-          <div className="py-20 text-center font-heading italic text-[18px] text-muted-foreground">
+          <div className="py-20 text-center italic text-[18px] text-muted-foreground">
             No articles yet. Check back soon or submit one.
           </div>
         )}
 
         {/* No search results */}
         {!feedLoading && searchQuery && filteredArticles.length === 0 && articles.length > 0 && (
-          <div className="py-20 text-center font-heading italic text-[18px] text-muted-foreground">
+          <div className="py-20 text-center italic text-[18px] text-muted-foreground">
             <span className="block font-mono not-italic text-[28px] mb-3">⌕</span>
             Nothing matches &ldquo;{searchQuery}&rdquo;. Try a different term.
           </div>

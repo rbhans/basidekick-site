@@ -143,7 +143,7 @@ export function PointStackOnboardingView() {
           <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.05] text-foreground">
             Sign in required
           </h1>
-          <p className="font-heading italic text-[15px] text-muted-foreground mt-3">
+          <p className="italic text-[15px] text-muted-foreground mt-3">
             Please sign in to set up your profile.
           </p>
         </div>
@@ -215,7 +215,7 @@ export function PointStackOnboardingView() {
         <form className="space-y-6" onSubmit={(event) => event.preventDefault()}>
           {currentStep === 1 && (
             <>
-              <p className="font-heading italic text-[16px] text-muted-foreground mb-6 leading-[1.5]">
+              <p className="italic text-[16px] text-muted-foreground mb-6 leading-[1.5]">
                 Let&apos;s set up your profile so others can find and connect with you.
               </p>
               <div className="space-y-5">
@@ -276,7 +276,7 @@ export function PointStackOnboardingView() {
 
           {currentStep === 2 && (
             <>
-              <p className="font-heading italic text-[16px] text-muted-foreground mb-6 leading-[1.5]">
+              <p className="italic text-[16px] text-muted-foreground mb-6 leading-[1.5]">
                 Add skills to help others find you for projects and questions.
               </p>
               <FormField
@@ -309,7 +309,7 @@ export function PointStackOnboardingView() {
               <h2 className="font-heading font-semibold text-[24px] text-foreground mb-2">
                 You&apos;re all set
               </h2>
-              <p className="font-heading italic text-[15px] text-muted-foreground mb-6">
+              <p className="italic text-[15px] text-muted-foreground mb-6">
                 Your profile is ready. Start exploring the community.
               </p>
               <button

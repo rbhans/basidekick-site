@@ -61,7 +61,7 @@ export function PrivacyView() {
           <h1 className="font-heading font-semibold text-[32px] md:text-[40px] leading-[1.05] text-foreground">
             Privacy Policy
           </h1>
-          <p className="font-heading italic text-[15px] text-muted-foreground mt-3">
+          <p className="italic text-[15px] text-muted-foreground mt-3">
             Last updated · <span className="tabular-nums">{lastUpdated}</span>
           </p>
         </div>

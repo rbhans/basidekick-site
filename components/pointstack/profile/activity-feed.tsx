@@ -79,7 +79,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
   if (error) {
     return (
       <div className="py-12 text-center">
-        <p className="font-heading italic text-[15px] text-destructive mb-4">{error}</p>
+        <p className="italic text-[15px] text-destructive mb-4">{error}</p>
         <button
           onClick={() => setRetryCount((c) => c + 1)}
           className="px-4 py-2 border border-foreground bg-card text-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-muted transition-colors"
@@ -92,7 +92,7 @@ export function ActivityFeed({ userId }: ActivityFeedProps) {
 
   if (activities.length === 0) {
     return (
-      <div className="py-16 text-center font-heading italic text-[16px] text-muted-foreground">
+      <div className="py-16 text-center italic text-[16px] text-muted-foreground">
         No recent activity.
       </div>
     );

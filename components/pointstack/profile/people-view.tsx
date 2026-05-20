@@ -44,7 +44,7 @@ export function PointStackPeopleView() {
         </span>
       </div>
 
-      <p className="font-heading italic text-[15px] text-muted-foreground mb-7">
+      <p className="italic text-[15px] text-muted-foreground mb-7">
         Find BAS professionals by name, skill, or location.
       </p>
 
@@ -81,7 +81,7 @@ export function PointStackPeopleView() {
 
       {/* Empty state */}
       {!loading && profiles.length === 0 && (
-        <div className="py-20 text-center font-heading italic text-[18px] text-muted-foreground">
+        <div className="py-20 text-center italic text-[18px] text-muted-foreground">
           {search
             ? `No one matches "${search}". Try a different name or skill.`
             : "No people yet."}

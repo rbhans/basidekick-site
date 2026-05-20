@@ -102,7 +102,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
   if (!post) {
     return (
       <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-16 text-center">
-        <p className="font-heading italic text-[20px] text-muted-foreground mb-5">
+        <p className="italic text-[20px] text-muted-foreground mb-5">
           This post isn&apos;t in the set.
         </p>
         <Link
@@ -367,7 +367,7 @@ export function PointStackPostDetail({ slug }: PostDetailProps) {
             ))}
           </div>
         ) : (
-          <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
+          <div className="py-16 text-center italic text-[18px] text-muted-foreground">
             {isQuestion
               ? "No answers yet. Be the first to help."
               : "No comments yet. Start the conversation."}

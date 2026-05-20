@@ -55,7 +55,7 @@ export function PointStackNotificationsView() {
           <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.05] text-foreground">
             Sign in to view notifications
           </h1>
-          <p className="font-heading italic text-[15px] text-muted-foreground mt-3">
+          <p className="italic text-[15px] text-muted-foreground mt-3">
             You need to be signed in to access your notifications.
           </p>
         </div>
@@ -172,7 +172,7 @@ export function PointStackNotificationsView() {
       {!notificationsLoading && notifications.length === 0 && (
         <div className="py-20 text-center">
           <Bell className="w-10 h-10 text-muted-foreground mx-auto mb-4" />
-          <p className="font-heading italic text-[16px] text-muted-foreground">
+          <p className="italic text-[16px] text-muted-foreground">
             No notifications yet. We&apos;ll let you know when something happens.
           </p>
         </div>

@@ -524,11 +524,11 @@ export function WikiView() {
               {/* Article list */}
               <div>
                 {loading ? (
-                  <div className="py-16 text-center font-heading italic text-[18px] text-muted-foreground">
+                  <div className="py-16 text-center italic text-[18px] text-muted-foreground">
                     Loading articles…
                   </div>
                 ) : articles.length === 0 ? (
-                  <div className="py-20 text-center font-heading italic text-[18px] text-muted-foreground">
+                  <div className="py-20 text-center italic text-[18px] text-muted-foreground">
                     <List className="w-7 h-7 text-muted-foreground/50 mx-auto mb-3" />
                     Nothing matches these filters.
                     {(filters.q || activeFilterCount > 0) && (

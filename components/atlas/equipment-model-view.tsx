@@ -69,7 +69,7 @@ function PointStandardsList({ atlasTypeId }: { atlasTypeId: string }) {
         {linkedEquipment.map((entry) => (
           <li key={entry.id}>
             {entry.isBroken ? (
-              <span className="font-heading italic text-[14px] text-destructive">
+              <span className="italic text-[14px] text-destructive">
                 {entry.name} (broken mapping)
               </span>
             ) : (
@@ -186,7 +186,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
   if (error) {
     return (
       <div className="min-h-full flex items-center justify-center py-24">
-        <p className="font-heading italic text-[17px] text-muted-foreground">
+        <p className="italic text-[17px] text-muted-foreground">
           Failed to load BAS Atlas data
         </p>
       </div>
@@ -205,7 +205,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
 
   if (!model || !brand || !type) {
     return (
-      <div className="py-24 text-center font-heading italic text-[18px] text-muted-foreground">
+      <div className="py-24 text-center italic text-[18px] text-muted-foreground">
         Equipment model not found.
       </div>
     );
@@ -281,7 +281,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
                   className="w-full max-h-[360px] object-contain p-4"
                 />
               ) : (
-                <div className="h-56 flex items-center justify-center font-heading italic text-[15px] text-muted-foreground">
+                <div className="h-56 flex items-center justify-center italic text-[15px] text-muted-foreground">
                   No image yet
                 </div>
               )}
@@ -334,7 +334,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
             </div>
 
             {images.length === 0 ? (
-              <p className="font-heading italic text-[15px] text-muted-foreground">No photos yet.</p>
+              <p className="italic text-[15px] text-muted-foreground">No photos yet.</p>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {images.map((img) => (
@@ -371,7 +371,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
             >
               {hasWorked ? "✓ Worked with this" : "I've worked with this"}
             </button>
-            <p className="font-heading italic text-[13px] text-muted-foreground mt-2 text-center">
+            <p className="italic text-[13px] text-muted-foreground mt-2 text-center">
               {experienceCount} {experienceCount === 1 ? "person has" : "people have"} worked with this
             </p>
           </div>
@@ -382,7 +382,7 @@ export function EquipmentModelView({ brandSlug, typeSlug, modelSlug }: Equipment
               People
             </div>
             {people.length === 0 ? (
-              <p className="font-heading italic text-[13px] text-muted-foreground">
+              <p className="italic text-[13px] text-muted-foreground">
                 No one yet. Be the first.
               </p>
             ) : (

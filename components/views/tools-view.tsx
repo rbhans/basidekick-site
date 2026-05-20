@@ -30,7 +30,7 @@ export function ToolsView() {
       </div>
 
       <section className="container mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-16 py-14">
-        <p className="font-heading italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-14 max-w-[640px] mx-auto">
+        <p className="italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-14 max-w-[640px] mx-auto">
           Professional software for building automation — one-time purchase, no subscriptions.
         </p>
 
@@ -65,7 +65,7 @@ function ToolSection({ index, tool, platform, id }: ToolSectionProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-10 mb-10">
         <div>
-          <p className="font-heading italic text-[17px] text-muted-foreground leading-[1.5] mb-6">
+          <p className="italic text-[17px] text-muted-foreground leading-[1.5] mb-6">
             {tool.tagline}.
           </p>
           <p className="text-[14px] text-foreground leading-[1.6] mb-6">
@@ -127,7 +127,7 @@ function ToolSection({ index, tool, platform, id }: ToolSectionProps) {
                   <div className="font-heading font-semibold text-[14px] text-foreground leading-[1.3]">
                     {f.title}
                   </div>
-                  <div className="font-heading italic text-[12px] text-muted-foreground mt-0.5 leading-[1.4]">
+                  <div className="italic text-[12px] text-muted-foreground mt-0.5 leading-[1.4]">
                     {f.description}
                   </div>
                 </div>

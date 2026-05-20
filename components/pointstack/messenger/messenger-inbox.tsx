@@ -26,7 +26,7 @@ export function MessengerInbox() {
   if (!user) {
     return (
       <div className="flex-1 flex items-center justify-center p-4">
-        <p className="font-heading italic text-[14px] text-muted-foreground">
+        <p className="italic text-[14px] text-muted-foreground">
           Sign in to view messages
         </p>
       </div>
@@ -96,7 +96,7 @@ export function MessengerInbox() {
       {/* Empty state */}
       {!messagesLoading && conversations.length === 0 && (
         <div className="flex-1 flex items-center justify-center p-6">
-          <p className="font-heading italic text-[14px] text-muted-foreground text-center">
+          <p className="italic text-[14px] text-muted-foreground text-center">
             No messages yet.
           </p>
         </div>
