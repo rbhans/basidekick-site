@@ -5,12 +5,14 @@ import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBabelAll } from "./use-babel-data";
+import { useAtlasAll } from "@/components/atlas/use-atlas-data";
 import { BabelEntryRow } from "./babel-entry-row";
+import { ModelEntryRow } from "@/components/atlas/model-entry-row";
 import { ReportButton } from "@/components/feedback/report-button";
 import { useAuth } from "@/hooks/use-auth";
-import type { BabelPointEntry, BabelEquipmentEntry } from "@/lib/types";
+import type { BabelPointEntry, BabelEquipmentEntry, AtlasModel, AtlasBrand } from "@/lib/types";
 
-export type AtlasScope = "all" | "points" | "equipment";
+export type AtlasScope = "all" | "points" | "equipment" | "models";
 
 interface BabelViewProps {
   scope: AtlasScope;
@@ -51,8 +53,20 @@ function equipmentMatches(entry: BabelEquipmentEntry, query: string): boolean {
   ]);
 }
 
+function modelMatches(model: AtlasModel, query: string): boolean {
+  return matchesQuery(query, [
+    model.name,
+    model.brand_name,
+    model.type_name,
+    model.description,
+    ...(model.model_numbers ?? []),
+    ...(model.protocols ?? []),
+  ]);
+}
+
 export function BabelView({ scope, onScopeChange }: BabelViewProps) {
   const { data, categories, loading, error } = useBabelAll();
+  const { data: atlasData, loading: atlasLoading } = useAtlasAll();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -74,14 +88,23 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
   }, []);
 
   const filtered = useMemo(() => {
-    if (!data) return { points: [] as BabelPointEntry[], equipment: [] as BabelEquipmentEntry[] };
+    const empty = {
+      points: [] as BabelPointEntry[],
+      equipment: [] as BabelEquipmentEntry[],
+      models: [] as AtlasModel[],
+    };
+    if (!data) return empty;
     const q = searchQuery.trim();
-    const points = (scope === "equipment" ? [] : data.points).filter((p) => pointMatches(p, q));
-    const equipment = (scope === "points" ? [] : data.equipment).filter((e) => equipmentMatches(e, q));
-    return { points, equipment };
-  }, [data, searchQuery, scope]);
+    const includePoints = scope === "all" || scope === "points";
+    const includeEquipment = scope === "all" || scope === "equipment";
+    const includeModels = scope === "all" || scope === "models";
+    const points = (includePoints ? data.points : []).filter((p) => pointMatches(p, q));
+    const equipment = (includeEquipment ? data.equipment : []).filter((e) => equipmentMatches(e, q));
+    const models = (includeModels && atlasData ? atlasData.models : []).filter((m) => modelMatches(m, q));
+    return { points, equipment, models };
+  }, [data, atlasData, searchQuery, scope]);
 
-  const totalVisible = filtered.points.length + filtered.equipment.length;
+  const totalVisible = filtered.points.length + filtered.equipment.length + filtered.models.length;
 
   // Distinct aliases
   const distinctAliases = useMemo(() => {
@@ -137,9 +160,10 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
         id: string;
         catId: string;
         name: string;
-        type: "point" | "equipment";
+        type: "point" | "equipment" | "model";
         points: BabelPointEntry[];
         equipment: BabelEquipmentEntry[];
+        models: AtlasModel[];
         desc: string;
       }>;
 
@@ -156,6 +180,7 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
           type: "point" as const,
           points,
           equipment: [] as BabelEquipmentEntry[],
+          models: [] as AtlasModel[],
           desc: "",
         };
       })
@@ -171,15 +196,34 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
           type: "equipment" as const,
           points: [] as BabelPointEntry[],
           equipment,
+          models: [] as AtlasModel[],
           desc: "",
         };
       })
       .filter((g) => g.equipment.length > 0 || (!searchQuery && scope === "equipment"));
 
+    const brands: AtlasBrand[] = atlasData?.brands ?? [];
+    const modelGroups = brands
+      .map((b) => {
+        const models = filtered.models.filter((m) => m.brand === b.id);
+        return {
+          id: `md-${b.id}`,
+          catId: b.id,
+          name: b.name,
+          type: "model" as const,
+          points: [] as BabelPointEntry[],
+          equipment: [] as BabelEquipmentEntry[],
+          models,
+          desc: b.description ?? "",
+        };
+      })
+      .filter((g) => g.models.length > 0 || (!searchQuery && scope === "models"));
+
     if (scope === "points") return pointGroups;
     if (scope === "equipment") return equipGroups;
-    return [...pointGroups, ...equipGroups];
-  }, [data, categories, filtered, scope, searchQuery]);
+    if (scope === "models") return modelGroups;
+    return [...pointGroups, ...equipGroups, ...modelGroups];
+  }, [data, atlasData, categories, filtered, scope, searchQuery]);
 
   // Default-expand first 2 groups on first load only
   useEffect(() => {
@@ -216,6 +260,8 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
 
   const totalPoints = data?.totalPoints ?? 0;
   const totalEquipment = data?.totalEquipment ?? 0;
+  const totalModels = atlasData?.totalModels ?? 0;
+  const totalBrands = atlasData?.totalBrands ?? 0;
   const lastReviewedDate = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
   return (
@@ -258,13 +304,16 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
           <div className="at-controls">
             <span className="label">Showing</span>
             <button className="at-chip" aria-selected={scope === "all"} onClick={() => onScopeChange("all")}>
-              All <span className="n">{totalPoints + totalEquipment}</span>
+              All <span className="n">{totalPoints + totalEquipment + totalModels}</span>
             </button>
             <button className="at-chip" aria-selected={scope === "points"} onClick={() => onScopeChange("points")}>
               Points <span className="n">{totalPoints}</span>
             </button>
             <button className="at-chip" aria-selected={scope === "equipment"} onClick={() => onScopeChange("equipment")}>
-              Equipment <span className="n">{totalEquipment}</span>
+              Equipment Types <span className="n">{totalEquipment}</span>
+            </button>
+            <button className="at-chip" aria-selected={scope === "models"} onClick={() => onScopeChange("models")}>
+              Models <span className="n">{totalModels}</span>
             </button>
             <span className="count">
               <b>{totalVisible}</b>
@@ -273,7 +322,7 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
           </div>
         </div>
 
-        {/* 5-cell stat strip */}
+        {/* Stat strip */}
         <div className="at-stats tabular-nums">
           <div className="cell">
             <span className="k">Total points</span>
@@ -281,9 +330,14 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
             <span className="delta dim">indexed</span>
           </div>
           <div className="cell">
-            <span className="k">Total equipment</span>
+            <span className="k">Equipment types</span>
             <span className="v">{totalEquipment}</span>
-            <span className="delta dim">models</span>
+            <span className="delta dim">generic classes</span>
+          </div>
+          <div className="cell">
+            <span className="k">Models</span>
+            <span className="v">{totalModels}</span>
+            <span className="delta dim">{totalBrands} {totalBrands === 1 ? "brand" : "brands"}</span>
           </div>
           <div className="cell">
             <span className="k">Distinct aliases</span>
@@ -384,7 +438,7 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
         </div>
 
         {/* Browse */}
-        {loading ? (
+        {loading || (scope !== "points" && scope !== "equipment" && atlasLoading) ? (
           <div className="space-y-8">
             {[1, 2, 3].map((i) => (
               <div key={i}>
@@ -405,12 +459,16 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
         ) : (
           <div className="at-browse">
             {groups.map((group, idx) => {
-              const itemCount = group.points.length + group.equipment.length;
+              const itemCount = group.points.length + group.equipment.length + group.models.length;
               if (itemCount === 0) return null;
               const expanded = isGroupExpanded(group.id, itemCount);
               const num = String(idx + 1).padStart(2, "0");
+              const kindLabel =
+                group.type === "point" ? "Points" : group.type === "equipment" ? "Equipment Type" : "Brand";
+              const countLabel =
+                group.type === "point" ? "points" : group.type === "equipment" ? "types" : "models";
               return (
-                <section key={group.id} className="at-cat" data-cat-kind={group.type === "point" ? "point" : "equipment"}>
+                <section key={group.id} className="at-cat" data-cat-kind={group.type}>
                   <button
                     className="at-cat-head"
                     type="button"
@@ -419,10 +477,10 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
                   >
                     <span className="num">.{num}</span>
                     <span className="name">{group.name}</span>
-                    <span className="kind">{group.type === "point" ? "Points" : "Equipment"}</span>
+                    <span className="kind">{kindLabel}</span>
                     <span className="ct">
                       <b>{itemCount}</b>
-                      {group.type === "point" ? "points" : "models"}
+                      {countLabel}
                     </span>
                     <span className="toggle">{expanded ? "−  Collapse" : "+  Expand"}</span>
                   </button>
@@ -434,6 +492,9 @@ export function BabelView({ scope, onScopeChange }: BabelViewProps) {
                       ))}
                       {group.equipment.map((entry) => (
                         <BabelEntryRow key={`eq-${entry.id}`} entry={entry} type="equipment" />
+                      ))}
+                      {group.models.map((m) => (
+                        <ModelEntryRow key={`md-${m.id}`} model={m} />
                       ))}
                     </div>
                   )}

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { BabelView } from "@/components/babel/babel-view";
 
-export type AtlasScope = "all" | "points" | "equipment";
+export type AtlasScope = "all" | "points" | "equipment" | "models";
 
 export function AtlasTabbedView() {
   const pathname = usePathname();
@@ -13,7 +13,7 @@ export function AtlasTabbedView() {
 
   const activeScope: AtlasScope = useMemo(() => {
     const scope = searchParams.get("scope");
-    if (scope === "points" || scope === "equipment") return scope;
+    if (scope === "points" || scope === "equipment" || scope === "models") return scope;
     return "all";
   }, [searchParams]);
 

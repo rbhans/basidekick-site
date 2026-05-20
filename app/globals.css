@@ -121,6 +121,37 @@
   --punch-soft: rgba(209, 26, 54, 0.12);
   --punch-soft-2: rgba(209, 26, 54, 0.24);
 
+  /* Supporting palette — used only for semantics (ontologies, status,
+     wiki categories, code syntax). Anchor: muted, editorial, sits beside
+     crimson without competing. Never use these for chrome/typography. */
+  --ochre: #b8762a;        /* warmth / warning / Haystack */
+  --ochre-2: #d99a5d;      /* lighter ochre — dark surfaces */
+  --moss: #3a7a3a;         /* positive / system-live / Brick */
+  --moss-2: #9ec79a;       /* lighter moss — dark surfaces */
+  --slate: #3d5a80;        /* guidance / how-to */
+  --teal: #2d6e6e;         /* reference */
+  --plum: #6b3a5e;         /* documentation */
+
+  /* Semantic aliases — prefer these in components over raw hues. */
+  --status-live: var(--moss);
+  --ontology-haystack: var(--ochre);
+  --ontology-brick: var(--moss);
+
+  /* Code syntax (light surfaces / dark snippet surfaces share names). */
+  --tok-keyword: var(--punch-2);
+  --tok-string: var(--moss-2);
+  --tok-key: var(--ochre-2);
+  --tok-fn: var(--ochre-2);
+  --tok-comment: var(--cream-3);
+  --tok-dim: var(--cream-3);
+
+  /* Wiki category accents. */
+  --wiki-troubleshooting: var(--ochre);
+  --wiki-how-to: var(--slate);
+  --wiki-best-practices: var(--moss);
+  --wiki-documentation: var(--plum);
+  --wiki-reference: var(--teal);
+
   --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
   --shadow-md: 0 1px 3px rgb(0 0 0 / 0.06), 0 4px 12px -2px rgb(0 0 0 / 0.08);
   --shadow-lg: 0 4px 6px rgb(0 0 0 / 0.04), 0 12px 24px -4px rgb(0 0 0 / 0.10);
@@ -2364,7 +2395,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #2c8a3f;
+  background: var(--status-live);
 }
 .sc-body {
   display: grid;
@@ -2482,12 +2513,12 @@
   overflow-x: auto;
   white-space: pre;
 }
-.sc-snippet .tok-key { color: #d99a5d; }
-.sc-snippet .tok-str { color: #9ec79a; }
-.sc-snippet .tok-cmt { color: var(--cream-3); font-style: italic; }
-.sc-snippet .tok-kw { color: #e8344e; }
-.sc-snippet .tok-fn { color: #e8b96a; }
-.sc-snippet .tok-dim { color: var(--cream-3); }
+.sc-snippet .tok-key { color: var(--tok-key); }
+.sc-snippet .tok-str { color: var(--tok-string); }
+.sc-snippet .tok-cmt { color: var(--tok-comment); font-style: italic; }
+.sc-snippet .tok-kw { color: var(--tok-keyword); }
+.sc-snippet .tok-fn { color: var(--tok-fn); }
+.sc-snippet .tok-dim { color: var(--tok-dim); }
 .sc-side .sc-block h4 {
   border-bottom: 0;
   padding-bottom: 0;
@@ -3136,8 +3167,8 @@
   padding-top: 3px;
 }
 .at-featured .quick dd { margin: 0; color: var(--cream); }
-.at-featured .quick .haystack { color: #e8b96a; }
-.at-featured .quick .brick { color: #9ec79a; }
+.at-featured .quick .haystack { color: var(--ochre-2); }
+.at-featured .quick .brick { color: var(--moss-2); }
 .at-featured .open {
   margin-top: auto;
   display: inline-flex;
@@ -3391,7 +3422,32 @@
 }
 .at-row[data-type="point"]::before { background: var(--ink-3); }
 .at-row[data-type="equipment"]::before { background: var(--punch); }
+.at-row[data-type="model"]::before { background: #b8762a; }
 .at-row:hover::before { transform: translateY(-50%) scale(1.5); }
+.at-row[data-type="model"] .model-brand {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #b8762a;
+  margin-right: 10px;
+  padding: 1px 6px;
+  border: 1px solid #b8762a;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.at-row[data-type="model"] .meta .model-type {
+  color: var(--punch);
+}
+.at-row[data-type="model"] .meta .model-discontinued {
+  color: var(--ink-4);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.at-cat[data-cat-kind="model"] .at-cat-head .num { color: #b8762a; }
+.at-cat[data-cat-kind="model"] .at-cat-head .kind { color: #b8762a; }
 .at-row .lead {
   display: flex;
   flex-direction: column;
@@ -3414,7 +3470,7 @@
   text-transform: uppercase;
   color: var(--ink-3);
 }
-.at-row .meta .brick { color: #2c8a3f; }
+.at-row .meta .brick { color: var(--ontology-brick); }
 .at-row .meta .sep { color: var(--ink-4); margin: 0 4px; }
 .at-row .aliases {
   font-family: var(--font-mono);

@@ -403,6 +403,10 @@ export interface AtlasModel {
   type: string;
   name: string;
   slug: string;
+  brand_name?: string;
+  brand_slug?: string;
+  type_name?: string;
+  type_slug?: string;
   model_numbers?: string[];
   protocols?: string[];
   status?: AtlasModelStatus;
