@@ -24,6 +24,9 @@ import { ProfileEditDialog } from "./profile-edit-dialog";
 import { FollowersDialog } from "./followers-dialog";
 import { ActivityFeed } from "./activity-feed";
 import { ContributionsTab } from "./contributions-tab";
+import { CompletionsTab, type CompletionsCatalogEntry } from "./completions-tab";
+import { PendingTab } from "./pending-tab";
+import { BookmarksTab } from "./bookmarks-tab";
 import { ExpertiseSection } from "./expertise-section";
 import { PointStackProfile, PointStackPost } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
@@ -33,9 +36,10 @@ import { toast } from "sonner";
 
 interface ProfileViewProps {
   username: string;
+  coursesCatalog?: CompletionsCatalogEntry[];
 }
 
-export function PointStackProfileView({ username }: ProfileViewProps) {
+export function PointStackProfileView({ username, coursesCatalog = [] }: ProfileViewProps) {
   const { user } = useAuth();
   const { messageUser } = usePointStackStore();
   const [profile, setProfile] = useState<PointStackProfile | null>(null);
@@ -236,6 +240,12 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
             </p>
           )}
 
+          {profile.bio && (
+            <p className="text-[14px] text-foreground/85 leading-[1.55] mb-4 max-w-[620px] whitespace-pre-wrap">
+              {profile.bio}
+            </p>
+          )}
+
           <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground mb-4">
             {profile.location && (
               <span className="inline-flex items-center gap-1.5">
@@ -400,11 +410,33 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
             Contributions
           </TabsTrigger>
           <TabsTrigger
+            value="completions"
+            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+          >
+            Completions
+          </TabsTrigger>
+          <TabsTrigger
             value="activity"
             className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
           >
             Activity
           </TabsTrigger>
+          {isOwnProfile && (
+            <>
+              <TabsTrigger
+                value="pending"
+                className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+              >
+                Pending
+              </TabsTrigger>
+              <TabsTrigger
+                value="bookmarks"
+                className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
+              >
+                Bookmarks
+              </TabsTrigger>
+            </>
+          )}
         </TabsList>
 
         <TabsContent value="posts" className="mt-4">
@@ -477,9 +509,28 @@ export function PointStackProfileView({ username }: ProfileViewProps) {
           <ContributionsTab userId={profile.id} />
         </TabsContent>
 
+        <TabsContent value="completions" className="mt-4">
+          <CompletionsTab
+            userId={profile.id}
+            isOwner={Boolean(isOwnProfile)}
+            catalog={coursesCatalog}
+          />
+        </TabsContent>
+
         <TabsContent value="activity" className="mt-4">
           <ActivityFeed userId={profile.id} />
         </TabsContent>
+
+        {isOwnProfile && (
+          <>
+            <TabsContent value="pending" className="mt-4">
+              <PendingTab userId={profile.id} />
+            </TabsContent>
+            <TabsContent value="bookmarks" className="mt-4">
+              <BookmarksTab />
+            </TabsContent>
+          </>
+        )}
       </Tabs>
 
       {/* Dialogs */}

@@ -2256,6 +2256,184 @@ export async function fetchUserWikiArticles(userId: string, limit = 20): Promise
   return (data || []) as WikiArticle[];
 }
 
+// Approved wiki contributions (edits + new entries that an admin approved).
+// Public-safe: only status='approved'.
+export interface UserWikiContributionRow {
+  id: string;
+  type: "edit" | "new_entry";
+  title: string;
+  created_at: string;
+  approved_article_id: string | null;
+  target_article: { title: string; slug: string } | null;
+  approved_article: { title: string; slug: string } | null;
+}
+
+export async function fetchUserApprovedWikiContributions(
+  userId: string,
+  limit = 20
+): Promise<UserWikiContributionRow[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("wiki_contributions")
+    .select(
+      `id, type, title, created_at, approved_article_id,
+       target_article:wiki_articles!wiki_contributions_target_article_id_fkey(title, slug),
+       approved_article:wiki_articles!wiki_contributions_approved_article_id_fkey(title, slug)`
+    )
+    .eq("user_id", userId)
+    .eq("status", "approved")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+
+  // Supabase types embedded relations as arrays in some configs — normalize.
+  return (data || []).map((row: {
+    id: string;
+    type: "edit" | "new_entry";
+    title: string;
+    created_at: string;
+    approved_article_id: string | null;
+    target_article: unknown;
+    approved_article: unknown;
+  }) => ({
+    id: row.id,
+    type: row.type,
+    title: row.title,
+    created_at: row.created_at,
+    approved_article_id: row.approved_article_id,
+    target_article: Array.isArray(row.target_article) ? row.target_article[0] ?? null : (row.target_article as { title: string; slug: string } | null),
+    approved_article: Array.isArray(row.approved_article) ? row.approved_article[0] ?? null : (row.approved_article as { title: string; slug: string } | null),
+  }));
+}
+
+// User's pending contributions across all moderation queues (owner-only view).
+export interface UserPendingItem {
+  id: string;
+  source: "wiki" | "babel" | "equipment" | "wiki_draft";
+  type: string;
+  title: string;
+  created_at: string;
+  link?: string;
+}
+
+export async function fetchUserPendingContributions(userId: string): Promise<UserPendingItem[]> {
+  const supabase = getClient();
+
+  const [wikiRes, babelRes, equipmentRes, draftRes] = await Promise.all([
+    supabase
+      .from("wiki_contributions")
+      .select("id, type, title, created_at, target_article:wiki_articles!wiki_contributions_target_article_id_fkey(slug)")
+      .eq("user_id", userId)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("babel_contributions")
+      .select("id, type, title, created_at")
+      .eq("user_id", userId)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("equipment_submissions")
+      .select("id, type, model_name, brand_name, created_at")
+      .eq("user_id", userId)
+      .eq("review_status", "pending")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("wiki_articles")
+      .select("id, title, slug, created_at")
+      .eq("author_id", userId)
+      .eq("is_published", false)
+      .order("created_at", { ascending: false }),
+  ]);
+
+  const items: UserPendingItem[] = [];
+
+  for (const row of (wikiRes.data || []) as Array<{
+    id: string; type: string; title: string; created_at: string;
+    target_article: unknown;
+  }>) {
+    const target = Array.isArray(row.target_article) ? row.target_article[0] : row.target_article;
+    items.push({
+      id: row.id,
+      source: "wiki",
+      type: row.type,
+      title: row.title,
+      created_at: row.created_at,
+      link: target && typeof target === "object" && "slug" in target ? `/wiki/${(target as { slug: string }).slug}` : undefined,
+    });
+  }
+  for (const row of (babelRes.data || []) as Array<{ id: string; type: string; title: string; created_at: string }>) {
+    items.push({ id: row.id, source: "babel", type: row.type, title: row.title, created_at: row.created_at });
+  }
+  for (const row of (equipmentRes.data || []) as Array<{ id: string; type: string; model_name: string | null; brand_name: string | null; created_at: string }>) {
+    items.push({
+      id: row.id,
+      source: "equipment",
+      type: row.type,
+      title: row.model_name || row.brand_name || "Equipment submission",
+      created_at: row.created_at,
+    });
+  }
+  for (const row of (draftRes.data || []) as Array<{ id: string; title: string; slug: string; created_at: string }>) {
+    items.push({
+      id: row.id,
+      source: "wiki_draft",
+      type: "draft",
+      title: row.title,
+      created_at: row.created_at,
+      link: `/wiki/${row.slug}`,
+    });
+  }
+
+  return items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+}
+
+// User's news submissions (public).
+export interface UserNewsSubmission {
+  id: string;
+  title: string;
+  slug: string;
+  source_domain: string;
+  upvote_count: number;
+  created_at: string;
+}
+
+export async function fetchUserNewsSubmissions(userId: string, limit = 20): Promise<UserNewsSubmission[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("news_articles")
+    .select("id, title, slug, source_domain, upvote_count, created_at")
+    .eq("submitted_by", userId)
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return (data || []) as UserNewsSubmission[];
+}
+
+// User's course progress (public if owner allows or viewer is owner — caller must check).
+export interface UserCourseProgressRow {
+  course_slug: string;
+  lessons_completed: string[];
+  last_lesson_slug: string | null;
+  started_at: string;
+  last_active_at: string;
+}
+
+export async function fetchUserCourseProgress(userId: string): Promise<UserCourseProgressRow[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("course_progress")
+    .select("course_slug, lessons_completed, last_lesson_slug, started_at, last_active_at")
+    .eq("user_id", userId)
+    .order("last_active_at", { ascending: false });
+
+  if (error) throw error;
+  return (data || []) as UserCourseProgressRow[];
+}
+
 // ============================================================
 // FOLLOWERS/FOLLOWING LISTS API
 // ============================================================

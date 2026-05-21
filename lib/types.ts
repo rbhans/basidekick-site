@@ -117,23 +117,14 @@ export const VIEW_IDS = {
 
 export type ViewId = (typeof VIEW_IDS)[keyof typeof VIEW_IDS];
 
-// License from Lemon Squeezy purchases
-export interface License {
-  id: string;
-  product_id: string; // 'ssk'
-  license_key: string;
-  lemon_squeezy_order_id: string | null;
-  purchased_at: string;
-  expires_at: string | null; // null = lifetime
-  is_active: boolean;
-}
-
 // User profile from Supabase
 export interface Profile {
   id: string;
   display_name: string | null;
   avatar_url: string | null;
   company: string | null;
+  bio: string | null;
+  show_completions: boolean;
   subscription_tier: string | null;
   entitlements: {
     tools: string[];
@@ -242,6 +233,35 @@ export interface WikiComment {
   updated_at: string;
   // Joined data
   author?: { display_name: string | null };
+}
+
+// Wiki contribution (user-submitted new articles + edit suggestions, admin-moderated)
+export type WikiContributionType = "edit" | "new_entry";
+export type WikiContributionStatus = "pending" | "approved" | "rejected";
+
+export interface WikiContribution {
+  id: string;
+  user_id: string | null;
+  type: WikiContributionType;
+  target_article_id: string | null;
+  title: string;
+  slug: string | null;
+  summary: string | null;
+  content: string;
+  category_id: string | null;
+  submitter_notes: string | null;
+  status: WikiContributionStatus;
+  reviewed_by: string | null;
+  reviewer_notes: string | null;
+  reviewed_at: string | null;
+  approved_article_id: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  submitter?: { display_name: string | null };
+  reviewer?: { display_name: string | null };
+  target_article?: { title: string; slug: string } | null;
+  category?: { name: string; slug: string } | null;
 }
 
 // Wiki suggestion
@@ -916,12 +936,14 @@ export interface UpdatePointStackProfileInput {
   display_name?: string;
   avatar_url?: string;
   headline?: string;
+  bio?: string;
   location?: string;
   skills?: string[];
   website_url?: string;
   linkedin_url?: string;
   github_url?: string;
   availability_status?: PointStackAvailabilityStatus;
+  show_completions?: boolean;
 }
 
 // ============================================================

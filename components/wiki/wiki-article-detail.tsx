@@ -13,6 +13,7 @@ import {
   Calendar,
   User,
   SignIn,
+  PencilSimple,
 } from "@phosphor-icons/react";
 import { MarkdownContent } from "@/components/markdown-content";
 import { RelatedArticles } from "@/components/wiki/related-articles";
@@ -228,6 +229,14 @@ export function WikiArticleDetail({ article, tags, facets = [] }: WikiArticleDet
               }}
               size="sm"
             />
+            <Link
+              href={ROUTES.WIKI_ARTICLE_SUGGEST_EDIT(article.slug)}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground border border-border rounded-sm hover:border-foreground hover:text-foreground transition-colors"
+              title={user ? "Suggest an edit" : "Sign in to suggest an edit"}
+            >
+              <PencilSimple className="w-3 h-3" />
+              Suggest edit
+            </Link>
             <ReportButton
               targetType="wiki_article"
               targetId={article.id}

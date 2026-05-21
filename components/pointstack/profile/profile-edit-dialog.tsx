@@ -72,6 +72,7 @@ function getDefaultValues(profile: PointStackProfile): ProfileEditFormValues {
   return {
     displayName: profile.display_name || "",
     headline: profile.headline || "",
+    bio: profile.bio || "",
     location: profile.location || "",
     skills: profile.skills || [],
     websiteUrl: profile.website_url || "",
@@ -118,6 +119,7 @@ export function ProfileEditDialog({
       const updatedProfile = await api.updateProfile({
         display_name: values.displayName.trim() || undefined,
         headline: values.headline.trim() || undefined,
+        bio: values.bio.trim() || undefined,
         location: values.location.trim() || undefined,
         skills: values.skills.length > 0 ? values.skills : undefined,
         website_url: values.websiteUrl.trim() || undefined,
@@ -166,6 +168,29 @@ export function ProfileEditDialog({
                   <FormControl>
                     <Input placeholder="e.g., Niagara Developer at Acme Controls" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Bio</FormLabel>
+                  <FormControl>
+                    <textarea
+                      {...field}
+                      rows={4}
+                      maxLength={500}
+                      placeholder="A few sentences about your background, focus areas, and what you're up to."
+                      className="w-full border border-border bg-card focus:border-foreground transition-colors outline-none p-3 text-[14px] text-foreground placeholder:text-muted-foreground/60 placeholder:italic font-sans resize-y rounded-md"
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground tabular-nums">
+                    {field.value?.length || 0}/500
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}

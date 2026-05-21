@@ -11,6 +11,10 @@ import {
 } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import * as api from "../pointstack-api";
+import type {
+  UserWikiContributionRow,
+  UserNewsSubmission,
+} from "../pointstack-api";
 
 interface ContributionsTabProps {
   userId: string;
@@ -27,19 +31,26 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
   const [babelContributions, setBabelContributions] = useState<BabelContribution[]>([]);
   const [equipmentSubmissions, setEquipmentSubmissions] = useState<EquipmentSubmission[]>([]);
   const [wikiArticles, setWikiArticles] = useState<WikiArticle[]>([]);
+  const [wikiContributions, setWikiContributions] = useState<UserWikiContributionRow[]>([]);
+  const [newsSubmissions, setNewsSubmissions] = useState<UserNewsSubmission[]>([]);
 
   useEffect(() => {
     const fetchContributions = async () => {
       setLoading(true);
       try {
-        const [babel, equipment, wiki] = await Promise.all([
+        const [babel, equipment, wiki, wikiContribs, news] = await Promise.all([
           api.fetchUserBabelContributions(userId).catch(() => []),
           api.fetchUserEquipmentSubmissions(userId).catch(() => []),
           api.fetchUserWikiArticles(userId).catch(() => []),
+          api.fetchUserApprovedWikiContributions(userId).catch(() => []),
+          api.fetchUserNewsSubmissions(userId).catch(() => []),
         ]);
-        setBabelContributions(babel);
-        setEquipmentSubmissions(equipment);
+        // Filter babel/equipment to approved-only for public-facing tab
+        setBabelContributions(babel.filter((c) => c.status === "approved"));
+        setEquipmentSubmissions(equipment.filter((s) => s.review_status === "approved"));
         setWikiArticles(wiki);
+        setWikiContributions(wikiContribs);
+        setNewsSubmissions(news);
       } catch (error) {
         console.error("Error fetching contributions:", error);
       } finally {
@@ -67,7 +78,11 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
   }
 
   const totalContributions =
-    babelContributions.length + equipmentSubmissions.length + wikiArticles.length;
+    babelContributions.length +
+    equipmentSubmissions.length +
+    wikiArticles.length +
+    wikiContributions.length +
+    newsSubmissions.length;
 
   if (totalContributions === 0) {
     return (
@@ -79,6 +94,9 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
 
   return (
     <div className="space-y-10">
+      {/* Wiki articles authored (also published from new_entry submissions) */}
+      {/* — block 01 placement to follow visual numbering */}
+
       {/* Atlas Terms Contributions */}
       {babelContributions.length > 0 && (
         <ContributionSection num="01" title="Atlas terms" count={babelContributions.length}>
@@ -161,6 +179,87 @@ export function ContributionsTab({ userId }: ContributionsTabProps) {
                   {article.category?.name && " · "}
                   <span className="tabular-nums">
                     {formatDistanceToNow(new Date(article.created_at), { addSuffix: true })}
+                  </span>
+                </div>
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground group-hover:text-accent transition-colors self-center">
+                View →
+              </span>
+            </Link>
+          ))}
+        </ContributionSection>
+      )}
+
+      {/* Wiki edits + new entries (approved contributions) */}
+      {wikiContributions.length > 0 && (
+        <ContributionSection num="04" title="Wiki edits & new entries" count={wikiContributions.length}>
+          {wikiContributions.map((c, idx) => {
+            const target = c.approved_article || c.target_article;
+            const href = target ? ROUTES.WIKI_ARTICLE(target.slug) : undefined;
+            const titleText = target?.title || c.title;
+            const label = c.type === "edit" ? "Edit applied" : "New entry";
+            const Row = (
+              <div className="grid grid-cols-[28px_1fr_auto] gap-4 items-start py-4 px-2 border-b border-muted">
+                <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums mt-1">
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <div className="min-w-0">
+                  <div className="font-heading font-semibold text-[15px] leading-[1.3] text-foreground truncate">
+                    {titleText}
+                  </div>
+                  <div className="mt-2 font-mono text-[9px] uppercase tracking-[1.1px] text-muted-foreground">
+                    <span className="text-accent">{label}</span>
+                    {" · "}
+                    <span className="tabular-nums">
+                      {formatDistanceToNow(new Date(c.created_at), { addSuffix: true })}
+                    </span>
+                  </div>
+                </div>
+                {href && (
+                  <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground self-center">
+                    View →
+                  </span>
+                )}
+              </div>
+            );
+            return href ? (
+              <Link
+                key={c.id}
+                href={href}
+                className="group hover:bg-muted/40 transition-colors block"
+              >
+                {Row}
+              </Link>
+            ) : (
+              <div key={c.id}>{Row}</div>
+            );
+          })}
+        </ContributionSection>
+      )}
+
+      {/* News submissions */}
+      {newsSubmissions.length > 0 && (
+        <ContributionSection num="05" title="News submissions" count={newsSubmissions.length}>
+          {newsSubmissions.map((n, idx) => (
+            <Link
+              key={n.id}
+              href={ROUTES.NEWS_ARTICLE(n.slug)}
+              className="group grid grid-cols-[28px_1fr_auto] gap-4 items-start py-4 px-2 border-b border-muted hover:bg-muted/40 transition-colors"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums mt-1">
+                {String(idx + 1).padStart(2, "0")}
+              </span>
+              <div className="min-w-0">
+                <h4 className="font-heading font-semibold text-[15px] leading-[1.3] text-foreground group-hover:text-accent transition-colors truncate">
+                  {n.title}
+                </h4>
+                <div className="mt-2 font-mono text-[9px] uppercase tracking-[1.1px] text-muted-foreground">
+                  <span className="text-accent">{n.source_domain}</span>
+                  {" · "}
+                  <span className="tabular-nums">{n.upvote_count} ↑</span>
+                  {" · "}
+                  <span className="tabular-nums">
+                    {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
                   </span>
                 </div>
               </div>

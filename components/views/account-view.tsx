@@ -5,44 +5,30 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
-import { useProgress } from "@/lib/progress";
-import { License, Profile, PointStackCompany } from "@/lib/types";
-import { TOOLS } from "@/lib/constants";
+import { Profile, PointStackCompany, PointStackProfile } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
-import { validateDisplayName, MAX_LENGTHS, MIN_LENGTHS } from "@/lib/security";
-import type { CourseSummary } from "@/app/(main)/account/page";
 import {
   SignOut,
-  Download,
-  Key,
-  Calendar,
   Buildings,
   SignIn,
   PencilSimple,
-  X,
-  Check,
   ArrowSquareOut,
-  BookOpen,
-  CheckCircle,
+  Eye,
+  EyeSlash,
 } from "@phosphor-icons/react";
 import { AvatarUpload } from "@/components/avatar-upload";
 import { UserAvatar } from "@/components/user-avatar";
 import { fetchUserCompanies } from "@/components/pointstack/pointstack-api";
+import { ProfileEditDialog } from "@/components/pointstack/profile/profile-edit-dialog";
 
-export function AccountView({ courses }: { courses: CourseSummary[] }) {
+export function AccountView() {
   const router = useRouter();
   const { user, loading: authLoading, signOut } = useAuth();
-  const { getCourse, hydrated: progressHydrated } = useProgress();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [licenses, setLicenses] = useState<License[]>([]);
   const [companies, setCompanies] = useState<(PointStackCompany & { _memberRole?: string })[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Edit mode state
-  const [isEditing, setIsEditing] = useState(false);
-  const [editDisplayName, setEditDisplayName] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [editError, setEditError] = useState("");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [togglingCompletions, setTogglingCompletions] = useState(false);
 
   useEffect(() => {
     async function fetchUserData() {
@@ -57,19 +43,13 @@ export function AccountView({ courses }: { courses: CourseSummary[] }) {
         return;
       }
 
-      // Fetch profile, licenses, and companies in parallel
-      const [profileRes, licensesRes, userCompanies] = await Promise.all([
+      const [profileRes, userCompanies] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", user.id).single(),
-        supabase.from("licenses").select("*").eq("user_id", user.id),
         fetchUserCompanies(user.id).catch(() => []),
       ]);
 
       if (profileRes.data) {
         setProfile(profileRes.data as Profile);
-      }
-
-      if (licensesRes.data) {
-        setLicenses(licensesRes.data as License[]);
       }
 
       setCompanies(userCompanies);
@@ -86,55 +66,23 @@ export function AccountView({ courses }: { courses: CourseSummary[] }) {
     router.push(ROUTES.HOME);
   };
 
-  const handleStartEdit = () => {
-    setEditDisplayName(profile?.display_name || "");
-    setEditError("");
-    setIsEditing(true);
-  };
-
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setEditDisplayName("");
-    setEditError("");
-  };
-
-  const handleSaveProfile = async () => {
-    if (!user) return;
-
-    // Validate display name
-    const validation = validateDisplayName(editDisplayName);
-    if (!validation.valid) {
-      setEditError(validation.error || "Invalid display name");
-      return;
-    }
-
-    setSaving(true);
-    setEditError("");
-
+  const handleToggleCompletions = async () => {
+    if (!user || !profile) return;
+    const next = !profile.show_completions;
+    setTogglingCompletions(true);
     const supabase = createClient();
     if (!supabase) {
-      setSaving(false);
-      setEditError("Failed to save. Please try again.");
+      setTogglingCompletions(false);
       return;
     }
-
     const { error } = await supabase
       .from("profiles")
-      .update({ display_name: validation.sanitized })
+      .update({ show_completions: next })
       .eq("id", user.id);
-
-    if (error) {
-      setSaving(false);
-      setEditError("Failed to save. Please try again.");
-      return;
+    if (!error) {
+      setProfile((prev) => (prev ? { ...prev, show_completions: next } : null));
     }
-
-    // Update local state
-    setProfile((prev) =>
-      prev ? { ...prev, display_name: validation.sanitized } : null
-    );
-    setIsEditing(false);
-    setSaving(false);
+    setTogglingCompletions(false);
   };
 
   // Not logged in
@@ -194,7 +142,7 @@ export function AccountView({ courses }: { courses: CourseSummary[] }) {
           />
           <div className="min-w-0">
             <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-2">
-              Account
+              Account settings
             </div>
             <h1 className="font-heading font-semibold text-[32px] md:text-[38px] leading-[1.05] text-foreground truncate">
               {profile?.display_name || "Your Account"}
@@ -202,15 +150,26 @@ export function AccountView({ courses }: { courses: CourseSummary[] }) {
             <p className="font-mono text-[11px] uppercase tracking-[1.1px] text-muted-foreground mt-2">
               {user?.email}
             </p>
-            {companies[0] && (
-              <Link
-                href={ROUTES.POINTSTACK_COMPANY(companies[0].slug)}
-                className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground hover:text-accent transition-colors mt-1"
-              >
-                <Buildings className="w-3 h-3" />
-                {companies[0].name}
-              </Link>
-            )}
+            <div className="flex flex-wrap items-center gap-3 mt-2">
+              {profile?.display_name && (
+                <Link
+                  href={ROUTES.POINTSTACK_PROFILE(profile.display_name)}
+                  className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[1.1px] text-accent hover:text-foreground transition-colors"
+                >
+                  <ArrowSquareOut className="w-3 h-3" />
+                  View public profile →
+                </Link>
+              )}
+              {companies[0] && (
+                <Link
+                  href={ROUTES.POINTSTACK_COMPANY(companies[0].slug)}
+                  className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground hover:text-accent transition-colors"
+                >
+                  <Buildings className="w-3 h-3" />
+                  {companies[0].name}
+                </Link>
+              )}
+            </div>
           </div>
           <button
             onClick={handleSignOut}
@@ -280,145 +239,8 @@ export function AccountView({ courses }: { courses: CourseSummary[] }) {
         )}
       </NumberedSection>
 
-      {/* 02 / Owned software */}
-      <NumberedSection num="02" title="Owned software">
-        {licenses.length === 0 ? (
-          <div className="py-10 text-center italic text-[15px] text-muted-foreground border border-dashed border-border">
-            You haven&apos;t purchased any software yet.{" "}
-            <Link
-              href={ROUTES.TOOLS}
-              className="text-foreground underline decoration-accent underline-offset-[3px] hover:text-accent not-italic font-sans"
-            >
-              Browse tools →
-            </Link>
-          </div>
-        ) : (
-          <div className="space-y-0">
-            {licenses.map((license, idx) => {
-              const tool = TOOLS[license.product_id];
-              return (
-                <div
-                  key={license.id}
-                  className="grid grid-cols-[28px_1fr_auto] gap-4 items-center py-4 px-2 border-b border-muted"
-                >
-                  <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <div className="min-w-0">
-                    <div className="font-heading font-semibold text-[16px] text-foreground">
-                      {tool?.name || license.product_id.toUpperCase()}
-                    </div>
-                    <div className="flex items-center gap-3 mt-1 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground flex-wrap">
-                      <span
-                        className={
-                          license.is_active ? "text-accent" : "text-destructive"
-                        }
-                      >
-                        {license.is_active ? "Active" : "Inactive"}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Key className="w-3 h-3" />
-                        <span className="tabular-nums">
-                          {license.license_key.slice(0, 8)}…
-                        </span>
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        <span className="tabular-nums">
-                          {new Date(license.purchased_at).toLocaleDateString()}
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-                  <button className="inline-flex items-center gap-1.5 px-3 py-2 border border-foreground bg-card text-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-muted transition-colors">
-                    <Download className="w-3 h-3" />
-                    Download
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </NumberedSection>
-
-      {/* 03 / Courses */}
-      <NumberedSection num="03" title="Courses">
-        {courses.length === 0 ? (
-          <div className="py-10 text-center italic text-[15px] text-muted-foreground border border-dashed border-border">
-            No courses available yet.
-          </div>
-        ) : (
-          <div className="space-y-0">
-            {courses.map((course, idx) => {
-              const progress = progressHydrated ? getCourse(course.slug) : null;
-              const total = course.lessonSlugs.length;
-              const completed = progress
-                ? progress.lessonsCompleted.filter((slug) =>
-                    course.lessonSlugs.includes(slug),
-                  ).length
-                : 0;
-              const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
-              const isDone = total > 0 && completed === total;
-              const isStarted = completed > 0 || !!progress?.lastLessonSlug;
-              const continueHref = progress?.lastLessonSlug
-                ? `${ROUTES.COURSES}/${course.slug}/${progress.lastLessonSlug}`
-                : `${ROUTES.COURSES}/${course.slug}`;
-              return (
-                <div
-                  key={course.slug}
-                  className="grid grid-cols-[28px_1fr_auto] gap-4 items-center py-4 px-2 border-b border-muted"
-                >
-                  <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
-                    {String(idx + 1).padStart(2, "0")}
-                  </span>
-                  <div className="min-w-0">
-                    <Link
-                      href={`${ROUTES.COURSES}/${course.slug}`}
-                      className="font-heading font-semibold text-[16px] text-foreground hover:text-accent transition-colors"
-                    >
-                      {course.title}
-                    </Link>
-                    <div className="flex items-center gap-3 mt-1 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground flex-wrap">
-                      {isDone ? (
-                        <span className="inline-flex items-center gap-1 text-accent">
-                          <CheckCircle weight="fill" className="w-3 h-3" />
-                          Complete
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1">
-                          <BookOpen className="w-3 h-3" />
-                          <span className="tabular-nums">
-                            {completed} / {total} lessons
-                          </span>
-                        </span>
-                      )}
-                      <span className="tabular-nums">{pct}%</span>
-                    </div>
-                    <div
-                      className="mt-2 h-1 w-full max-w-[280px] rounded-full bg-muted overflow-hidden"
-                      aria-hidden="true"
-                    >
-                      <div
-                        className="h-full bg-accent transition-[width] duration-300"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                  <Link
-                    href={continueHref}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 border border-foreground bg-card text-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-muted transition-colors"
-                  >
-                    {isDone ? "Review" : isStarted ? "Continue" : "Start"}
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </NumberedSection>
-
-      {/* 04 / Profile picture */}
-      <NumberedSection num="04" title="Profile picture">
+      {/* 02 / Profile picture */}
+      <NumberedSection num="02" title="Profile picture">
         <div className="max-w-md">
           <AvatarUpload
             currentAvatarUrl={profile?.avatar_url || null}
@@ -430,76 +252,25 @@ export function AccountView({ courses }: { courses: CourseSummary[] }) {
         </div>
       </NumberedSection>
 
-      {/* 05 / Account details */}
+      {/* 03 / Account details */}
       <NumberedSection
-        num="05"
+        num="03"
         title="Account details"
         action={
-          !isEditing && (
-            <button
-              onClick={handleStartEdit}
-              className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[1.2px] text-accent hover:text-foreground transition-colors"
-            >
-              <PencilSimple className="w-3 h-3" />
-              Edit →
-            </button>
-          )
+          <button
+            onClick={() => setEditDialogOpen(true)}
+            className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[1.2px] text-accent hover:text-foreground transition-colors"
+          >
+            <PencilSimple className="w-3 h-3" />
+            Edit profile →
+          </button>
         }
       >
-        {/* Edit form */}
-        {isEditing && (
-          <div className="mb-6 p-5 border border-foreground bg-card max-w-md">
-            <div className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-3">
-              Edit display name
-            </div>
-            <input
-              type="text"
-              value={editDisplayName}
-              onChange={(e) => {
-                setEditDisplayName(e.target.value);
-                if (editError) setEditError("");
-              }}
-              maxLength={MAX_LENGTHS.DISPLAY_NAME}
-              placeholder="Enter display name…"
-              className="w-full border border-border bg-background focus:border-foreground transition-colors outline-none px-3 py-2 text-[14px] text-foreground font-sans"
-            />
-            <div className="mt-1.5 flex items-center justify-between font-mono text-[9px] uppercase tracking-[1px] text-muted-foreground">
-              <span>
-                {MIN_LENGTHS.DISPLAY_NAME}-{MAX_LENGTHS.DISPLAY_NAME} chars
-              </span>
-              <span className="tabular-nums">
-                {editDisplayName.length}/{MAX_LENGTHS.DISPLAY_NAME}
-              </span>
-            </div>
-            {editError && (
-              <p className="mt-2 font-mono text-[10px] uppercase tracking-[1.1px] text-destructive">
-                {editError}
-              </p>
-            )}
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={handleCancelEdit}
-                disabled={saving}
-                className="inline-flex items-center gap-1.5 px-4 py-2 border border-border bg-card text-muted-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:border-foreground hover:text-foreground disabled:opacity-50 transition-colors"
-              >
-                <X className="w-3 h-3" />
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveProfile}
-                disabled={saving}
-                className="inline-flex items-center gap-1.5 px-4 py-2 border border-foreground bg-primary text-primary-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-primary/90 disabled:opacity-50 transition-colors"
-              >
-                <Check className="w-3 h-3" />
-                {saving ? "Saving…" : "Save"}
-              </button>
-            </div>
-          </div>
-        )}
-
         <dl className="border-t border-b border-foreground max-w-[680px]">
           <DetailRow label="Email" value={<span className="font-mono">{user?.email}</span>} />
           <DetailRow label="Display name" value={profile?.display_name || "—"} />
+          <DetailRow label="Headline" value={profile && "headline" in profile ? ((profile as Profile & { headline?: string }).headline || "—") : "—"} />
+          <DetailRow label="Bio" value={profile?.bio ? <span className="whitespace-pre-wrap">{profile.bio}</span> : "—"} />
           <DetailRow
             label="Company"
             value={
@@ -525,6 +296,52 @@ export function AccountView({ courses }: { courses: CourseSummary[] }) {
           />
         </dl>
       </NumberedSection>
+
+      {/* 04 / Privacy */}
+      <NumberedSection num="04" title="Privacy">
+        <div className="max-w-[680px] border border-border bg-card p-5">
+          <div className="grid grid-cols-[1fr_auto] gap-4 items-start">
+            <div className="min-w-0">
+              <div className="font-heading font-semibold text-[15px] text-foreground mb-1">
+                Show course completions on public profile
+              </div>
+              <p className="text-[13px] text-muted-foreground leading-[1.5]">
+                When on, anyone viewing your public profile sees your course progress and completed lessons. Off by default.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleToggleCompletions}
+              disabled={togglingCompletions || !profile}
+              aria-pressed={profile?.show_completions ?? false}
+              className={`inline-flex items-center gap-1.5 px-3 py-2 border font-mono text-[10px] uppercase tracking-[1.2px] transition-colors disabled:opacity-50 ${
+                profile?.show_completions
+                  ? "border-accent bg-accent/15 text-accent"
+                  : "border-border bg-card text-muted-foreground hover:border-foreground hover:text-foreground"
+              }`}
+            >
+              {profile?.show_completions ? (
+                <>
+                  <Eye className="w-3 h-3" /> On
+                </>
+              ) : (
+                <>
+                  <EyeSlash className="w-3 h-3" /> Off
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </NumberedSection>
+
+      {profile && (
+        <ProfileEditDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          profile={profile as unknown as PointStackProfile}
+          onSave={(updated) => setProfile((prev) => (prev ? { ...prev, ...updated } : (updated as unknown as Profile)))}
+        />
+      )}
     </section>
   );
 }

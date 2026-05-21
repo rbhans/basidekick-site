@@ -56,30 +56,6 @@ create trigger on_auth_user_created
   for each row execute function public.handle_new_user();
 
 -- ============================================================
--- LICENSES TABLE
--- ============================================================
--- For software purchases via Lemon Squeezy
-
-create table public.licenses (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references public.profiles(id) on delete cascade,
-  product_id text not null, -- 'nsk', 'ssk', 'msk'
-  license_key text not null,
-  lemon_squeezy_order_id text,
-  purchased_at timestamptz default now(),
-  expires_at timestamptz, -- null = lifetime
-  is_active boolean default true
-);
-
--- Enable RLS
-alter table public.licenses enable row level security;
-
--- Policies: Users can only see their own licenses
-create policy "Users can view their own licenses"
-  on public.licenses for select
-  using (auth.uid() = user_id);
-
--- ============================================================
 -- WIKI TABLES
 -- ============================================================
 
@@ -393,4 +369,3 @@ create index forum_posts_author_id_idx on public.forum_posts(author_id);
 create index projects_user_id_idx on public.projects(user_id);
 
 -- Licenses index
-create index licenses_user_id_idx on public.licenses(user_id);

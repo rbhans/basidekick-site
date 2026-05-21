@@ -100,6 +100,29 @@ interface AdminEquipmentSubmission {
   submitter: { display_name: string | null } | null;
 }
 
+interface AdminWikiContribution {
+  id: string;
+  user_id: string | null;
+  type: "edit" | "new_entry";
+  target_article_id: string | null;
+  title: string;
+  slug: string | null;
+  summary: string | null;
+  content: string;
+  category_id: string | null;
+  submitter_notes: string | null;
+  status: "pending" | "approved" | "rejected";
+  reviewer_notes: string | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  approved_article_id: string | null;
+  created_at: string;
+  updated_at: string;
+  submitter: { display_name: string | null } | null;
+  target_article: { title: string; slug: string } | null;
+  category: { name: string; slug: string } | null;
+}
+
 interface AdminStats {
   userCount: number;
   articleCount: number;
@@ -109,6 +132,7 @@ interface AdminStats {
   pendingReports: number;
   unverifiedCompanies: number;
   publishedArticles: number;
+  pendingWikiContributions: number;
 }
 
 interface AdminViewProps {
@@ -118,10 +142,19 @@ interface AdminViewProps {
   babelContributions: AdminBabelContribution[];
   equipmentSubmissions: AdminEquipmentSubmission[];
   contentReports: AdminContentReport[];
+  wikiContributions: AdminWikiContribution[];
   stats: AdminStats;
 }
 
-type TabId = "overview" | "reports" | "users" | "wiki" | "babel" | "equipment" | "companies";
+type TabId =
+  | "overview"
+  | "reports"
+  | "users"
+  | "wiki"
+  | "wiki-contributions"
+  | "babel"
+  | "equipment"
+  | "companies";
 
 export function AdminView({
   users: initialUsers,
@@ -130,6 +163,7 @@ export function AdminView({
   babelContributions: initialBabelContributions,
   equipmentSubmissions: initialEquipmentSubmissions,
   contentReports,
+  wikiContributions: initialWikiContributions,
   stats,
 }: AdminViewProps) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
@@ -138,9 +172,11 @@ export function AdminView({
   const [companies, setCompanies] = useState(initialCompanies);
   const [babelContributions, setBabelContributions] = useState(initialBabelContributions);
   const [equipmentSubmissions, setEquipmentSubmissions] = useState(initialEquipmentSubmissions);
+  const [wikiContributions, setWikiContributions] = useState(initialWikiContributions);
   const [loading, setLoading] = useState<string | null>(null);
   const [expandedContribution, setExpandedContribution] = useState<string | null>(null);
   const [expandedEquipmentSubmission, setExpandedEquipmentSubmission] = useState<string | null>(null);
+  const [expandedWikiContribution, setExpandedWikiContribution] = useState<string | null>(null);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -320,6 +356,61 @@ export function AdminView({
     }
   };
 
+  const handleWikiContributionAction = async (
+    contributionId: string,
+    action: "approve" | "reject"
+  ) => {
+    setLoading(`wiki-contribution-${contributionId}`);
+    const supabase = createClient();
+    if (!supabase) {
+      setLoading(null);
+      return;
+    }
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        alert("Session expired. Please sign in again.");
+        setLoading(null);
+        return;
+      }
+
+      const response = await fetch(`/api/wiki/contributions/${contributionId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ action }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        alert(errorData.error || "Failed to update wiki contribution");
+        setLoading(null);
+        return;
+      }
+
+      const result = await response.json();
+      setWikiContributions((prev) =>
+        prev.map((c) =>
+          c.id === contributionId
+            ? {
+                ...c,
+                status: action === "approve" ? "approved" : "rejected",
+                approved_article_id: result.approved_article_id ?? c.approved_article_id,
+              }
+            : c
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update wiki contribution:", error);
+      alert("Failed to update contribution. Please try again.");
+    }
+
+    setLoading(null);
+  };
+
   const getContributionTypeIcon = (type: string) => {
     switch (type) {
       case "error":
@@ -356,6 +447,12 @@ export function AdminView({
     },
     { id: "users", label: "Users", icon: <Users className="size-4" />, count: stats.userCount },
     { id: "wiki", label: "Wiki", icon: <Article className="size-4" />, count: stats.articleCount },
+    {
+      id: "wiki-contributions",
+      label: "Wiki Submissions",
+      icon: <PencilSimple className="size-4" />,
+      count: stats.pendingWikiContributions,
+    },
     {
       id: "babel",
       label: "Atlas Terms",
@@ -519,6 +616,19 @@ export function AdminView({
                   </div>
                   <p className={`text-3xl font-bold ${stats.pendingEquipmentSubmissions > 0 ? "text-primary" : ""}`}>
                     {stats.pendingEquipmentSubmissions}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">pending review</p>
+                </button>
+                <button
+                  onClick={() => setActiveTab("wiki-contributions")}
+                  className="p-6 border border-border bg-card shadow-sm text-left hover:border-accent transition-colors"
+                >
+                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                    <PencilSimple className="size-4" />
+                    <span className="text-sm">Wiki Submissions</span>
+                  </div>
+                  <p className={`text-3xl font-bold ${stats.pendingWikiContributions > 0 ? "text-primary" : ""}`}>
+                    {stats.pendingWikiContributions}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">pending review</p>
                 </button>
@@ -777,6 +887,206 @@ export function AdminView({
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* Wiki Contributions Tab */}
+          {activeTab === "wiki-contributions" && (
+            <div className="space-y-4">
+              <div className="border border-border bg-card shadow-sm overflow-hidden">
+                <table className="w-full">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-4 text-sm font-medium">Submission</th>
+                      <th className="text-left p-4 text-sm font-medium hidden md:table-cell">Type</th>
+                      <th className="text-left p-4 text-sm font-medium hidden sm:table-cell">Target</th>
+                      <th className="text-left p-4 text-sm font-medium hidden lg:table-cell">Submitted By</th>
+                      <th className="text-left p-4 text-sm font-medium">Status</th>
+                      <th className="text-right p-4 text-sm font-medium">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {wikiContributions.map((contribution) => (
+                      <Fragment key={contribution.id}>
+                        <tr
+                          className="hover:bg-muted/30 cursor-pointer"
+                          onClick={() =>
+                            setExpandedWikiContribution(
+                              expandedWikiContribution === contribution.id ? null : contribution.id
+                            )
+                          }
+                        >
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              <button className="text-muted-foreground">
+                                {expandedWikiContribution === contribution.id ? (
+                                  <CaretUp className="size-4" />
+                                ) : (
+                                  <CaretDown className="size-4" />
+                                )}
+                              </button>
+                              <span className="font-medium">{contribution.title}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 hidden md:table-cell">
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                              {contribution.type === "new_entry" ? (
+                                <Plus className="size-4" />
+                              ) : (
+                                <PencilSimple className="size-4" />
+                              )}
+                              <span className="text-sm">
+                                {contribution.type === "new_entry" ? "New Entry" : "Edit"}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-4 hidden sm:table-cell">
+                            {contribution.target_article ? (
+                              <Link
+                                href={ROUTES.WIKI_ARTICLE(contribution.target_article.slug)}
+                                className="text-sm text-primary hover:underline"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {contribution.target_article.title}
+                              </Link>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">New article</span>
+                            )}
+                          </td>
+                          <td className="p-4 text-muted-foreground hidden lg:table-cell">
+                            {contribution.submitter?.display_name || "Anonymous"}
+                          </td>
+                          <td className="p-4">
+                            {contribution.status === "pending" && (
+                              <span className="text-xs bg-accent/15 text-accent px-2 py-0.5">
+                                Pending
+                              </span>
+                            )}
+                            {contribution.status === "approved" && (
+                              <span className="text-xs bg-secondary text-foreground px-2 py-0.5">
+                                Approved
+                              </span>
+                            )}
+                            {contribution.status === "rejected" && (
+                              <span className="text-xs bg-destructive/10 text-destructive px-2 py-0.5">
+                                Rejected
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
+                            {contribution.status === "pending" ? (
+                              <div className="flex justify-end gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleWikiContributionAction(contribution.id, "approve")}
+                                  disabled={loading === `wiki-contribution-${contribution.id}`}
+                                  className="text-foreground hover:text-accent"
+                                  title={
+                                    contribution.type === "new_entry"
+                                      ? "Approve — creates draft wiki article"
+                                      : "Approve — applies edit to live article"
+                                  }
+                                >
+                                  <Check className="size-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleWikiContributionAction(contribution.id, "reject")}
+                                  disabled={loading === `wiki-contribution-${contribution.id}`}
+                                  className="text-destructive hover:text-destructive"
+                                  title="Reject"
+                                >
+                                  <X className="size-4" />
+                                </Button>
+                              </div>
+                            ) : contribution.approved_article_id ? (
+                              <span className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
+                                {contribution.status === "approved" ? "Applied" : ""}
+                              </span>
+                            ) : null}
+                          </td>
+                        </tr>
+                        {expandedWikiContribution === contribution.id && (
+                          <tr key={`${contribution.id}-detail`} className="bg-muted/20">
+                            <td colSpan={6} className="p-4">
+                              <div className="space-y-3">
+                                {contribution.summary && (
+                                  <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                      Summary
+                                    </p>
+                                    <p className="text-sm">{contribution.summary}</p>
+                                  </div>
+                                )}
+                                {contribution.slug && contribution.type === "new_entry" && (
+                                  <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                      Suggested slug
+                                    </p>
+                                    <code className="text-xs font-mono">{contribution.slug}</code>
+                                  </div>
+                                )}
+                                {contribution.category && (
+                                  <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                      Category
+                                    </p>
+                                    <p className="text-sm">{contribution.category.name}</p>
+                                  </div>
+                                )}
+                                <div>
+                                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                    Proposed content
+                                  </p>
+                                  <pre className="text-xs bg-muted p-3 rounded overflow-x-auto whitespace-pre-wrap max-h-96 overflow-y-auto">
+                                    {contribution.content}
+                                  </pre>
+                                </div>
+                                {contribution.submitter_notes && (
+                                  <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                      Notes from submitter
+                                    </p>
+                                    <p className="text-sm whitespace-pre-wrap">{contribution.submitter_notes}</p>
+                                  </div>
+                                )}
+                                {contribution.reviewer_notes && (
+                                  <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                                      Reviewer notes
+                                    </p>
+                                    <p className="text-sm whitespace-pre-wrap">{contribution.reviewer_notes}</p>
+                                  </div>
+                                )}
+                                <div className="flex gap-4 text-xs text-muted-foreground">
+                                  <span>Submitted: {formatDate(contribution.created_at)}</span>
+                                  {contribution.reviewed_at && (
+                                    <span>Reviewed: {formatDate(contribution.reviewed_at)}</span>
+                                  )}
+                                </div>
+                                {contribution.status === "approved" && contribution.approved_article_id && contribution.type === "new_entry" && (
+                                  <div className="pt-2 border-t border-border">
+                                    <p className="text-xs text-muted-foreground">
+                                      Draft article created. Publish it from the Wiki tab.
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    ))}
+                  </tbody>
+                </table>
+                {wikiContributions.length === 0 && (
+                  <div className="p-8 text-center text-muted-foreground">
+                    No wiki contributions yet
+                  </div>
+                )}
               </div>
             </div>
           )}

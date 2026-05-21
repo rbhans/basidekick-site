@@ -67,6 +67,7 @@ const skillSchema = z.string().trim().min(1).max(40);
 export const profileEditFormSchema = z.object({
   displayName: z.string().max(120),
   headline: z.string().max(160),
+  bio: z.string().max(500, "Bio must be 500 characters or fewer."),
   location: z.string().max(140),
   skills: z.array(skillSchema).max(10, "You can add up to 10 skills."),
   websiteUrl: optionalHttpUrlSchema,
