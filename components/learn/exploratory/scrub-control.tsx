@@ -49,6 +49,7 @@ export function ScrubControl({
 
   if (steps === 0) return null;
   const safeStep = clamp(step);
+  const pct = steps > 1 ? (safeStep / (steps - 1)) * 100 : 50;
 
   return (
     <figure
@@ -101,7 +102,8 @@ export function ScrubControl({
           aria-valuenow={safeStep}
           aria-valuetext={labels?.[safeStep] ?? `Step ${safeStep + 1} of ${steps}`}
           aria-label={label ?? "Scrub through steps"}
-          className="block w-full appearance-none bg-transparent accent-[color:var(--color-accent-strong)] focus:outline-none [&::-webkit-slider-runnable-track]:h-1 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[color:var(--color-border-strong)] [&::-webkit-slider-thumb]:-mt-[5px] [&::-webkit-slider-thumb]:h-[14px] [&::-webkit-slider-thumb]:w-[14px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[color:var(--color-accent-strong)] [&::-webkit-slider-thumb]:shadow [&::-moz-range-track]:h-1 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-[color:var(--color-border-strong)] [&::-moz-range-thumb]:h-[14px] [&::-moz-range-thumb]:w-[14px] [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-[color:var(--color-accent-strong)]"
+          style={{ "--scrub-pct": `${pct}%` } as React.CSSProperties}
+          className="scrub-input block w-full appearance-none bg-transparent focus:outline-none"
         />
         {labels ? (
           <div className="relative mx-[7px] mt-2 h-4 text-[10px] uppercase tracking-[0.14em] text-[color:var(--color-fg-subtle)]">

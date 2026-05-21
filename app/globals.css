@@ -3746,6 +3746,19 @@
   --tracking-display: -0.025em;
   --tracking-mono-label: 0.16em;
 
+  /* --color-* compat aliases — learn components reference these directly
+     instead of the @theme inline shadcn aliases. Map to main palette. */
+  --color-bg: var(--sand);
+  --color-bg-muted: var(--cream);
+  --color-fg: var(--ink);
+  --color-fg-muted: var(--ink-2);
+  --color-fg-subtle: var(--ink-3);
+  --color-border-strong: var(--border-strong);
+  --color-accent-strong: var(--punch-2);
+  --color-accent-fg: var(--cream);
+  --color-accent-soft: var(--punch-soft);
+  --color-accent-soft-fg: var(--cream);
+
   --color-feedback-correct-fg: var(--moss);
   --color-feedback-correct-bg: rgba(58, 122, 58, 0.08);
   --color-feedback-correct-border: rgba(58, 122, 58, 0.4);
@@ -3892,3 +3905,59 @@
 }
 .brand-section-marker > .num { color: var(--punch); }
 .brand-section-marker > .label { color: var(--ink-3); }
+
+/* ScrubControl native range — crimson fill before thumb, soft track after.
+   Driven by --scrub-pct (0%–100%) set inline by the React component. */
+.scrub-input {
+  --scrub-pct: 0%;
+}
+.scrub-input::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--punch) 0%,
+    var(--punch) var(--scrub-pct),
+    var(--border-strong) var(--scrub-pct),
+    var(--border-strong) 100%
+  );
+}
+.scrub-input::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  margin-top: -5px;
+  height: 14px;
+  width: 14px;
+  border-radius: 9999px;
+  background: var(--punch);
+  border: 2px solid var(--sand);
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.2);
+}
+.scrub-input::-moz-range-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--punch) 0%,
+    var(--punch) var(--scrub-pct),
+    var(--border-strong) var(--scrub-pct),
+    var(--border-strong) 100%
+  );
+}
+.scrub-input::-moz-range-thumb {
+  appearance: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 9999px;
+  background: var(--punch);
+  border: 2px solid var(--sand);
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.2);
+}
+.scrub-input:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--punch);
+  outline-offset: 2px;
+}
+.scrub-input:focus-visible::-moz-range-thumb {
+  outline: 2px solid var(--punch);
+  outline-offset: 2px;
+}
