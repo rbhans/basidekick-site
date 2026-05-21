@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/use-auth";
 import { createClient } from "@/lib/supabase/client";
+import { useProgress } from "@/lib/progress";
 import { License, Profile, PointStackCompany } from "@/lib/types";
 import { TOOLS } from "@/lib/constants";
 import { ROUTES } from "@/lib/routes";
 import { validateDisplayName, MAX_LENGTHS, MIN_LENGTHS } from "@/lib/security";
+import type { CourseSummary } from "@/app/(main)/account/page";
 import {
   SignOut,
   Download,
@@ -20,14 +22,17 @@ import {
   X,
   Check,
   ArrowSquareOut,
+  BookOpen,
+  CheckCircle,
 } from "@phosphor-icons/react";
 import { AvatarUpload } from "@/components/avatar-upload";
 import { UserAvatar } from "@/components/user-avatar";
 import { fetchUserCompanies } from "@/components/pointstack/pointstack-api";
 
-export function AccountView() {
+export function AccountView({ courses }: { courses: CourseSummary[] }) {
   const router = useRouter();
   const { user, loading: authLoading, signOut } = useAuth();
+  const { getCourse, hydrated: progressHydrated } = useProgress();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [licenses, setLicenses] = useState<License[]>([]);
   const [companies, setCompanies] = useState<(PointStackCompany & { _memberRole?: string })[]>([]);
@@ -336,8 +341,84 @@ export function AccountView() {
         )}
       </NumberedSection>
 
-      {/* 03 / Profile picture */}
-      <NumberedSection num="03" title="Profile picture">
+      {/* 03 / Courses */}
+      <NumberedSection num="03" title="Courses">
+        {courses.length === 0 ? (
+          <div className="py-10 text-center italic text-[15px] text-muted-foreground border border-dashed border-border">
+            No courses available yet.
+          </div>
+        ) : (
+          <div className="space-y-0">
+            {courses.map((course, idx) => {
+              const progress = progressHydrated ? getCourse(course.slug) : null;
+              const total = course.lessonSlugs.length;
+              const completed = progress
+                ? progress.lessonsCompleted.filter((slug) =>
+                    course.lessonSlugs.includes(slug),
+                  ).length
+                : 0;
+              const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+              const isDone = total > 0 && completed === total;
+              const isStarted = completed > 0 || !!progress?.lastLessonSlug;
+              const continueHref = progress?.lastLessonSlug
+                ? `${ROUTES.COURSES}/${course.slug}/${progress.lastLessonSlug}`
+                : `${ROUTES.COURSES}/${course.slug}`;
+              return (
+                <div
+                  key={course.slug}
+                  className="grid grid-cols-[28px_1fr_auto] gap-4 items-center py-4 px-2 border-b border-muted"
+                >
+                  <span className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground tabular-nums">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0">
+                    <Link
+                      href={`${ROUTES.COURSES}/${course.slug}`}
+                      className="font-heading font-semibold text-[16px] text-foreground hover:text-accent transition-colors"
+                    >
+                      {course.title}
+                    </Link>
+                    <div className="flex items-center gap-3 mt-1 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground flex-wrap">
+                      {isDone ? (
+                        <span className="inline-flex items-center gap-1 text-accent">
+                          <CheckCircle weight="fill" className="w-3 h-3" />
+                          Complete
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1">
+                          <BookOpen className="w-3 h-3" />
+                          <span className="tabular-nums">
+                            {completed} / {total} lessons
+                          </span>
+                        </span>
+                      )}
+                      <span className="tabular-nums">{pct}%</span>
+                    </div>
+                    <div
+                      className="mt-2 h-1 w-full max-w-[280px] rounded-full bg-muted overflow-hidden"
+                      aria-hidden="true"
+                    >
+                      <div
+                        className="h-full bg-accent transition-[width] duration-300"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  </div>
+                  <Link
+                    href={continueHref}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 border border-foreground bg-card text-foreground font-mono text-[10px] uppercase tracking-[1.2px] hover:bg-muted transition-colors"
+                  >
+                    {isDone ? "Review" : isStarted ? "Continue" : "Start"}
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </NumberedSection>
+
+      {/* 04 / Profile picture */}
+      <NumberedSection num="04" title="Profile picture">
         <div className="max-w-md">
           <AvatarUpload
             currentAvatarUrl={profile?.avatar_url || null}
@@ -349,9 +430,9 @@ export function AccountView() {
         </div>
       </NumberedSection>
 
-      {/* 04 / Account details */}
+      {/* 05 / Account details */}
       <NumberedSection
-        num="04"
+        num="05"
         title="Account details"
         action={
           !isEditing && (

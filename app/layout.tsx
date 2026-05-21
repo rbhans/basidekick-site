@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Archivo, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { ProgressProvider } from "@/lib/progress";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -92,7 +93,9 @@ export default function RootLayout({
             }),
           }}
         />
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ProgressProvider>{children}</ProgressProvider>
+        </AuthProvider>
         <Toaster />
         <Analytics />
       </body>
