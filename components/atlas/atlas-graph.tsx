@@ -232,7 +232,7 @@ function runForceLayout(graphData: GraphData, rootId: string | null) {
       source: e.source,
       target: e.target,
       style: {
-        stroke: "#C4F82A",
+        stroke: "var(--ink-3)",
         strokeWidth: 1.5,
         opacity: 0.7,
       },
@@ -330,9 +330,9 @@ export function AtlasGraph() {
         ...e,
         animated: isConnected,
         style: {
-          stroke: isConnected ? "#C4F82A" : "#C4F82A",
+          stroke: isConnected ? "var(--punch)" : "var(--ink-3)",
           strokeWidth: isConnected ? 2.5 : 1,
-          opacity: isConnected ? 1 : 0.15,
+          opacity: isConnected ? 1 : 0.12,
         },
       };
     });
@@ -420,9 +420,9 @@ export function AtlasGraph() {
           className="!bg-card !border-border !rounded-lg"
           nodeStrokeColor={() => "transparent"}
           nodeColor={(n) =>
-            n.type === "equipment" ? "#C4F82A" : "#3f3f46"
+            n.type === "equipment" ? "var(--punch)" : "var(--ink-3)"
           }
-          maskColor="hsla(0, 0%, 4%, 0.8)"
+          maskColor="rgba(10, 10, 10, 0.12)"
         />
       </ReactFlow>
 

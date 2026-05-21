@@ -1,16 +1,18 @@
-// Category colors — current names + backward-compat for old names
+// Wiki category accents. Each value is a CSS var resolved against the
+// supporting palette in app/globals.css. Edit the var, not the hex.
 const CATEGORY_COLORS = {
-  troubleshooting: "#F59E0B",
-  howTo: "#3B82F6",
-  bestPractices: "#10B981",
-  documentation: "#8B5CF6",
-  reference: "#06B6D4",
+  troubleshooting: "var(--wiki-troubleshooting)",
+  howTo: "var(--wiki-how-to)",
+  bestPractices: "var(--wiki-best-practices)",
+  documentation: "var(--wiki-documentation)",
+  reference: "var(--wiki-reference)",
 } as const;
 
-// Maps category slugs (prefix) to colors — handles renamed + legacy slugs.
+const FALLBACK = "var(--punch)";
+
 const SLUG_PREFIX_COLORS: [string, string][] = [
   ["troubleshooting", CATEGORY_COLORS.troubleshooting],
-  ["issues-solutions", CATEGORY_COLORS.troubleshooting], // legacy
+  ["issues-solutions", CATEGORY_COLORS.troubleshooting],
   ["how-to", CATEGORY_COLORS.howTo],
   ["best-practices", CATEGORY_COLORS.bestPractices],
   ["reference", CATEGORY_COLORS.reference],
@@ -19,15 +21,12 @@ const SLUG_PREFIX_COLORS: [string, string][] = [
   ["docs-", CATEGORY_COLORS.documentation],
 ];
 
-// Maps every known category name to its accent color
 export const WIKI_CATEGORY_COLORS: Record<string, string> = {
-  // Current names
   "Troubleshooting": CATEGORY_COLORS.troubleshooting,
   "How-To": CATEGORY_COLORS.howTo,
   "Best Practices": CATEGORY_COLORS.bestPractices,
   "Documentation": CATEGORY_COLORS.documentation,
   "Reference": CATEGORY_COLORS.reference,
-  // Legacy names (backward-compat)
   "Issues & Solutions": CATEGORY_COLORS.troubleshooting,
   "How-To Guides": CATEGORY_COLORS.howTo,
   "BASidekick Documentation": CATEGORY_COLORS.documentation,
@@ -37,19 +36,17 @@ export function getWikiCategoryColor(
   categoryName: string | null | undefined,
   categorySlug?: string | null,
 ): string {
-  if (!categoryName && !categorySlug) return "#C4F82A";
+  if (!categoryName && !categorySlug) return FALLBACK;
 
-  // Try exact name match first
   if (categoryName && WIKI_CATEGORY_COLORS[categoryName]) {
     return WIKI_CATEGORY_COLORS[categoryName];
   }
 
-  // Fall back to slug prefix matching (handles subcategories)
   if (categorySlug) {
     for (const [prefix, color] of SLUG_PREFIX_COLORS) {
       if (categorySlug.startsWith(prefix)) return color;
     }
   }
 
-  return "#C4F82A";
+  return FALLBACK;
 }
