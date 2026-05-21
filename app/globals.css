@@ -3728,3 +3728,167 @@
   transition: transform .15s;
 }
 .ch:hover .ch-cta .arr { transform: translateX(4px); }
+
+/* ============================================================================
+   COURSES / LEARN — tokens & utilities for /courses route.
+   Used by course shell, lesson MDX prose, and learn components
+   (assessment, exploratory, content). Source of truth: docs/brand-guidelines.md.
+   ========================================================================== */
+:root {
+  --border-strong: rgba(10, 10, 10, 0.18);
+  --radius-card: 8px;
+  --radius-control: 6px;
+  --radius-chip: 4px;
+
+  --text-prose: 1rem;
+  --leading-prose: 1.55;
+  --tracking-tight: -0.015em;
+  --tracking-display: -0.025em;
+  --tracking-mono-label: 0.16em;
+
+  --color-feedback-correct-fg: var(--moss);
+  --color-feedback-correct-bg: rgba(58, 122, 58, 0.08);
+  --color-feedback-correct-border: rgba(58, 122, 58, 0.4);
+  --color-feedback-partial-fg: var(--ochre);
+  --color-feedback-partial-bg: rgba(184, 118, 42, 0.08);
+  --color-feedback-partial-border: rgba(184, 118, 42, 0.4);
+  --color-feedback-incorrect-fg: var(--punch);
+  --color-feedback-incorrect-bg: rgba(209, 26, 54, 0.08);
+  --color-feedback-incorrect-border: rgba(209, 26, 54, 0.4);
+}
+
+/* Editorial reading prose for MDX lesson bodies. */
+.prose {
+  font-size: var(--text-prose);
+  line-height: var(--leading-prose);
+  color: var(--ink);
+  text-align: left;
+}
+.prose > * + * { margin-top: 1.15em; }
+.prose > h1,
+.prose > h2,
+.prose > h3,
+.prose > h4 {
+  font-family: var(--font-sans);
+  color: var(--ink);
+}
+.prose > h1 {
+  font-weight: 800;
+  font-size: clamp(2rem, 4.2vw, 3.25rem);
+  line-height: 1.05;
+  letter-spacing: var(--tracking-display);
+  margin-top: 0;
+}
+.prose > h2 {
+  font-weight: 800;
+  font-size: clamp(1.5rem, 2.3vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: var(--tracking-tight);
+  margin-top: 2.4em;
+}
+.prose > h3 {
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  letter-spacing: var(--tracking-tight);
+  margin-top: 2em;
+}
+.prose > h4 {
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  margin-top: 1.75em;
+}
+.prose > h2 + *,
+.prose > h3 + *,
+.prose > h4 + * { margin-top: 0.7em; }
+.prose > p,
+.prose > ul,
+.prose > ol,
+.prose > blockquote { color: var(--ink); }
+.prose > p { max-width: 68ch; }
+.prose > ul,
+.prose > ol {
+  padding-left: 1.5em;
+  max-width: 68ch;
+}
+.prose > ul { list-style: disc; }
+.prose > ol { list-style: decimal; }
+.prose li + li { margin-top: 0.35em; }
+.prose > blockquote {
+  border-left: 2px solid var(--punch);
+  padding-left: 1em;
+  font-style: italic;
+  color: var(--ink-2);
+  max-width: 68ch;
+}
+.prose a {
+  color: var(--punch);
+  text-decoration: underline;
+  text-decoration-color: var(--punch);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-color 150ms ease, color 150ms ease;
+}
+.prose a:hover {
+  color: var(--punch-2);
+  text-decoration-color: var(--punch-2);
+}
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--cream);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-chip);
+  border: 1px solid var(--border);
+}
+.prose pre {
+  font-family: var(--font-mono);
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.85em;
+  line-height: 1.6;
+}
+.prose pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 3em 0;
+}
+.prose img,
+.prose figure {
+  max-width: 100%;
+  border-radius: var(--radius-card);
+}
+.prose strong {
+  font-weight: 700;
+  color: var(--ink);
+}
+.prose em { font-style: italic; }
+
+/* Mono label/marker utilities used by lesson chrome and learn components. */
+.brand-mono-label {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-mono-label);
+  font-size: 0.7rem;
+  color: var(--ink-3);
+}
+.brand-section-marker {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-mono-label);
+  font-size: 0.7rem;
+}
+.brand-section-marker > .num { color: var(--punch); }
+.brand-section-marker > .label { color: var(--ink-3); }

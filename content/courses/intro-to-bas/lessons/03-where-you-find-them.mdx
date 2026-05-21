@@ -1,0 +1,84 @@
+---
+title: "Where You Find Them"
+description: "The building types and scales where BAS work happens, and what each one changes about the job."
+order: 3
+estimatedMinutes: 9
+---
+
+A BAS doesn't look the same everywhere. The system in a strip-mall pharmacy is wired differently, programmed differently, and serviced differently than the one in a 1.2-million-square-foot pharmaceutical campus. Same five jobs (control, monitor, schedule, alarm, trend), but the *shape* of the work changes with the building.
+
+This lesson walks through the spectrum, and uses the trip to introduce most of the content patterns the rest of the course relies on.
+
+<Callout variant="info">
+  This is the first lesson that exercises the full content vocabulary , 
+  callouts, asides, key terms, figures, and comparison tables. The patterns
+  here will repeat through every course.
+</Callout>
+
+## The scale spectrum
+
+At the small end of *controls* you have a single programmable thermostat with a phone app, most people in the industry wouldn't call that a BAS, but it sits on the same spectrum. A proper BAS usually starts when there are multiple controllers talking over a network to a supervisor. At the large end, you get a clustered, redundant, IT-integrated platform spanning dozens of buildings. The decisions you make as a BAS engineer at one end of that spectrum barely apply at the other.
+
+<LessonSection title="Where the work actually lives" level={3}>
+
+In practice, the bulk of professional BAS work clusters around three building types:
+
+- **Commercial office**, the workhorse of the industry. Predictable schedules, simple-ish HVAC, energy budgets that owners actually care about.
+- **Institutional**, schools, universities, hospitals, government. Larger systems, longer project timelines, stricter requirements, more <KeyTerm term="commissioning" definition="The structured process of verifying that a building's systems perform per the design intent before turnover, and ideally for the first year after." /> work.
+- **Industrial / lab**, pharma, biotech, semiconductor. Where the BAS *is* the experiment. Failure modes you don't see in office work: cleanroom pressurization, fume hood face velocity, redundant chiller plants.
+
+</LessonSection>
+
+## A first comparison
+
+Here's a fast contrast between the two extremes, the small box at the strip pharmacy and the big system at the hospital campus.
+
+<Comparison
+  leftLabel="Strip pharmacy"
+  rightLabel="Hospital campus"
+  rows={[
+    { label: "Controller count", left: "1 (RTU thermostat)", right: "hundreds, often spread across multiple buildings" },
+    { label: "Point count", left: "~10", right: "tens of thousands on a large campus" },
+    { label: "Protocols", left: "Wi-Fi / proprietary cloud", right: "BACnet/IP, BACnet MS/TP, Modbus, LonWorks" },
+    { label: "Schedule complexity", left: "One occupancy schedule", right: "Per-zone, per-system, plus override hierarchy" },
+    { label: "Alarming", left: "Push notification to owner's phone", right: "Routed to onsite ops, dispatched after-hours, logged for compliance" },
+    { label: "Who installs it", left: "HVAC contractor's tech", right: "Dedicated BAS integration team, often several engineers over months" }
+  ]}
+  caption="Same five jobs, very different jobs. Numbers are illustrative, real projects vary widely."
+/>
+
+The middle of the spectrum is where most BAS engineers spend their careers. A 120,000-square-foot multi-tenant office building has enough complexity to be interesting, multiple AHUs, VAV zoning, hydronic plant, demand-response participation, without being a months-long project.
+
+## The job changes with the scale
+
+<Aside attribution="A 20-year BAS integrator, on switching from office work to hospitals">
+  Office work teaches you the patterns. Hospital work teaches you what it costs
+  when the patterns fail.
+</Aside>
+
+The same engineer can absolutely work across the spectrum, but the *mindset* required at each end differs.
+
+<Callout variant="industry-insight">
+  When estimators look at a new project, the first thing they're sizing isn't
+  the equipment count, it's the *coordination overhead*. A hospital project's
+  cost is dominated by the meetings, submittal cycles, and design reviews
+  that happen before a single controller gets mounted. The bigger the
+  building, the more of the work is talking about the work.
+</Callout>
+
+<Callout variant="warning">
+  Don't apply small-building intuition to large-building systems. A
+  "let's just override that schedule for the weekend" move that works on a
+  strip mall can be a paged-by-3am incident in a hospital with negative-pressure
+  isolation rooms.
+</Callout>
+
+<Callout variant="tip">
+  When you're new to a building, start by reading the <KeyTerm term="sequence of operations" definition="The narrative document, usually a PDF, that describes how each HVAC system is supposed to behave under normal, off-normal, and failure conditions. The closest thing to a 'spec' for the BAS configuration." />. It tells you what the system was supposed to do, which is the first half of figuring out why it isn't doing it.
+</Callout>
+
+---
+
+## Next up
+
+The people. Owner, designer, integrator, mech contractor, commissioning agent, operator, who does what and where the friction lives.

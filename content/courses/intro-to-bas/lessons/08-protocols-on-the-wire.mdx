@@ -1,0 +1,307 @@
+---
+title: "Protocols on the Wire"
+description: "BACnet, Modbus, LonWorks, MQTT. What each protocol does and where a BAS engineer touches it."
+order: 8
+estimatedMinutes: 12
+---
+
+import { ProtocolStackIllustration } from "@/components/learn/illustrations/intro-to-bas/protocol-stack-illustration";
+import { NetworkTopology } from "@/components/learn/illustrations/intro-to-bas/network-topology";
+
+A BAS is, at the end of the day, a lot of small computers talking to each other. The protocols that let them talk are the closest thing the industry has to a shared language, and learning the basics of how those protocols work changes how the whole field looks.
+
+This lesson is deliberately broad and shallow. Each of the protocols below has its own course's worth of detail; the goal here is to put names on the shapes and to understand why you reach for one over another.
+
+<LessonSection title="Why protocols exist" level={2}>
+
+In the pneumatic era, signals were carried by air pressure in tubes. Every manufacturer's controller could read every other manufacturer's signals because pressure is pressure. When the industry went digital in the 1980s and '90s, that compatibility vanished. Each vendor had its own wire format, its own value encoding, and its own way of describing what a "zone temperature" was.
+
+A **protocol** is the rule book that lets two devices, possibly from different vendors, agree on:
+
+- How the bits are framed on the wire (the physical and data-link layer)
+- How addresses identify devices
+- What an "object" or "register" or "point" looks like
+- How a device asks for a value or commands a change
+- What errors mean
+
+Protocols don't make systems interoperable on their own, they make interoperability *possible*. There is still plenty of integration work after the protocol is agreed on.
+
+<Callout variant="info">
+  When the industry says "open protocol," it usually means a standard a vendor
+  doesn't own outright, BACnet, Modbus, LonWorks, OPC UA, KNX, MQTT. A vendor
+  can be BACnet-compliant and still have proprietary features that only their
+  controllers understand. "Open" is a spectrum.
+</Callout>
+
+</LessonSection>
+
+<LessonSection title="The major protocols, briefly" level={2}>
+
+Every protocol below sits on some version of the same four-layer stack, physical wire, data-link frames, network addressing, application semantics. Scrub through and watch each protocol's footprint shift across the layers.
+
+<ScrubControl
+  label="Protocol comparison"
+  labels={["BACnet/IP", "BACnet MS/TP", "Modbus TCP", "MQTT"]}
+  frames={[
+    <ProtocolStackIllustration key="s0" step={0} />,
+    <ProtocolStackIllustration key="s1" step={1} />,
+    <ProtocolStackIllustration key="s2" step={2} />,
+    <ProtocolStackIllustration key="s3" step={3} />,
+  ]}
+/>
+
+<Tabs
+  label="Major BAS protocols"
+  items={[
+    {
+      value: "bacnet",
+      label: "BACnet",
+      content: (
+        <div className="space-y-3">
+          <p>
+            The dominant open protocol for North American commercial BAS. Developed by ASHRAE in the 1990s; today managed by ASHRAE's SSPC 135 committee and the BACnet International trade group. Almost every major vendor speaks it.
+          </p>
+          <p>
+            BACnet models the building as a collection of <strong>objects</strong>, Analog Input, Binary Output, Schedule, Trend Log, Notification Class, and a few dozen more. Every object has <strong>properties</strong> (present-value, units, status flags). The protocol is the rules for reading, writing, and subscribing to those properties.
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            Common variants: BACnet/IP (over Ethernet), BACnet MS/TP (over RS-485 twisted pair), BACnet/SC (the newer secure variant over TLS).
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "modbus",
+      label: "Modbus",
+      content: (
+        <div className="space-y-3">
+          <p>
+            Older than the public web. Originally created by Modicon in 1979 for industrial PLCs, Modbus is dead simple, a master polls slaves for ranges of <strong>registers</strong>, and slaves answer with values. No object model, no discovery, no notifications. Just numbers at addresses.
+          </p>
+          <p>
+            That simplicity is why Modbus survived. Almost every meter, sensor, VFD, and small device supports it. Modbus RTU runs on RS-485 serial; Modbus TCP runs on Ethernet.
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            BAS engineers most often meet Modbus at the boundary, pulling readings from a power meter, a chiller, or a third-party sensor that doesn't speak BACnet.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "lonworks",
+      label: "LonWorks",
+      content: (
+        <div className="space-y-3">
+          <p>
+            A peer-to-peer protocol developed by Echelon in the late 1980s. Once a major competitor to BACnet, especially in European markets and in lighting / VAV / FCU spaces.
+          </p>
+          <p>
+            Today LonWorks is in slow retreat for new commercial construction in North America but very much alive in installed bases. Older buildings often have LonWorks networks that need to be bridged into a BACnet-centric BAS.
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            The mental model is different from BACnet's: LonWorks devices subscribe to network variables (SNVTs), not properties on remote objects.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "modern",
+      label: "OPC UA, MQTT, REST",
+      content: (
+        <div className="space-y-3">
+          <p>
+            More recent arrivals, mostly riding the convergence between operational technology and IT. <strong>OPC UA</strong> is the industrial automation standard for secure, structured machine-to-machine data. <strong>MQTT</strong> is a lightweight publish/subscribe protocol popular for IoT and analytics streams. <strong>REST</strong> APIs sit on top of HTTP and are how analytics platforms, dashboards, and modern integrations usually pull data.
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            Few BAS controllers natively speak these protocols. They show up at the supervisor layer and above, where data leaves the controls network for analytics or enterprise systems.
+          </p>
+        </div>
+      ),
+    },
+  ]}
+/>
+
+<DragToMatch
+  prompt="Match each protocol to the physical medium you'd most commonly see it on."
+  pairs={[
+    {
+      id: "bip",
+      left: "BACnet/IP",
+      right: "Ethernet (Cat5e/6)",
+    },
+    {
+      id: "mstp",
+      left: "BACnet MS/TP",
+      right: "RS-485 twisted pair",
+    },
+    {
+      id: "modbus-rtu",
+      left: "Modbus RTU",
+      right: "RS-485 serial",
+    },
+    {
+      id: "mqtt",
+      left: "MQTT",
+      right: "TCP/IP (port 1883 or 8883)",
+    },
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="A BACnet primer" level={2}>
+
+Because BACnet is everywhere in modern commercial BAS, it's worth understanding its mental model at least at the surface. The core idea: a BAS device is a bag of <KeyTerm term="objects" definition="Named things inside a BACnet device, Analog Input 1, Binary Output 4, Schedule 3, Trend Log 12. Every object has properties (Present_Value, Status_Flags, Units, etc.) that other devices can read or write." />, each of which has <KeyTerm term="properties" definition="Named attributes of a BACnet object. The two most important are Object_Identifier and Present_Value. Other common properties include Status_Flags, Units, Description, and (for I/O) Out_Of_Service." />, accessed through <KeyTerm term="services" definition="Actions one BACnet device performs on or asks of another. ReadProperty and WriteProperty are the most common. SubscribeCOV, ConfirmedEventNotification, WhoIs/IAm are the other early ones to recognize." />.
+
+<RevealCard
+  front="Object"
+  back="A named thing inside a device. Examples: Analog Input 1 (the zone temperature sensor), Binary Output 4 (the fan command), Schedule 3 (the occupancy schedule), Trend Log 12 (the chilled-water-supply trend)."
+/>
+
+<RevealCard
+  front="Property"
+  back="A named attribute of an object. Every object has at least Object_Identifier, Object_Name, Object_Type, and (for I/O objects) Present_Value. There are dozens more, Status_Flags, Units, COV_Increment, Description, and so on."
+/>
+
+<RevealCard
+  front="Device object"
+  back="Every BACnet device has exactly one Device object. Its properties describe the whole device, its vendor, model, firmware, supported services, and the list of objects it contains."
+/>
+
+<RevealCard
+  front="Service"
+  back="An action one device asks another to perform. ReadProperty and WriteProperty are the two you'll see most. Others include SubscribeCOV (notify me when a value changes), ConfirmedEventNotification (alarm me), and WhoIs / IAm (the discovery handshake)."
+/>
+
+<RevealCard
+  front="BIBB"
+  back="BACnet Interoperability Building Block. A bundle of services a device is certified to support, for example, the 'Data Sharing, ReadProperty, A' BIBB means the device can request reads from other devices. Specs list required BIBBs; vendors list supported BIBBs."
+/>
+
+### IP vs MS/TP
+
+The two BACnet variants you'll see on most projects are BACnet/IP and BACnet MS/TP. They carry the same protocol on different physical media.
+
+<Comparison
+  leftLabel="BACnet/IP"
+  rightLabel="BACnet MS/TP"
+  rows={[
+    { label: "Physical layer", left: "Ethernet (UDP packets, typically port 47808)", right: "RS-485 twisted pair, master-slave token passing" },
+    { label: "Speed", left: "10/100/1000 Mbps, bottleneck is rarely the wire", right: "9.6 to 115.2 kbps, slow, but predictable" },
+    { label: "Typical use", left: "Supervisory controllers, plant equipment, JACE-to-JACE backbones", right: "VAV boxes, FCUs, dense terminal-unit networks" },
+    { label: "Cost per node", left: "Higher, every device needs IP and a switch port", right: "Lower, dozens of devices share one twisted-pair trunk" },
+    { label: "Failure mode", left: "Network storm or switch outage takes a segment offline", right: "A bad terminator or a swapped polarity on one device degrades the whole trunk" },
+  ]}
+  caption="Most commercial BAS run both, IP at the top, MS/TP at the terminal-unit layer."
+/>
+
+</LessonSection>
+
+<LessonSection title="Tracing one read across the network" level={2}>
+
+When an operator opens a graphic and the zone temperature appears, a chain of devices and protocols has just executed in a few hundred milliseconds. Step through it.
+
+<StepThrough
+  label="A point value, end to end"
+  frames={[
+    <NetworkTopology key="n0" frame={0} />,
+    <NetworkTopology key="n1" frame={1} />,
+    <NetworkTopology key="n2" frame={2} />,
+    <NetworkTopology key="n3" frame={3} />,
+    <NetworkTopology key="n4" frame={4} />,
+  ]}
+  captions={[
+    <span key="c0">Operators experience this as one click. Underneath, three devices and two protocols cooperate.</span>,
+    <span key="c1">Caching matters. Without it, a busy graphic could thrash an MS/TP trunk.</span>,
+    <span key="c2">MS/TP is half-duplex and master-slave, the request has to wait its turn on the token rotation.</span>,
+    <span key="c3">Notice how each layer only knows its piece. The VAV controller has no idea a web browser is on the other end.</span>,
+    <span key="c4">Most BAS performance complaints trace back to one of these hops being slower than the operator expected.</span>,
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="Networks and the IT conversation" level={2}>
+
+A new wrinkle for BAS work in the last decade: building automation networks are now expected to coexist with corporate IT.
+
+That means <KeyTerm term="VLAN" definition="Virtual LAN. A logical network segment that shares physical switches with other segments but is isolated at the data-link layer. BAS networks are increasingly placed on their own VLAN, separate from corporate user traffic." /> segmentation, firewall rules, identity management, certificate handling, and patch cycles, all topics that used to belong to the corporate IT team and now show up on BAS submittals. The protocols themselves haven't changed much, but the *network they ride on* has become a shared resource.
+
+<Callout variant="warning">
+  Do not plug a BAS controller into a corporate network without coordinating
+  with IT. A controller sending broadcast discovery traffic can saturate a
+  segment, and a corporate firewall blocking BACnet UDP traffic can silently
+  break a building. This is one of the most common
+  finger-pointing moments on a modern project.
+</Callout>
+
+<Callout variant="industry-insight">
+  The BAS engineers who will be most valuable over the next decade are the ones
+  who can hold a credible conversation with IT, VLANs, certificates, change
+  management, network monitoring. The mechanical knowledge still matters; it
+  just isn't enough on its own anymore.
+</Callout>
+
+</LessonSection>
+
+<LessonSection title="Gateways, when nothing matches" level={2}>
+
+Sometimes a piece of equipment speaks one protocol and the BAS speaks another. The solution is a **protocol gateway**, a small box (or a service running on a supervisor) that translates between the two.
+
+A common example: a chiller that speaks Modbus exposes a few dozen registers; the BAS is BACnet-centric. A gateway reads the Modbus registers and re-presents them as BACnet objects. The BAS sees an ordinary BACnet device; the chiller sees an ordinary Modbus master.
+
+<RevealCard
+  front="Why gateways are a hassle"
+  back="They add a translation layer that has to be configured, maintained, and updated when either side changes. A failed gateway is a single point of failure that hides upstream of every point it carries. Veteran integrators avoid them when they can, but a building with one BACnet-incompatible chiller, two LonWorks lighting controllers, and a Modbus power meter rack will absolutely have several."
+/>
+
+</LessonSection>
+
+<LessonSection title="A quick check-in" level={2}>
+
+<MultipleChoice
+  question="A new construction project has a central BAS supervisor on Ethernet, twelve VAV controllers wired into a single twisted-pair trunk, and a third-party chiller that exposes data over Modbus TCP. Which protocols are most likely in play?"
+  options={[
+    {
+      text: "BACnet/IP for the supervisor, BACnet MS/TP for the VAV trunk, Modbus TCP plus a gateway for the chiller",
+      correct: true,
+      explanation: "This is the canonical layout: BACnet/IP at the top, BACnet MS/TP for dense terminal-unit networks on twisted pair, and a Modbus device integrated via gateway so the BAS sees it as BACnet.",
+    },
+    {
+      text: "LonWorks for everything",
+      correct: false,
+      explanation: "LonWorks is still in the field on older buildings, but it's uncommon as a sole protocol on new commercial construction.",
+    },
+    {
+      text: "MQTT for everything",
+      correct: false,
+      explanation: "MQTT shows up at analytics and IoT layers, not as the primary controls protocol on a BAS network.",
+    },
+    {
+      text: "Proprietary vendor protocol only",
+      correct: false,
+      explanation: "A spec calling for a BACnet supervisor and a Modbus chiller rules this out, open protocols are explicitly required.",
+    },
+  ]}
+/>
+
+<FillInBlank
+  prompt="In BACnet, the named attribute of an object, like Present_Value or Status_Flags, is called a ___."
+  answers={["property", "Property"]}
+  fuzzy={1}
+  explanation="Objects have properties. ReadProperty and WriteProperty are the two services you'll see most often on a BACnet trace."
+/>
+
+<Aside attribution="A controls engineer with twenty years on BACnet">
+  Learn the object model, learn the services, learn the difference between IP
+  and MS/TP. Once you have those three, you can read almost any BAS network
+  capture and at least know what's failing. The rest is reps.
+</Aside>
+
+</LessonSection>
+
+---
+
+## Next up
+
+The project lifecycle. How a BAS goes from a sketch in a design firm to a running system an operator inherits.

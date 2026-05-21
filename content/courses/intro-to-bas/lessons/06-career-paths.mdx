@@ -1,0 +1,292 @@
+---
+title: "Career Paths in BAS"
+description: "There isn't one ladder into BAS, there are half a dozen. This lesson walks through the common entry routes, the roles people grow into, and the skills that move you between them."
+order: 6
+estimatedMinutes: 11
+---
+
+import { CareerArcIllustration } from "@/components/learn/illustrations/intro-to-bas/career-arc-illustration";
+
+The last lesson covered the *people on a project*. This one covers the *people in the industry*, how they got there, what they do day-to-day, and how a career in BAS tends to evolve over a decade or two.
+
+The short version: there is no single ladder. People arrive in BAS from HVAC service, from electrical work, from IT, from mechanical engineering, and from the operator's chair. The industry absorbs all of them, and the best engineers are usually the ones who brought a strong skill from somewhere else.
+
+<LessonSection title="How people get in" level={2}>
+
+<Tabs
+  label="Entry routes into BAS"
+  items={[
+    {
+      value: "hvac",
+      label: "HVAC technician",
+      content: (
+        <div className="space-y-3">
+          <p>
+            The most common entry route. A service tech who has been crawling around AHUs, replacing actuators, and tracing duct for a few years brings irreplaceable field intuition. The gap is usually programming, networking, and the BAS supervisor software.
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            Typical first BAS title: <em>controls technician</em> or <em>field technician</em>.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "electrical",
+      label: "Electrician / low-voltage",
+      content: (
+        <div className="space-y-3">
+          <p>
+            Comfort with wiring, conduit, and power conventions transfers cleanly. Low-voltage technicians who have run network and security cabling adapt fastest, they already understand structured wiring.
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            Typical first BAS title: <em>installer</em> or <em>panel builder</em>, moving toward <em>commissioning technician</em>.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "it",
+      label: "IT / programmer",
+      content: (
+        <div className="space-y-3">
+          <p>
+            Increasingly common as buildings become network-dependent. Programmers pick up sequences and graphics quickly; the gap is mechanical intuition, knowing why a flow sensor might be lying to you matters as much as knowing how to read the value.
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            Typical first BAS title: <em>BAS programmer</em>, <em>integration engineer</em>, or <em>analytics developer</em>.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "engineering",
+      label: "Mechanical engineer",
+      content: (
+        <div className="space-y-3">
+          <p>
+            Designers who specified the sequences for a few years sometimes cross over to the integrator side to actually build them. They bring deep system understanding and weak programming muscles, the opposite problem of the IT route.
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            Typical first BAS title: <em>controls engineer</em> or <em>applications engineer</em>.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "operations",
+      label: "Building operator",
+      content: (
+        <div className="space-y-3">
+          <p>
+            The most under-recognized path. An operator who has lived inside a BAS for five years can diagnose problems faster than most integrators. The gap is design, knowing how to draw the sequence before you debug it. Many operators move into in-house controls roles before going to an integrator.
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            Typical first BAS title: <em>in-house controls technician</em> or <em>BAS administrator</em>.
+          </p>
+        </div>
+      ),
+    },
+  ]}
+/>
+
+<Callout variant="industry-insight">
+  No single route is "the best." Hiring managers tend to value field hours and
+  curiosity above formal training. A two-year HVAC technician with a habit of
+  reading sequence narratives end-to-end is more valuable than a four-year
+  graduate who has never opened a panel door.
+</Callout>
+
+</LessonSection>
+
+<LessonSection title="The roles people grow into" level={2}>
+
+A few roles capture most professional BAS work. They aren't titles every company uses, different shops use the same words to mean different things, but the shapes are consistent. Two of them, the <KeyTerm term="controls technician" definition="The field-focused role: pulls cable, mounts and terminates controllers, walks down sequences. The longest-tenured person on most teams." /> and the <KeyTerm term="master systems integrator" definition="A senior integration role on large campuses and portfolios. Stitches BAS, lighting, metering, security, and IT into a single supervisory layer. Often abbreviated MSI." />, sit at opposite ends of the field-to-systems spectrum and are worth recognizing by name.
+
+<RevealCard
+  front="Controls / BAS technician"
+  back="Field-focused. Pulls cable, mounts controllers, terminates panels, commissions points, walks down sequences. Lives in mechanical rooms more than at a desk. Often the longest-tenured person on the team."
+/>
+
+<RevealCard
+  front="BAS programmer / integrator"
+  back="The role most 'BAS engineer' job titles refer to. Turns sequences of operations into running code, builds operator graphics, integrates third-party devices, sets up the network. Half desk, half site."
+/>
+
+<RevealCard
+  front="Controls engineer (design side)"
+  back="Sits at a design firm. Writes sequence-of-operations documents, point lists, and control diagrams that the integrator implements. Reviews submittals and shop drawings. Heavy reader, light wiring."
+/>
+
+<RevealCard
+  front="Project manager"
+  back="Owns schedule, scope, and cost on a BAS project. Coordinates between integrator, mechanical contractor, owner, and design team. Usually grown out of a technician or programmer who got tired of fighting with bad schedules."
+/>
+
+<RevealCard
+  front="Analytics / energy engineer"
+  back="Lives downstream of the BAS, reads trends, looks for fault patterns, builds dashboards. Often a hybrid programming / data role layered on top of one or more BAS platforms. Sometimes called 'monitoring-based commissioning.'"
+/>
+
+<RevealCard
+  front="Master systems integrator (MSI)"
+  back="Takes BAS, security, lighting, metering, and IT and stitches them into a single supervisory layer. A senior role at large campuses, hospital networks, and tech companies with strict operational standards."
+/>
+
+<DragToMatch
+  prompt="Match each skill to the role where it tends to be heaviest. (Every role uses every skill, the question is where each is most concentrated.)"
+  pairs={[
+    {
+      id: "wire",
+      left: "Terminating panels and pulling cable",
+      right: "Controls technician",
+    },
+    {
+      id: "logic",
+      left: "Writing platform-specific control logic",
+      right: "BAS programmer / integrator",
+    },
+    {
+      id: "soo",
+      left: "Drafting sequence-of-operations documents",
+      right: "Controls engineer (design)",
+    },
+    {
+      id: "schedule",
+      left: "Owning schedule, scope, and cost",
+      right: "Project manager",
+    },
+    {
+      id: "trend",
+      left: "Building fault-detection dashboards on top of trend data",
+      right: "Analytics / energy engineer",
+    },
+    {
+      id: "systems",
+      left: "Stitching BAS, lighting, metering, and security into one platform",
+      right: "Master systems integrator",
+    },
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="A rough progression" level={2}>
+
+Most careers move from hands-on toward design or analytics, but the shape is messier than a straight ladder. Drag the slider to watch how time tends to redistribute across field, desk, design, and lead work as a career compounds.
+
+<ScrubControl
+  label="Career mix over time"
+  labels={["0–2 yr", "2–4 yr", "4–7 yr", "7–10 yr", "10+ yr"]}
+  frames={[
+    <CareerArcIllustration key="a0" step={0} />,
+    <CareerArcIllustration key="a1" step={1} />,
+    <CareerArcIllustration key="a2" step={2} />,
+    <CareerArcIllustration key="a3" step={3} />,
+    <CareerArcIllustration key="a4" step={4} />,
+  ]}
+  captions={[
+    <span key="c0">Time on tools is what makes the rest of the career work.</span>,
+    <span key="c1">Your first platform, Tridium, Honeywell, JCI, Siemens, Distech, shapes years of habits. Pick where you spend that time deliberately.</span>,
+    <span key="c2">This is the inflection point most controls engineers describe as the hardest. Project ownership is a different muscle than execution.</span>,
+    <span key="c3">Specialization compounds. Generalists exist, but they almost always have one or two deep areas under the breadth.</span>,
+    <span key="c4">The industry is small enough that reputation travels. Burn no bridges in years 0–7 and the next ten are easier.</span>,
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="Two side-by-side roles" level={2}>
+
+People conflate *controls technician* and *controls engineer* constantly. The job titles can even swap between companies. Here's a rough contrast.
+
+<Comparison
+  leftLabel="Controls technician (field)"
+  rightLabel="Controls engineer (design / programming)"
+  rows={[
+    { label: "Where the work lives", left: "Mechanical rooms, panels, jobsite trailers", right: "Office, with site visits during construction and cx" },
+    { label: "Tools of the day", left: "Hand tools, multimeter, laptop in a backpack", right: "Drawings, sequence documents, programming environment" },
+    { label: "Most common output", left: "A panel that works, a point that commissions, a sequence that fires", right: "A drawing set, a sequence narrative, a programmed controller" },
+    { label: "Failure mode", left: "Wires terminated wrong, sensors reading off, points missed", right: "Logic gaps, missed setpoints, design that doesn't match field reality" },
+    { label: "What growth looks like", left: "More complex systems, leading commissioning crews, training newer techs", right: "Bigger projects, owning sequences across whole portfolios, mentoring designers" },
+  ]}
+  caption="Both are professional careers, neither is a stepping stone to the other."
+/>
+
+<Aside attribution="A controls engineer with twelve years in the field, on hiring debates with HR">
+  We keep being asked whether to hire a programmer or a technician. The honest
+  answer is that the best people are both, alternating depending on the week.
+  A team that respects that flexibility will keep its talent for a decade.
+</Aside>
+
+</LessonSection>
+
+<LessonSection title="Adjacent paths" level={2}>
+
+A few specialties grow naturally out of BAS but aren't really BAS work anymore. They show up often enough in conversation that it helps to recognize them.
+
+- **Energy management**, looking at meters, utility bills, and trend data to find waste. Lives downstream of the BAS but feeds requirements back into it.
+- **Sustainability / decarbonization**, broader strategic work for owners, with BAS as one of several tools. Often paired with an engineering degree or LEED / WELL accreditations.
+- **Cybersecurity**, increasingly visible as BAS networks touch corporate IT. Few people specialize fully in BAS cybersecurity yet; most hold a foot in OT cyber more broadly.
+- **Vendor / manufacturer**, joining one of the BAS manufacturers (Honeywell, Siemens, JCI, Schneider, Distech, Tridium, ABB, etc.) as an applications engineer, trainer, or product manager.
+
+<Callout variant="tip">
+  If you're early in your career and want optionality, build one platform deep
+  and one protocol broad. A practitioner who is excellent at, say, Niagara
+  Tridium <em>and</em> understands BACnet/IP across vendors can choose where
+  they work for decades.
+</Callout>
+
+</LessonSection>
+
+<LessonSection title="A quick check-in" level={2}>
+
+<MultipleChoice
+  question="Which of the following is the *least* common entry route into a professional BAS career?"
+  options={[
+    {
+      text: "Working as an HVAC service technician",
+      correct: false,
+      explanation: "This is one of the most common starting points, field intuition translates directly.",
+    },
+    {
+      text: "Coming from a programming or IT background",
+      correct: false,
+      explanation: "Increasingly common; programming skills transfer well, though mechanical intuition takes time.",
+    },
+    {
+      text: "Starting in a design firm as a mechanical engineer",
+      correct: false,
+      explanation: "Less common than the field routes, but a well-established path, especially toward design-side controls work.",
+    },
+    {
+      text: "Graduating from a four-year 'BAS engineering' degree program",
+      correct: true,
+      explanation: "Dedicated four-year BAS programs are rare. Most practitioners come in through HVAC, electrical, IT, mechanical engineering, or operations and pick up BAS-specific training on the job or through vendor courses.",
+    },
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="How people learn" level={2}>
+
+There is no single curriculum. Most career growth in BAS happens through three sources, in roughly this order:
+
+1. **On-the-job apprenticeship.** Working alongside a senior technician or engineer for a year or two is more valuable than any course.
+2. **Vendor training.** Tridium University, Honeywell EBI, JCI Metasys, Siemens, each major vendor runs structured training on their platform. Many companies pay for it.
+3. **Industry organizations.** ASHRAE, ACG (commissioning), AEE (energy), and BACnet International all run conferences, certifications, and standards committees that anchor the broader field.
+
+<FillInBlank
+  prompt="The most common first source of BAS skill is on-the-job ___ with a senior practitioner."
+  answers={["apprenticeship", "mentorship", "training"]}
+  fuzzy={2}
+  explanation="Apprenticeship is the answer used in the lesson, but mentorship and on-the-job training point at the same idea, most BAS skill is transferred person-to-person."
+/>
+
+</LessonSection>
+
+---
+
+## Next up
+
+Back to equipment. The mechanical systems a BAS sits on top of, and what each one means for the person at the keyboard.

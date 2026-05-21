@@ -1,0 +1,234 @@
+---
+title: "The Major Players"
+description: "Owner, designer, integrator, mech contractor, cx agent, operator. Who does what and where the friction lives."
+order: 5
+estimatedMinutes: 11
+---
+
+import { AhuFindTheSpot } from "@/components/learn/illustrations/intro-to-bas/ahu-find-the-spot";
+import { AhuLabelMatch } from "@/components/learn/illustrations/intro-to-bas/ahu-label-match";
+
+Every BAS project, from a strip pharmacy to a hospital campus, has the same cast of characters. Different scales mean different proportions, but the *roles* don't change. A controls engineer who can move between them is almost always more useful than one who only speaks one tribe's language.
+
+This lesson introduces the six roles you'll meet on every project, then closes with a short knowledge check at the end of each section. As before, assessments are check-ins, not gates, you can keep going whether you got them right or not.
+
+## The six roles
+
+<RevealCard
+  front="Why introduce roles before equipment?"
+  back="Because the equipment is rarely the hard part. Coordinating six groups of people with overlapping responsibilities and conflicting incentives is the actual job."
+/>
+
+### 1. The owner
+
+The party that pays for the BAS. The owner cares about three things: energy bills, tenant comfort, and not getting paged at 2am. Their representative on the project is usually a facilities manager or director, sometimes a corporate energy / sustainability lead, sometimes a CFO if the building is small enough for the BAS to be a noticeable budget line.
+
+Owners almost never specify the BAS themselves. They hire a design team to do it. But owners *do* push back on cost late in the project, and the BAS is often where late-stage value engineering takes a bite.
+
+### 2. The mechanical engineer (design)
+
+A mechanical engineer at a design firm specifies what the BAS has to do, in the form of a **sequence of operations** document and a **point list**. They don't write the BAS code, they write what the code is supposed to accomplish.
+
+<Callout variant="industry-insight">
+  The quality of a project is set in the design phase. A well-written sequence
+  of operations document reads almost like code; a poorly-written one creates
+  weeks of meetings during commissioning. If you're new to the industry,
+  reading two or three real sequences end-to-end is the fastest way to start
+  understanding how the field thinks.
+</Callout>
+
+<MultipleChoice
+  question="Which of the following is the design engineer's most important output for the BAS scope?"
+  options={[
+    {
+      text: "A list of preferred BAS vendors",
+      correct: false,
+      explanation:
+        "Vendor preference is usually the owner's call, not the design engineer's.",
+    },
+    {
+      text: "The sequence of operations document",
+      correct: true,
+      explanation:
+        "It's the closest thing to a spec for the BAS configuration, the integrator translates this document into code.",
+    },
+    {
+      text: "Mounting hardware schedules",
+      correct: false,
+      explanation:
+        "Mounting hardware is usually defined by the integrator or installer.",
+    },
+    {
+      text: "The user interface mockups",
+      correct: false,
+      explanation:
+        "UI work generally falls to the integrator or the BAS vendor.",
+    },
+  ]}
+/>
+
+### 3. The integrator
+
+This is the role most "BAS engineer" job titles refer to. The integrator turns the design engineer's sequence of operations into running code on real controllers. They write the logic, build the screens, integrate the protocols, and stand behind the system at turnover.
+
+Integrators come in two flavors:
+
+- **Vendor-aligned**, works for or under one of the major BAS manufacturers (Honeywell, Siemens, Johnson Controls, etc.). Almost always proposes that vendor's product line.
+- **Independent**, picks the controller for each project, often based on what fits the building best or what the owner's existing team already knows.
+
+<DragToOrder
+  prompt="Order these typical integrator activities from earliest to latest in a project."
+  items={[
+    "Submittals (point lists, drawings, panel schedules)",
+    "Panel assembly and wiring",
+    "Field commissioning",
+    "Turnover and operator training",
+    "Warranty period support",
+  ]}
+/>
+
+### 4. The mechanical contractor
+
+The mech contractor installs the ducts, pipes, dampers, valves, fans, and pumps that the BAS controls. They are not the BAS, but a *lot* of finger-pointing happens at the boundary.
+
+The classic BAS-vs-mech disputes:
+
+- A damper actuator was installed but never wired. Whose problem?
+- A valve was installed backwards. The BAS reports "100% open" but no flow. Whose problem?
+- A sensor is in the wrong place, measuring discharge before it leaves the unit instead of in the duct. Whose problem?
+
+<DragToMatch
+  prompt="Match each role to the question they're most likely asking on a Tuesday afternoon."
+  pairs={[
+    {
+      id: "owner",
+      left: "Owner",
+      right: "Why is our energy bill higher than last month?",
+    },
+    {
+      id: "design",
+      left: "Design engineer",
+      right: "Does the as-built match the sequence I specified?",
+    },
+    {
+      id: "integrator",
+      left: "Integrator",
+      right: "Why is my damper proving open before the fan finishes ramping?",
+    },
+    {
+      id: "mech",
+      left: "Mechanical contractor",
+      right: "Is the BAS fighting my pressure setpoint, or is the duct leaking?",
+    },
+    {
+      id: "cx",
+      left: "Commissioning agent",
+      right: "Does the system behave the way the spec says it should?",
+    },
+  ]}
+/>
+
+### 5. The commissioning agent
+
+A third-party (in theory, sometimes part of the design firm) who verifies that the building's systems perform per the design intent before turnover, and ideally for the first year afterward. The commissioning agent is the role most likely to find a BAS bug before the owner does.
+
+<Callout variant="tip">
+  When you start working in BAS, look for projects with strong commissioning.
+  They're better learning environments, the commissioning agent will catch
+  things you miss, and you'll see what good behavior looks like.
+</Callout>
+
+### 6. The operator (after turnover)
+
+Once the construction team leaves, the building's operator runs the BAS day to day. Operators are the long-term tenants of the system you build, and the most under-appreciated role on the list. A great operator will keep a mediocre BAS running fine for fifteen years. A poor operator will quietly degrade a great system into a complaint-driven, override-everywhere mess in two.
+
+<Aside attribution="A senior BAS technician at a regional integrator">
+  We don't build buildings for design engineers, and we don't build them for
+  owners. We build them for the operator who's going to be the only person
+  sitting in front of the screen for the next decade.
+</Aside>
+
+## A sketch of the project lifecycle
+
+The six roles don't all show up at once. They appear in a rough order, and the BAS engineer touches each of them along the way.
+
+<StepThrough
+  label="Project lifecycle"
+  frames={[
+    <span key="f0">
+      <strong>Design.</strong> The owner (often via an owner's representative
+      and any project standards or owner project requirements) drives intent;
+      the mechanical engineer produces the basis of design, sequence of
+      operations, and point list. Commissioning, if engaged early, helps shape
+      the requirements. The BAS integrator is usually not yet on board.
+    </span>,
+    <span key="f1">
+      <strong>Bid + award.</strong> Integrator gets selected. The first
+      conversations about which controllers, which protocols, which UI.
+    </span>,
+    <span key="f2">
+      <strong>Submittals.</strong> Drawings, panel layouts, point lists. Lots
+      of redlines. This is where most missing requirements get caught.
+    </span>,
+    <span key="f3">
+      <strong>Construction.</strong> Mechanical contractor mounts equipment,
+      runs conduit. Integrator builds panels, pulls cable, mounts controllers.
+    </span>,
+    <span key="f4">
+      <strong>Commissioning.</strong> Each system gets exercised. Setpoints
+      tested, alarms walked, schedules verified. Most BAS code changes happen
+      here.
+    </span>,
+    <span key="f5">
+      <strong>Turnover.</strong> Owner receives manuals, the operator gets
+      trained, warranty period begins. The first real day the BAS is in
+      service.
+    </span>,
+  ]}
+  captions={[
+    <span key="c0">Design happens before you're hired. Read the spec carefully when you arrive.</span>,
+    <span key="c1">Bid is the first time scope gets explicit. Pricing follows scope; scope follows the spec.</span>,
+    <span key="c2">Submittals are the contract's resolution mechanism. Make them precise.</span>,
+    <span key="c3">Construction is the longest phase. It's also where field reality diverges from drawings.</span>,
+    <span key="c4">Commissioning is where you learn how the system actually behaves.</span>,
+    <span key="c5">Turnover is when the operator becomes the most important user of your work.</span>,
+  ]}
+/>
+
+## Vocabulary check
+
+<FillInBlank
+  prompt="The document that describes how each HVAC system is supposed to behave is called the ___ of operations."
+  answers={["sequence", "Sequence"]}
+  fuzzy={1}
+  explanation="The sequence of operations is the closest thing to a spec for the BAS configuration. Sometimes shortened to SOO."
+/>
+
+<FillInBlank
+  prompt="The role most likely to catch a BAS bug before the owner does is the ___ agent."
+  answers={["commissioning", "cx"]}
+  fuzzy={1}
+  explanation="Commissioning agents (often abbreviated Cx) run the structured tests that verify the BAS does what the spec says."
+/>
+
+## Where the friction lives
+
+The single most common conflict on a BAS project is the boundary between the integrator and the mechanical contractor. The BAS engineer's job is half technical and half diplomatic, knowing where to push, where to wait, and where to write a polite RFI.
+
+<AhuFindTheSpot
+  prompt="Click the cooling coil, the component most likely to be the subject of an integrator vs. mech contractor disagreement on a project."
+  target="coolingCoil"
+  explanation="Cooling coils ride the line between the BAS (which modulates the valve and reports temperatures) and the mech contractor (who installs the coil and pipes the chilled water). When discharge temperatures don't match expectations, both sides start measuring."
+/>
+
+## Putting names on the parts
+
+Same AHU, no labels this time. Drag the labels to the right components.
+
+<AhuLabelMatch prompt="Drag each label onto the component it names." />
+
+---
+
+## Next up
+
+How people actually get into this field, and what the career arc looks like once they're in.

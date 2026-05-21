@@ -1,0 +1,76 @@
+---
+title: "What is a Building Automation System?"
+description: "What a BAS is, why it exists, and why most larger commercial buildings end up with one."
+order: 1
+estimatedMinutes: 8
+---
+
+A **building automation system**, usually shortened to BAS, is the nervous system of a modern commercial building. It senses what's happening, decides what to do about it, and tells the mechanical, electrical, and plumbing systems how to respond. When you walk into an office at 7am and the air is already comfortable, that's a BAS doing its job quietly in the background.
+
+## Why automation exists
+
+Buildings consume roughly 40% of U.S. primary energy, with heating, cooling, ventilation, and lighting making up the bulk of that load. Before automation, an operator had to physically walk to each piece of equipment and set it by hand. Schedules were a wall calendar. Setpoints were a knob on a wall. Anything more sophisticated meant trusting a tenant not to crank the thermostat to 85°F on a Friday afternoon and leave for the weekend.
+
+The first generation of automation was pneumatic. Compressed air in tubing carried signals between thermostats and dampers. It worked, but tuning it felt like alchemy.
+
+> A pneumatic system in the hands of a good operator could rival a digital system. In the hands of a typical operator, it was a slow leak with a thermostat strapped to it.
+
+Today, a BAS is a network of digital controllers communicating over standardized protocols, supervised by software that anyone with a web browser can reach.
+
+### What a BAS actually does
+
+At the smallest scale, a BAS is doing five things at any given moment:
+
+- **Control**, reading sensors, deciding actions, commanding outputs. Open a damper. Modulate a valve. Stage a chiller.
+- **Monitor**, exposing the current state of connected points so operators can see what every device is doing right now.
+- **Schedule**, turning equipment on and off according to occupancy, weather, and demand response signals.
+- **Alarm**, noticing when something is out of bounds and notifying the right person fast enough to do something about it.
+- **Trend**, recording a configurable subset of points over time, periodically, on change-of-value, or on a trigger, so operators can investigate "why did room 412 get hot last Tuesday at 3:14pm?"
+
+Most BAS work blends these together. A single VAV box may be on a schedule, controlling to a setpoint, trending its damper position, and alarming if airflow drops below a threshold, all simultaneously.
+
+### Where you find them
+
+You'll find a BAS in:
+
+1. Office buildings, common in larger properties, and increasingly common as building size and energy-code stringency rise.
+2. Hospitals and clinics, where pressure relationships between rooms can be a life-safety concern.
+3. Schools and universities, where energy budgets and indoor air quality matter equally.
+4. Laboratories and cleanrooms, where the BAS *is* the experiment, if it fails.
+5. Data centers, where cooling is the difference between $40M/year servers running and $40M/year servers melting.
+
+The smaller the building, the simpler the system tends to be. A single rooftop unit on a strip-mall pharmacy might have a stand-alone programmable thermostat, usually considered a controls package rather than a full BAS. At the other end, a 1.2M-square-foot pharma campus can run tens of thousands of points spread across hundreds of controllers, integrated to power monitoring, security access control, and the corporate IT network.
+
+## The cast of characters
+
+Working in BAS means working with six distinct kinds of people, often at the same time:
+
+- The **owner** signs the checks. They care about energy bills, tenant comfort, and not getting paged at 2am.
+- The **design engineer** (typically a mechanical engineer at a design firm) writes the sequence of operations and point list that specifies what the BAS has to do. They don't write the code; they write what the code is supposed to accomplish.
+- The **integrator** designs and programs the BAS. This is the role most "BAS engineer" job titles refer to.
+- The **mechanical contractor** installs the ducts, pipes, and equipment the BAS controls. They are not the BAS, but a lot of finger-pointing happens at the boundary.
+- The **commissioning agent** verifies that the building actually behaves the way the design says it should. They run the tests that catch the mistakes.
+- The **operator** runs the building day-to-day after the construction team leaves. They live in the BAS. They are the ones who decide whether the system was worth the money.
+
+A typical BAS engineer spends part of every project translating between these groups, and most of the rest tracking down why a `point.value` doesn't match what the screen says it should.
+
+## A first piece of jargon
+
+You will hear the phrase `point` constantly. A **point** is anything the BAS can read, write, or compute, a sensor reading, a setpoint, a calculated value, a binary output. A small VAV box might have 12 points. A large hotel or hospital can run into the tens of thousands once guestroom controls, central plant, and back-of-house systems are counted. Most of the work of a BAS engineer is, in one form or another, *organizing points*.
+
+```
+ZN_TEMP        72.1 °F   (sensor input)
+ZN_TEMP_SP     72.0 °F   (operator setpoint)
+DAMPER_POS     34   %    (analog output)
+OCC_STATUS     ON        (binary input from a schedule)
+```
+
+That's a fragment of what one room's worth of points might look like.
+
+---
+
+## Next up
+
+Lesson 2 zooms into what a BAS is actually doing minute to minute. After that: where you find them, who works on them, the mechanical systems they sit on top of, the protocols underneath, and what the career looks like.
+
+For now this is the shape of the thing. A network of small computers watching a building. The rest of the course is how that works in practice.

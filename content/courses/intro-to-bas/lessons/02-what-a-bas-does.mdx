@@ -1,0 +1,66 @@
+---
+title: "What a BAS Actually Does"
+description: "The five jobs every BAS is doing at any moment, and how they blend in real buildings."
+order: 2
+estimatedMinutes: 10
+---
+
+import { ZoneTempChart } from "@/components/learn/illustrations/intro-to-bas/zone-temp-chart";
+
+Last lesson sketched the shape of a BAS at the highest level: a network of small computers watching a building. This lesson zooms in by one level. We'll walk through the five things a BAS is doing at any given moment, why they matter, and how they blend together in practice.
+
+## The five jobs
+
+If you ask ten BAS engineers what their system does, you'll get ten slightly different answers, but the answers cluster around five core jobs.
+
+### 1. Control
+
+Control is the closed loop. A sensor reads a value, the controller compares it to a setpoint, and an output is adjusted to reduce the difference. A simple example: a zone temperature sensor reads `73°F`, the setpoint is `72°F`, so the controller modulates the cold-water valve a hair more open. Repeat every second, forever.
+
+Most control happens at the *device controller* level, small boxes mounted in mechanical rooms or above ceilings, each running its own logic. The supervisory controller above them coordinates, but it doesn't have to be present for the room to stay comfortable.
+
+### 2. Monitor
+
+Monitoring is the quieter half of control. Every point on every controller has a current value, and the BAS exposes those values to operators in real time, through graphics, point lists, and the supervisor's live database.
+
+That live picture is also what feeds trends (job 5): the operator or designer chooses which points to record, how often, and under what conditions. Without monitoring, every troubleshooting conversation is a guess.
+
+### 3. Schedule
+
+Buildings have rhythms. Offices fill at 7am, empty at 6pm. Schools follow academic calendars. Hotels have peaks at check-in and check-out times. A BAS turns equipment on and off, raises and lowers setpoints, and changes operating modes in response to those rhythms.
+
+> A well-tuned schedule is the single highest-leverage energy strategy in most commercial buildings. The hardest equipment problem to fix is the equipment running when it doesn't need to.
+
+Schedules can be calendar-based, occupancy-sensor-based, or driven by demand-response signals from the utility.
+
+### 4. Alarm
+
+When something is out of bounds, a freeze-stat trips, a chiller faults, a zone temperature hangs at `68°F` for two hours, the BAS needs to tell someone. Fast.
+
+The hard part of alarming isn't generating alarms. It's generating *the right ones*. A BAS that emails 4,000 alarms a day teaches operators to ignore alarms. A BAS that emails 4 a day, all real, teaches them to act.
+
+### 5. Trend
+
+Trends are the long memory. Where monitoring is "what's happening now," trending is "what happened over the last week / month / year." A graph of one zone's temperature against outside air temperature across a season is how you discover that the southeast corner offices overheat every July afternoon.
+
+<ZoneTempChart />
+
+Every reading on that chart was a point value, sampled at whatever interval the trend was configured for, written to a database, and read back when an operator wanted to understand a complaint. Trends are *selected*: a typical building only logs a fraction of its points, on intervals or change-of-value triggers that match what the operator needs to investigate later.
+
+## How they blend
+
+In practice, the five jobs don't run in isolation. A single VAV box is simultaneously:
+
+- **Controlling** its damper to maintain zone temperature.
+- **Monitoring** its damper position, airflow, and supply temperature.
+- **Scheduled** to drop to an unoccupied setpoint at 6:30pm.
+- **Alarming** if its airflow drops below 20% of design.
+- **Trending** all of the above on 1-minute intervals.
+
+A BAS engineer's day is, in part, about deciding *which* of those five jobs each piece of equipment should be doing, *how* it should be doing them, and *when* the configuration should change. That decision-making is what we'll build up to over the rest of this course.
+
+---
+
+## Next up
+
+Where you find these systems. Building types, scale, and what each one changes about the day-to-day job.

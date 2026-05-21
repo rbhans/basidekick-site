@@ -1,0 +1,382 @@
+---
+title: "The Project Lifecycle"
+description: "Seven phases from owner conversation to running building. The documents that anchor each one and where the BAS engineer shows up."
+order: 9
+estimatedMinutes: 14
+---
+
+Lesson 5 introduced the rough shape of a project, design, bid, submittals, construction, commissioning, turnover. This lesson treats each of those phases with more care and names the documents that hold them together.
+
+A BAS project is, more than anything, a *paper trail*. The actual controllers and wires are the easy part. The hard part is the agreement about what those controllers should do, what they're allowed to cost, who's responsible when something doesn't work, and what gets handed off at the end. Every phase below produces a document or two whose only job is to pin one of those agreements in place.
+
+<LessonSection title="A first map" level={2}>
+
+Below: the seven phases on a single ribbon, with role density shown beneath. The integrator's bar is faint at the left and dominant from submittals onward; the operator's bar barely shows until the very end.
+
+<Figure
+  src="/diagrams/project-phases.svg"
+  alt="Horizontal ribbon of the seven project phases with role-density bars beneath each phase."
+  caption={<>Seven phases, six roles, one paper trail. Darker bar means the role is heavier in that phase.</>}
+/>
+
+<StepThrough
+  label="The seven phases of a BAS project"
+  frames={[
+    <span key="f0"><strong>1. Pre-design.</strong> Owner writes the requirements; the design team gets selected.</span>,
+    <span key="f1"><strong>2. Design.</strong> Mechanical engineer produces the basis of design, sequence of operations, and point list.</span>,
+    <span key="f2"><strong>3. Bid + award.</strong> Integrators bid; one is selected. Scope is locked.</span>,
+    <span key="f3"><strong>4. Submittals.</strong> Integrator produces panel drawings, networking diagrams, refined point lists.</span>,
+    <span key="f4"><strong>5. Construction.</strong> Panels are built, conduit is run, controllers are mounted, equipment is installed.</span>,
+    <span key="f5"><strong>6. Commissioning.</strong> Each system is exercised. Setpoints tested, alarms walked, sequences proven.</span>,
+    <span key="f6"><strong>7. Turnover + warranty.</strong> Operator is trained, O&M docs handed over, warranty period begins.</span>,
+  ]}
+  captions={[
+    <span key="c0">The longer this phase is, the smoother the rest of the project tends to go.</span>,
+    <span key="c1">Design quality is the single biggest predictor of project quality. Cheap design is expensive construction.</span>,
+    <span key="c2">Bid clarifications matter. Anything ambiguous in the spec becomes a change order later.</span>,
+    <span key="c3">Submittals are the contract's resolution mechanism, make them precise.</span>,
+    <span key="c4">The longest phase. Most calendar time, most schedule risk, most weather and trade coordination.</span>,
+    <span key="c5">Where the BAS engineer earns most of their reputation. Calm under cx pressure compounds.</span>,
+    <span key="c6">A bad turnover taints a great project. A great turnover redeems a rough one.</span>,
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="Phase 1: pre-design" level={2}>
+
+Before any engineer drafts a sequence, the owner answers a few questions: what is this building for, who will use it, how much can it cost, and what does "good" look like a year after move-in.
+
+The output of pre-design is usually a document called the **OPR**, the <KeyTerm term="Owner's Project Requirements" definition="A document, usually written by the owner or a consultant, that captures the owner's intended use, comfort requirements, energy targets, sustainability goals, and acceptance criteria for a project. The OPR is the anchor every later phase ought to trace back to." />. Strong OPRs cite measurable acceptance criteria; weak ones say "comfortable" without defining for whom.
+
+<Callout variant="industry-insight">
+  Commissioning agents read the OPR first when they show up on a project. If it
+  doesn't exist, or it's a single page of marketing copy, they know the project
+  has a foundation problem before they've opened a panel.
+</Callout>
+
+</LessonSection>
+
+<LessonSection title="Phase 2: design" level={2}>
+
+The design team, usually a mechanical engineer at an MEP firm, turns the OPR into a technical specification. Three documents anchor the BAS scope, the <KeyTerm term="BOD" definition="Basis of Design, narrative explaining why the design selections were made. Why VAV instead of fan-coil? Why dual chillers instead of a single? The BOD answers the 'why' the drawings don't." />, the sequence of operations, and the point list.
+
+<RevealCard
+  front="Basis of design (BOD)"
+  back="The narrative document explaining the design intent behind the system selections. Why a VAV system instead of a fan-coil approach? Why a dual-chiller plant instead of a single? The BOD answers the 'why' that the drawings don't."
+/>
+
+<RevealCard
+  front="Sequence of operations (SOO)"
+  back="The behavioral specification for every system the BAS controls. Reads almost like code, 'when outside air temperature is above 65°F, enable the economizer and reset the discharge-air setpoint per the cooling demand schedule.' The closest thing to a spec the BAS will ever have."
+/>
+
+<RevealCard
+  front="Point list"
+  back="A tabular spec listing every BAS point, sensor, output, calculated value, grouped by equipment. Each row names the point, the type (AI, AO, BI, BO, BV, AV), the units, and any alarms or trends that should apply to it. The point list is what the integrator prices."
+/>
+
+The BAS engineer rarely participates in this phase directly, but the *quality* of these documents will dictate how the rest of the project goes. Anyone moving into a design role should plan to spend months reading well-written examples.
+
+</LessonSection>
+
+<LessonSection title="Phase 3: bid and award" level={2}>
+
+The owner sends the design package out for pricing. Integrators bid; the owner selects one. The contracting model, whether it's design-bid-build, design-build, or progressive design-build, determines who is on the hook for what.
+
+<Comparison
+  leftLabel="Design-bid-build"
+  rightLabel="Design-build"
+  rows={[
+    { label: "When integrator gets involved", left: "After design is complete", right: "Early, sometimes during pre-design" },
+    { label: "Integrator's incentive", left: "Hit the price they bid; deviations become change orders", right: "Hit the owner's outcomes; design is shared with the team" },
+    { label: "Risk of late surprises", left: "Higher, design gaps surface during construction", right: "Lower, integrator catches gaps during design" },
+    { label: "Typical BAS engineer role", left: "Inherits documents and translates them to code", right: "Helps shape documents from the start" },
+    { label: "Common on", left: "Public projects, traditional commercial work", right: "Tech campuses, hospitals, mission-critical work" },
+  ]}
+  caption="Different delivery models mean different muscles. A BAS engineer who can work in both has a much longer runway."
+/>
+
+The bid phase produces an **awarded contract** and, just as important, a set of **bid clarifications**, written exceptions, alternates, and assumptions the integrator made when pricing. Those clarifications become contract documents.
+
+</LessonSection>
+
+<LessonSection title="Phase 4: submittals" level={2}>
+
+Once the contract is signed, the integrator produces a stack of documents the owner and design team have to approve before any wire gets pulled. These are the **submittals**.
+
+<Tabs
+  label="Typical BAS submittals"
+  items={[
+    {
+      value: "drawings",
+      label: "Drawings",
+      content: (
+        <div className="space-y-2">
+          <p>
+            <strong>Panel drawings</strong>, layouts of every BAS panel: which controllers go where, terminal block numbering, internal wiring, door legend, label callouts.
+          </p>
+          <p>
+            <strong>Riser diagrams</strong>, the network architecture: which panels live on which network segment, what protocol, what bandwidth.
+          </p>
+          <p>
+            <strong>Flow / control diagrams</strong>, schematic representations of each system the BAS will control, with sensor and output locations annotated.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "points",
+      label: "Point list",
+      content: (
+        <div className="space-y-2">
+          <p>
+            The design point list refined to match the actual controllers being supplied, adding any vendor-required points the design missed, renaming to match the integrator's tagging convention, and locking the count for procurement.
+          </p>
+          <p>
+            <strong>This is the single highest-leverage submittal.</strong> Every point that gets missed here turns into either a change order or a commissioning argument.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "sequence",
+      label: "Sequence narrative",
+      content: (
+        <div className="space-y-2">
+          <p>
+            The integrator's restatement of the design SOO, sometimes with added detail around exceptions, manual overrides, alarm priorities, and reset strategies.
+          </p>
+          <p>
+            Reading the design SOO and the integrator's narrative side by side is a useful exercise, the differences are usually where ambiguity lived.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "products",
+      label: "Product data",
+      content: (
+        <div className="space-y-2">
+          <p>
+            Cut sheets for every BAS component, controllers, sensors, valves, dampers, gateways. The owner's engineer reviews these to confirm they match the spec or accept any substitutions.
+          </p>
+        </div>
+      ),
+    },
+  ]}
+/>
+
+<Callout variant="tip">
+  Submittals are the last cheap place to catch a design problem. After this
+  phase, fixes cost real money, controllers ordered, panels built, schedule
+  committed. A BAS engineer who reads submittals carefully saves their project
+  manager hours of pain later.
+</Callout>
+
+</LessonSection>
+
+<LessonSection title="Phase 5: construction" level={2}>
+
+Wires get pulled. Conduit gets bent. Panels get assembled in a shop and shipped to site. Controllers get mounted in mechanical rooms or above ceilings. Equipment shows up on the dock and finds its place. This is the longest phase by calendar.
+
+The BAS engineer's day during construction is mostly:
+
+- Coordinating with the mechanical contractor, when a coil gets installed, where the sensor goes, who is responsible for power to a damper actuator
+- Walking the site to confirm field reality matches the drawings
+- Writing <KeyTerm term="RFIs" definition="Request for Information. A formal question to the design team when something on site doesn't match the drawings or the spec. The RFI response becomes part of the contract record." /> when something doesn't match, a question to the design team asking for clarification or a redirect
+- Catching late-stage scope changes (an **ASI**, additional service info, from the architect)
+
+A BAS panel finishing programming in the shop, then waiting six weeks for the mech contractor to finish piping a fan coil, is the standard rhythm.
+
+</LessonSection>
+
+<LessonSection title="Phase 6: commissioning" level={2}>
+
+Now the BAS gets pressure-tested. **Commissioning** (often shortened to **cx**) is the structured process of verifying that the system behaves the way the design said it would. There are roughly four stages, pre-functional checks, point-to-point verification, the <KeyTerm term="functional performance test (FPT)" definition="System-by-system walks of the sequence of operations. Cx agent forces each scenario the SOO describes and confirms the BAS does what the document says." />, and the <KeyTerm term="integrated systems test (IST)" definition="Multi-system scenarios, smoke control, fail-safe on power loss, fire-alarm coordination. Where seams between trades show up." />.
+
+<RevealCard
+  front="Pre-functional checks"
+  back="Each device gets inspected before it's powered on. The commissioning agent or the integrator walks every panel, every controller, every sensor, and confirms they're installed, addressed, and ready to commission. A pre-functional checklist is the lowest level of cx documentation."
+/>
+
+<RevealCard
+  front="Point-to-point checks (P2P)"
+  back="For each BAS point, the team forces a known input and confirms the BAS sees the expected output. A zone temperature sensor reads 72°F when the room is at 72°F. A damper goes 0% closed when the BAS commands 0%. Tedious; non-negotiable."
+/>
+
+<RevealCard
+  front="Functional performance tests (FPT)"
+  back="System-by-system tests of the sequence of operations. The cx agent walks each scenario the SOO describes, economizer enable, freeze-stat response, schedule transition, alarm fire, and confirms the BAS does exactly what the document says it should."
+/>
+
+<RevealCard
+  front="Integrated systems test (IST)"
+  back="Multi-system scenarios. A fire-alarm test that ought to trigger smoke control. A loss-of-power event that should fail-safe across HVAC, lighting, and security. These tests are where any miscommunication between trades surfaces."
+/>
+
+<Aside attribution="A commissioning agent with two decades of FPT walks">
+  The functional test is where every bad assumption from the past year shows up.
+  If you're an integrator, the goal isn't to pass, it's to find the broken
+  thing while the painters are still on site, before the owner is paying utility
+  bills.
+</Aside>
+
+The end of commissioning produces a **cx report** that the owner accepts (or doesn't). Punch lists from this phase often run a hundred items deep on a substantial project.
+
+</LessonSection>
+
+<LessonSection title="Phase 7: turnover and warranty" level={2}>
+
+Construction is over. The cx report is signed. Now the BAS engineer's audience changes from designers and contractors to *operators*.
+
+<Tabs
+  label="Turnover deliverables"
+  items={[
+    {
+      value: "training",
+      label: "Operator training",
+      content: (
+        <div className="space-y-2">
+          <p>
+            One to several days of structured training: how the system is laid out, how to log in, how to read the graphics, how to override and release, how to acknowledge alarms, how to extract trends. The best training sessions also explain *why* the design is what it is, operators inherit decisions for years.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "manuals",
+      label: "O&M manuals",
+      content: (
+        <div className="space-y-2">
+          <p>
+            A binder (or, increasingly, a folder of PDFs) covering every BAS component: cut sheets, panel drawings, network diagrams, the final sequence narrative, alarm and trend configuration, login credentials, support contacts. The operator's reference for the next ten years.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "asbuilts",
+      label: "As-built drawings",
+      content: (
+        <div className="space-y-2">
+          <p>
+            The original drawings updated to reflect *what was actually installed*, every change order, every field redirection, every sensor moved during commissioning. The gap between submitted and as-built drawings is often where future operator confusion lives.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "warranty",
+      label: "Warranty support",
+      content: (
+        <div className="space-y-2">
+          <p>
+            Typically a one-year warranty period during which the integrator returns to fix anything that wasn't a maintenance issue. Smart integrators schedule a 9-month tuning walk, sequences that worked in moderate spring weather almost always need adjustment by the time the building has been through a full summer and winter.
+          </p>
+        </div>
+      ),
+    },
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="Where each role lives on the lifecycle" level={2}>
+
+The cast of characters from lesson 5 doesn't show up uniformly, each role's busiest phase is different.
+
+<Comparison
+  leftLabel="Phase"
+  rightLabel="Where each role is heaviest"
+  rows={[
+    { label: "Pre-design + design", left: "1–2", right: "Owner, mechanical engineer, commissioning agent (if early-engaged)" },
+    { label: "Bid + award", left: "3", right: "Owner, integrator, project manager, mechanical contractor" },
+    { label: "Submittals", left: "4", right: "Integrator, design engineer (reviewing), mechanical contractor" },
+    { label: "Construction", left: "5", right: "Mechanical contractor (heaviest), integrator (medium)" },
+    { label: "Commissioning", left: "6", right: "Commissioning agent (heaviest), integrator, design engineer (spot)" },
+    { label: "Turnover + warranty", left: "7", right: "Integrator, operator (becomes heaviest from here onward)" },
+  ]}
+  caption="Each phase has a primary role. Knowing who's leading helps you know whose questions to answer first."
+/>
+
+<DragToMatch
+  prompt="Match each document to the phase where it lands. (Some documents live longer than one phase, pick the phase where each is *produced*.)"
+  pairs={[
+    {
+      id: "opr",
+      left: "Owner's Project Requirements",
+      right: "Pre-design",
+    },
+    {
+      id: "soo",
+      left: "Sequence of operations + point list",
+      right: "Design",
+    },
+    {
+      id: "panel",
+      left: "Panel drawings + refined point list",
+      right: "Submittals",
+    },
+    {
+      id: "fpt",
+      left: "Functional performance test results",
+      right: "Commissioning",
+    },
+    {
+      id: "om",
+      left: "O&M manuals + as-built drawings",
+      right: "Turnover",
+    },
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="A quick check-in" level={2}>
+
+<DragToOrder
+  prompt="Drag these BAS project activities into the order they happen on a typical design-bid-build project."
+  items={[
+    "Owner writes the Owner's Project Requirements",
+    "Design engineer writes the sequence of operations",
+    "Integrator submits panel drawings and a refined point list",
+    "Mechanical contractor mounts equipment and pulls cable",
+    "Commissioning agent runs functional performance tests",
+    "Integrator hands over O&M documents and trains the operator",
+  ]}
+/>
+
+<MultipleChoice
+  question="Of the following BAS submittal items, which is the *single highest-leverage* place to catch design ambiguity before it becomes a change order?"
+  options={[
+    {
+      text: "The product data cut sheets",
+      correct: false,
+      explanation: "Product cut sheets matter for spec compliance, but they don't usually expose sequence ambiguity.",
+    },
+    {
+      text: "The refined point list",
+      correct: true,
+      explanation: "Missed points are the most common change-order source on a BAS project. A precise point list locks the scope before anything is ordered or wired.",
+    },
+    {
+      text: "The riser diagram",
+      correct: false,
+      explanation: "Risers matter for network design but they rarely surface design ambiguity.",
+    },
+    {
+      text: "The panel labels",
+      correct: false,
+      explanation: "Labels are downstream of every other decision in the submittal.",
+    },
+  ]}
+/>
+
+</LessonSection>
+
+---
+
+## Next up
+
+Last lesson of the intro. What's worth studying next and how people actually keep learning once they're in the field.

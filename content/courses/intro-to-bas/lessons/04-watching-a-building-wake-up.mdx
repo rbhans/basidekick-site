@@ -1,0 +1,223 @@
+---
+title: "Watching a Building Wake Up"
+description: "A day in the life of an air handler, told through the schedules and sequences a BAS uses to keep a building comfortable."
+order: 4
+estimatedMinutes: 12
+---
+
+import { OccupancyIllustration } from "@/components/learn/illustrations/intro-to-bas/occupancy-illustration";
+import { AhuStartupSequence } from "@/components/learn/illustrations/intro-to-bas/ahu-startup-sequence";
+import { AhuAnatomy } from "@/components/learn/illustrations/intro-to-bas/ahu-anatomy";
+import { ControlLoopDiagram } from "@/components/learn/illustrations/intro-to-bas/control-loop-diagram";
+
+The last lesson covered *where* BAS work happens. This one zooms in on a single day in a single building, what the system is doing at any given hour, and what mechanical equipment it's coordinating. The lesson uses every interactive widget the platform ships with, so it doubles as a tour of how the rest of the course will feel.
+
+<Callout variant="tip">
+  This lesson is hands-on. Drag the slider, hit play, hover the diagrams. The
+  goal isn't memorization. It's getting a feel for the rhythm a BAS imposes
+  on a building.
+</Callout>
+
+## A day in 5 timestamps
+
+Most commercial buildings run on roughly the same daily curve: dark overnight, warm-up before tenants arrive, peak occupancy mid-day, ramp-down at end of day, setback overnight. Scrub through the day below to see how the building's footprint changes.
+
+<ScrubControl
+  labels={["6:00", "9:00", "12:00", "17:00", "22:00"]}
+  label="Time of day"
+  frames={[
+    <OccupancyIllustration key="t0" step={0} />,
+    <OccupancyIllustration key="t1" step={1} />,
+    <OccupancyIllustration key="t2" step={2} />,
+    <OccupancyIllustration key="t3" step={3} />,
+    <OccupancyIllustration key="t4" step={4} />,
+  ]}
+  captions={[
+    <span key="c0">Pre-dawn. The schedule is about to fire; the BAS is still in unoccupied mode.</span>,
+    <span key="c1">Morning. AHUs are ramping; the building is climbing out of setback.</span>,
+    <span key="c2">Peak occupancy. Every loop in the building is in some form of control.</span>,
+    <span key="c3">End of day. Tenants leaving; the BAS begins the unoccupied transition.</span>,
+    <span key="c4">Overnight. Setback temps, lighting off, alarms armed for off-hours faults.</span>,
+  ]}
+/>
+
+The schedule sketches *when* things happen. The next question is *how*, what specifically the air handler does to satisfy the schedule.
+
+## Pressing play on an AHU
+
+The first piece of equipment a BAS commands every morning is the air handler. AHUs don't just "turn on", they execute a startup sequence designed to protect themselves and the building.
+
+<StepThrough
+  label="AHU startup"
+  frames={[
+    <AhuStartupSequence key="f0" frame={0} />,
+    <AhuStartupSequence key="f1" frame={1} />,
+    <AhuStartupSequence key="f2" frame={2} />,
+    <AhuStartupSequence key="f3" frame={3} />,
+    <AhuStartupSequence key="f4" frame={4} />,
+    <AhuStartupSequence key="f5" frame={5} />,
+  ]}
+  captions={[
+    <span key="c0">Before the schedule fires, the AHU is dark. Everything is safe.</span>,
+    <span key="c1">The schedule fires at 6:30am. The controller transitions to occupied mode.</span>,
+    <span key="c2">Dampers move to their startup positions. In many sequences, outside-air and return paths are confirmed before the supply fan is permitted to start.</span>,
+    <span key="c3">The supply fan ramps. Static-pressure control comes online; VAVs unlock.</span>,
+    <span key="c4">Discharge-air control engages. Depending on season and load, the heating or cooling valve modulates toward the discharge setpoint, heating for morning warm-up, cooling once the building is on the load.</span>,
+    <span key="c5">Steady state. The unit will hold here, modulating constantly, until 6pm.</span>,
+  ]}
+/>
+
+<Callout variant="industry-insight">
+  Most BAS bugs operators report are really sequence bugs: a step that didn't
+  fire, fired in the wrong order, or fired without the upstream device proving
+  its state. Knowing the *order* matters more than knowing the parts.
+</Callout>
+
+## Anatomy of the unit
+
+Same AHU, paused. Tap each hotspot to learn what that component does.
+
+<AhuAnatomy />
+
+## Two ways to look at the same thing
+
+A BAS engineer constantly switches between framings of the same data. Toggle between the operator's view and the schematic view of one VAV box below.
+
+<Toggle
+  label="VAV view"
+  options={[
+    {
+      value: "operator",
+      label: "Operator view",
+      content: (
+        <div>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            How the operator sees a single VAV box in the BAS web UI.
+          </p>
+          <pre className="mt-3 overflow-x-auto rounded-[var(--radius-control)] bg-[color:var(--color-bg-muted)] p-3 text-xs">
+{`Zone temperature . . . 71.8 °F
+Cooling setpoint . . . 72.0 °F
+Damper position . . . . 34 %
+Airflow . . . . . . . . 540 cfm
+Occupancy . . . . . . . OCCUPIED`}
+          </pre>
+        </div>
+      ),
+    },
+    {
+      value: "schematic",
+      label: "Schematic view",
+      content: (
+        <div>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            How a controls engineer reads the same box on a drawing.
+          </p>
+          <pre className="mt-3 overflow-x-auto rounded-[var(--radius-control)] bg-[color:var(--color-bg-muted)] p-3 text-xs">
+{`ZN-T   →   PI   →   DMPR-O  ( 0-100 % )
+                        ↓
+                   FLOW-FB  →  alarm
+SCHED  →   OCC-CMD →  setpoint table`}
+          </pre>
+        </div>
+      ),
+    },
+  ]}
+/>
+
+## Five ideas worth flipping
+
+A handful of vocabulary terms power most of what we've seen so far. Tap each card to see the definition, and tap again to hide it.
+
+<RevealCard
+  front="Setpoint"
+  back="The value the BAS is trying to reach for a controlled variable, e.g., 72°F zone temperature, or 1.5 inches w.c. duct static pressure."
+/>
+
+<RevealCard
+  front="Setback"
+  back="An unoccupied setpoint, looser than the occupied one to save energy. In heating season a zone might hold 72°F during the day and drift down to ~65°F overnight; in cooling season the corresponding move is a higher unoccupied setpoint (sometimes called setup), often in the high 70s or low 80s °F."
+/>
+
+<RevealCard
+  front="Discharge-air temperature (DAT)"
+  back="The temperature of air leaving the AHU. The control variable for most cooling-coil loops."
+/>
+
+<RevealCard
+  front="Static pressure"
+  back="The pressure inside a duct. Supply fans are usually commanded to a static-pressure setpoint that holds steady as VAVs open and close."
+/>
+
+<RevealCard
+  front="Demand-control ventilation"
+  back="Resetting the outside-air intake based on real-time occupancy signals, usually CO₂, while still meeting the code-required minimum ventilation rate and any pressurization constraints. Saves heating and cooling energy when spaces are lightly used, without dropping below what the ventilation standard demands."
+/>
+
+## Looking at the same loop, two ways
+
+A control loop is whatever lives between a sensor and the output it commands. Same loop, different perspectives:
+
+<Tabs
+  label="Control loop perspectives"
+  items={[
+    {
+      value: "narrative",
+      label: "Narrative",
+      content: (
+        <div className="space-y-3 text-[color:var(--color-fg)]">
+          <p>
+            "When zone temperature is above setpoint, open the cooling damper.
+            When it's below, close it."
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            How it shows up in a sequence of operations document. Readable, but
+            ambiguous about timing and tuning.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "math",
+      label: "Math",
+      content: (
+        <div className="space-y-3 text-[color:var(--color-fg)]">
+          <p className="font-mono text-sm">
+            output = Kp · error + Ki · ∫ error dt
+          </p>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            Same idea expressed as a PI controller. Now the question becomes
+            "what are Kp and Ki?", and tuning becomes a real conversation.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "graphical",
+      label: "Graphical",
+      content: (
+        <div className="text-[color:var(--color-fg)]">
+          <ControlLoopDiagram />
+          <p className="mt-3 text-sm text-[color:var(--color-fg-muted)]">
+            The control-system block diagram. Same loop you saw in the narrative
+            and the math tabs, sensor feeds a comparator, comparator feeds a
+            PI controller, PI controller drives the damper. The dashed line is
+            the physical feedback path: opening the damper changes the air the
+            zone sensor reads next.
+          </p>
+        </div>
+      ),
+    },
+  ]}
+/>
+
+<Aside attribution="One of the early BAS instructors at a community college">
+  You can teach someone the parts of an AHU in an hour. Teaching them the
+  rhythm, when each part wakes up, how long it takes to stabilize, what to
+  trust during a fault, takes a season.
+</Aside>
+
+---
+
+## Next up
+
+Step back from the equipment. Who designs, installs, and runs it, and why most BAS arguments are about humans, not hardware.

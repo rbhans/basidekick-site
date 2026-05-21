@@ -1,0 +1,140 @@
+---
+title: "What Comes Next"
+description: "What you've covered, what comes next, and a few habits that compound for anyone making BAS a career."
+order: 10
+estimatedMinutes: 8
+---
+
+You've made it to the end of the intro course. Before pointing at what to study next, it's worth pausing to mark what you now know.
+
+<LessonSection title="What you've covered" level={2}>
+
+<StepThrough
+  label="The intro course in nine moves"
+  frames={[
+    <span key="f0"><strong>1.</strong> A BAS is a network of small computers that watches a building, decides what to do, and writes it all down.</span>,
+    <span key="f1"><strong>2.</strong> At any moment it's doing five jobs, controlling, monitoring, scheduling, alarming, trending.</span>,
+    <span key="f2"><strong>3.</strong> The same five jobs scale from a strip pharmacy to a hospital campus, but the work changes shape at each scale.</span>,
+    <span key="f3"><strong>4.</strong> Watching a building wake up means watching schedules fire, AHUs come online, and zones move toward setpoint.</span>,
+    <span key="f4"><strong>5.</strong> Six roles surround every project, owner, mechanical engineer, integrator, mechanical contractor, commissioning agent, operator.</span>,
+    <span key="f5"><strong>6.</strong> There is no single path into a BAS career. HVAC, electrical, IT, mechanical engineering, and operations all feed in.</span>,
+    <span key="f6"><strong>7.</strong> The BAS controls three families of equipment, air-side, water-side, refrigerant-side. Most buildings have all three.</span>,
+    <span key="f7"><strong>8.</strong> Protocols like BACnet, Modbus, and LonWorks let those pieces of equipment exchange information.</span>,
+    <span key="f8"><strong>9.</strong> A BAS project moves through seven phases, pre-design, design, bid, submittals, construction, commissioning, turnover.</span>,
+  ]}
+  captions={[
+    <span key="c0">Lessons 1 and 2, the shape of the system and what it's doing all day.</span>,
+    <span key="c1">Lesson 2 again. Memorize the five jobs.</span>,
+    <span key="c2">Lesson 3, scale changes the work.</span>,
+    <span key="c3">Lesson 4, the rhythm a BAS imposes on a day.</span>,
+    <span key="c4">Lesson 5, the people who make it happen.</span>,
+    <span key="c5">Lesson 6, careers in BAS.</span>,
+    <span key="c6">Lesson 7, the mechanical systems underneath.</span>,
+    <span key="c7">Lesson 8, the wires between the pieces.</span>,
+    <span key="c8">Lesson 9, how a project moves from a sketch to a running building.</span>,
+  ]}
+/>
+
+That's a lot. None of it is enough on its own to do the work, but all of it together is the *vocabulary* you need to be in the room while the work is being done.
+
+<Figure
+  src="/diagrams/project-phases.svg"
+  alt="Project lifecycle phase ribbon, the seven phases with role-density bars beneath."
+  caption={<>One picture worth keeping after this course: every BAS project moves through these seven phases, with the six roles taking turns at the center.</>}
+  zoom
+/>
+
+</LessonSection>
+
+<LessonSection title="Where the follow-on courses go" level={2}>
+
+The intro course was deliberately broad and shallow. The follow-ons go the other direction, narrow and deep, one topic at a time. Tap each card to see what's coming.
+
+<RevealCard
+  front="Mechanical systems, in depth"
+  back="One course per equipment family. AHUs and air distribution. Chiller plants and condenser water. Boiler plants and hot water. Refrigerant-side equipment. Each lesson walks the equipment, its controls, and the failure modes a BAS engineer has to recognize."
+/>
+
+<RevealCard
+  front="Sequences of operations"
+  back="The narrative behavioral spec turned into an art form. Reading sequences. Writing sequences. Translating between sequences and code. Common patterns (economizer, demand-control ventilation, setpoint reset). What good sequences look like, and what bad ones get wrong."
+/>
+
+<RevealCard
+  front="Protocols, in depth"
+  back="A course per major protocol. BACnet at object-and-service level, services, BIBBs, the device object, COV, alarms, schedules, trend logs. Modbus, including the register quirks and the lying-by-default sensors. LonWorks, OPC UA, MQTT, when each shows up and what to watch for."
+/>
+
+<RevealCard
+  front="Programming controllers"
+  back="Hands-on work in the major BAS programming environments, Niagara/Tridium, Honeywell EBI, JCI Metasys, Distech, Siemens. Logic blocks, function blocks, graphics, schedules, alarms, trend configuration. Pattern recognition across vendors."
+/>
+
+<RevealCard
+  front="Networking for BAS"
+  back="What a BAS engineer needs to know about IP, VLANs, RS-485 cabling, fiber, wireless mesh, and corporate IT integration. Enough to design a small BAS network, troubleshoot a saturated trunk, and have a credible conversation with an IT lead."
+/>
+
+<RevealCard
+  front="Commissioning"
+  back="The structured process from pre-functional checks through integrated systems test. How to write functional performance tests that catch real problems. What goes in a cx report. The cx agent's view of the world, which every BAS engineer benefits from understanding."
+/>
+
+<RevealCard
+  front="Energy and analytics"
+  back="What lives downstream of the BAS, utility meters, trend analytics, fault detection and diagnostics, monitoring-based commissioning. The skill of going from raw trend data to a story about how the building actually behaves."
+/>
+
+</LessonSection>
+
+<LessonSection title="How to learn this for real" level={2}>
+
+The intro course is reading. The work isn't. A few habits make BAS skill compound faster than just doing the next course. Two worth naming explicitly: read finished <KeyTerm term="sequences of operations" definition="The narrative behavioral spec for every system the BAS controls. Reading two or three finished sequences end-to-end is the fastest way to learn how the field thinks." />, and sit through every <KeyTerm term="commissioning walk" definition="A structured site visit where the cx agent exercises the sequence of operations on real equipment. The single highest-density learning environment in the industry." /> you can find your way into.
+
+<Comparison
+  leftLabel="Easy to skip"
+  rightLabel="Worth doing anyway"
+  rows={[
+    { label: "Read someone else's sequence of operations", left: "Why? You'll write your own.", right: "Reading two or three real, finished sequences end to end is the fastest way to learn how the field thinks." },
+    { label: "Watch a commissioning walk", left: "Boring, slow, lots of clipboard work.", right: "It's where every assumption from design meets reality. Sit in on as many as you can." },
+    { label: "Open a panel door", left: "Looks complicated. Wires everywhere.", right: "It stops looking complicated as soon as you've terminated one yourself. The fastest way to lose fear of a panel is to wire one." },
+    { label: "Read a trend before drawing a conclusion", left: "Faster to ask a sensor.", right: "The trend tells you more than the live value. It's also what saves your conclusion from being wrong." },
+    { label: "Talk to the operator", left: "They aren't on the engineering team.", right: "They've been watching the building for years. Half the bugs you'll chase are bugs they already know about." },
+  ]}
+  caption="None of these takes special training. All of them compound."
+/>
+
+<Callout variant="tip">
+  Pick one platform and learn it deeper than your job requires. Pick one
+  protocol and read its specification at least once, cover to cover. Pick one
+  building type and learn its sequences inside out. In ten years, those three
+  picks will define the career you have.
+</Callout>
+
+<Aside attribution="A senior BAS practitioner, asked what they'd tell themselves at year zero">
+  Don't try to know everything. Be a person who can find out anything. The
+  field is too big for the first; everyone good at this is great at the second.
+</Aside>
+
+</LessonSection>
+
+<LessonSection title="A last quick check" level={2}>
+
+<FillInBlank
+  prompt="Across this course we've called out five things a BAS does at any moment, control, ___, schedule, alarm, trend."
+  answers={["monitor", "Monitor"]}
+  fuzzy={1}
+  explanation="Monitor, exposing the live state of every connected point, is the quieter half of control and the foundation for trends, alarms, and operator graphics."
+/>
+
+</LessonSection>
+
+<LessonSection title="A small send-off" level={2}>
+
+A BAS isn't a product. It's a long argument, conducted in panels and pipes and trend logs and sequence narratives, about how a building should behave. The argument never really ends. Every season pushes back; every operator has a different idea; every new tenant changes the load; every new protocol changes what's possible. Working in BAS means becoming comfortable with that, and finding the satisfaction in it.
+
+Whichever course you pick up next, the same five jobs and six roles will be in the background. Once you've seen them, you can't unsee them.
+
+Go build something.
+
+</LessonSection>

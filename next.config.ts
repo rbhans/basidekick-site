@@ -1,8 +1,19 @@
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
+import createMDX from "@next/mdx";
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
+});
+
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [
+      "remark-frontmatter",
+      ["remark-mdx-frontmatter", { name: "frontmatter" }],
+    ],
+    rehypePlugins: [],
+  },
 });
 
 // Content Security Policy
@@ -36,6 +47,7 @@ const nextConfig: NextConfig = {
   env: {
     BUILD_TIME: new Date().toISOString(),
   },
+  pageExtensions: ["ts", "tsx", "md", "mdx"],
   serverExternalPackages: ["better-sqlite3"],
   outputFileTracingIncludes: {
     "/api/atlas": ["./data/bas-atlas.db"],
@@ -184,4 +196,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig);
+export default withBundleAnalyzer(withMDX(nextConfig));

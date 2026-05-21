@@ -1,0 +1,348 @@
+---
+title: "The Mechanical Systems a BAS Controls"
+description: "The three families of equipment a BAS sits on top of: air-side, water-side, refrigerant-side. What each one does and where the BAS plugs in."
+order: 7
+estimatedMinutes: 13
+---
+
+import { ChillerPlantSchematic } from "@/components/learn/illustrations/intro-to-bas/chiller-plant-schematic";
+import { VavReheat } from "@/components/learn/illustrations/intro-to-bas/vav-reheat";
+import { AhuAnatomy } from "@/components/learn/illustrations/intro-to-bas/ahu-anatomy";
+import { AHU_CENTERS } from "@/components/learn/illustrations/intro-to-bas/ahu-static-body";
+import { AhuFindTheSpot } from "@/components/learn/illustrations/intro-to-bas/ahu-find-the-spot";
+
+We've spent five lessons describing the BAS. This one steps back to the equipment underneath. A BAS is only as useful as its understanding of the mechanical system it sits on top of, and that mechanical system almost always falls into one of three families: **air-side**, **water-side**, and **refrigerant-side**.
+
+The same building usually contains all three. A typical mid-rise office runs air-side equipment (air handlers and VAVs) connected to water-side equipment (a chiller plant and a heating plant), with refrigerant-side equipment sprinkled in for spaces the central plant doesn't serve. Knowing which side a problem belongs to is the first move when something goes wrong.
+
+<LessonSection title="The three families" level={2}>
+
+<Tabs
+  label="The three mechanical families"
+  items={[
+    {
+      value: "air",
+      label: "Air-side",
+      content: (
+        <div className="space-y-3">
+          <p>
+            Everything that moves, conditions, or distributes air. Air handlers, fans, ductwork, dampers, filters, and the terminal units (VAV boxes, fan-powered boxes, fan coil units) that deliver air to the space.
+          </p>
+          <p>
+            The BAS modulates dampers and valves, stages fans, and resets temperatures and pressures. This is where most operator complaints actually live, comfort problems are air-side problems first.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "water",
+      label: "Water-side",
+      content: (
+        <div className="space-y-3">
+          <p>
+            The central plants that make hot water, chilled water, and condenser water, plus the pumps and piping that move them. Chillers, boilers, cooling towers, heat exchangers, and a forest of valves and isolation points.
+          </p>
+          <p>
+            The BAS stages plant equipment, resets supply temperatures, and protects expensive machines from running outside their envelopes.
+          </p>
+        </div>
+      ),
+    },
+    {
+      value: "refrigerant",
+      label: "Refrigerant-side",
+      content: (
+        <div className="space-y-3">
+          <p>
+            Packaged equipment that does its own refrigeration cycle, rooftop units (RTUs), split systems, heat pumps, VRF, and the smaller dedicated outdoor-air units that ride on top of any of those.
+          </p>
+          <p>
+            The BAS rarely manages the refrigeration loop directly. It commands the equipment and reads its state via the manufacturer's gateway or onboard controls, usually over BACnet, Modbus, or a proprietary protocol that needs translation.
+          </p>
+        </div>
+      ),
+    },
+  ]}
+/>
+
+<Callout variant="info">
+  Most real systems blend families. A building might have a central chilled-water
+  plant (water-side) feeding AHUs (air-side) that serve VAV boxes (air-side),
+  with VRF heat pumps (refrigerant-side) in the conference rooms that the
+  central system can't reach.
+</Callout>
+
+</LessonSection>
+
+<LessonSection title="Air-side: from plant to grille" level={2}>
+
+The air-side story starts with an <KeyTerm term="air handler" definition="A central air-conditioning box. Mixes outside and return air, conditions it through filters and coils, and pushes it through a duct system. May serve one zone (single-zone AHU) or many (variable-air-volume AHU)." />, a box that conditions and moves a stream of air, and ends at a diffuser in the ceiling. Between those two points sit terminal units that fine-tune the air for each zone.
+
+<RevealCard
+  front="AHU (air handling unit)"
+  back="The central air-conditioning box for a system. Mixes outside and return air, passes it through filters and coils, and pushes it down a duct system. May serve one zone (single-zone AHU) or many (variable-air-volume AHU)."
+/>
+
+<RevealCard
+  front="VAV (variable air volume) box"
+  back="A terminal unit on a duct branch that varies how much air it lets through to maintain a zone temperature. Often has a reheat coil for cold complaints. The most common terminal unit in U.S. office buildings."
+/>
+
+<RevealCard
+  front="FCU (fan coil unit)"
+  back="A small AHU at the zone, own fan, own coil, fed by hot and chilled water from the central plant. Common in hotels, dorms, and perimeter offices."
+/>
+
+<RevealCard
+  front="DOAS (dedicated outdoor-air system)"
+  back="A specialized AHU that conditions only the ventilation air. Used when the rest of the cooling is handled by terminal units like FCUs or VRF. Lets each subsystem be sized for what it's best at."
+/>
+
+The single biggest air-side decision in a project is **VAV vs constant-volume** distribution. The contrast looks like this:
+
+<Comparison
+  leftLabel="Constant volume (CV)"
+  rightLabel="Variable air volume (VAV)"
+  rows={[
+    { label: "Flow at the terminal", left: "Fixed, the box passes the same airflow always", right: "Varies, the box modulates a damper to match zone load" },
+    { label: "Energy at part load", left: "High, fan keeps moving the same volume regardless of need", right: "Lower, fan can ride down with the system as zones close" },
+    { label: "Complexity", left: "Simple; few moving parts", right: "More controllers, dampers, sensors per zone" },
+    { label: "Typical use today", left: "Single-zone rooftops, dedicated process spaces", right: "Multi-zone office, school, hospital non-critical areas" },
+    { label: "BAS work involved", left: "Schedule + setpoint per system", right: "Per-zone tuning, airflow calibration, reset strategies" },
+  ]}
+  caption="VAV is the default in U.S. commercial construction. CV is what you find when something special is happening."
+/>
+
+</LessonSection>
+
+<LessonSection title="A look at one VAV box" level={2}>
+
+A single VAV box is the smallest serious control loop you'll meet in commercial work. Two views of the same one:
+
+<Toggle
+  label="VAV view"
+  options={[
+    {
+      value: "schematic",
+      label: "Schematic",
+      content: (
+        <div>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            A VAV box on a branch duct. Cooling reduces flow toward minimum; heating opens the reheat valve and may raise flow.
+          </p>
+          <VavReheat />
+        </div>
+      ),
+    },
+    {
+      value: "points",
+      label: "Point list",
+      content: (
+        <div>
+          <p className="text-sm text-[color:var(--color-fg-muted)]">
+            What the operator sees on a typical VAV box graphic.
+          </p>
+          <pre className="mt-3 overflow-x-auto rounded-[var(--radius-control)] bg-[color:var(--color-bg-muted)] p-3 text-xs">
+{`ZN-T          72.4 °F   (zone temperature)
+ZN-T-SP       72.0 °F   (cooling setpoint)
+DPR-POS         42 %    (damper position, 0-100)
+AIR-FLOW       540 cfm  (measured at the flow ring)
+AIR-FLOW-SP    520 cfm  (active flow setpoint)
+HTG-VLV          0 %    (reheat valve position)
+OCC-STATUS    OCC       (occupied / unoccupied)`}
+          </pre>
+        </div>
+      ),
+    },
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="The AHU as the air-side/water-side handoff" level={2}>
+
+Most AHUs are where the air-side and water-side meet. The cooling coil receives chilled water from the central plant; the heating coil receives hot water from the heating plant. From the operator's screen they look like inputs and outputs, but they're physical interfaces between two different mechanical worlds.
+
+<AhuAnatomy
+  kicker="AHU · AIR ↔ WATER"
+  tag="HANDOFF"
+  showLabels={false}
+  caption={<>The same AHU you saw in lesson 4, relabeled around where the BAS straddles the air-side and water-side worlds.</>}
+  hotspots={[
+    {
+      ...AHU_CENTERS.coolingCoil,
+      label: "Cooling coil = chilled water in",
+      detail:
+        "The BAS modulates a chilled-water valve here. The water comes from the chiller plant; how cold and how much depends on plant supply temperature and the AHU's discharge-air setpoint.",
+    },
+    {
+      ...AHU_CENTERS.heatingCoil,
+      label: "Heating coil = hot water in",
+      detail:
+        "The BAS modulates a hot-water valve here. Most morning warm-up calls land on this coil before the cooling side comes online.",
+    },
+    {
+      ...AHU_CENTERS.oaDamper,
+      label: "OA damper = ventilation point",
+      detail:
+        "Outside-air intake is the only point on this diagram that isn't air-side / water-side. It's the air-side / atmosphere boundary, controlled by minimum-ventilation logic and economizer logic.",
+    },
+    {
+      ...AHU_CENTERS.supplyFan,
+      label: "Supply fan = airflow into the building",
+      detail:
+        "Static pressure setpoints determine fan speed. When VAVs close, the fan slows; when they open, it ramps. The BAS is what keeps that balance steady.",
+    },
+  ]}
+/>
+
+</LessonSection>
+
+<LessonSection title="Water-side: chillers, boilers, and the loops between them" level={2}>
+
+Once you leave the air-side equipment, you enter pipes. A **central plant** is the family of machines that makes the working fluids the rest of the building uses, typically chilled water around 42–45°F supply, hot water around 140–180°F supply, and condenser water that connects <KeyTerm term="chillers" definition="Machines that remove heat from a stream of water. Water in warm, water out cold. The heat is rejected either to outside air (air-cooled) or to a cooling tower (water-cooled)." /> to <KeyTerm term="cooling towers" definition="Where the heat removed by a water-cooled chiller actually leaves the building. Warm condenser water cascades through fill, partially evaporates, and returns cooler." />.
+
+<RevealCard
+  front="Chiller"
+  back="A machine that removes heat from a stream of water. Water goes in warm, comes out colder. The heat is rejected either to outside air (air-cooled chiller) or to a cooling tower (water-cooled chiller)."
+/>
+
+<RevealCard
+  front="Cooling tower"
+  back="The cooling tower is where the heat removed by a water-cooled chiller actually leaves the building. Warm condenser water cascades through fill, evaporates partially, and returns cooler. Located outside, almost always on the roof or in a yard."
+/>
+
+<RevealCard
+  front="Boiler"
+  back="A machine that makes hot water (or steam, in older buildings) by burning gas or running electric resistance heat. Most BAS work hooks into the boiler controls rather than designing the combustion logic itself, which usually lives in the boiler's own controller."
+/>
+
+<RevealCard
+  front="Heat exchanger"
+  back="A device that passes heat from one fluid to another without mixing them. Used to isolate building water from district loops, to make domestic hot water from heating hot water, and dozens of other places."
+/>
+
+### A chilled-water plant in five steps
+
+Step through a typical chilled-water plant startup. The exact order shifts with the design, but the *idea*, prove flow, then enable load, then trim, is universal.
+
+<StepThrough
+  label="Chilled-water plant startup"
+  frames={[
+    <ChillerPlantSchematic key="p0" frame={0} />,
+    <ChillerPlantSchematic key="p1" frame={1} />,
+    <ChillerPlantSchematic key="p2" frame={2} />,
+    <ChillerPlantSchematic key="p3" frame={3} />,
+    <ChillerPlantSchematic key="p4" frame={4} />,
+  ]}
+  captions={[
+    <span key="c0">Most plant problems trace back to one of these states being wrong, not to the machines themselves.</span>,
+    <span key="c1">The 'enable' decision is one of the higher-leverage BAS strategies, wrong enable saves no energy or causes short cycling.</span>,
+    <span key="c2">Flow proofs protect chillers from running dry. They are non-negotiable.</span>,
+    <span key="c3">Staging logic is where a lot of BAS energy work lives, the difference between one chiller at 90% and two at 45% is real money.</span>,
+    <span key="c4">Reset strategies (supply temp, tower setpoint, condenser flow) reward attention. Static setpoints leave energy on the table.</span>,
+  ]}
+/>
+
+<Callout variant="industry-insight">
+  A surprising amount of plant-side energy is wasted on pumps that run when no
+  zones are calling. The cheapest plant optimization is almost always
+  "don't run when nobody's asking for it," and the BAS is what enforces that.
+</Callout>
+
+</LessonSection>
+
+<LessonSection title="Refrigerant-side: rooftop units, splits, and VRF" level={2}>
+
+Some buildings, and parts of many buildings, skip the central plant entirely. They use packaged equipment that does the whole refrigeration cycle in one box.
+
+<RevealCard
+  front="RTU (rooftop unit)"
+  back="A packaged HVAC unit sitting on the roof, fan, filters, coil, compressor, gas heat or heat pump all in one cabinet. Common in strip retail, schools, and smaller commercial buildings. Often controlled by a stand-alone thermostat, but increasingly integrated to a BAS via BACnet."
+/>
+
+<RevealCard
+  front="Split system"
+  back="A two-piece system: indoor unit (often a fan coil) and outdoor unit (condenser). Refrigerant lines connect them. Common for tenant fit-outs and small offices."
+/>
+
+<RevealCard
+  front="VRF (variable refrigerant flow)"
+  back="A more elaborate refrigerant network: one or more outdoor condensers piped to many indoor units, each controlled individually. Some VRF systems can move heat from one part of a building to another, recovering energy. The BAS usually talks to the VRF manufacturer's gateway, not each indoor unit."
+/>
+
+<Comparison
+  leftLabel="Central plant + AHU"
+  rightLabel="Packaged / VRF equipment"
+  rows={[
+    { label: "Cooling source", left: "Chilled water from a chiller plant", right: "Refrigerant in the equipment itself" },
+    { label: "Distribution", left: "Pipes carry water; ducts carry conditioned air", right: "Refrigerant lines run to indoor units; small ducts at each" },
+    { label: "Best fit", left: "Larger buildings, dense schedules, mixed loads", right: "Smaller spaces, retrofits, areas the central system can't reach" },
+    { label: "What the BAS sees", left: "Hundreds of small points across plant and AHUs", right: "Fewer points per box, often through a single manufacturer gateway" },
+    { label: "Typical failure", left: "Plant short-cycles or supply temp drifts", right: "A single indoor unit goes offline; the rest keep running" },
+  ]}
+  caption="The same building often has both, and the BAS engineer's job is making them feel like one system to the operator."
+/>
+
+</LessonSection>
+
+<LessonSection title="Where the BAS plugs in" level={2}>
+
+For every piece of equipment above, the BAS performs the same basic moves:
+
+- **Read** sensors and state, temperatures, pressures, flow rates, on/off, alarms.
+- **Compute** based on setpoints, schedules, and supervisory logic.
+- **Command** outputs, valve and damper positions, fan and pump VFD speeds, equipment enable/disable.
+- **Record** trends and alarms for later investigation.
+
+The shape of the work changes, but the verbs don't. Once you can read a sequence of operations for an AHU, you can read one for a chiller plant, you're looking for the same five questions, just answered with different machines.
+
+<Aside attribution="A senior commissioning agent, on what makes a good BAS engineer">
+  The ones who get good fastest treat air-side, water-side, and refrigerant-side
+  as dialects of the same language. The bad ones treat them as foreign
+  countries.
+</Aside>
+
+</LessonSection>
+
+<LessonSection title="A quick check-in" level={2}>
+
+<AhuFindTheSpot
+  prompt="On the AHU below, click the component that is the air-side / water-side handoff for cooling, the place a chiller plant's chilled water actually does its work on the air stream."
+  target="coolingCoil"
+  explanation="The cooling coil is where chilled water from the plant meets the air stream, it's the literal interface between water-side and air-side. The BAS modulates the chilled-water valve here based on the discharge-air setpoint."
+/>
+
+<MultipleChoice
+  question="A building has a central chiller plant feeding AHUs, VAV boxes with reheat at each zone, and a VRF system serving a conference room block. Which of the following is *most* accurate?"
+  options={[
+    {
+      text: "The BAS only controls the central plant; the VRF and VAVs are independent",
+      correct: false,
+      explanation: "A modern BAS coordinates all of these, though it usually talks to the VRF through a single gateway rather than each indoor unit.",
+    },
+    {
+      text: "The BAS sees air-side, water-side, and refrigerant-side equipment as parts of one system, with different points and protocols underneath",
+      correct: true,
+      explanation: "Operators want one pane of glass. The BAS engineer's job is to integrate all three families into a coherent supervisory layer even though they run on different control logic underneath.",
+    },
+    {
+      text: "VRF systems don't connect to BAS, they always run stand-alone",
+      correct: false,
+      explanation: "Modern VRF systems almost always offer a BACnet or Modbus gateway. Stand-alone is uncommon for new commercial construction.",
+    },
+    {
+      text: "AHUs and VAVs are the same family of equipment",
+      correct: false,
+      explanation: "Both are air-side, but they play different roles, the AHU conditions the bulk supply air, the VAVs trim it for each zone.",
+    },
+  ]}
+/>
+
+</LessonSection>
+
+---
+
+## Next up
+
+What's between the pieces. The protocols that carry information from one controller to another, and what each one is good at.
