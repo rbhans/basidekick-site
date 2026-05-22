@@ -3729,6 +3729,58 @@
 }
 .ch:hover .ch-cta .arr { transform: translateX(4px); }
 
+.index-group {
+  margin-top: 36px;
+}
+.index-group:first-of-type {
+  margin-top: 0;
+}
+.index-group-bar {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--cream-3);
+}
+.index-group-bar .num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--punch);
+}
+.index-group-bar h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin: 0;
+}
+.index-group-bar .meta {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cream-3);
+}
+.ch-slim {
+  padding: 22px 22px 18px;
+  min-height: 180px;
+}
+.ch-slim .ch-head {
+  margin-bottom: 12px;
+}
+.ch-slim .ch-head h3 {
+  font-size: clamp(22px, 2.4vw, 30px);
+}
+.ch-slim .ch-desc {
+  margin: 0 0 14px;
+  font-size: 13px;
+}
+
 /* ============================================================================
    COURSES / LEARN — tokens & utilities for /courses route.
    Used by course shell, lesson MDX prose, and learn components

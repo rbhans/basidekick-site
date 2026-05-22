@@ -445,71 +445,194 @@ export function HomeView({
         </div>
       </section>
 
-      {/* ============ CHANNELS (dark) ============ */}
+      {/* ============ INDEX (dark) ============ */}
       <section className="char-section">
         <div className="bsk-wrap section">
           <div className="section-bar">
             <span className="num">.06</span>
-            <h2>Also On This Console</h2>
+            <h2>Find Your Way</h2>
             <span className="id" style={{ marginLeft: "auto" }}>
-              CHN <b>03</b>
+              IDX <b>12</b>
             </span>
           </div>
 
-          <div className="channels">
-            <Link href={ROUTES.WIKI} className="card-dark card-hover ch">
-              <div className="ch-head">
-                <h3>WIKI</h3>
-                <span className="num">.06</span>
-              </div>
-              <p className="ch-desc">
-                Field-tested guides on grounding, sequencing, commissioning — and the things nobody writes down. Every article authored by humans who showed up on site.
-              </p>
-              <div className="ch-stats">
-                <span className="badge badge-secondary">{alsoHere.wikiCount} articles</span>
-                <span className="badge badge-outline">+{pulse.newWikiThisWeek} this week</span>
-              </div>
-              <span className="ch-cta">
-                Browse the wiki <span className="arr">→</span>
-              </span>
-            </Link>
+          {/* Learn */}
+          <div className="index-group">
+            <div className="index-group-bar">
+              <span className="num">A /</span>
+              <h3>Learn</h3>
+              <span className="meta">Reference & study</span>
+            </div>
+            <div className="channels">
+              <IndexCard
+                href={ROUTES.ATLAS}
+                title="ATLAS"
+                num=".06.1"
+                desc="Point & equipment reference. Every vendor names things differently — Atlas catalogs them."
+                stats={[
+                  { label: `${atlasCount.toLocaleString()} points`, kind: "secondary" },
+                  { label: `${equipmentCount} equipment`, kind: "outline" },
+                ]}
+                cta="Open Atlas"
+              />
+              <IndexCard
+                href={ROUTES.WIKI}
+                title="WIKI"
+                num=".06.2"
+                desc="Long-form guides & explainers. Field-tested articles on grounding, sequencing, commissioning."
+                stats={[
+                  { label: `${alsoHere.wikiCount} articles`, kind: "secondary" },
+                  { label: `+${pulse.newWikiThisWeek} this week`, kind: "outline" },
+                ]}
+                cta="Browse the wiki"
+              />
+              <IndexCard
+                href={ROUTES.COURSES}
+                title="COURSES"
+                num=".06.3"
+                desc="Self-paced BAS lessons. Start with Intro to BAS — fundamentals for new techs."
+                stats={[{ label: "Intro to BAS", kind: "secondary" }]}
+                cta="Start learning"
+              />
+              <IndexCard
+                href={ROUTES.REFERENCES}
+                title="REFS"
+                num=".06.4"
+                desc="Standards, specs, sources. Quick reference sheets for protocols, wiring, common tasks."
+                cta="Open references"
+              />
+              <IndexCard
+                href={ROUTES.CALCULATORS}
+                title="CALC"
+                num=".06.5"
+                desc="Quick engineering math. CFM, BTU, duct sizing, and other common calculations."
+                cta="Open calculators"
+              />
+            </div>
+          </div>
 
-            <Link href={ROUTES.NEWS} className="card-dark card-hover ch">
-              <div className="ch-head">
-                <h3>NEWS</h3>
-                <span className="num">.07</span>
-              </div>
-              <p className="ch-desc">
-                A small daily-ish feed of the BAS industry — standards updates, vendor news, security advisories. <em>LLM-sorted, human-reviewed.</em> No hot takes.
-              </p>
-              <div className="ch-stats">
-                {alsoHere.newsLatest && <span className="badge badge-secondary">latest {alsoHere.newsLatest}</span>}
-                <span className="badge badge-outline">updated daily</span>
-              </div>
-              <span className="ch-cta">
-                Read the feed <span className="arr">→</span>
-              </span>
-            </Link>
+          {/* Community */}
+          <div className="index-group">
+            <div className="index-group-bar">
+              <span className="num">B /</span>
+              <h3>Community</h3>
+              <span className="meta">People & posts</span>
+            </div>
+            <div className="channels">
+              <IndexCard
+                href={ROUTES.POINTSTACK}
+                title="POINTSTACK"
+                num=".07.1"
+                desc="Q&A, projects, posts. Small, moderated, specifically for BAS — not another general forum."
+                stats={[
+                  { label: `${pointStackStats.members.toLocaleString()} members`, kind: "secondary" },
+                  { label: `${pointStackStats.posts} posts`, kind: "outline" },
+                ]}
+                cta="Open the feed"
+              />
+              <IndexCard
+                href={ROUTES.NEWS}
+                title="NEWS"
+                num=".07.2"
+                desc="Industry signal, weekly. Standards updates, vendor news, security advisories. No hot takes."
+                stats={[
+                  ...(alsoHere.newsLatest
+                    ? [{ label: `latest ${alsoHere.newsLatest}`, kind: "secondary" as const }]
+                    : []),
+                  { label: "updated daily", kind: "outline" as const },
+                ]}
+                cta="Read the feed"
+              />
+              <IndexCard
+                href={ROUTES.POINTSTACK_PEOPLE}
+                title="EXPERTS"
+                num=".07.3"
+                desc="Endorsed BAS practitioners. Find people by topic, endorsed by peers in the field."
+                cta="Browse experts"
+              />
+              <IndexCard
+                href={ROUTES.POINTSTACK_JOBS}
+                title="JOBS"
+                num=".07.4"
+                desc="Roles across the industry. Controls, integration, commissioning, sales engineering."
+                stats={[{ label: `${pointStackStats.openJobs} open`, kind: "secondary" }]}
+                cta="View open jobs"
+              />
+            </div>
+          </div>
 
-            <Link href={ROUTES.OPEN_SOURCE} className="card-dark card-hover ch">
-              <div className="ch-head">
-                <h3>SRC</h3>
-                <span className="num">.08</span>
-              </div>
-              <p className="ch-desc">
-                Rust crates and tools for building BAS software from the ground up. <em>rustbac</em>, <em>rustmod</em>, and an experimental BMS. Pull requests welcome.
-              </p>
-              <div className="ch-stats">
-                <span className="badge badge-secondary">{alsoHere.crateCount} repos</span>
-                <span className="badge badge-outline">MIT · Rust</span>
-              </div>
-              <span className="ch-cta">
-                View on GitHub <span className="arr">→</span>
-              </span>
-            </Link>
+          {/* Build */}
+          <div className="index-group">
+            <div className="index-group-bar">
+              <span className="num">C /</span>
+              <h3>Build</h3>
+              <span className="meta">Code & tooling</span>
+            </div>
+            <div className="channels">
+              <IndexCard
+                href={ROUTES.OPEN_SOURCE}
+                title="SRC"
+                num=".08.1"
+                desc="Repos, libraries, releases. Rust crates for BAS protocols — rustbac, more on the way."
+                stats={[
+                  { label: `${alsoHere.crateCount} repos`, kind: "secondary" },
+                  { label: "MIT · Rust", kind: "outline" },
+                ]}
+                cta="View on GitHub"
+              />
+              <IndexCard
+                href={ROUTES.TOOLS}
+                title="TOOLS"
+                num=".08.2"
+                desc="Utilities for the field. Simulators, scanners, and other professional software."
+                stats={[{ label: "Coming soon", kind: "outline" }]}
+                cta="See what's coming"
+              />
+              <IndexCard
+                href={ROUTES.API_ATLAS}
+                title="API"
+                num=".08.3"
+                desc="JSON · no auth · stable URLs. Public Atlas data, free to integrate into your tools."
+                stats={[{ label: "Public", kind: "secondary" }]}
+                cta="See the API"
+              />
+            </div>
           </div>
         </div>
       </section>
     </>
+  );
+}
+
+interface IndexCardProps {
+  href: string;
+  title: string;
+  num: string;
+  desc: string;
+  stats?: { label: string; kind: "secondary" | "outline" }[];
+  cta: string;
+}
+
+function IndexCard({ href, title, num, desc, stats, cta }: IndexCardProps) {
+  return (
+    <Link href={href} className="card-dark card-hover ch ch-slim">
+      <div className="ch-head">
+        <h3>{title}</h3>
+        <span className="num">{num}</span>
+      </div>
+      <p className="ch-desc">{desc}</p>
+      {stats && stats.length > 0 && (
+        <div className="ch-stats">
+          {stats.map((s) => (
+            <span key={s.label} className={`badge ${s.kind === "secondary" ? "badge-secondary" : "badge-outline"}`}>
+              {s.label}
+            </span>
+          ))}
+        </div>
+      )}
+      <span className="ch-cta">
+        {cta} <span className="arr">→</span>
+      </span>
+    </Link>
   );
 }
