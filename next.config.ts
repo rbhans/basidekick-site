@@ -116,12 +116,27 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/ssk",
-        destination: "/tools/ssk",
+        destination: "/tools",
         permanent: true,
       },
       {
         source: "/qsk",
-        destination: "/tools/qsk",
+        destination: "/tools",
+        permanent: true,
+      },
+      {
+        source: "/tools/ssk",
+        destination: "/tools",
+        permanent: true,
+      },
+      {
+        source: "/tools/qsk",
+        destination: "/tools",
+        permanent: true,
+      },
+      {
+        source: "/tools/qsk/privacy",
+        destination: "/qrsidekick/privacy",
         permanent: true,
       },
       {

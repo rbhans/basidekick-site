@@ -4,7 +4,6 @@ import { VIEW_IDS } from "./types";
 export const ROUTES = {
   HOME: "/",
   TOOLS: "/tools",
-  TOOL: (id: string) => `/tools/${encodeURIComponent(id)}`,
   WIKI: "/wiki",
   WIKI_ARTICLE: (slug: string) => `/wiki/${encodeURIComponent(slug)}`,
   WIKI_TAG: (tagSlug: string) => `/wiki/tags/${encodeURIComponent(tagSlug)}`,
@@ -85,10 +84,6 @@ export function getRouteForViewId(viewId: string): string {
       return ROUTES.HOME;
     case VIEW_IDS.TOOLS:
       return ROUTES.TOOLS;
-    case VIEW_IDS.SSK:
-      return ROUTES.TOOL("ssk");
-    case VIEW_IDS.QSK:
-      return ROUTES.TOOL("qsk");
     case VIEW_IDS.WIKI:
       return ROUTES.WIKI;
     case VIEW_IDS.POINTSTACK:
@@ -147,11 +142,7 @@ export function getViewIdFromPath(pathname: string): string {
   if (pathname === "/signup") return VIEW_IDS.SIGNUP;
   if (pathname === "/admin") return VIEW_IDS.ADMIN;
 
-  // Tool detail pages
   if (pathname.startsWith("/tools/")) {
-    const toolId = pathname.split("/")[2];
-    if (toolId === "ssk") return VIEW_IDS.SSK;
-    if (toolId === "qsk") return VIEW_IDS.QSK;
     return VIEW_IDS.TOOLS;
   }
 

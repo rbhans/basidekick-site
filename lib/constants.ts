@@ -1,11 +1,4 @@
-import {
-  Tool,
-  ToolDetail,
-  UseCase,
-  NavNode,
-  Resource,
-  VIEW_IDS,
-} from "./types";
+import { NavNode, Resource, VIEW_IDS } from "./types";
 import { ROUTES } from "./routes";
 
 // =============================================================================
@@ -15,8 +8,6 @@ import { ROUTES } from "./routes";
 export const VIEW_TITLES: Record<string, string> = {
   [VIEW_IDS.HOME]: "Home",
   [VIEW_IDS.TOOLS]: "Tools",
-  [VIEW_IDS.SSK]: "SimulatorSidekick",
-  [VIEW_IDS.QSK]: "QR Sidekick",
   [VIEW_IDS.RESOURCES]: "Resources",
   [VIEW_IDS.ATLAS]: "BAS Atlas",
   [VIEW_IDS.BABEL]: "BAS Atlas",
@@ -36,8 +27,6 @@ export const VIEW_TITLES: Record<string, string> = {
 export const VIEW_LOADING_TEXT: Record<string, string> = {
   [VIEW_IDS.HOME]: "HOME",
   [VIEW_IDS.TOOLS]: "TOOLS",
-  [VIEW_IDS.SSK]: "SIMULATOR_SIDEKICK",
-  [VIEW_IDS.QSK]: "QR_SIDEKICK",
   [VIEW_IDS.RESOURCES]: "RESOURCES",
   [VIEW_IDS.ATLAS]: "BAS_ATLAS",
   [VIEW_IDS.BABEL]: "BAS_ATLAS",
@@ -52,48 +41,6 @@ export const VIEW_LOADING_TEXT: Record<string, string> = {
   [VIEW_IDS.SIGNIN]: "SIGN_IN",
   [VIEW_IDS.SIGNUP]: "SIGN_UP",
 };
-
-// =============================================================================
-// TOOLS DATA - Single source of truth for all tool information
-// =============================================================================
-
-export const TOOLS: Record<string, Tool> = {
-  [VIEW_IDS.SSK]: {
-    id: VIEW_IDS.SSK,
-    name: "SimulatorSidekick",
-    shortName: "SSK",
-    tagline: "BACnet/Modbus simulator",
-    description: "Create virtual devices in seconds for testing and development.",
-    status: "coming",
-    iconName: "WaveTriangle",
-    webVersion: false,
-    features: [
-      "BACnet/IP simulation",
-      "Modbus TCP/RTU support",
-      "Multiple virtual devices",
-      "Save/load templates",
-    ],
-  },
-  [VIEW_IDS.QSK]: {
-    id: VIEW_IDS.QSK,
-    name: "QR Sidekick",
-    shortName: "QSK",
-    tagline: "Scan. Track. Control.",
-    description: "The simplest way for field technicians to manage building equipment using QR codes.",
-    status: "coming",
-    iconName: "QrCode",
-    webVersion: false,
-    features: [
-      "Instant QR scanning",
-      "Live Niagara data",
-      "Maintenance notes",
-      "Cross-platform (iOS/Android)",
-    ],
-  },
-};
-
-// Array version for iteration
-export const TOOLS_LIST = Object.values(TOOLS);
 
 // =============================================================================
 // RESOURCES DATA - Free resources
@@ -140,125 +87,6 @@ export const RESOURCES: Resource[] = [
 ];
 
 // =============================================================================
-// TOOL DETAILS - Extended info for detail pages
-// =============================================================================
-
-export const TOOL_DETAILS: Record<string, ToolDetail> = {
-  [VIEW_IDS.SSK]: {
-    ...TOOLS[VIEW_IDS.SSK],
-    detailedFeatures: [
-      {
-        iconName: "WaveTriangle",
-        title: "BACnet Simulation",
-        description: "Create virtual BACnet devices with customizable object types and properties.",
-      },
-      {
-        iconName: "Plugs",
-        title: "Modbus Simulation",
-        description: "Simulate Modbus TCP/RTU devices with configurable registers.",
-      },
-      {
-        iconName: "Cpu",
-        title: "Multiple Devices",
-        description: "Run multiple virtual devices simultaneously for complex testing scenarios.",
-      },
-      {
-        iconName: "FileText",
-        title: "Templates",
-        description: "Save and load device templates for quick setup on future projects.",
-      },
-    ],
-    steps: [
-      { number: 1, title: "Create Device", description: "Define your virtual device type and properties" },
-      { number: 2, title: "Configure Points", description: "Add and configure simulated points" },
-      { number: 3, title: "Start Simulation", description: "Run the simulator and connect your BAS" },
-    ],
-    requirements: [
-      { label: "Platform", value: "Windows 10+" },
-      { label: "BACnet", value: "BACnet/IP" },
-      { label: "Modbus", value: "TCP & RTU" },
-    ],
-  },
-  [VIEW_IDS.QSK]: {
-    ...TOOLS[VIEW_IDS.QSK],
-    mobileApp: true,
-    detailedFeatures: [
-      {
-        iconName: "Scan",
-        title: "Instant QR Scanning",
-        description: "Scan equipment QR codes to pull up point values and status instantly.",
-      },
-      {
-        iconName: "Gauge",
-        title: "Live Niagara Data",
-        description: "View real-time values when connected to the building network.",
-      },
-      {
-        iconName: "Note",
-        title: "Maintenance Notes",
-        description: "Add dated notes for repairs, inspections, and observations.",
-      },
-      {
-        iconName: "Lock",
-        title: "Secure & Private",
-        description: "Your data stays secure on your device and cloud storage.",
-      },
-    ],
-    steps: [
-      { number: 1, title: "Scan QR Code", description: "Point your phone at any equipment QR code" },
-      { number: 2, title: "View Data", description: "See live point values, status, and history" },
-      { number: 3, title: "Add Notes", description: "Record maintenance notes for your team" },
-    ],
-    requirements: [
-      { label: "Platform", value: "iOS & Android" },
-      { label: "For live data", value: "Building network connection" },
-      { label: "Free tier", value: "5 equipment items" },
-    ],
-    useCases: [
-      "Scan a rooftop unit to check discharge temps and fan status",
-      "Scan a thermostat to pull up its associated VAV controller",
-      "Scan a chiller to view operating parameters and alarms",
-      "Scan any equipment to add maintenance notes for your team",
-    ],
-    perfectFor: [
-      "HVAC technicians",
-      "Building automation professionals",
-      "Facility maintenance teams",
-      "Controls contractors",
-      "Property managers",
-    ],
-    pricing: [
-      { name: "Free", limit: "5 items", price: "$0" },
-      { name: "Basic", limit: "50 items", price: "$3/month" },
-      { name: "Pro", limit: "100 items", price: "$5/month" },
-      { name: "Unlimited", limit: "Unlimited", price: "$10/month" },
-    ],
-  },
-};
-
-// =============================================================================
-// USE CASES - For tools page
-// =============================================================================
-
-export const USE_CASES: UseCase[] = [
-  {
-    title: "Commissioning a new building",
-    description: "Verify point configurations and simulate devices before go-live",
-    tools: ["SSK"],
-  },
-  {
-    title: "Testing integrations offline",
-    description: "Simulate BACnet/Modbus devices without physical hardware",
-    tools: ["SSK"],
-  },
-  {
-    title: "Field equipment tracking",
-    description: "Scan QR codes to view live data and add maintenance notes",
-    tools: ["QSK"],
-  },
-];
-
-// =============================================================================
 // NAVIGATION - Tree structure for sidebar
 // =============================================================================
 
@@ -268,21 +96,6 @@ export const NAV_ITEMS: NavNode[] = [
     label: "TOOLS",
     iconName: "Wrench",
     colorVariant: "tools",
-    defaultExpanded: true,
-    children: [
-      {
-        id: VIEW_IDS.SSK,
-        label: "SimulatorSidekick",
-        iconName: "WaveTriangle",
-        colorVariant: "tools",
-      },
-      {
-        id: VIEW_IDS.QSK,
-        label: "QR Sidekick",
-        iconName: "QrCode",
-        colorVariant: "tools",
-      },
-    ],
   },
   {
     id: VIEW_IDS.POINTSTACK,

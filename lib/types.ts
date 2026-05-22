@@ -1,67 +1,5 @@
 import { ReactNode } from "react";
 
-// Tool status
-export type ToolStatus = "coming";
-
-// Base tool info (used in listings)
-export interface Tool {
-  id: string;
-  name: string;
-  shortName: string;
-  tagline: string;
-  description: string;
-  status: ToolStatus;
-  iconName: string;
-  features: string[];
-  webVersion?: boolean;
-}
-
-// Extended feature info (used in detail pages)
-export interface ToolFeature {
-  iconName: string;
-  title: string;
-  description: string;
-}
-
-// Step info for "how it works" sections
-export interface ToolStep {
-  number: number;
-  title: string;
-  description: string;
-}
-
-// Requirement info
-export interface ToolRequirement {
-  label: string;
-  value: string;
-}
-
-// Pricing tier for tools with subscription pricing
-export interface ToolPricingTier {
-  name: string;
-  limit: string;
-  price: string;
-  highlighted?: boolean;
-}
-
-// Full tool detail (used in detail pages)
-export interface ToolDetail extends Tool {
-  detailedFeatures: ToolFeature[];
-  steps: ToolStep[];
-  requirements: ToolRequirement[];
-  pricing?: ToolPricingTier[];
-  mobileApp?: boolean;
-  useCases?: string[];
-  perfectFor?: string[];
-}
-
-// Use case for tools page
-export interface UseCase {
-  title: string;
-  description: string;
-  tools: string[];
-}
-
 // Resource info (for resources section)
 export interface Resource {
   id: string;
@@ -96,8 +34,6 @@ export interface NavNode {
 export const VIEW_IDS = {
   HOME: "home",
   TOOLS: "tools",
-  SSK: "ssk",
-  QSK: "qsk",
   RESOURCES: "resources",
   ATLAS: "atlas",
   BABEL: "babel",
