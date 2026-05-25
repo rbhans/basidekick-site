@@ -60,7 +60,7 @@ export function ArticleCard({
           </span>
         </div>
       )}
-      <h3 className="font-heading text-[15px] font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2">
+      <h3 className="font-heading text-[15px] font-bold text-foreground group-hover:text-punch transition-colors line-clamp-2">
         {title}
       </h3>
       {description && (

@@ -3,7 +3,7 @@ import { CourseCard } from "@/components/courses/course-card";
 import { getAllCourses } from "@/lib/courses";
 
 export const metadata: Metadata = {
-  title: "Courses",
+  title: "Courses — BASidekick",
   description:
     "Free, browser-based courses for the building automation industry.",
   alternates: { canonical: "https://basidekick.com/courses" },

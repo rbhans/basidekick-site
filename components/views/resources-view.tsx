@@ -71,7 +71,7 @@ export function ResourcesView() {
         </div>
       </div>
 
-      <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-14">
+      <section className="bsk-wrap-narrow py-14">
         <p className="italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[640px] mx-auto">
           A working set of references and tools — built alongside the industry, free to use.
         </p>

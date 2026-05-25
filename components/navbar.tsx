@@ -64,8 +64,7 @@ export function Navbar() {
   return (
     <>
       <header
-        className="sticky top-0 z-40 border-b border-[var(--sand-line)]"
-        style={{ background: "rgba(250,250,248,.85)", backdropFilter: "blur(6px)" }}
+        className="sticky top-0 z-40 border-b border-[var(--sand-line)] bg-background/85 backdrop-blur-[6px]"
       >
         <div className="bsk-wrap grid grid-cols-[auto_1fr_auto] items-center gap-7 h-[68px] max-md:gap-3 max-md:h-[60px]">
           {/* Brand */}
@@ -150,7 +149,6 @@ export function Navbar() {
                 <Button
                   size="sm"
                   onClick={() => router.push(ROUTES.SIGNIN)}
-                  className="bg-primary text-primary-foreground hover:bg-[#000] font-semibold text-[12.5px] h-[30px] px-3 rounded-sm"
                 >
                   Sign in
                 </Button>

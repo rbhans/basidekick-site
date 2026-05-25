@@ -18,7 +18,7 @@ interface CollectionPageProps {
 export async function generateMetadata({ params }: CollectionPageProps): Promise<Metadata> {
   const { slug } = await params;
   const supabase = getSupabaseClient();
-  if (!supabase) return { title: "Collection Not Found | BASidekick Wiki" };
+  if (!supabase) return { title: "Collection Not Found — BASidekick Wiki" };
 
   const { data: collection } = await supabase
     .from("wiki_collections")
@@ -26,15 +26,15 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
     .eq("slug", slug)
     .single();
 
-  if (!collection) return { title: "Collection Not Found | BASidekick Wiki" };
+  if (!collection) return { title: "Collection Not Found — BASidekick Wiki" };
 
   const description = collection.description || `Browse the ${collection.name} article collection`;
 
   return {
-    title: `${collection.name} | BASidekick Wiki`,
+    title: `${collection.name} — BASidekick Wiki`,
     description,
     openGraph: {
-      title: `${collection.name} - BASidekick Wiki`,
+      title: `${collection.name} — BASidekick Wiki`,
       description,
       type: "website",
       siteName: "BASidekick",

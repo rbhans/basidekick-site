@@ -163,6 +163,31 @@
 
   --pad-x: clamp(20px, 4vw, 56px);
   --maxw: 1380px;
+  --maxw-content: 1100px;
+  --maxw-narrow: 1000px;
+  --maxw-prose: 760px;
+
+  /* ===== Type scale ===== */
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 22px;
+  --text-xl: 28px;
+  --text-2xl: clamp(30px, 4.4vw, 48px);   /* h1 / hero-manifesto */
+  --text-3xl: clamp(48px, 7vw, 96px);     /* display / feed-h */
+  --lh-tight: 1.08;
+  --lh-snug: 1.2;
+  --lh-body: 1.55;
+
+  /* ===== Spacing scale ===== */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 40px;
+  --space-5: 56px;
+  --space-6: 88px;
+  --space-7: 128px;
 }
 
 @layer base {
@@ -188,6 +213,42 @@
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 0 var(--pad-x);
+}
+.bsk-wrap-content {
+  max-width: var(--maxw-content);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+.bsk-wrap-narrow {
+  max-width: var(--maxw-narrow);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+.bsk-wrap-prose {
+  max-width: var(--maxw-prose);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+
+/* ============================================================
+   Canonical card — single source for elevated surfaces.
+   Hover lifts to shadow-md; combine with .bsk-hover-lift for transform.
+   ============================================================ */
+.bsk-card {
+  background: var(--card);
+  border: 1px solid var(--sand-line);
+  border-radius: var(--rad);
+  box-shadow: var(--shadow-sm);
+  transition: border-color .14s, box-shadow .14s, transform .14s;
+}
+.bsk-card:hover {
+  border-color: var(--ink-3);
+  box-shadow: var(--shadow-md);
+}
+.char-section .bsk-card {
+  background: var(--char-card);
+  border-color: var(--char-line);
+  box-shadow: var(--shadow-dark-md);
 }
 
 /* ============================================================
@@ -607,7 +668,7 @@
 .em-bar .em-close:hover {
   background: var(--punch);
   border-color: var(--punch);
-  color: #fff;
+  color: var(--sand);
 }
 .em-bar kbd {
   background: var(--char-2);
@@ -764,8 +825,8 @@
 .btn-lg { height: 44px; padding: 0 22px; font-size: 14.5px; }
 .btn:active { transform: translateY(1px); }
 .btn-primary { background: var(--ink); color: var(--sand); }
-.btn-primary:hover { background: #000; }
-.btn-punch { background: var(--punch); color: #fff; box-shadow: 0 1px 2px rgba(209, 26, 54, .3); }
+.btn-primary:hover { background: var(--char); }
+.btn-punch { background: var(--punch); color: var(--sand); box-shadow: 0 1px 2px rgba(209, 26, 54, .3); }
 .btn-punch:hover { background: var(--punch-2); box-shadow: 0 2px 8px rgba(209, 26, 54, .35); }
 .btn-outline { border-color: var(--sand-line-2); color: var(--ink); background: var(--card); }
 .btn-outline:hover { background: var(--card-2); border-color: var(--ink); }
@@ -776,7 +837,7 @@
 .char-section .btn-outline { background: transparent; color: var(--cream); border-color: var(--char-line-2); }
 .char-section .btn-outline:hover { background: var(--char-2); border-color: var(--cream); }
 .char-section .btn-primary { background: var(--cream); color: var(--char); }
-.char-section .btn-primary:hover { background: #fff; }
+.char-section .btn-primary:hover { background: var(--card); }
 .char-section .btn-ghost { color: var(--cream-2); }
 .char-section .btn-ghost:hover { background: var(--char-2); color: var(--cream); }
 
@@ -801,7 +862,7 @@
 .badge-default { background: var(--ink); color: var(--sand); }
 .badge-secondary { background: var(--sand-2); color: var(--ink); border-color: var(--sand-line); }
 .badge-outline { border-color: var(--sand-line-2); color: var(--ink-2); }
-.badge-punch { background: var(--punch); color: #fff; }
+.badge-punch { background: var(--punch); color: var(--sand); }
 .badge-punch-soft { background: var(--punch-soft); color: var(--punch); border-color: var(--punch-soft-2); }
 .badge-punch-outline { border-color: var(--punch); color: var(--punch); }
 .char-section .badge-default { background: var(--cream); color: var(--char); }
@@ -828,7 +889,7 @@
   flex-shrink: 0;
 }
 .avatar-sm { width: 28px; height: 28px; font-size: 11px; }
-.avatar-punch { background: var(--punch); color: #fff; border-color: transparent; }
+.avatar-punch { background: var(--punch); color: var(--sand); border-color: transparent; }
 .avatar-ink { background: var(--ink); color: var(--sand); border-color: transparent; }
 
 /* ============================================================
@@ -909,10 +970,10 @@
    SECTION + SECTION-BAR (used on home)
    ============================================================ */
 .section {
-  padding-block: 88px 96px;
+  padding-block: var(--space-6) calc(var(--space-6) + var(--space-1));
 }
 @media (max-width: 720px) {
-  .section { padding-block: 56px 64px; }
+  .section { padding-block: var(--space-5) calc(var(--space-5) + var(--space-1)); }
 }
 .section-bar {
   display: flex;
@@ -960,12 +1021,12 @@
    HOME — HERO
    ============================================================ */
 .hero {
-  padding-block: 72px 80px;
+  padding-block: var(--space-6) calc(var(--space-6) - var(--space-1));
   position: relative;
-  max-width: 1200px;
+  max-width: var(--maxw-content);
   margin: 0 auto;
 }
-@media (max-width: 720px) { .hero { padding-block: 40px 56px; } }
+@media (max-width: 720px) { .hero { padding-block: var(--space-4) var(--space-5); } }
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
@@ -998,8 +1059,8 @@
 .hero-manifesto {
   font-family: var(--font-sans);
   font-weight: 600;
-  font-size: clamp(30px, 4.4vw, 48px);
-  line-height: 1.08;
+  font-size: var(--text-2xl);
+  line-height: var(--lh-tight);
   letter-spacing: -.018em;
   color: var(--ink);
   max-width: 22ch;
@@ -1036,7 +1097,7 @@
    ============================================================ */
 .hero-schematic {
   position: relative;
-  background: #ffffff;
+  background: var(--card);
   border: 1px solid var(--sand-line-2);
   border-radius: var(--rad);
   box-shadow: var(--shadow-lg);
@@ -1050,7 +1111,7 @@
   gap: 14px;
   height: auto;
   padding: 9px 14px;
-  background: #0d0d0d;
+  background: var(--char);
   color: var(--cream-2);
   border-bottom: 1px solid var(--char-line-2);
   font-family: var(--font-mono);
@@ -1086,7 +1147,7 @@
 .hero-schematic .viewport {
   position: relative;
   aspect-ratio: 3 / 2;
-  background: #fff;
+  background: var(--card);
   overflow: hidden;
 }
 .hero-schematic .viewport img {
@@ -1430,7 +1491,7 @@
 .feed-h {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: clamp(48px, 7vw, 96px);
+  font-size: var(--text-3xl);
   line-height: .9;
   letter-spacing: -.035em;
   color: var(--ink);
@@ -1631,7 +1692,7 @@
 }
 .wk-sb-item.active .checkbox::after {
   content: "\2713";
-  color: #fff;
+  color: var(--sand);
   font-size: 10px;
   font-weight: 700;
 }
@@ -1709,7 +1770,7 @@
 }
 .wk-cat-card:hover .glyph {
   background: var(--punch);
-  color: #fff;
+  color: var(--sand);
 }
 .wk-cat-card .body { min-width: 0; flex: 1; }
 .wk-cat-card .name {
@@ -2334,7 +2395,7 @@
   transition: background .14s, transform .14s, box-shadow .14s;
 }
 .sc-cta:hover {
-  background: #000;
+  background: var(--char);
   box-shadow: var(--shadow-md);
 }
 .sc-cta:active { transform: translateY(1px); }

@@ -13,11 +13,11 @@ function getSupabaseClient() {
 }
 
 export const metadata: Metadata = {
-  title: "BAS Video Library | BASidekick Wiki",
+  title: "BAS Video Library — BASidekick Wiki",
   description:
     "Curated video tutorials and walkthroughs for building automation — BACnet, Niagara, DDC controls, HVAC commissioning, and more.",
   openGraph: {
-    title: "BAS Video Library - BASidekick Wiki",
+    title: "BAS Video Library — BASidekick Wiki",
     description:
       "Curated video tutorials for building automation professionals.",
     type: "website",
