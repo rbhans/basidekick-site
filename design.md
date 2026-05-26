@@ -187,6 +187,149 @@ components:
     borderColor: "rgba(10,10,10,0.08)"
     height: 68
     height-mobile: 60
+  field-label:
+    fontFamily: mono
+    fontSize: 11
+    transform: uppercase
+    tracking: "0.18em"
+    color: "rgba(10,10,10,0.44)"
+  field-help:
+    fontSize: 12.5
+    color: "rgba(10,10,10,0.44)"
+  field-error:
+    fontSize: 12.5
+    color: "#b91d34"
+    icon: required
+  table-row:
+    paddingY: 16
+    paddingX: 8
+    borderBottom: "rgba(10,10,10,0.08)"
+    fontFamily: sans
+    fontSize: 14
+    numericFont: "tabular-nums"
+    hover: { backgroundColor: "rgba(10,10,10,0.025)" }
+  thread-row:
+    gridTemplate: "avatar 36 · kind 80 · ts 60 · title 1fr · stat 60"
+    paddingY: 18
+    borderBottom: "rgba(10,10,10,0.08)"
+  skeleton:
+    backgroundColor: "#ededeb"
+    rounded: 4px
+    shimmer:
+      duration: 1400ms
+      easing: ease-in-out
+      colors: ["#ededeb", "#f5f5f3", "#ededeb"]
+  empty-state:
+    paddingY: 56
+    textAlign: center
+    icon: { size: 32, color: "rgba(10,10,10,0.22)" }
+    title: { size: 17, weight: 600 }
+    body: { size: 13, color: "rgba(10,10,10,0.44)" }
+  toast:
+    backgroundColor: "#0a0a0a"
+    textColor: "#fafaf8"
+    rounded: 6px
+    shadow: lg
+    fontSize: 14
+    duration: 4000ms
+
+motion:
+  duration:
+    instant: 0ms          # state flips that should feel snappy (checkbox)
+    micro: 80ms           # focus-ring fade, ghost hovers
+    fast: 140ms           # button hover, link color, default UI tween
+    base: 200ms           # card hover lift, dropdown open
+    slow: 320ms           # modal enter, panel slide
+    long: 600ms           # hero image crossfade
+  easing:
+    standard: "cubic-bezier(0.4, 0, 0.2, 1)"   # default
+    enter: "cubic-bezier(0, 0, 0.2, 1)"        # entering elements
+    exit: "cubic-bezier(0.4, 0, 1, 1)"         # leaving elements
+    spring: "cubic-bezier(0.34, 1.56, 0.64, 1)" # gentle overshoot
+  hover-lift:
+    transform: "translateY(-1px)"
+    shadow: md
+    duration: fast
+  pulse:
+    keyframe: bsk-pulse
+    duration: 2400ms
+    target: live-dot
+  reduced-motion:
+    rule: "@media (prefers-reduced-motion: reduce)"
+    behavior: "Replace transforms and keyframes with opacity-only or static state."
+
+breakpoints:
+  sm: 640px
+  md: 720px
+  lg: 980px
+  xl: 1024px
+  2xl: 1380px
+
+icons:
+  library: phosphor-icons
+  weights:
+    default: regular
+    emphasis: bold
+    forbidden: [thin, light, fill, duotone]
+  sizes:
+    xs: 12       # inline with text-xs
+    sm: 14       # inline with text-sm/base, mono labels
+    md: 16       # default UI (buttons, nav, form fields)
+    lg: 20       # section headers, primary CTAs
+    xl: 24       # empty-state, modal headers
+  hover-color: "#d11a36"
+  rest-color: "rgba(10,10,10,0.44)"
+
+voice:
+  attributes: [plainspoken, anti-hype, craft-proud, first-person, wry]
+  cta-verbs: [Browse, Explore, Open, Read, Submit, Sign in, Join, Continue]
+  forbidden-words:
+    - revolutionary
+    - cutting-edge
+    - next-gen
+    - seamless
+    - leverage
+    - delight
+    - effortless
+    - empower
+    - unlock
+    - amazing
+    - welcome  # avoid as standalone greeting
+  page-title: "{Section} — BASidekick"
+  wiki-title: "{Article} — BASidekick Wiki"
+  section-number: ".01"   # not "01 /" or "1." or "#1"
+  status-tagline: "INDEPENDENT BAS TOOLKIT"  # mono uppercase tracked
+
+accessibility:
+  contrast:
+    ink-on-sand: 19.6     # ✓ AAA
+    ink-2-on-sand: 8.8    # ✓ AAA
+    ink-3-on-sand: 4.7    # ✓ AA large, NOT for body < 12px
+    punch-on-sand: 5.6    # ✓ AA body, AAA large
+    cream-on-char: 18.2   # ✓ AAA
+  focus-ring:
+    color: "#d11a36"
+    width: 2px
+    offset: 2px
+    style: solid
+    never-removed: true
+  min-tap-target: 44      # iOS guidance; mobile buttons + nav
+  color-blindness-check: ["deuteranopia", "protanopia"]
+  rule: "Never convey state with color alone — pair with label or icon."
+
+og:
+  size: { width: 1200, height: 630 }
+  twitter-card: summary_large_image
+  twitter-header: { width: 1500, height: 500 }
+  square: { width: 1080, height: 1080 }
+  runtime: app/opengraph-image.tsx
+  static: public/brand/social-banner.svg
+  manifest: app/manifest.ts
+  app-icon: { width: 180, height: 180 }
+  pwa-icons:
+    - { size: 192, purpose: any }
+    - { size: 512, purpose: any }
+    - { size: 512, purpose: maskable }
 ---
 
 ## Overview
@@ -450,6 +593,398 @@ Wrap content with `<section class="sand-section">` (or `char-section` for invers
 
 ---
 
+## Motion
+
+Motion is restraint. The page should feel like paper that occasionally lifts — never like a stage show.
+
+### Duration scale
+
+| Token | ms | Use |
+|---|---|---|
+| `instant` | 0 | State flips that should feel snappy (checkbox tick, tab switch) |
+| `micro` | 80 | Focus-ring fade, ghost hover background |
+| `fast` | 140 | **Default UI tween** — button hover, link color, border darkening |
+| `base` | 200 | Card hover lift, dropdown open, popover fade |
+| `slow` | 320 | Modal enter/exit, sliding panel |
+| `long` | 600 | Hero schematic image crossfade |
+
+`fast` (140ms) is the default. If you can't justify why a transition needs to be slower or faster than 140ms, it should be 140ms.
+
+### Easing
+
+| Token | Curve | Use |
+|---|---|---|
+| `standard` | `cubic-bezier(0.4, 0, 0.2, 1)` | Default — any two-way state |
+| `enter` | `cubic-bezier(0, 0, 0.2, 1)` | Things appearing |
+| `exit` | `cubic-bezier(0.4, 0, 1, 1)` | Things leaving |
+| `spring` | `cubic-bezier(0.34, 1.56, 0.64, 1)` | Gentle overshoot — rare, used by `HoverLift` wrapper |
+
+### Animations in the system
+
+- **`.bsk-hover-lift`** — 1px upward translate + shadow tier bump on hover. Wraps cards.
+- **`.live-dot` / `.pulse-dot`** — 2.4s `bsk-pulse` keyframe (box-shadow ring expansion). Used on status indicators only.
+- **Hero schematic image crossfade** — 600ms `ease` opacity transition between images.
+- **`framer-motion`** (via `motion` package v12) — used sparingly: navbar mega-menu, mobile drawer, modal intercept. No scroll-triggered hijinks.
+
+### Reduced motion
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+```
+
+`live-dot` should switch to a static crimson disc (no pulse). Hover lifts should be opacity-only.
+
+---
+
+## Voice & Tone
+
+The site reads like a working engineer's notebook: terse, plainspoken, slightly wry, never marketing-y.
+
+### Attributes
+
+- **Plainspoken.** Short sentences. Concrete nouns.
+- **Anti-hype.** No "revolutionary", no "cutting-edge", no "AI-powered" unless that's literally what's being described.
+- **Craft-proud, not boastful.** "Smaller, but still loved." Modesty + obvious care.
+- **First-person where it earns it.** Rob signs his work. That's an asset.
+- **Wry.** "A quiet place to talk shop." "No hot takes."
+
+### CTA verb shortlist
+
+`Browse · Explore · Open · Read · Submit · Sign in · Join · Continue · Start`
+
+Pick from this list. Do not invent "Discover more!" or "Get started in seconds!" — they're tells.
+
+### Micro-label conventions
+
+- Section numbers: `.01`, `.02`, `.03` — leading decimal, mono, crimson digit, ink-3 label.
+- Status taglines: `INDEPENDENT BAS TOOLKIT`, `SYS NOMINAL`, `FEED OK` — mono, uppercase, tracked `0.14–0.18em`.
+- Timestamps: `UTC 18:57` (24-hour), `MAY 24, 2026` (mono short month), or relative (`2 minutes ago` — sentence case).
+- Counts: `501 points indexed` (tabular numerals), not `500+ points!` or `over five hundred`.
+
+### Forbidden words
+
+Don't use these without a real reason: *revolutionary, cutting-edge, next-gen, seamless, leverage, delight, effortless, empower, unlock, amazing, welcome* (as standalone greeting).
+
+### Do / Don't
+
+| Do | Don't |
+|---|---|
+| "Browse the Atlas →" | "Discover our comprehensive equipment library!" |
+| "501 points indexed" | "Over 500+ points available now" |
+| "*built by a working engineer*" | "Industry-leading expertise" |
+| "Pull up a chair →" | "Welcome to our community!" |
+| "A quiet place to talk shop" | "Connect with industry leaders" |
+
+### Italic discipline
+
+Italic is a flavor, not a system. One italic phrase per heading, maximum. Reserve for:
+- The single emphatic phrase in the H1 (`*"built by a working engineer"*`)
+- Bylines (`*— Rob, Tucson*`)
+- Pull quotes
+
+Never italicize: nav links, CTAs, body paragraphs, mono labels, the wordmark.
+
+---
+
+## Iconography
+
+**One library only: [Phosphor Icons](https://phosphoricons.com)** (`@phosphor-icons/react`). Mixing icon families breaks the visual rhythm.
+
+### Weights
+
+- **`regular`** — default for all UI.
+- **`bold`** — emphasis: section header icons, primary CTA icons, the X on modals.
+- **Forbidden:** `thin`, `light`, `fill`, `duotone`. They don't sit alongside Archivo's geometric character.
+
+### Sizes (tracked to type scale)
+
+| Token | px | Use |
+|---|---|---|
+| `xs` | 12 | Inline with `--text-xs` |
+| `sm` | 14 | Inline with body text, mono labels |
+| `md` | 16 | **Default UI** — buttons, nav, form fields |
+| `lg` | 20 | Section headers, primary CTAs |
+| `xl` | 24 | Empty-state placeholders, modal headers |
+
+### Color rules
+
+- Rest: `--ink-3` (rgba(10,10,10,0.44))
+- Hover: `--punch`
+- Active / brand action: `--punch`
+- Inverse surfaces: `--cream-2` rest, `--cream` hover
+
+### `BrandMark` is not an icon
+
+Don't use `<BrandMark />` as a list bullet, a button affordance, or inline next to body text. It's the logo. Use a Phosphor icon instead.
+
+---
+
+## Forms
+
+Forms are stacked, ragged-right, label-above-input. No floating labels, no inline labels, no placeholder-as-label.
+
+### Anatomy
+
+```
+┌─ FIELD LABEL (mono, 11px, 0.18em tracked, uppercase, ink-3)
+├─ <input> (15px sans, ink, --rad, border --sand-line, focus → --ink border)
+├─ Help text (12.5px sans, ink-3) — only when there's something to clarify
+└─ Error message (12.5px sans, destructive #b91d34, with required icon)
+```
+
+### Rules
+
+- **Label is mandatory.** Even when "obvious." Screen-readers don't see "obvious."
+- **Help text is optional.** Add only when it prevents an error.
+- **Errors replace help text** in the same slot, with a small icon.
+- **Disabled state** uses `--ink-4` (rgba 0.22) for label + value; cursor `not-allowed`.
+- **Required mark** is a small `*` in `--punch` next to the label, not "(required)" in copy.
+- **Field grouping** uses `--space-3` (24px) between fields, `--space-4` (40px) between groups.
+- **Submit button** is `.btn-primary` (ink, not punch) unless this is a primary marketing CTA.
+
+### Search field
+
+`.nw-search` is the canonical pattern — bordered, italic placeholder, ink-focus border, mono kbd hint on the right.
+
+---
+
+## State patterns
+
+Every data-driven surface needs four states: **resting**, **loading**, **empty**, **error**. Document each before shipping.
+
+### Loading — skeleton
+
+```
+background: var(--sand-2);
+border-radius: var(--rad-sm);
+animation: bsk-shimmer 1.4s ease-in-out infinite;
+```
+
+Skeleton blocks should mirror the resting-state layout, not be a generic spinner. Use a spinner only for inline button-level loading (`.btn` with a 14px spinner) or after >2s when a skeleton would mislead.
+
+### Empty
+
+Centered, vertical:
+
+1. Phosphor icon (24px, `--ink-4`)
+2. Title (17px sans, semibold)
+3. One-sentence body (13px sans, `--ink-3`)
+4. Optional CTA (`.btn-outline`)
+
+Copy template: *"No \[things\] yet."* + actionable second line ("Be the first to contribute →"). Do **not** apologize or use sad-tone phrasing.
+
+### Error
+
+Centered, same vertical structure as empty, but:
+- Icon color: `--destructive` (#b91d34)
+- Title: "Something broke" / "Couldn't load \[thing\]" (specific > generic)
+- Body: brief reason, then "Try again →" link
+- Optional `<details>` for technical detail (collapsed by default, mono font)
+
+### Success / toast
+
+Use `sonner` (already wired in [app/layout.tsx](app/layout.tsx)). Default position: bottom-right desktop, bottom-center mobile. Duration: 4000ms. Never use a toast for an error that requires the user's attention — use an inline error or modal.
+
+---
+
+## Tables / data rows
+
+The site is data-heavy: Atlas points, wiki articles, PointStack threads, news entries. They all use a row-based pattern, not a `<table>` element (except for tabular reference data).
+
+### Anatomy (`.thread-list` / `.atlas-row`)
+
+```
+| avatar | kind  | timestamp | title + meta                  | stat |
+| 36px   | 80px  | 60px      | flex 1                        | 60px |
+```
+
+- **Avatar** (`.avatar`) — 36px circle, mono initials on `--sand-2`.
+- **Kind** — `.badge` variant (punch-soft for questions, default for projects, outline for jobs).
+- **Timestamp** — mono 11px, `--ink-3`, 24-hour UTC.
+- **Title + meta** — title in sans 15px, `--ink`; meta below in sans 12px, `--ink-3` with `tabular-nums` on counts.
+- **Stat** — right-aligned numeric (replies, views) in mono `tabular-nums`.
+
+### Hover
+
+Whole row gets `background: rgba(10,10,10,0.025)`. No transform, no shadow — rows are flat. Title color shifts to `--punch` via `group-hover:text-punch`.
+
+### Tabular numerics
+
+Always use `tabular-nums` for any column that can be visually scanned (counts, prices, timestamps, durations):
+
+```css
+.tabular-nums {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+```
+
+### When to use a real `<table>`
+
+For reference data that must align in columns and may be exported (point-naming standards, equipment specs, API responses). Otherwise use the row pattern — it's more flexible for responsive layouts.
+
+---
+
+## Schematic system
+
+The technical-drawing motifs are a reusable visual system, not one-off hero decoration.
+
+### Components
+
+- **Status strip (`.strip`)** — 32px char-bar, mono UTC + build version + crimson live dot. Site-wide, top of `<body>`.
+- **Drawing stamp** — mono header inside dark panels: `DRAWING [id] · REV [n] · SHEET [n / total] · ● LIVE`. Used on hero schematic, atlas specimen, and PointStack featured cards.
+- **Corner brackets** — 22px L-shapes in `--punch`, 1.5px stroke, on the four corners of the hero schematic viewport. **Never** apply to other elements.
+- **Section numbers** — `.01`, `.02`, `.03` — mono, leading decimal, crimson digit, ink-3 label, `0.22em` tracking.
+- **Field rows (`.title-block .field`)** — `LABEL` (mono, ink-3) + `VALUE` (sans, ink). Pipe-separated visually with `border-left: 1px solid var(--sand-line)`.
+
+### Voice in stamps
+
+Drawing IDs follow `M-23-700` format (prefix, year-prefix, sequence). Never use random alphanumeric. The prefix letter encodes type: M = mechanical, E = electrical, P = piping, A = architectural.
+
+### Don't extend
+
+The "specimen" language is permitted **only** on the Atlas "today's specimen" card. Do not generalize to "Specimen of the week" / "Featured specimen" elsewhere.
+
+---
+
+## Dark surfaces
+
+The site is paper. Dark surfaces are panels embedded in paper — not a full dark mode.
+
+### When to flip
+
+Use `.char-section` (`--char` background) for:
+- The status strip at the top of every page.
+- The hero schematic header strip.
+- Specimen / featured cards that warrant a museum-label treatment.
+- Block-quote "specimen of \[topic\]" callouts in long-form articles.
+
+Do **not** use it for: full pages, primary cards, hover states, modals.
+
+### Token flipping
+
+Inside `.char-section`, tokens automatically swap:
+- `--background` reads as `--char`
+- Text reads as `--cream` hierarchy
+- Borders read as `--char-line` / `--char-line-2`
+- `.btn-primary` flips to cream-on-char
+- Badges flip via `.char-section .badge-*` overrides
+
+The `--ochre-2` / `--moss-2` lighter variants exist for badges on dark surfaces — use them automatically when inside `.char-section`.
+
+### Full dark mode
+
+Not enabled. The `@custom-variant dark` directive exists in [app/globals.css](app/globals.css) for future use, but no `.dark` overrides ship today. If the site adds full dark mode later, the existing `--char-*` / `--cream-*` tokens are the foundation.
+
+---
+
+## Accessibility
+
+### Contrast
+
+| Foreground | Background | Ratio | Verdict |
+|---|---|---|---|
+| `--ink` (#0a0a0a) | `--sand` (#fafaf8) | 19.6:1 | ✅ AAA |
+| `--ink-2` (rgba 0.64) | `--sand` | 8.8:1 | ✅ AAA |
+| `--ink-3` (rgba 0.44) | `--sand` | 4.7:1 | ✅ AA large only — **do not use below 12px** |
+| `--ink-4` (rgba 0.22) | `--sand` | 2.1:1 | Decorative only — never carry meaning |
+| `--punch` (#d11a36) | `--sand` | 5.6:1 | ✅ AA body, AAA large |
+| `--cream` (#f5f5f5) | `--char` (#0d0d0d) | 18.2:1 | ✅ AAA |
+| `--cream-2` (rgba 0.66) | `--char` | 12.0:1 | ✅ AAA |
+| `--cream-3` (rgba 0.44) | `--char` | 8.0:1 | ✅ AAA |
+
+### Focus ring
+
+Always visible. Always `--ring` (`--punch`). 2px solid, 2px offset. **Never removed.** If a focus ring clashes with a design, the design is wrong.
+
+```css
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+```
+
+### Touch targets
+
+Minimum 44×44px for any tappable element on mobile (iOS guidance, used as floor). Buttons under that size live only in dense desktop UI (e.g., 30px `.btn-sm` pills in the wiki filter bar).
+
+### Keyboard
+
+- Every interactive element reachable via Tab.
+- `cmd-K` opens the global command palette ([components/command-menu.tsx](components/command-menu.tsx)).
+- Nav megamenu opens on click (not hover) — keyboard-friendly, no race conditions.
+- Modal traps focus, restores it on close.
+- `Esc` closes modals, popovers, mobile drawer.
+
+### Color-blindness
+
+Crimson on cream + ink base reads correctly for the most common conditions (deuteranopia, protanopia). **Never convey state with color alone** — always pair with a label, an icon, or position.
+
+### Reduced motion
+
+Honor `prefers-reduced-motion: reduce`. Live dots stop pulsing. Hover lifts become opacity-only. Page transitions become instant.
+
+---
+
+## Open Graph & social
+
+### Runtime images
+
+| File | Output | Purpose |
+|---|---|---|
+| [app/opengraph-image.tsx](app/opengraph-image.tsx) | 1200×630 PNG | Default OG image, used when a page doesn't set its own |
+| [app/twitter-image.tsx](app/twitter-image.tsx) | 1200×630 PNG | Default Twitter card image |
+| [app/icon.svg](app/icon.svg) | 32×32 favicon | Browser tab |
+| [app/apple-icon.tsx](app/apple-icon.tsx) | 180×180 PNG | iOS home-screen icon |
+| [app/manifest.ts](app/manifest.ts) | webmanifest | PWA icon set, name, theme color |
+
+Per-page OG images override the default via `metadata.openGraph.images` in a `page.tsx` `generateMetadata`. The runtime route is canonical because OG crawlers always rasterize from it — if the SVG mockup in `public/brand/` diverges, fix the SVG, not the runtime.
+
+### Static mockups
+
+| File | Size | Use |
+|---|---|---|
+| `public/brand/social-banner.svg` | 1200×630 | OG/Twitter card mockup; mirrors runtime |
+| `public/brand/social-square.svg` | 1080×1080 | Instagram, LinkedIn square posts |
+| `public/brand/social-twitter-header.svg` | 1500×500 | X / Twitter banner |
+| `public/brand/social-twitter-header.png` | 1500×500 | Same, rasterized for upload |
+| `public/brand/wordmark-light.svg` | 480×80 | JSON-LD `logo`, email signatures, light lockups |
+| `public/brand/wordmark-dark.svg` | 480×80 | Dark-surface lockups |
+| `public/brand/avatar-light.svg` | 400×400 | Profile avatar (light context) |
+| `public/brand/avatar-dark.svg` | 400×400 | Profile avatar (dark context) |
+| `public/brand/brandmark.svg` | 32×18 native | Standalone mark (no wordmark), any size |
+| `public/brand/brandmark-mono.svg` | 32×18 native | Single-color print/email — ink only |
+| `public/brand/brandmark-maskable.svg` | 512×512 | PWA maskable icon (40% safe zone) |
+
+### OG image anatomy
+
+```
+┌──────────────────────────────────────────┐
+│ ● SYS NOMINAL · INDEPENDENT BAS TOOLKIT  │ ← status strip
+│                                          │
+│ .01 BASIDEKICK                           │ ← section number
+│                                          │
+│ {Headline — Archivo Black 62px}          │
+│ {italic emphasis in crimson}             │
+│                                          │
+│ ─────────────────────────────────────    │ ← hairline
+│ BASIDEKICK · basidekick.com    ATLAS · …  │ ← footer meta
+└──────────────────────────────────────────┘
+```
+
+### JSON-LD
+
+Org + WebSite types ship from [app/layout.tsx](app/layout.tsx). For wiki articles, add `Article` schema with `headline`, `datePublished`, `dateModified`, `author`. For atlas entries, add `DefinedTerm` with `inDefinedTermSet` pointing to the atlas hub.
+
+---
+
 ## Do's and Don'ts
 
 ### Do
@@ -475,3 +1010,12 @@ Wrap content with `<section class="sand-section">` (or `char-section` for invers
 - ❌ **Don't use italic for emphasis.** Reserve it for taglines, hero highlights, and signoffs.
 - ❌ **Don't separate page-title segments with a pipe (`|`).** Em-dash only.
 - ❌ **Don't write button hover states with hardcoded hex** (`hover:bg-[#000]`). Use shadcn `<Button>` defaults or `.btn-*` utility classes.
+- ❌ **Don't transition slower than 200ms** for default UI state changes. The site should feel paper-quick.
+- ❌ **Don't use `placeholder` as a label.** Labels above inputs, every time.
+- ❌ **Don't write a generic "Welcome!" greeting.** Lead with what's actually there.
+- ❌ **Don't ship a UI surface without all four states** (resting, loading, empty, error). Skeletons mirror layout, not generic spinners.
+- ❌ **Don't pair Phosphor with another icon library** (Lucide, Heroicons, FontAwesome). Pick a lane.
+- ❌ **Don't use `BrandMark` as an inline icon** — it's the logo.
+- ❌ **Don't extend the "specimen" metaphor** beyond the Atlas Today's Specimen card.
+- ❌ **Don't remove the focus ring.** Ever. If it clashes, redesign the surface.
+- ❌ **Don't convey state with color alone.** Pair with a label or icon for color-blind users.

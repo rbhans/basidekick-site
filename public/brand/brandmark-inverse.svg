@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 18" width="32" height="18" role="img" aria-label="BASidekick mark (inverse)">
+  <!-- BrandMark inverse — cream card, crimson cutouts. Use only on full-bleed
+       crimson surfaces (rare); the default crimson-on-anything mark wins
+       almost everywhere else. Aspect, radius, and geometry must remain
+       identical to brandmark.svg. -->
+  <rect width="32" height="18" rx="2" fill="#fafaf8"/>
+  <rect x="3" y="6" width="6" height="6" rx="1" fill="#d11a36"/>
+  <path d="M10 9 H17 M15 6.5 L17.5 9 L15 11.5" stroke="#d11a36" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <rect x="19.5" y="2.5" width="10" height="13" rx="1.5" fill="none" stroke="#d11a36" stroke-width="1.6"/>
+</svg>
