@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { GithubLogo } from "@phosphor-icons/react";
 
-type ProjectKind = "Protocol" | "Tool" | "BMS";
+type ProjectKind = "Protocol" | "Tool" | "Module" | "BMS";
 
 interface ProjectMeta {
   language: string;
@@ -48,8 +48,9 @@ interface OpenSourceProject {
 }
 
 // All data below is sourced from each project's GitHub README, Cargo.toml,
-// or public site. Nothing is invented. If a field is unknown it shows "—".
-// Repos last cross-checked: 2026-05-17.
+// local module metadata, or public site. Nothing is invented. If a field is
+// unknown it shows "—". Existing repos last cross-checked: 2026-05-17.
+// NiagaraFalls added from local README/module metadata and GitHub on 2026-05-26.
 const openSourceProjects: OpenSourceProject[] = [
   {
     id: "rustbac",
@@ -217,6 +218,62 @@ const openSourceProjects: OpenSourceProject[] = [
     ],
   },
   {
+    id: "niagarafalls",
+    name: "NiagaraFalls",
+    protocol: "Niagara 4",
+    kind: "Module",
+    tagline: (
+      <>
+        Niagara 4 <b>runtime module</b> · authenticated WebSocket station API
+      </>
+    ),
+    description: (
+      <>
+        Niagara 4 runtime module that exposes station data through an authenticated WebSocket API. It gives external graphics, dashboards, commissioning tools, and integrations a practical live-data path without forcing every app to live inside Niagara UI.
+      </>
+    ),
+    githubUrl: "https://github.com/rbhans/niagara-falls",
+    meta: {
+      language: "Java",
+      license: "—",
+      latest: "—",
+      stars: 0,
+      lastCommit: "May 26, 2026",
+      status: "Active",
+    },
+    features: [
+      {
+        title: "Station discovery",
+        body: "Browse station structure, describe objects, search bounded branches, and request metadata for devices, points, schedules, histories, alarms, and parent objects.",
+      },
+      {
+        title: "Live values",
+        body: "Read point snapshots and keep active graphics current with replaceable point subscriptions, lease renewal, and connection-scoped cleanup.",
+      },
+      {
+        title: "Writable points",
+        body: "Describe writable capabilities before rendering controls, then set, override, auto, or emergency override writable points through Niagara permissions.",
+      },
+      {
+        title: "Alarms, schedules, and histories",
+        body: "Read bounded alarm snapshots, subscribe to alarm changes, inspect schedules, and pull history records when an external app needs those views.",
+      },
+    ],
+    snippets: [
+      {
+        label: "Station endpoint",
+        body: `GET https://<station>/falls/health\nwss://<station>/falls`,
+      },
+      {
+        label: "Companion demo",
+        body: `node tools/niagarafalls-nav-tree-server.mjs --port=8787\n# open http://127.0.0.1:8787/`,
+      },
+    ],
+    links: [
+      { label: "View on GitHub", href: "https://github.com/rbhans/niagara-falls" },
+    ],
+  },
+  {
     id: "opencrate-bms",
     name: "OpenCrate BMS",
     protocol: "BMS",
@@ -264,7 +321,7 @@ const openSourceProjects: OpenSourceProject[] = [
   },
 ];
 
-type FilterKind = "all" | "protocol" | "tool" | "bms";
+type FilterKind = "all" | "protocol" | "tool" | "module" | "bms";
 
 export function OpenSourceView() {
   const [filter, setFilter] = useState<FilterKind>("all");
@@ -291,11 +348,11 @@ export function OpenSourceView() {
 
         <div className="sc-filter">
           <span className="label">Filter</span>
-          {(["all", "protocol", "tool", "bms"] as const).map((f) => (
+          {(["all", "protocol", "tool", "module", "bms"] as const).map((f) => (
             <button
               key={f}
               className="nw-pill"
-              aria-selected={filter === f}
+              aria-pressed={filter === f}
               onClick={() => setFilter(f)}
             >
               {f === "all" ? "All" : f === "bms" ? "BMS" : f[0].toUpperCase() + f.slice(1)}

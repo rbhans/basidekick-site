@@ -545,7 +545,8 @@
   border-color: var(--ink);
   color: var(--ink);
 }
-.nw-pill[aria-selected="true"] {
+.nw-pill[aria-selected="true"],
+.nw-pill[aria-pressed="true"] {
   background: var(--ink);
   color: var(--sand);
   border-color: var(--ink);
