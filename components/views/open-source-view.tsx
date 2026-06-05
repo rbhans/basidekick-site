@@ -50,7 +50,7 @@ interface OpenSourceProject {
 // All data below is sourced from each project's GitHub README, Cargo.toml,
 // local module metadata, or public site. Nothing is invented. If a field is
 // unknown it shows "—". Existing repos last cross-checked: 2026-05-17.
-// NiagaraFalls added from local README/module metadata and GitHub on 2026-05-26.
+// BASk Stream added from local README/module metadata and GitHub on 2026-05-26.
 const openSourceProjects: OpenSourceProject[] = [
   {
     id: "rustbac",
@@ -218,8 +218,8 @@ const openSourceProjects: OpenSourceProject[] = [
     ],
   },
   {
-    id: "niagarafalls",
-    name: "NiagaraFalls",
+    id: "bask-stream",
+    name: "BASk Stream",
     protocol: "Niagara 4",
     kind: "Module",
     tagline: (
@@ -229,10 +229,10 @@ const openSourceProjects: OpenSourceProject[] = [
     ),
     description: (
       <>
-        Niagara 4 runtime module that exposes station data through an authenticated WebSocket API. It gives external graphics, dashboards, commissioning tools, and integrations a practical live-data path without forcing every app to live inside Niagara UI.
+        BASk Stream is a Niagara 4 runtime module that exposes station data through an authenticated WebSocket API. It gives external graphics, dashboards, commissioning tools, and integrations a practical live-data path without forcing every app to live inside Niagara UI.
       </>
     ),
-    githubUrl: "https://github.com/rbhans/niagara-falls",
+    githubUrl: "https://github.com/rbhans/bask-stream",
     meta: {
       language: "Java",
       license: "—",
@@ -262,15 +262,15 @@ const openSourceProjects: OpenSourceProject[] = [
     snippets: [
       {
         label: "Station endpoint",
-        body: `GET https://<station>/falls/health\nwss://<station>/falls`,
+        body: `GET https://<station>/stream/health\nwss://<station>/stream`,
       },
       {
         label: "Companion demo",
-        body: `node tools/niagarafalls-nav-tree-server.mjs --port=8787\n# open http://127.0.0.1:8787/`,
+        body: `node tools/baskstream-live-smoke.mjs\n# connects to the configured station`,
       },
     ],
     links: [
-      { label: "View on GitHub", href: "https://github.com/rbhans/niagara-falls" },
+      { label: "View on GitHub", href: "https://github.com/rbhans/bask-stream" },
     ],
   },
   {
