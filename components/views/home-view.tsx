@@ -51,12 +51,11 @@ interface HomeViewProps {
   };
 }
 
-// Schematic frame metadata — labels matched to each hero image
-const SCHEMATIC_FRAMES = [
-  { src: "/hero1.png", drawing: "M-23-700", rev: "B", sheet: "01 / 04", stamp: "M-23-700-HVAC", title: "HVAC CONTROL DIAGRAM · RTU-23" },
-  { src: "/hero4.png", drawing: "M-23-600", rev: "0", sheet: "02 / 04", stamp: "M-23-600-MECH", title: "MECHANICAL FLOOR PLAN · LEVEL 06" },
-  { src: "/hero2.png", drawing: "FT-240512", rev: "0", sheet: "03 / 04", stamp: "FT-240512-M0.0", title: "HVAC CONTROL DRAWING · FUTURE TOWER" },
-  { src: "/hero3.png", drawing: "M-23-700", rev: "C", sheet: "04 / 04", stamp: "M-23-700-CAT", title: "EQUIPMENT CATALOG · 8 SYSTEMS" },
+const HERO_DRAWINGS = [
+  { src: "/hero2.png", alt: "HVAC control drawing background" },
+  { src: "/hero4.png", alt: "Mechanical floor plan background" },
+  { src: "/hero3.png", alt: "Equipment catalog background" },
+  { src: "/hero1.png", alt: "HVAC control diagram background" },
 ];
 
 // Component ------------------------------------------------------------
@@ -72,9 +71,7 @@ export function HomeView({
   const [specimenIndex, setSpecimenIndex] = useState(0);
   const [atlasTotal, setAtlasTotal] = useState<number | null>(null);
   const [equipmentCount, setEquipmentCount] = useState<number>(147);
-  const [schematicIndex, setSchematicIndex] = useState(0);
   const currentSpecimen = specimens[specimenIndex] || featuredAtlas;
-  const currentSchematic = SCHEMATIC_FRAMES[schematicIndex];
 
   useEffect(() => {
     fetch("/api/atlas/points?limit=500")
@@ -133,13 +130,6 @@ export function HomeView({
     return () => clearInterval(timer);
   }, [advanceSpecimen, specimens.length]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSchematicIndex((i) => (i + 1) % SCHEMATIC_FRAMES.length);
-    }, 7000);
-    return () => clearInterval(timer);
-  }, []);
-
   const atlasCount = atlasTotal ?? specimens.length;
   const sheetLabel = useMemo(() => {
     const total = atlasCount || 812;
@@ -151,86 +141,45 @@ export function HomeView({
     <>
       {/* ============ HERO (sand) ============ */}
       <section className="sand-section">
-        <div className="bsk-wrap hero">
-          <div className="hero-grid">
-            <div className="hero-text">
-              <div className="hero-pulse">
-                <span className="pulse-dot" aria-hidden="true" />
-                <span>
-                  Updated this week · <b>{pulse.newWikiThisWeek}</b> new wiki entries · <b>{pulse.newAtlasThisWeek}</b> new atlas points · <b>{pulse.newPointStackThisWeek}</b> new PointStack posts
-                </span>
-              </div>
+        <div className="bsk-wrap home-hero">
+          <div className="home-hero-drawing-bg" aria-hidden="true">
+            {HERO_DRAWINGS.map((drawing, index) => (
+              <Image
+                key={drawing.src}
+                src={drawing.src}
+                alt={drawing.alt}
+                fill
+                priority={index === 0}
+                sizes="(max-width: 980px) 100vw, 70vw"
+                className="home-hero-drawing-frame"
+              />
+            ))}
+          </div>
 
-              <h1 className="hero-manifesto">
-                BAS info, community, and resources —{" "}
-                <em>built by a working engineer</em>, independent of any vendor.
-              </h1>
-
-              <p className="hero-lede">
-                A growing reference for the people who build, integrate, and operate building automation systems. Open data, open source, and a small community that actually answers questions.
-              </p>
-
-              <p className="hero-signoff">
-                <em>— Rob, Tucson</em>
-              </p>
+          <div className="home-hero-text">
+            <div className="home-hero-pulse">
+              <span className="pulse-dot" aria-hidden="true" />
+              <span>
+                Updated this week · <b>{pulse.newWikiThisWeek}</b> new wiki entries · <b>{pulse.newAtlasThisWeek}</b> new atlas points · <b>{pulse.newPointStackThisWeek}</b> new PointStack posts
+              </span>
             </div>
 
-            {/* Schematic viewer */}
-            <figure className="hero-schematic" aria-label="Featured technical drawing">
-              <div className="strip">
-                <span className="group">
-                  <span className="k">DRAWING</span> <span className="v">{currentSchematic.drawing}</span>
-                </span>
-                <span className="sep" aria-hidden />
-                <span className="group">
-                  <span className="k">REV</span> <span className="v">{currentSchematic.rev}</span>
-                </span>
-                <span className="sep" aria-hidden />
-                <span className="group">
-                  <span className="k">SHEET</span> <span className="v">{currentSchematic.sheet}</span>
-                </span>
-                <span className="live">
-                  <span className="dot" aria-hidden /> LIVE
-                </span>
-              </div>
-              <div className="viewport">
-                <span className="stamp">
-                  <span className="k">BSK</span>
-                  <span>{currentSchematic.stamp}</span>
-                </span>
-                <Image
-                  key={currentSchematic.src}
-                  src={currentSchematic.src}
-                  alt={currentSchematic.title}
-                  fill
-                  priority
-                  sizes="(max-width: 980px) 100vw, 50vw"
-                  className="active"
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-              <figcaption className="foot">
-                <span className="meta">
-                  <span className="k" style={{ color: "var(--punch)" }}>TITLE</span>
-                  <b>{currentSchematic.title}</b>
-                </span>
-                <span className="dots" role="tablist" aria-label="Schematic">
-                  {SCHEMATIC_FRAMES.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setSchematicIndex(i)}
-                      className={i === schematicIndex ? "active" : ""}
-                      aria-label={`View schematic ${i + 1}`}
-                    />
-                  ))}
-                </span>
-              </figcaption>
-            </figure>
+            <h1 className="home-hero-manifesto">
+              BAS info, community, and resources —{" "}
+              <em>built with a cross-system BAS perspective</em>, independent of any vendor.
+            </h1>
+
+            <p className="home-hero-lede">
+              A growing reference for the people who build, integrate, and operate building automation systems. Open data, open source, and a small community that actually answers questions.
+            </p>
+
+            <p className="home-hero-signoff">
+              <em>— Rob, Tucson</em>
+            </p>
           </div>
 
           {/* Metric cards */}
-          <div className="hero-metrics">
+          <div className="home-hero-metrics">
             <article className="card-light card-hover metric">
               <div className="head">
                 <h3 className="title">Atlas</h3>
