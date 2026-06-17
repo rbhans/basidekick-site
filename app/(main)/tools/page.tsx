@@ -1,5 +1,6 @@
-import { ToolsView } from "@/components/views/tools-view";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/lib/routes";
 
 export default function ToolsPage() {
-  return <ToolsView />;
+  redirect(ROUTES.OPEN_SOURCE);
 }

@@ -515,33 +515,33 @@ export function HomeView({
             <div className="index-group-bar">
               <span className="num">C /</span>
               <h3>Build</h3>
-              <span className="meta">Code & tooling</span>
+              <span className="meta">Code & shared work</span>
             </div>
             <div className="channels">
               <IndexCard
                 href={ROUTES.OPEN_SOURCE}
-                title="SRC"
+                title="SHARE"
                 num=".08.1"
-                desc="Repos, libraries, releases. Rust crates for BAS protocols — rustbac, more on the way."
+                desc="BAS links, files, modules, repos, scripts, and field-adjacent notes from BASidekick and the community."
                 stats={[
-                  { label: `${alsoHere.crateCount} repos`, kind: "secondary" },
-                  { label: "MIT · Rust", kind: "outline" },
+                  { label: `${alsoHere.crateCount} entries`, kind: "secondary" },
+                  { label: "Community", kind: "outline" },
                 ]}
-                cta="View on GitHub"
+                cta="Browse community share"
               />
               <IndexCard
-                href={ROUTES.TOOLS}
-                title="TOOLS"
+                href={ROUTES.POINTSTACK_RESOURCES}
+                title="QUEUE"
                 num=".08.2"
-                desc="Utilities for the field. Simulators, scanners, and other professional software."
-                stats={[{ label: "Coming soon", kind: "outline" }]}
-                cta="See what's coming"
+                desc="Templates, scripts, references, and files shared by signed-in PointStack members."
+                stats={[{ label: "User shared", kind: "outline" }]}
+                cta="Open resources"
               />
               <IndexCard
                 href={ROUTES.API_ATLAS}
                 title="API"
                 num=".08.3"
-                desc="JSON · no auth · stable URLs. Public Atlas data, free to integrate into your tools."
+                desc="JSON · no auth · stable URLs. Public Atlas data, free to integrate into your own apps."
                 stats={[{ label: "Public", kind: "secondary" }]}
                 cta="See the API"
               />

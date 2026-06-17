@@ -55,7 +55,7 @@ export function RustResourcesView() {
           className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors mb-6"
         >
           <span className="text-accent">←</span>
-          Back to open source
+          Back to Community Share
         </Link>
 
         <div className="pb-5 border-b border-foreground mb-8">

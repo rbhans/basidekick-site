@@ -21,7 +21,7 @@ const CATEGORY_LABELS: Record<PointStackResourceCategory, string> = {
   script: "Scripts",
   document: "Documents",
   guide: "Guides",
-  tool: "Tools",
+  tool: "Projects",
   other: "Other",
 };
 
@@ -31,7 +31,7 @@ const CATEGORY_CHIPS: { key: string | undefined; label: string }[] = [
   { key: "script", label: "Scripts" },
   { key: "document", label: "Documents" },
   { key: "guide", label: "Guides" },
-  { key: "tool", label: "Tools" },
+  { key: "tool", label: "Projects" },
 ];
 
 export function PointStackResourcesView() {
@@ -64,9 +64,15 @@ export function PointStackResourcesView() {
     return resources.filter(
       (r) =>
         r.title.toLowerCase().includes(q) ||
-        r.description?.toLowerCase().includes(q),
+        r.description?.toLowerCase().includes(q) ||
+        r.tags.some((tag) => tag.toLowerCase().includes(q)),
     );
   }, [resources, searchQuery]);
+
+  const availableTags = useMemo(
+    () => Array.from(new Set(resources.flatMap((resource) => resource.tags))).sort(),
+    [resources],
+  );
 
   return (
     <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
@@ -81,6 +87,7 @@ export function PointStackResourcesView() {
         </span>
         {user && (
           <CreateResourceDialog
+            suggestedTags={availableTags}
             onCreated={async () => {
               await loadResources();
             }}
@@ -95,7 +102,7 @@ export function PointStackResourcesView() {
       </div>
 
       <p className="italic text-[15px] text-muted-foreground mb-7">
-        Templates, scripts, and tools the community has open-sourced.
+        Templates, scripts, references, files, and project links the community has shared.
       </p>
 
       {/* Search */}
@@ -170,6 +177,18 @@ export function PointStackResourcesView() {
                   <p className="text-[13px] text-muted-foreground leading-[1.5] mt-1 line-clamp-2 max-w-[640px]">
                     {resource.description}
                   </p>
+                )}
+                {resource.tags.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {resource.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-sm border border-border px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[1.1px] text-muted-foreground"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
                 )}
                 <div className="mt-2 flex items-center gap-4 font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground">
                   <span className="inline-flex items-center gap-1 tabular-nums">

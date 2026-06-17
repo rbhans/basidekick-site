@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -38,10 +38,12 @@ import {
   RESOURCE_CATEGORIES,
 } from "@/lib/schemas/pointstack-content";
 import * as api from "../pointstack-api";
+import { TagInput } from "../shared/tag-input";
 
 interface CreateResourceDialogProps {
   trigger: ReactNode;
   onCreated?: (resource: PointStackResourceListing) => void | Promise<void>;
+  suggestedTags?: string[];
 }
 
 const CATEGORY_LABELS: Record<(typeof RESOURCE_CATEGORIES)[number], string> = {
@@ -49,22 +51,69 @@ const CATEGORY_LABELS: Record<(typeof RESOURCE_CATEGORIES)[number], string> = {
   script: "Script",
   document: "Document",
   guide: "Guide",
-  tool: "Tool",
+  tool: "Project",
   other: "Other",
 };
+
+const DEFAULT_RESOURCE_TAGS = [
+  "niagara",
+  "bacnet",
+  "modbus",
+  "hvac",
+  "graphics",
+  "commissioning",
+  "template",
+  "script",
+  "reference",
+  "field",
+  "rust",
+  "integration",
+];
 
 const defaultValues: CreateResourceFormValues = {
   title: "",
   description: "",
   category: "template",
+  tags: [],
+  imageUrls: "",
   fileUrl: "",
   externalLink: "",
   isFree: true,
 };
 
-export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialogProps) {
+function normalizeResourceTag(tag: string): string {
+  return tag
+    .trim()
+    .toLowerCase()
+    .replace(/^#+/, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+}
+
+function normalizeResourceTags(tags: string[]): string[] {
+  const uniqueTags = new Set<string>();
+
+  tags.forEach((tag) => {
+    const normalized = normalizeResourceTag(tag);
+    if (normalized) uniqueTags.add(normalized);
+  });
+
+  return Array.from(uniqueTags).slice(0, 8);
+}
+
+export function CreateResourceDialog({
+  trigger,
+  onCreated,
+  suggestedTags = [],
+}: CreateResourceDialogProps) {
   const [open, setOpen] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const tagSuggestions = useMemo(
+    () => normalizeResourceTags([...DEFAULT_RESOURCE_TAGS, ...suggestedTags]),
+    [suggestedTags],
+  );
 
   const form = useForm<CreateResourceFormValues>({
     resolver: zodResolver(createResourceFormSchema),
@@ -83,6 +132,11 @@ export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialo
       title: values.title.trim(),
       description: values.description.trim() || undefined,
       category: values.category,
+      tags: normalizeResourceTags(values.tags),
+      preview_images: values.imageUrls
+        .split(/\r?\n|,/)
+        .map((url) => url.trim())
+        .filter(Boolean),
       file_url: values.fileUrl.trim() || undefined,
       external_link: values.externalLink.trim() || undefined,
       is_free: values.isFree,
@@ -112,7 +166,7 @@ export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialo
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Share a Resource</DialogTitle>
+          <DialogTitle>Share an Entry</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -127,7 +181,7 @@ export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialo
                     <Input
                       {...field}
                       id="resource-title"
-                      placeholder="BACnet Startup Script Template"
+                      placeholder="BACnet startup checklist"
                       maxLength={200}
                     />
                   </FormControl>
@@ -146,7 +200,7 @@ export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialo
                     <Textarea
                       {...field}
                       id="resource-description"
-                      placeholder="Describe what this resource is and how to use it..."
+                      placeholder="Describe what this is, who it helps, and how to use it..."
                       rows={4}
                       maxLength={10000}
                     />
@@ -204,10 +258,52 @@ export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialo
 
             <FormField
               control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Tags</FormLabel>
+                  <FormControl>
+                    <TagInput
+                      value={field.value || []}
+                      onChange={field.onChange}
+                      maxTags={8}
+                      suggestions={tagSuggestions}
+                      placeholder="bacnet, niagara, field"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="imageUrls"
+              render={({ field }) => (
+                <FormItem className="space-y-2">
+                  <FormLabel>Image URLs (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      id="resource-image-urls"
+                      placeholder="https://example.com/screenshots/preview.png"
+                      rows={2}
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground">
+                    One image URL per line. You can add these later if the entry is mostly a file or link.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="fileUrl"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel>File URL</FormLabel>
+                  <FormLabel>File Link</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -226,17 +322,17 @@ export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialo
               name="externalLink"
               render={({ field }) => (
                 <FormItem className="space-y-2">
-                  <FormLabel>External Link</FormLabel>
+                  <FormLabel>Project or Reference Link</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       id="resource-external-link"
                       type="url"
-                      placeholder="https://github.com/user/bas-tools"
+                      placeholder="https://github.com/user/bas-project"
                     />
                   </FormControl>
                   <p className="text-xs text-muted-foreground">
-                    Provide a file URL, an external link, or both.
+                    Provide a file link, a project/reference link, or both.
                   </p>
                   <FormMessage />
                 </FormItem>
@@ -255,7 +351,7 @@ export function CreateResourceDialog({ trigger, onCreated }: CreateResourceDialo
                 Cancel
               </Button>
               <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Sharing..." : "Share Resource"}
+                {form.formState.isSubmitting ? "Sharing..." : "Share Entry"}
               </Button>
             </div>
           </form>

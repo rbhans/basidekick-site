@@ -44,6 +44,7 @@ export const ROUTES = {
   API_ATLAS: "/api/atlas",
   POINTSTACK_PEOPLE: "/pointstack/people",
   POINTSTACK_JOBS: "/pointstack/jobs",
+  POINTSTACK_RESOURCES: "/pointstack/resources",
   ACCOUNT: "/account",
   PROFILE: "/profile",
   SIGNIN: "/signin",

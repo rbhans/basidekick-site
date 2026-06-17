@@ -23,7 +23,7 @@ const CATEGORY_LABELS: Record<PointStackResourceCategory, string> = {
   script: "Script",
   document: "Document",
   guide: "Guide",
-  tool: "Tool",
+  tool: "Project",
   other: "Other",
 };
 
@@ -206,6 +206,19 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
           )}
         </button>
       </div>
+
+      {resource.tags.length > 0 && (
+        <div className="mb-6 flex flex-wrap gap-2">
+          {resource.tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-sm border border-border px-2 py-1 font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Preview image */}
       {resource.preview_images && resource.preview_images.length > 0 && (

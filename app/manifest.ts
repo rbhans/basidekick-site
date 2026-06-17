@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "BASidekick",
     short_name: "BASidekick",
     description:
-      "Independent BAS reference, community, and open-source toolkit. Maintained by Rob in Tucson.",
+      "Independent BAS reference, community, and shared resource hub. Maintained by Rob in Tucson.",
     start_url: "/",
     display: "standalone",
     background_color: "#fafaf8",

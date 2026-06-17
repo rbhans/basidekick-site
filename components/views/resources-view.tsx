@@ -5,7 +5,7 @@ import { ROUTES } from "@/lib/routes";
 
 const resources = [
   {
-    title: "Rust BAS Tools",
+    title: "Rust BAS Packages",
     description:
       "Open source Rust crates for BAS protocols, starting with rustbac for BACnet.",
     href: ROUTES.RESOURCES_RUST,
@@ -73,7 +73,7 @@ export function ResourcesView() {
 
       <section className="bsk-wrap-narrow py-14">
         <p className="italic text-[17px] text-muted-foreground text-center leading-[1.5] mb-12 max-w-[640px] mx-auto">
-          A working set of references and tools — built alongside the industry, free to use.
+          A working set of references and resources — built alongside the industry, free to use.
         </p>
 
         <div className="flex items-baseline gap-3.5 pb-3.5 border-b border-foreground mb-5">

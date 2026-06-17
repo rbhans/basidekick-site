@@ -1,319 +1,232 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { GithubLogo } from "@phosphor-icons/react";
+/* eslint-disable @next/next/no-img-element -- Shared entry images can come from arbitrary community-hosted URLs. */
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import Link from "next/link";
+import {
+  FileArrowDown,
+  Globe,
+  GithubLogo,
+  LinkSimple,
+  MagnifyingGlass,
+  Plus,
+  Stack,
+} from "@phosphor-icons/react";
+import { CreateResourceDialog } from "@/components/pointstack/resources/create-resource-dialog";
+import { useAuth } from "@/hooks/use-auth";
+import type { PointStackResourceCategory, PointStackResourceListing } from "@/lib/types";
+import { ROUTES } from "@/lib/routes";
+import * as pointStackApi from "@/components/pointstack/pointstack-api";
 
-type ProjectKind = "Protocol" | "Tool" | "Module" | "BMS";
+type ShareKind = "Protocol" | "Project" | "Module" | "File";
+type ShareStage = "Active" | "Preview" | "Planned";
+type ShareAccess = "Open source" | "Project site" | "File" | "Planned";
+type ShareLinkType = "github" | "file" | "site" | "external";
 
-interface ProjectMeta {
+interface CommunityShareLink {
+  label: string;
+  href: string;
+  type?: ShareLinkType;
+}
+
+interface CommunityShareImage {
+  src: string;
+  alt: string;
+}
+
+interface CommunityShareEntry {
+  id: string;
+  title: string;
+  protocol: string;
+  kind: ShareKind;
+  stage: ShareStage;
+  access: ShareAccess;
+  summary: string;
+  description: ReactNode;
+  owner: string;
   language: string;
   license: string;
   latest: string;
-  stars: number | string;
   lastCommit: string;
-  status: string;
+  stars: number | string;
+  images?: CommunityShareImage[];
+  highlights: string[];
+  snippets?: {
+    label: string;
+    body: string;
+  }[];
+  tags: string[];
+  links: CommunityShareLink[];
 }
 
-interface ProjectLink {
-  label: string;
-  href: string;
-}
-
-interface FeatureNote {
-  title: string;
-  body: string;
-}
-
-interface Snippet {
-  label: string;
-  body: string;
-}
-
-interface OpenSourceProject {
-  id: string;
-  name: string;
-  protocol: string;
-  kind: ProjectKind;
-  /** Short tagline. Should be true, not marketing. */
-  tagline: React.ReactNode;
-  /** Long description. Sourced from the live site or the project's own README. */
-  description: React.ReactNode;
-  githubUrl: string;
-  meta: ProjectMeta;
-  /** Features pulled verbatim or paraphrased from the project's README. */
-  features: FeatureNote[];
-  /** Real example code or config. Either copied from the repo or omitted. */
-  snippets?: Snippet[];
-  links: ProjectLink[];
-}
-
-// All data below is sourced from each project's GitHub README, Cargo.toml,
-// local module metadata, or public site. Nothing is invented. If a field is
-// unknown it shows "—". Existing repos last cross-checked: 2026-05-17.
-// BASk Stream added from local README/module metadata and GitHub on 2026-05-26.
-const openSourceProjects: OpenSourceProject[] = [
+// Directory entries are hand-curated from project READMEs, public project sites,
+// or local module metadata. Unknown values stay explicit instead of guessed.
+const communityShareEntries: CommunityShareEntry[] = [
   {
     id: "rustbac",
-    name: "rustbac",
+    title: "rustbac",
     protocol: "BACnet",
     kind: "Protocol",
-    tagline: (
-      <>
-        Rust <b>BACnet workspace</b> · BACnet/IP, BACnet/SC, MS/TP
-      </>
-    ),
+    stage: "Active",
+    access: "Open source",
+    summary: "Rust BACnet workspace for BACnet/IP, BACnet/SC, MS/TP, clients, servers, and CLI work.",
     description: (
       <>
-        Open source Rust crate for BACnet communication in BAS applications. The first protocol crate in the BASidekick Rust suite. The workspace ships a <em>no_std</em> core encoder/decoder, async BACnet/IP transport, BACnet/SC WebSocket transport, MS/TP transport, a high-level client API, server scaffolding, and a set of CLI tools.
+        Open source Rust crate for BACnet communication in BAS applications. The workspace ships a <em>no_std</em> core encoder/decoder, async BACnet/IP transport, BACnet/SC WebSocket transport, MS/TP transport, a high-level client API, server scaffolding, and CLI commands.
       </>
     ),
-    githubUrl: "https://github.com/rbhans/rust-bac",
-    meta: {
-      language: "Rust",
-      license: "MIT OR Apache-2.0",
-      latest: "0.4.1",
-      stars: 2,
-      lastCommit: "May 12, 2026",
-      status: "Active",
-    },
-    features: [
-      {
-        title: "no_std core encoder/decoder",
-        body: "rustbac-core handles BACnet encoding, NPDU/APDU, types, and service payloads without depending on the standard library.",
-      },
-      {
-        title: "Multiple transports",
-        body: "BACnet/IP (UDP/BVLC) with BBMD/FDR support, BACnet/SC WebSocket, and MS/TP — each in its own crate.",
-      },
-      {
-        title: "Full BACnet service coverage",
-        body: "Who-Is/I-Am, Who-Has/I-Have, Read/Write Property (single + multiple), ReadRange, Atomic Read/Write File, Subscribe COV, event/alarm services, and ConfirmedPrivateTransfer.",
-      },
-      {
-        title: "CLI binaries",
-        body: "rustbac-tools ships whois, whohas, readprop, writeprop, subcov, readrange, readfile, dcc, reinit, timesync, and more.",
-      },
+    owner: "BASidekick",
+    language: "Rust",
+    license: "MIT OR Apache-2.0",
+    latest: "0.4.1",
+    lastCommit: "May 12, 2026",
+    stars: 2,
+    tags: ["bacnet", "rust", "protocol"],
+    highlights: [
+      "no_std core encoder/decoder for BACnet NPDU/APDU, types, and service payloads.",
+      "BACnet/IP with BBMD/FDR support, BACnet/SC WebSocket, and MS/TP transports.",
+      "CLI commands for whois, readprop, writeprop, subcov, readrange, file services, DCC, and time sync.",
     ],
     snippets: [
       {
         label: "Cargo.toml",
         body: `[dependencies]\nrustbac-client = "0.4"\nrustbac-core = "0.4"\nrustbac-datalink = "0.4"`,
       },
-      {
-        label: "examples/discover_devices.rs",
-        body: `use rustbac_client::BacnetClient;\nuse std::time::Duration;\n\n#[tokio::main]\nasync fn main() -> Result<(), Box<dyn std::error::Error>> {\n    let client = BacnetClient::new().await?;\n    let devices = client.who_is(\n        None,\n        Duration::from_secs(3),\n    ).await?;\n    for device in &devices {\n        println!("{:?} at {}", device.device_id, device.address);\n    }\n    Ok(())\n}`,
-      },
     ],
     links: [
-      { label: "View on GitHub", href: "https://github.com/rbhans/rust-bac" },
+      { label: "GitHub", href: "https://github.com/rbhans/rust-bac", type: "github" },
     ],
   },
   {
     id: "rustmod",
-    name: "rustmod",
+    title: "rustmod",
     protocol: "Modbus",
     kind: "Protocol",
-    tagline: (
-      <>
-        Rust <b>Modbus workspace</b> · TCP and RTU, client + server
-      </>
-    ),
+    stage: "Active",
+    access: "Open source",
+    summary: "Rust Modbus workspace with TCP and RTU transports, async and sync clients, and server support.",
     description: (
       <>
-        Open source Rust crate for Modbus communication in BAS applications. A modern, safe Rust Modbus library for building automation and industrial integrations. <em>Zero-copy codec</em>, no_std core, async and sync clients, TCP + RTU transports, and server support.
+        Open source Rust crate for Modbus communication in BAS applications. A modern, safe Rust Modbus library for building automation and industrial integrations with <em>zero-copy codec</em>, no_std core, async and sync clients, TCP and RTU transports, and server support.
       </>
     ),
-    githubUrl: "https://github.com/rbhans/rust-mod",
-    meta: {
-      language: "Rust",
-      license: "MIT OR Apache-2.0",
-      latest: "0.2.0",
-      stars: 0,
-      lastCommit: "Mar 5, 2026",
-      status: "Active",
-    },
-    features: [
-      {
-        title: "Function codes 01–43",
-        body: "Read/write coils, registers, holding/input registers, exception status, diagnostics, mask write, read FIFO queue, MEI device identification, and custom vendor codes.",
-      },
-      {
-        title: "Zero-copy, no_std core",
-        body: "rustmod-core decodes PDUs by borrowing from the input buffer with no heap allocation. Works without std or alloc for embedded use.",
-      },
-      {
-        title: "Async + sync clients",
-        body: "ModbusClient for async workflows, SyncModbusTcpClient for blocking. Both clonable across tasks.",
-      },
-      {
-        title: "Server support + simulator",
-        body: "TCP server, RTU-over-TCP server, optional native RTU serial server, and an InMemoryModbusService for testing without hardware.",
-      },
+    owner: "BASidekick",
+    language: "Rust",
+    license: "MIT OR Apache-2.0",
+    latest: "0.2.0",
+    lastCommit: "Mar 5, 2026",
+    stars: 0,
+    tags: ["modbus", "rust", "protocol"],
+    highlights: [
+      "Function codes 01-43, including coils, registers, diagnostics, file records, FIFO, and MEI.",
+      "Zero-copy no_std core that decodes PDUs by borrowing from the input buffer.",
+      "TCP server, RTU-over-TCP server, optional native RTU serial server, and in-memory simulator.",
     ],
     snippets: [
       {
         label: "Cargo.toml",
         body: `[dependencies]\nrustmod-client = "0.2"\nrustmod-datalink = "0.2"\ntokio = { version = "1", features = ["full"] }`,
       },
-      {
-        label: "TCP read holding registers",
-        body: `use rustmod_client::ModbusClient;\nuse rustmod_datalink::ModbusTcpTransport;\n\n#[tokio::main]\nasync fn main() -> Result<(), Box<dyn std::error::Error>> {\n    let link = ModbusTcpTransport::connect("127.0.0.1:502").await?;\n    let client = ModbusClient::new(link);\n    let regs = client\n        .read_holding_registers(1, 0x006B, 3)\n        .await?;\n    println!("registers: {regs:?}");\n    Ok(())\n}`,
-      },
     ],
     links: [
-      { label: "View on GitHub", href: "https://github.com/rbhans/rust-mod" },
+      { label: "GitHub", href: "https://github.com/rbhans/rust-mod", type: "github" },
     ],
   },
   {
     id: "qrbas",
-    name: "QRBAS",
-    protocol: "Tool",
-    kind: "Tool",
-    tagline: (
-      <>
-        Self-hosted <b>QR equipment pages</b> for BAS teams · Niagara connector
-      </>
-    ),
+    title: "QRBAS",
+    protocol: "Niagara",
+    kind: "Project",
+    stage: "Active",
+    access: "Open source",
+    summary: "Self-hosted QR equipment pages for BAS teams, with a local Niagara connector and no cloud backend.",
     description: (
       <>
-        Open source QR code tool for BAS workflows. Run one small server on the local network, add Niagara stations, print QR codes for equipment, and let technicians scan with a phone camera to see live point data in the browser. <em>No app store. No cloud backend. No technician logins.</em>
+        Open source QR code project for BAS workflows. Run one small server on the local network, add Niagara stations, print QR codes for equipment, and let technicians scan with a phone camera to see live point data in the browser. <em>No app store. No cloud backend. No technician logins.</em>
       </>
     ),
-    githubUrl: "https://github.com/rbhans/qrbas",
-    meta: {
-      language: "Go",
-      license: "—",
-      latest: "—",
-      stars: 0,
-      lastCommit: "Apr 28, 2026",
-      status: "Active",
-    },
-    features: [
-      {
-        title: "Embedded PWA + SQLite",
-        body: "Single Go binary, embedded progressive web app, SQLite storage in ~/.qrbas/qrbas.db by default.",
-      },
-      {
-        title: "Niagara connector",
-        body: "Add Niagara stations from the admin UI, configure equipment, and print QR codes that resolve to live point data.",
-      },
-      {
-        title: "Local-network only",
-        body: "Runs on the BAS network. No cloud backend, no accounts, no telemetry.",
-      },
+    owner: "BASidekick",
+    language: "Go",
+    license: "-",
+    latest: "-",
+    lastCommit: "Apr 28, 2026",
+    stars: 0,
+    tags: ["niagara", "qr", "field"],
+    highlights: [
+      "Single Go binary with embedded PWA and SQLite storage.",
+      "Niagara station setup from the admin UI, equipment mapping, and printable QR codes.",
+      "Runs on the BAS network with no cloud backend, accounts, or telemetry.",
     ],
     snippets: [
       {
         label: "Quick start",
         body: `cd server\ngo run .\n# open http://localhost:8080`,
       },
-      {
-        label: "Build",
-        body: `cd server\ngo build -trimpath \\\n    -ldflags="-s -w" \\\n    -o qrbas-server .`,
-      },
     ],
     links: [
-      { label: "View on GitHub", href: "https://github.com/rbhans/qrbas" },
+      { label: "GitHub", href: "https://github.com/rbhans/qrbas", type: "github" },
       { label: "Project site", href: "https://rbhans.github.io/qrbas/" },
     ],
   },
   {
     id: "bask-stream",
-    name: "BASk Stream",
+    title: "BASk Stream",
     protocol: "Niagara 4",
     kind: "Module",
-    tagline: (
-      <>
-        Niagara 4 <b>runtime module</b> · authenticated WebSocket station API
-      </>
-    ),
+    stage: "Active",
+    access: "Open source",
+    summary: "Niagara 4 runtime module that exposes station data through an authenticated WebSocket API.",
     description: (
       <>
-        BASk Stream is a Niagara 4 runtime module that exposes station data through an authenticated WebSocket API. It gives external graphics, dashboards, commissioning tools, and integrations a practical live-data path without forcing every app to live inside Niagara UI.
+        BASk Stream gives external graphics, dashboards, commissioning apps, and integrations a practical live-data path without forcing every app to live inside Niagara UI.
       </>
     ),
-    githubUrl: "https://github.com/rbhans/bask-stream",
-    meta: {
-      language: "Java",
-      license: "—",
-      latest: "—",
-      stars: 0,
-      lastCommit: "May 26, 2026",
-      status: "Active",
-    },
-    features: [
-      {
-        title: "Station discovery",
-        body: "Browse station structure, describe objects, search bounded branches, and request metadata for devices, points, schedules, histories, alarms, and parent objects.",
-      },
-      {
-        title: "Live values",
-        body: "Read point snapshots and keep active graphics current with replaceable point subscriptions, lease renewal, and connection-scoped cleanup.",
-      },
-      {
-        title: "Writable points",
-        body: "Describe writable capabilities before rendering controls, then set, override, auto, or emergency override writable points through Niagara permissions.",
-      },
-      {
-        title: "Alarms, schedules, and histories",
-        body: "Read bounded alarm snapshots, subscribe to alarm changes, inspect schedules, and pull history records when an external app needs those views.",
-      },
+    owner: "BASidekick",
+    language: "Java",
+    license: "-",
+    latest: "-",
+    lastCommit: "May 26, 2026",
+    stars: 0,
+    tags: ["niagara", "websocket", "integration"],
+    highlights: [
+      "Station browsing, object descriptions, bounded search, and metadata for points, devices, schedules, histories, and alarms.",
+      "Point snapshots and replaceable live subscriptions with lease renewal and connection cleanup.",
+      "Writable point capability checks before set, override, auto, or emergency override controls render.",
     ],
     snippets: [
       {
         label: "Station endpoint",
         body: `GET https://<station>/stream/health\nwss://<station>/stream`,
       },
-      {
-        label: "Companion demo",
-        body: `node tools/baskstream-live-smoke.mjs\n# connects to the configured station`,
-      },
     ],
     links: [
-      { label: "View on GitHub", href: "https://github.com/rbhans/bask-stream" },
+      { label: "GitHub", href: "https://github.com/rbhans/bask-stream", type: "github" },
     ],
   },
   {
     id: "opencrate-bms",
-    name: "OpenCrate BMS",
+    title: "OpenCrate BMS",
     protocol: "BMS",
-    kind: "BMS",
-    tagline: (
-      <>
-        A <b>hobby BMS</b> · being built from scratch in Rust · coming soon
-      </>
-    ),
+    kind: "Project",
+    stage: "Planned",
+    access: "Project site",
+    summary: "Hobby BMS project being built from scratch in Rust. Public release is still pending.",
     description: (
       <>
-        A hobby project to learn various parts of BMS by building the software from the ground up in pure Rust. Public release is <em>still pending</em>; the marketing site lists the planned feature set below.
+        A hobby project to learn various parts of BMS by building the software from the ground up in pure Rust. Public release is <em>still pending</em>; the project site lists the planned feature set.
       </>
     ),
-    githubUrl: "https://rbhans.github.io/opencrate-site/",
-    meta: {
-      language: "Rust",
-      license: "MIT",
-      latest: "—",
-      stars: "—",
-      lastCommit: "—",
-      status: "Coming soon",
-    },
-    features: [
-      {
-        title: "Multi-protocol",
-        body: "Planned: BACnet/IP, BACnet/SC, MS/TP, Modbus TCP/RTU with auto-discovery, COV subscriptions, priority writes, and block reads.",
-      },
-      {
-        title: "Alarms & routing",
-        body: "Planned: high/low limit, deadband, intrinsic alarms; notification routing to email, SMS, or webhooks; shelving and escalation tiers.",
-      },
-      {
-        title: "Trend logging",
-        body: "Planned: interval and COV history with auto-downsampling across storage tiers; backfill from BACnet TrendLogs; CSV export.",
-      },
-      {
-        title: "Visual logic engine + commissioning",
-        body: "Planned: a block editor that compiles to scripts (PID, timers, math, comparisons) and per-device commissioning checklists with full audit trail.",
-      },
+    owner: "BASidekick",
+    language: "Rust",
+    license: "MIT",
+    latest: "-",
+    lastCommit: "-",
+    stars: "-",
+    tags: ["rust", "bms", "project"],
+    highlights: [
+      "Planned multi-protocol support for BACnet/IP, BACnet/SC, MS/TP, Modbus TCP, and Modbus RTU.",
+      "Planned alarms, routing, trend logging, visual logic, and commissioning workflows.",
+      "Useful as a public build log while the software is still forming.",
     ],
     links: [
       { label: "Project site", href: "https://rbhans.github.io/opencrate-site/" },
@@ -321,153 +234,428 @@ const openSourceProjects: OpenSourceProject[] = [
   },
 ];
 
-type FilterKind = "all" | "protocol" | "tool" | "module" | "bms";
+type KindFilter = "all" | Lowercase<ShareKind>;
+
+const KIND_FILTERS: { value: KindFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "protocol", label: "Protocol" },
+  { value: "project", label: "Projects" },
+  { value: "module", label: "Modules" },
+  { value: "file", label: "Files" },
+];
+
+const RESOURCE_CATEGORY_LABELS: Record<PointStackResourceCategory, string> = {
+  template: "Template",
+  script: "Script",
+  document: "Document",
+  guide: "Guide",
+  tool: "Project",
+  other: "Other",
+};
+
+const FILE_LINK_PATTERN = /\.(?:7z|bac|bog|csv|docx?|gz|jar|json|mod|n4|pdf|pptx?|px|tar|tgz|txt|xlsx?|xml|ya?ml|zip)(?:[?#].*)?$/i;
+const HAS_SUPABASE_CONFIG = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+);
+
+function getShareLinkType(link: CommunityShareLink): ShareLinkType {
+  if (link.type) return link.type;
+  const href = link.href.toLowerCase();
+  if (href.includes("github.com")) return "github";
+  if (FILE_LINK_PATTERN.test(href)) return "file";
+  if (/^https?:\/\//i.test(href)) return "site";
+  return "external";
+}
+
+function resourceToCommunityShareEntry(resource: PointStackResourceListing): CommunityShareEntry {
+  const topic = RESOURCE_CATEGORY_LABELS[resource.category];
+  const links: CommunityShareLink[] = [];
+
+  if (resource.file_url) {
+    links.push({ label: "File", href: resource.file_url, type: "file" });
+  }
+
+  if (resource.external_link) {
+    const isGithub = resource.external_link.toLowerCase().includes("github.com");
+    links.push({
+      label: isGithub ? "GitHub" : "Reference",
+      href: resource.external_link,
+      type: isGithub ? "github" : "site",
+    });
+  }
+
+  links.push({
+    label: "Entry",
+    href: ROUTES.POINTSTACK_RESOURCE(resource.slug),
+    type: "external",
+  });
+
+  return {
+    id: `resource-${resource.id}`,
+    title: resource.title,
+    protocol: topic,
+    kind: resource.file_url ? "File" : "Project",
+    stage: "Active",
+    access: resource.file_url ? "File" : "Project site",
+    summary: resource.description || "Community-submitted BAS entry.",
+    description: resource.description || "Community-submitted entry. Add a description when more detail is available.",
+    owner: resource.author?.display_name || "Community",
+    language: "-",
+    license: resource.is_free ? "Free" : "Premium",
+    latest: "Shared",
+    lastCommit: formatShareDate(resource.created_at),
+    stars: resource.upvote_count,
+    images: (resource.preview_images || []).map((src, index) => ({
+      src,
+      alt: `${resource.title} image ${index + 1}`,
+    })),
+    tags: resource.tags || [],
+    highlights: [
+      `${topic} shared by ${resource.author?.display_name || "a community member"}.`,
+      resource.file_url ? "Includes a file link." : "Includes a project or reference link.",
+      `${resource.comment_count} comments and ${resource.download_count} opens.`,
+    ],
+    links,
+  };
+}
+
+function formatShareDate(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 export function OpenSourceView() {
-  const [filter, setFilter] = useState<FilterKind>("all");
+  const { user } = useAuth();
+  const [kindFilter, setKindFilter] = useState<KindFilter>("all");
+  const [protocolFilter, setProtocolFilter] = useState("all");
+  const [tagFilter, setTagFilter] = useState("all");
+  const [query, setQuery] = useState("");
+  const [sharedResources, setSharedResources] = useState<PointStackResourceListing[]>([]);
 
-  const projects = useMemo(() => {
-    if (filter === "all") return openSourceProjects;
-    return openSourceProjects.filter((p) => p.kind.toLowerCase() === filter);
-  }, [filter]);
+  useEffect(() => {
+    if (!HAS_SUPABASE_CONFIG) return;
+
+    let cancelled = false;
+
+    pointStackApi
+      .fetchResources(undefined, 50)
+      .then((resources) => {
+        if (!cancelled) setSharedResources(resources);
+      })
+      .catch((error) => {
+        console.error("Error loading shared resources:", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const allEntries = useMemo(
+    () => [
+      ...sharedResources.map(resourceToCommunityShareEntry),
+      ...communityShareEntries,
+    ],
+    [sharedResources],
+  );
+
+  const protocols = useMemo(
+    () => Array.from(new Set(allEntries.map((entry) => entry.protocol))).sort(),
+    [allEntries],
+  );
+
+  const tags = useMemo(
+    () => Array.from(new Set(allEntries.flatMap((entry) => entry.tags))).sort(),
+    [allEntries],
+  );
+
+  const entries = useMemo(() => {
+    const q = query.trim().toLowerCase();
+
+    return allEntries.filter((entry) => {
+      const matchesKind = kindFilter === "all" || entry.kind.toLowerCase() === kindFilter;
+      const matchesProtocol = protocolFilter === "all" || entry.protocol === protocolFilter;
+      const matchesTag = tagFilter === "all" || entry.tags.includes(tagFilter);
+      const searchText = [
+        entry.title,
+        entry.protocol,
+        entry.kind,
+        entry.stage,
+        entry.access,
+        entry.summary,
+        entry.owner,
+        entry.language,
+        ...entry.tags,
+        ...entry.highlights,
+        ...entry.links.flatMap((link) => [link.label, link.href]),
+      ].join(" ").toLowerCase();
+      const matchesQuery = !q || searchText.includes(q);
+      return matchesKind && matchesProtocol && matchesTag && matchesQuery;
+    });
+  }, [allEntries, kindFilter, protocolFilter, query, tagFilter]);
+
+  const activeCount = allEntries.filter((entry) => entry.stage === "Active").length;
+  const sourceCount = allEntries.filter((entry) => entry.access === "Open source").length;
 
   return (
     <section className="sand-section">
-      <div className="nw-page">
-        <div className="nw-head" style={{ padding: "0 0 14px", margin: "0 0 28px" }}>
+      <div className="nw-page ts-page">
+        <header className="nw-head ts-head">
           <span className="num">.05</span>
-          <h1>Source / Open Source BAS Tools</h1>
+          <h1>Community Share</h1>
           <span className="id">
-            <span className="live-dot" /> <b>{openSourceProjects.length}</b> projects
+            <span className="live-dot" /> <b>{allEntries.length}</b> entries
           </span>
-        </div>
+        </header>
 
-        <p className="nw-tagline">
-          Rust crates and tools for building BAS software from the ground up. <em>Protocol-first</em>, practical, open source.
+        <p className="nw-tagline ts-tagline">
+          BAS projects, references, files, repos, and field notes. <em>Open source when possible</em>, useful first.
         </p>
 
-        <div className="sc-filter">
-          <span className="label">Filter</span>
-          {(["all", "protocol", "tool", "module", "bms"] as const).map((f) => (
-            <button
-              key={f}
-              className="nw-pill"
-              aria-pressed={filter === f}
-              onClick={() => setFilter(f)}
-            >
-              {f === "all" ? "All" : f === "bms" ? "BMS" : f[0].toUpperCase() + f.slice(1)}
-            </button>
-          ))}
-          <span className="count">
-            <b>{projects.length}</b>shown
-          </span>
-        </div>
-
-        {projects.map((project, idx) => (
-          <article key={project.id} className="sc-section" id={project.id}>
-            <header className="sc-section-head">
-              <span className="sc-num">.{String(idx + 1).padStart(2, "0")}</span>
-              <div className="sc-title-stack">
-                <div className="row">
-                  <h2 className="sc-name">{project.name}</h2>
-                  <span className="sc-pill is-protocol">
-                    {project.kind} · {project.protocol}
-                  </span>
-                  <span className="sc-pill is-status">
-                    <span className="dot" />
-                    {project.meta.status}
-                  </span>
-                </div>
-                <div className="sc-tagline">{project.tagline}</div>
+        <div className="ts-shell">
+          <aside className="ts-rail" aria-label="Community share controls">
+            <div className="ts-rail-panel">
+              <div className="ts-rail-hd">
+                <span>Index</span>
+                <b>{entries.length}</b>
               </div>
-              <a
-                className="sc-cta"
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GithubLogo weight="fill" />
-                View on GitHub
-              </a>
-            </header>
 
-            <p className="sc-desc">{project.description}</p>
+              <label className="ts-search">
+                <MagnifyingGlass aria-hidden="true" />
+                <span className="sr-only">Search entries</span>
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Search entries..."
+                />
+              </label>
 
-            <div className="sc-meta tabular-nums">
-              <MetaCell k="Language" v={project.meta.language} />
-              <MetaCell k="License" v={project.meta.license} />
-              <MetaCell k="Latest" v={project.meta.latest} />
-              <MetaCell k="Stars" v={String(project.meta.stars)} />
-              <MetaCell k="Last commit" v={project.meta.lastCommit} />
-              <MetaCell k="Status" v={project.meta.status} dot />
-            </div>
-
-            <div className="sc-body">
-              <div className="sc-block">
-                <h4>
-                  <span className="idx">A</span>Features
-                </h4>
-                <ul className="sc-features">
-                  {project.features.map((feat, fi) => (
-                    <li key={fi} data-n={String(fi + 1).padStart(2, "0")}>
-                      <span>
-                        <b>{feat.title}</b>
-                        {feat.body}
-                      </span>
-                    </li>
+              <div className="ts-filter-group">
+                <span className="ts-filter-label">Kind</span>
+                <div className="ts-filter-buttons">
+                  {KIND_FILTERS.map((filter) => (
+                    <button
+                      key={filter.value}
+                      type="button"
+                      className="nw-pill"
+                      aria-pressed={kindFilter === filter.value}
+                      onClick={() => setKindFilter(filter.value)}
+                    >
+                      {filter.label}
+                    </button>
                   ))}
-                </ul>
+                </div>
               </div>
-              <aside className="sc-side">
-                {project.snippets?.map((snip, si) => (
-                  <div key={si} className="sc-snippet">
-                    <div className="hd">
-                      <span className="lbl">{snip.label}</span>
-                      <button
-                        type="button"
-                        className="copy"
-                        onClick={() => navigator.clipboard?.writeText(snip.body)}
-                      >
-                        Copy
+
+              <div className="ts-filter-group">
+                <span className="ts-filter-label">Topic</span>
+                <div className="ts-filter-buttons">
+                  <button
+                    type="button"
+                    className="nw-pill"
+                    aria-pressed={protocolFilter === "all"}
+                    onClick={() => setProtocolFilter("all")}
+                  >
+                    All
+                  </button>
+                  {protocols.map((protocol) => (
+                    <button
+                      key={protocol}
+                      type="button"
+                      className="nw-pill"
+                      aria-pressed={protocolFilter === protocol}
+                      onClick={() => setProtocolFilter(protocol)}
+                    >
+                      {protocol}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="ts-filter-group">
+                <span className="ts-filter-label">Tags</span>
+                <div className="ts-filter-buttons is-scrollable">
+                  <button
+                    type="button"
+                    className="nw-pill"
+                    aria-pressed={tagFilter === "all"}
+                    onClick={() => setTagFilter("all")}
+                  >
+                    All
+                  </button>
+                  {tags.map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      className="nw-pill"
+                      aria-pressed={tagFilter === tag}
+                      onClick={() => setTagFilter(tag)}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="ts-stats" aria-label="Directory stats">
+                <span>
+                  <b>{activeCount}</b>
+                  Active
+                </span>
+                <span>
+                  <b>{sourceCount}</b>
+                  Open
+                </span>
+              </div>
+
+              <div className="ts-submit">
+                <span className="ts-filter-label">Community queue</span>
+                <p>Post a title, description, images, and a file or project link. Images can be added now or later.</p>
+                {user ? (
+                  <CreateResourceDialog
+                    suggestedTags={tags}
+                    onCreated={(resource) => {
+                      setSharedResources((current) => [resource, ...current]);
+                    }}
+                    trigger={
+                      <button type="button" className="ts-submit-action">
+                        <Plus aria-hidden="true" />
+                        Share an entry
                       </button>
-                    </div>
-                    <pre>{snip.body}</pre>
-                  </div>
-                ))}
-                {project.links.length > 0 && (
-                  <div className="sc-block">
-                    <h4>
-                      <span className="idx">B</span>Links
-                    </h4>
-                    <ul className="sc-links">
-                      {project.links.map((lnk, li) => (
-                        <li key={li}>
-                          <a href={lnk.href} target="_blank" rel="noreferrer">
-                            {lnk.label}
-                            <span className="arr">→</span>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                    }
+                  />
+                ) : (
+                  <Link href={ROUTES.SIGNIN} className="ts-submit-action">
+                    <Plus aria-hidden="true" />
+                    Sign in to share
+                  </Link>
                 )}
-              </aside>
+              </div>
             </div>
-          </article>
-        ))}
+          </aside>
+
+          <div className="ts-results">
+            {entries.length > 0 ? (
+              entries.map((entry, index) => (
+                <CommunityShareCard key={entry.id} entry={entry} index={index} />
+              ))
+            ) : (
+              <div className="ts-empty">
+                <Stack aria-hidden="true" />
+                <h2>No entries match that filter.</h2>
+                <p>Clear a filter or share the thing you expected to find.</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-function MetaCell({ k, v, dot = false }: { k: string; v: string; dot?: boolean }) {
+function CommunityShareCard({ entry, index }: { entry: CommunityShareEntry; index: number }) {
+  const primaryLink = entry.links[0];
+  const primaryImage = entry.images?.[0];
+
   return (
-    <div className="cell">
+    <article className={primaryImage ? "ts-card has-shot" : "ts-card"} id={entry.id}>
+      {primaryImage && (
+        <div className="ts-shot" aria-label={`${entry.title} image`}>
+          <img
+            src={primaryImage.src}
+            alt={primaryImage.alt}
+            loading="lazy"
+          />
+        </div>
+      )}
+
+      <div className="ts-card-main">
+        <div className="ts-card-kicker">
+          <span className="ts-num">.{String(index + 1).padStart(2, "0")}</span>
+          <span>{entry.kind}</span>
+          <span>{entry.protocol}</span>
+          <span>{entry.access}</span>
+          <span className={entry.stage === "Active" ? "is-live" : ""}>{entry.stage}</span>
+        </div>
+
+        <div className="ts-card-title">
+          <h2>{entry.title}</h2>
+          {primaryLink && (
+            <a href={primaryLink.href} target="_blank" rel="noreferrer" aria-label={`Open ${entry.title}`}>
+              <ShareLinkIcon link={primaryLink} />
+            </a>
+          )}
+        </div>
+
+        <p className="ts-summary">{entry.summary}</p>
+
+        {entry.tags.length > 0 && (
+          <div className="ts-tags" aria-label={`${entry.title} tags`}>
+            {entry.tags.map((tag) => (
+              <span key={tag}>#{tag}</span>
+            ))}
+          </div>
+        )}
+
+        <div className="ts-meta tabular-nums">
+          <MetaCell k="Owner" v={entry.owner} />
+          <MetaCell k="Lang" v={entry.language} />
+          <MetaCell k="License" v={entry.license} />
+          <MetaCell k="Latest" v={entry.latest} />
+          <MetaCell k="Stars" v={String(entry.stars)} />
+          <MetaCell k="Commit" v={entry.lastCommit} />
+        </div>
+
+        <div className="ts-actions">
+          {entry.links.map((link) => (
+            <a key={`${entry.id}-${link.href}`} href={link.href} target="_blank" rel="noreferrer">
+              <ShareLinkIcon link={link} />
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <details className="ts-detail">
+          <summary>Description and notes</summary>
+          <p className="ts-desc">{entry.description}</p>
+          <ul>
+            {entry.highlights.map((highlight, highlightIndex) => (
+              <li key={highlightIndex}>{highlight}</li>
+            ))}
+          </ul>
+          {entry.snippets?.map((snippet) => (
+            <div key={snippet.label} className="ts-code">
+              <span>{snippet.label}</span>
+              <pre>{snippet.body}</pre>
+            </div>
+          ))}
+        </details>
+      </div>
+    </article>
+  );
+}
+
+function ShareLinkIcon({ link }: { link: CommunityShareLink }) {
+  const linkType = getShareLinkType(link);
+
+  if (linkType === "github") return <GithubLogo weight="fill" />;
+  if (linkType === "file") return <FileArrowDown />;
+  if (linkType === "site") return <Globe />;
+  return <LinkSimple />;
+}
+
+function MetaCell({ k, v }: { k: string; v: string }) {
+  return (
+    <span className="ts-meta-cell">
       <span className="k">{k}</span>
-      <span className="v">
-        {dot && v !== "—" && <span className="commit-dot" />}
-        {v}
-      </span>
-    </div>
+      <span className="v">{v}</span>
+    </span>
   );
 }

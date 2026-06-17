@@ -238,6 +238,14 @@ function asStringArray(value: unknown): string[] {
   return value.filter((item): item is string => typeof item === "string");
 }
 
+function normalizeResourceListing(resource: PointStackResourceListing): PointStackResourceListing {
+  return {
+    ...resource,
+    preview_images: asStringArray((resource as { preview_images?: unknown }).preview_images),
+    tags: asStringArray((resource as { tags?: unknown }).tags),
+  };
+}
+
 function asRecord(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return {};
   return value as Record<string, unknown>;
@@ -1561,7 +1569,7 @@ export async function fetchResources(
 
   const { data, error } = await query;
   if (error) throw error;
-  return data || [];
+  return ((data || []) as PointStackResourceListing[]).map(normalizeResourceListing);
 }
 
 export async function fetchResourceBySlug(slug: string): Promise<PointStackResourceListing | null> {
@@ -1579,7 +1587,7 @@ export async function fetchResourceBySlug(slug: string): Promise<PointStackResou
     if (error.code === "PGRST116") return null;
     throw error;
   }
-  return data;
+  return normalizeResourceListing(data as PointStackResourceListing);
 }
 
 export async function createResource(input: CreatePointStackResourceInput): Promise<PointStackResourceListing> {
@@ -1597,6 +1605,7 @@ export async function createResource(input: CreatePointStackResourceInput): Prom
       slug,
       description: input.description,
       category: input.category,
+      tags: input.tags || [],
       preview_images: input.preview_images || [],
       file_url: input.file_url,
       is_free: input.is_free ?? true,
@@ -1609,7 +1618,7 @@ export async function createResource(input: CreatePointStackResourceInput): Prom
     .single();
 
   if (error) throw error;
-  return data;
+  return normalizeResourceListing(data as PointStackResourceListing);
 }
 
 export async function incrementResourceDownloadCount(resourceId: string): Promise<void> {

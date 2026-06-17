@@ -15,7 +15,7 @@ export const VIEW_TITLES: Record<string, string> = {
   [VIEW_IDS.REFERENCES]: "References",
   [VIEW_IDS.WIKI]: "Wiki",
   [VIEW_IDS.POINTSTACK]: "PointStack",
-  [VIEW_IDS.OPEN_SOURCE]: "Open Source",
+  [VIEW_IDS.OPEN_SOURCE]: "Community Share",
 
   [VIEW_IDS.CALCULATORS]: "Calculators",
   [VIEW_IDS.ACCOUNT]: "Account",
@@ -34,7 +34,7 @@ export const VIEW_LOADING_TEXT: Record<string, string> = {
   [VIEW_IDS.REFERENCES]: "REFERENCES",
   [VIEW_IDS.WIKI]: "WIKI",
   [VIEW_IDS.POINTSTACK]: "POINTSTACK",
-  [VIEW_IDS.OPEN_SOURCE]: "OPEN_SOURCE",
+  [VIEW_IDS.OPEN_SOURCE]: "COMMUNITY_SHARE",
 
   [VIEW_IDS.CALCULATORS]: "CALCULATORS",
   [VIEW_IDS.ACCOUNT]: "ACCOUNT",
@@ -91,12 +91,6 @@ export const RESOURCES: Resource[] = [
 // =============================================================================
 
 export const NAV_ITEMS: NavNode[] = [
-  {
-    id: VIEW_IDS.TOOLS,
-    label: "TOOLS",
-    iconName: "Wrench",
-    colorVariant: "tools",
-  },
   {
     id: VIEW_IDS.POINTSTACK,
     label: "POINTSTACK",
@@ -164,7 +158,7 @@ export const NAV_ITEMS: NavNode[] = [
   },
   {
     id: VIEW_IDS.OPEN_SOURCE,
-    label: "OPEN SOURCE",
+    label: "COMMUNITY SHARE",
     iconName: "Cpu",
     colorVariant: "resources",
     href: ROUTES.OPEN_SOURCE,

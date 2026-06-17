@@ -12,7 +12,7 @@ export function Footer() {
               <span className="text-punch ml-1">→</span>
             </h4>
             <p className="text-ink-2 text-[14px] max-w-[36ch] m-0 leading-[1.55]">
-              Independent BAS reference, community, and open-source toolkit. Built &amp; maintained by Rob Hansen in Tucson.
+              Independent BAS reference, community, and shared resource hub. Built &amp; maintained by Rob Hansen in Tucson.
             </p>
           </div>
           <FootCol heading="Reference">
@@ -28,8 +28,8 @@ export function Footer() {
             <FootLink href="/pointstack/jobs">Open jobs</FootLink>
           </FootCol>
           <FootCol heading="Build">
-            <FootLink href={ROUTES.OPEN_SOURCE}>Open Source</FootLink>
-            <FootLink href="/tools">Tools</FootLink>
+            <FootLink href={ROUTES.OPEN_SOURCE}>Community Share</FootLink>
+            <FootLink href={ROUTES.POINTSTACK_RESOURCES}>Community resources</FootLink>
             <FootLink href="/api/atlas">API</FootLink>
             <a
               href="https://github.com/rbhans"

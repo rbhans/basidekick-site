@@ -52,6 +52,32 @@ const optionalHttpUrl = z.string().trim().superRefine((value, ctx) => {
   }
 });
 
+const optionalHttpUrlList = z.string().trim().superRefine((value, ctx) => {
+  if (!value) return;
+
+  const urls = value
+    .split(/\r?\n|,/)
+    .map((url) => url.trim())
+    .filter(Boolean);
+
+  urls.forEach((url) => {
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        ctx.addIssue({
+          code: "custom",
+          message: "Each image URL must be a valid http/https URL.",
+        });
+      }
+    } catch {
+      ctx.addIssue({
+        code: "custom",
+        message: "Each image URL must be a valid http/https URL.",
+      });
+    }
+  });
+});
+
 export const createPostFormSchema = z.object({
   postType: z.enum(POST_TYPES),
   title: titleSchema,
@@ -110,6 +136,8 @@ export const createResourceFormSchema = z
     title: titleSchema,
     description: optionalContentString,
     category: z.enum(RESOURCE_CATEGORIES),
+    tags: z.array(z.string().trim().min(1).max(40)).max(8),
+    imageUrls: optionalHttpUrlList,
     fileUrl: optionalHttpUrl,
     externalLink: optionalHttpUrl,
     isFree: z.boolean(),
@@ -118,7 +146,7 @@ export const createResourceFormSchema = z
     if (!value.fileUrl.trim() && !value.externalLink.trim()) {
       ctx.addIssue({
         code: "custom",
-        message: "Provide either a file URL or an external link.",
+        message: "Provide either a file link or a project/reference link.",
         path: ["fileUrl"],
       });
     }

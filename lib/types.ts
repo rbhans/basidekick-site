@@ -1,5 +1,3 @@
-import { ReactNode } from "react";
-
 // Resource info (for resources section)
 export interface Resource {
   id: string;
@@ -688,6 +686,7 @@ export interface PointStackResourceListing {
   slug: string;
   description: string | null;
   category: PointStackResourceCategory;
+  tags: string[];
   preview_images: string[];
   file_url: string | null;
   is_free: boolean;
@@ -862,6 +861,7 @@ export interface CreatePointStackResourceInput {
   title: string;
   description?: string;
   category: PointStackResourceCategory;
+  tags?: string[];
   preview_images?: string[];
   file_url?: string;
   is_free?: boolean;
