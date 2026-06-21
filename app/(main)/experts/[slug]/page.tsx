@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { getClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { ROUTES } from "@/lib/routes";
 import {
   EndorsementTopic,
@@ -18,7 +18,9 @@ interface PageProps {
 }
 
 async function loadTopic(slug: string): Promise<EndorsementTopic | null> {
-  const supabase = await getClient();
+  const supabase = await createClient();
+  if (!supabase) return null;
+
   const { data } = await supabase
     .from("endorsement_topics")
     .select("*")
@@ -32,7 +34,9 @@ async function loadLeaderboard(
   topicId: string,
   limit = 50
 ): Promise<LeaderboardEntry[]> {
-  const supabase = await getClient();
+  const supabase = await createClient();
+  if (!supabase) return [];
+
   const { data } = await supabase
     .from("endorsement_scores")
     .select(
@@ -78,6 +82,7 @@ export async function generateMetadata({
     title: `${topic.name} experts — BASidekick`,
     description:
       topic.description ?? `Top ${topic.name} contributors by peer endorsements.`,
+    alternates: { canonical: `https://basidekick.com/experts/${encodeURIComponent(slug)}` },
   };
 }
 

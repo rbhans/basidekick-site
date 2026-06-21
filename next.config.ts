@@ -115,6 +115,16 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/pointstack/resources",
+        destination: "/open-source",
+        permanent: false,
+      },
+      {
+        source: "/pointstack/resources/:path*",
+        destination: "/open-source/:path*",
+        permanent: false,
+      },
+      {
         source: "/ssk",
         destination: "/tools",
         permanent: true,

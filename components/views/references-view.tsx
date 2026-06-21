@@ -373,6 +373,61 @@ export function ReferencesView() {
           Practical BAS reference sheets for protocol lookup, signal checks, field terminology,
           and source-backed reminders that are easy to scan on site.
         </p>
+        <section
+          aria-labelledby="references-answer-summary"
+          className="border-y border-foreground py-5 mb-10"
+        >
+          <div className="grid gap-5 md:grid-cols-[1.1fr_1fr_1fr]">
+            <div>
+              <h2
+                id="references-answer-summary"
+                className="font-mono text-[10px] uppercase tracking-[1.4px] text-accent"
+              >
+                Answer-first field reference
+              </h2>
+              <p className="mt-2 text-[14px] leading-[1.55] text-foreground">
+                Use this page when you need quick BAS lookup tables for protocol
+                objects, command priorities, signal types, electrical terms, and commissioning checks.
+              </p>
+            </div>
+            <dl className="grid gap-3 text-[13px] leading-[1.45]">
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                  BACnet lookup
+                </dt>
+                <dd className="text-foreground">
+                  Start with object types and command priority before changing points.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                  Modbus lookup
+                </dt>
+                <dd className="text-foreground">
+                  Check function and exception codes before blaming the device.
+                </dd>
+              </div>
+            </dl>
+            <dl className="grid gap-3 text-[13px] leading-[1.45]">
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                  Signal checks
+                </dt>
+                <dd className="text-foreground">
+                  Compare signal type, scaling range, wiring, and device configuration together.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                  Source notes
+                </dt>
+                <dd className="text-foreground">
+                  Each source-backed section links out to the spec or field reference behind it.
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </section>
 
         <Section num="01" title="BACnet object types" defaultOpen>
           <ReferenceTable

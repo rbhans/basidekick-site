@@ -45,9 +45,20 @@ function Section({
 }
 
 // Calculator Card
-function Calculator({ title, children }: { title: string; children: React.ReactNode }) {
+function Calculator({
+  title,
+  id,
+  children,
+}: {
+  title: string;
+  id?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="border border-border bg-card hover:border-foreground transition-colors p-5">
+    <div
+      id={id}
+      className="scroll-mt-24 border border-border bg-card hover:border-foreground transition-colors p-5"
+    >
       <h3 className="font-mono text-[10px] uppercase tracking-[1.3px] text-accent pb-2 mb-4 border-b border-border">
         {title}
       </h3>
@@ -932,10 +943,65 @@ export function CalculatorsView() {
           Quick reference calculators for building automation professionals. For estimation
           purposes — verify critical calculations.
         </p>
+        <section
+          aria-labelledby="calculator-answer-summary"
+          className="border-y border-foreground py-5 mb-10"
+        >
+          <div className="grid gap-5 md:grid-cols-[1.1fr_1fr_1fr]">
+            <div>
+              <h2
+                id="calculator-answer-summary"
+                className="font-mono text-[10px] uppercase tracking-[1.4px] text-accent"
+              >
+                Answer-first field math
+              </h2>
+              <p className="mt-2 text-[14px] leading-[1.55] text-foreground">
+                Use this page for BAS field checks around airflow, hydronic heat transfer,
+                duct static reset, signal scaling, and controller network sizing.
+              </p>
+            </div>
+            <dl className="grid gap-3 text-[13px] leading-[1.45]">
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                  Air changes
+                </dt>
+                <dd className="text-foreground">
+                  ACH = CFM x 60 / room volume in cubic feet.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                  Hydronic BTU
+                </dt>
+                <dd className="text-foreground">
+                  BTU/hr = GPM x Delta T x 500 for water.
+                </dd>
+              </div>
+            </dl>
+            <dl className="grid gap-3 text-[13px] leading-[1.45]">
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                  Duct static reset
+                </dt>
+                <dd className="text-foreground">
+                  Static = design static x (actual CFM / design CFM)^2.
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[10px] uppercase tracking-[1.2px] text-muted-foreground">
+                  Network sizing
+                </dt>
+                <dd className="text-foreground">
+                  Use subnet host count before assigning BAS controller addresses.
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </section>
         <div className="w-full">
           {/* Sensor & Signal Scaling */}
           <Section num="01" title="Sensor & signal scaling" defaultOpen>
-            <Calculator title="Analog Input Scaling">
+            <Calculator title="Analog Input Scaling" id="analog-input-scaling-calculator">
               <div className="grid grid-cols-2 gap-2">
                 <CalcInput label="Raw Min" value={analogRawMin} onChange={setAnalogRawMin} unit="mA/V" />
                 <CalcInput label="Raw Max" value={analogRawMax} onChange={setAnalogRawMax} unit="mA/V" />
@@ -980,7 +1046,7 @@ export function CalculatorsView() {
 
           {/* Airside Calculations */}
           <Section num="02" title="Airside calculations">
-            <Calculator title="Air Changes per Hour">
+            <Calculator title="Air Changes per Hour" id="air-changes-per-hour-calculator">
               <CalcInput label="Airflow" value={achCfm} onChange={setAchCfm} unit="CFM" />
               <div className="grid grid-cols-3 gap-2">
                 <CalcInput label="Length" value={achLength} onChange={setAchLength} unit="ft" />
@@ -990,7 +1056,7 @@ export function CalculatorsView() {
               <CalcOutput label="Air Changes/Hour" value={achResult} unit="ACH" />
             </Calculator>
 
-            <Calculator title="Mixed Air Temperature">
+            <Calculator title="Mixed Air Temperature" id="mixed-air-temperature-calculator">
               <CalcInput label="Outside Air Temp" value={matOaTemp} onChange={setMatOaTemp} unit="°F" />
               <CalcInput label="Return Air Temp" value={matRaTemp} onChange={setMatRaTemp} unit="°F" />
               <CalcInput label="OA Air Fraction" value={matOaDamper} onChange={setMatOaDamper} unit="%" />
@@ -1057,7 +1123,7 @@ export function CalculatorsView() {
               </CalculatorNote>
             </Calculator>
 
-            <Calculator title="IP Subnet Calculator">
+            <Calculator title="IP Subnet Calculator" id="ip-subnet-calculator">
               <CalcInput label="Network Address" value={subnetIp} onChange={setSubnetIp} type="text" />
               <CalcInput label="CIDR Mask" value={subnetMask} onChange={setSubnetMask} unit="bits" />
               <CalcOutput label="Usable Hosts" value={subnetInfo.hosts} />
@@ -1112,7 +1178,7 @@ export function CalculatorsView() {
               </CalculatorNote>
             </Calculator>
 
-            <Calculator title="BTU from Flow">
+            <Calculator title="BTU from Flow" id="btu-from-flow-calculator">
               <CalcInput label="Flow Rate" value={btuGpm} onChange={setBtuGpm} unit="GPM" />
               <CalcInput label="Temperature Difference" value={btuDeltaT} onChange={setBtuDeltaT} unit="°F" />
               <CalcOutput label="Heat Transfer" value={btuResult.btu} unit="BTU/hr" />
@@ -1317,7 +1383,7 @@ export function CalculatorsView() {
               </CalculatorNote>
             </Calculator>
 
-            <Calculator title="Duct Static Setpoint">
+            <Calculator title="Duct Static Setpoint" id="duct-static-setpoint-calculator">
               <CalcInput label="Design CFM" value={ductDesignCfm} onChange={setDuctDesignCfm} unit="CFM" />
               <CalcInput label="Design Static" value={ductDesignSp} onChange={setDuctDesignSp} unit="in WC" />
               <CalcInput label="Actual CFM" value={ductActualCfm} onChange={setDuctActualCfm} unit="CFM" />
@@ -1420,7 +1486,7 @@ export function CalculatorsView() {
               </div>
             </Calculator>
 
-            <Calculator title="Airflow">
+            <Calculator title="Airflow" id="airflow-cfm-conversion-calculator">
               <div className="flex gap-2">
                 <div className="flex-1">
                   <CalcInput label="Value" value={flowValue} onChange={setFlowValue} />

@@ -25,5 +25,10 @@ export const metadata: Metadata = {
 };
 
 export default function WikiPage() {
-  return <WikiView />;
+  return (
+    <>
+      <h1 className="sr-only">BAS Wiki</h1>
+      <WikiView />
+    </>
+  );
 }

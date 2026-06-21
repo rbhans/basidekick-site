@@ -1,18 +1,16 @@
-import { PointStackResourceDetail } from "@/components/pointstack/resources/resource-detail";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/lib/routes";
 
 interface ResourcePageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: ResourcePageProps) {
-  const { slug } = await params;
-  return {
-    title: `Resource - PointStack`,
-    description: `View and download resource on PointStack`,
-  };
-}
+export const metadata = {
+  title: "Entry - Community Share",
+  description: "View a shared BAS community entry.",
+};
 
 export default async function ResourcePage({ params }: ResourcePageProps) {
   const { slug } = await params;
-  return <PointStackResourceDetail slug={slug} />;
+  redirect(ROUTES.COMMUNITY_SHARE_ENTRY(slug));
 }

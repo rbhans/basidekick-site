@@ -56,7 +56,6 @@ export const NAV_GROUPS: NavGroup[] = [
     label: "Build",
     items: [
       { href: ROUTES.OPEN_SOURCE, label: "Community Share", desc: "Community BAS links, files, and projects" },
-      { href: ROUTES.POINTSTACK_RESOURCES, label: "Resources", desc: "Templates, scripts, guides" },
       { href: ROUTES.API_ATLAS, label: "API", desc: "JSON · no auth · stable URLs" },
     ],
     featured: {

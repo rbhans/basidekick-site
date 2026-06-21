@@ -530,17 +530,9 @@ export function HomeView({
                 cta="Browse community share"
               />
               <IndexCard
-                href={ROUTES.POINTSTACK_RESOURCES}
-                title="QUEUE"
-                num=".08.2"
-                desc="Templates, scripts, references, and files shared by signed-in PointStack members."
-                stats={[{ label: "User shared", kind: "outline" }]}
-                cta="Open resources"
-              />
-              <IndexCard
                 href={ROUTES.API_ATLAS}
                 title="API"
-                num=".08.3"
+                num=".08.2"
                 desc="JSON · no auth · stable URLs. Public Atlas data, free to integrate into your own apps."
                 stats={[{ label: "Public", kind: "secondary" }]}
                 cta="See the API"

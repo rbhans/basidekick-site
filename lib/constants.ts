@@ -128,13 +128,6 @@ export const NAV_ITEMS: NavNode[] = [
         href: "/pointstack/jobs",
       },
       {
-        id: "pointstack-resources",
-        label: "Resources",
-        iconName: "Folder",
-        colorVariant: "pointstack",
-        href: "/pointstack/resources",
-      },
-      {
         id: "pointstack-messages",
         label: "Messages",
         iconName: "ChatCircle",

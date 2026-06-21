@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -151,7 +151,7 @@ export function CreateResourceDialog({
       resetForm();
     } catch (error) {
       console.error("Error creating resource:", error);
-      setSubmitError("Failed to share resource. Please try again.");
+      setSubmitError("Failed to share entry. Please try again.");
     }
   };
 
@@ -250,7 +250,7 @@ export function CreateResourceDialog({
                         className="size-4"
                       />
                     </FormControl>
-                    <FormLabel htmlFor="resource-free">Free resource</FormLabel>
+                    <FormLabel htmlFor="resource-free">Free to access</FormLabel>
                   </FormItem>
                 )}
               />

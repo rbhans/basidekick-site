@@ -1,9 +1,17 @@
 import { HomeView } from "@/components/views/home-view";
 import { createClient } from "@supabase/supabase-js";
+import type { Metadata } from "next";
 import { ROUTES } from "@/lib/routes";
 
 // ISR: Revalidate daily — content updates come via redeployments
 export const revalidate = 86400;
+
+export const metadata: Metadata = {
+  title: "BASidekick — BAS info, community, and resources",
+  description:
+    "Independent BAS reference, community, and shared resource hub. Maintained by Rob in Tucson.",
+  alternates: { canonical: "https://basidekick.com" },
+};
 
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

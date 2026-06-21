@@ -1,7 +1,7 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- Shared entry images can come from arbitrary community-hosted URLs. */
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   FileArrowDown,
@@ -14,227 +14,18 @@ import {
 } from "@phosphor-icons/react";
 import { CreateResourceDialog } from "@/components/pointstack/resources/create-resource-dialog";
 import { useAuth } from "@/hooks/use-auth";
+import {
+  curatedCommunityShareEntries,
+  type CommunityShareEntry,
+  type CommunityShareKind,
+  type CommunityShareLink,
+  type CommunityShareLinkType,
+} from "@/lib/data/community-share";
 import type { PointStackResourceCategory, PointStackResourceListing } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import * as pointStackApi from "@/components/pointstack/pointstack-api";
 
-type ShareKind = "Protocol" | "Project" | "Module" | "File";
-type ShareStage = "Active" | "Preview" | "Planned";
-type ShareAccess = "Open source" | "Project site" | "File" | "Planned";
-type ShareLinkType = "github" | "file" | "site" | "external";
-
-interface CommunityShareLink {
-  label: string;
-  href: string;
-  type?: ShareLinkType;
-}
-
-interface CommunityShareImage {
-  src: string;
-  alt: string;
-}
-
-interface CommunityShareEntry {
-  id: string;
-  title: string;
-  protocol: string;
-  kind: ShareKind;
-  stage: ShareStage;
-  access: ShareAccess;
-  summary: string;
-  description: ReactNode;
-  owner: string;
-  language: string;
-  license: string;
-  latest: string;
-  lastCommit: string;
-  stars: number | string;
-  images?: CommunityShareImage[];
-  highlights: string[];
-  snippets?: {
-    label: string;
-    body: string;
-  }[];
-  tags: string[];
-  links: CommunityShareLink[];
-}
-
-// Directory entries are hand-curated from project READMEs, public project sites,
-// or local module metadata. Unknown values stay explicit instead of guessed.
-const communityShareEntries: CommunityShareEntry[] = [
-  {
-    id: "rustbac",
-    title: "rustbac",
-    protocol: "BACnet",
-    kind: "Protocol",
-    stage: "Active",
-    access: "Open source",
-    summary: "Rust BACnet workspace for BACnet/IP, BACnet/SC, MS/TP, clients, servers, and CLI work.",
-    description: (
-      <>
-        Open source Rust crate for BACnet communication in BAS applications. The workspace ships a <em>no_std</em> core encoder/decoder, async BACnet/IP transport, BACnet/SC WebSocket transport, MS/TP transport, a high-level client API, server scaffolding, and CLI commands.
-      </>
-    ),
-    owner: "BASidekick",
-    language: "Rust",
-    license: "MIT OR Apache-2.0",
-    latest: "0.4.1",
-    lastCommit: "May 12, 2026",
-    stars: 2,
-    tags: ["bacnet", "rust", "protocol"],
-    highlights: [
-      "no_std core encoder/decoder for BACnet NPDU/APDU, types, and service payloads.",
-      "BACnet/IP with BBMD/FDR support, BACnet/SC WebSocket, and MS/TP transports.",
-      "CLI commands for whois, readprop, writeprop, subcov, readrange, file services, DCC, and time sync.",
-    ],
-    snippets: [
-      {
-        label: "Cargo.toml",
-        body: `[dependencies]\nrustbac-client = "0.4"\nrustbac-core = "0.4"\nrustbac-datalink = "0.4"`,
-      },
-    ],
-    links: [
-      { label: "GitHub", href: "https://github.com/rbhans/rust-bac", type: "github" },
-    ],
-  },
-  {
-    id: "rustmod",
-    title: "rustmod",
-    protocol: "Modbus",
-    kind: "Protocol",
-    stage: "Active",
-    access: "Open source",
-    summary: "Rust Modbus workspace with TCP and RTU transports, async and sync clients, and server support.",
-    description: (
-      <>
-        Open source Rust crate for Modbus communication in BAS applications. A modern, safe Rust Modbus library for building automation and industrial integrations with <em>zero-copy codec</em>, no_std core, async and sync clients, TCP and RTU transports, and server support.
-      </>
-    ),
-    owner: "BASidekick",
-    language: "Rust",
-    license: "MIT OR Apache-2.0",
-    latest: "0.2.0",
-    lastCommit: "Mar 5, 2026",
-    stars: 0,
-    tags: ["modbus", "rust", "protocol"],
-    highlights: [
-      "Function codes 01-43, including coils, registers, diagnostics, file records, FIFO, and MEI.",
-      "Zero-copy no_std core that decodes PDUs by borrowing from the input buffer.",
-      "TCP server, RTU-over-TCP server, optional native RTU serial server, and in-memory simulator.",
-    ],
-    snippets: [
-      {
-        label: "Cargo.toml",
-        body: `[dependencies]\nrustmod-client = "0.2"\nrustmod-datalink = "0.2"\ntokio = { version = "1", features = ["full"] }`,
-      },
-    ],
-    links: [
-      { label: "GitHub", href: "https://github.com/rbhans/rust-mod", type: "github" },
-    ],
-  },
-  {
-    id: "qrbas",
-    title: "QRBAS",
-    protocol: "Niagara",
-    kind: "Project",
-    stage: "Active",
-    access: "Open source",
-    summary: "Self-hosted QR equipment pages for BAS teams, with a local Niagara connector and no cloud backend.",
-    description: (
-      <>
-        Open source QR code project for BAS workflows. Run one small server on the local network, add Niagara stations, print QR codes for equipment, and let technicians scan with a phone camera to see live point data in the browser. <em>No app store. No cloud backend. No technician logins.</em>
-      </>
-    ),
-    owner: "BASidekick",
-    language: "Go",
-    license: "-",
-    latest: "-",
-    lastCommit: "Apr 28, 2026",
-    stars: 0,
-    tags: ["niagara", "qr", "field"],
-    highlights: [
-      "Single Go binary with embedded PWA and SQLite storage.",
-      "Niagara station setup from the admin UI, equipment mapping, and printable QR codes.",
-      "Runs on the BAS network with no cloud backend, accounts, or telemetry.",
-    ],
-    snippets: [
-      {
-        label: "Quick start",
-        body: `cd server\ngo run .\n# open http://localhost:8080`,
-      },
-    ],
-    links: [
-      { label: "GitHub", href: "https://github.com/rbhans/qrbas", type: "github" },
-      { label: "Project site", href: "https://rbhans.github.io/qrbas/" },
-    ],
-  },
-  {
-    id: "bask-stream",
-    title: "BASk Stream",
-    protocol: "Niagara 4",
-    kind: "Module",
-    stage: "Active",
-    access: "Open source",
-    summary: "Niagara 4 runtime module that exposes station data through an authenticated WebSocket API.",
-    description: (
-      <>
-        BASk Stream gives external graphics, dashboards, commissioning apps, and integrations a practical live-data path without forcing every app to live inside Niagara UI.
-      </>
-    ),
-    owner: "BASidekick",
-    language: "Java",
-    license: "-",
-    latest: "-",
-    lastCommit: "May 26, 2026",
-    stars: 0,
-    tags: ["niagara", "websocket", "integration"],
-    highlights: [
-      "Station browsing, object descriptions, bounded search, and metadata for points, devices, schedules, histories, and alarms.",
-      "Point snapshots and replaceable live subscriptions with lease renewal and connection cleanup.",
-      "Writable point capability checks before set, override, auto, or emergency override controls render.",
-    ],
-    snippets: [
-      {
-        label: "Station endpoint",
-        body: `GET https://<station>/stream/health\nwss://<station>/stream`,
-      },
-    ],
-    links: [
-      { label: "GitHub", href: "https://github.com/rbhans/bask-stream", type: "github" },
-    ],
-  },
-  {
-    id: "opencrate-bms",
-    title: "OpenCrate BMS",
-    protocol: "BMS",
-    kind: "Project",
-    stage: "Planned",
-    access: "Project site",
-    summary: "Hobby BMS project being built from scratch in Rust. Public release is still pending.",
-    description: (
-      <>
-        A hobby project to learn various parts of BMS by building the software from the ground up in pure Rust. Public release is <em>still pending</em>; the project site lists the planned feature set.
-      </>
-    ),
-    owner: "BASidekick",
-    language: "Rust",
-    license: "MIT",
-    latest: "-",
-    lastCommit: "-",
-    stars: "-",
-    tags: ["rust", "bms", "project"],
-    highlights: [
-      "Planned multi-protocol support for BACnet/IP, BACnet/SC, MS/TP, Modbus TCP, and Modbus RTU.",
-      "Planned alarms, routing, trend logging, visual logic, and commissioning workflows.",
-      "Useful as a public build log while the software is still forming.",
-    ],
-    links: [
-      { label: "Project site", href: "https://rbhans.github.io/opencrate-site/" },
-    ],
-  },
-];
-
-type KindFilter = "all" | Lowercase<ShareKind>;
+type KindFilter = "all" | Lowercase<CommunityShareKind>;
 
 const KIND_FILTERS: { value: KindFilter; label: string }[] = [
   { value: "all", label: "All" },
@@ -259,7 +50,7 @@ const HAS_SUPABASE_CONFIG = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
 
-function getShareLinkType(link: CommunityShareLink): ShareLinkType {
+function getShareLinkType(link: CommunityShareLink): CommunityShareLinkType {
   if (link.type) return link.type;
   const href = link.href.toLowerCase();
   if (href.includes("github.com")) return "github";
@@ -287,7 +78,7 @@ function resourceToCommunityShareEntry(resource: PointStackResourceListing): Com
 
   links.push({
     label: "Entry",
-    href: ROUTES.POINTSTACK_RESOURCE(resource.slug),
+    href: ROUTES.COMMUNITY_SHARE_ENTRY(resource.slug),
     type: "external",
   });
 
@@ -320,6 +111,22 @@ function resourceToCommunityShareEntry(resource: PointStackResourceListing): Com
   };
 }
 
+function getEntryDedupeKeys(entry: CommunityShareEntry): string[] {
+  return [
+    `title:${entry.title.toLowerCase()}`,
+    ...entry.links.map((link) => `link:${link.href.toLowerCase()}`),
+  ];
+}
+
+function mergeCommunityShareEntries(resourceEntries: CommunityShareEntry[]) {
+  const resourceKeys = new Set(resourceEntries.flatMap(getEntryDedupeKeys));
+  const curatedEntries = curatedCommunityShareEntries.filter((entry) =>
+    getEntryDedupeKeys(entry).every((key) => !resourceKeys.has(key)),
+  );
+
+  return [...resourceEntries, ...curatedEntries];
+}
+
 function formatShareDate(value: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "-";
@@ -330,13 +137,17 @@ function formatShareDate(value: string): string {
   });
 }
 
-export function OpenSourceView() {
+interface OpenSourceViewProps {
+  initialResources?: PointStackResourceListing[];
+}
+
+export function OpenSourceView({ initialResources = [] }: OpenSourceViewProps) {
   const { user } = useAuth();
   const [kindFilter, setKindFilter] = useState<KindFilter>("all");
   const [protocolFilter, setProtocolFilter] = useState("all");
   const [tagFilter, setTagFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [sharedResources, setSharedResources] = useState<PointStackResourceListing[]>([]);
+  const [sharedResources, setSharedResources] = useState<PointStackResourceListing[]>(initialResources);
 
   useEffect(() => {
     if (!HAS_SUPABASE_CONFIG) return;
@@ -357,13 +168,10 @@ export function OpenSourceView() {
     };
   }, []);
 
-  const allEntries = useMemo(
-    () => [
-      ...sharedResources.map(resourceToCommunityShareEntry),
-      ...communityShareEntries,
-    ],
-    [sharedResources],
-  );
+  const allEntries = useMemo(() => {
+    const resourceEntries = sharedResources.map(resourceToCommunityShareEntry);
+    return mergeCommunityShareEntries(resourceEntries);
+  }, [sharedResources]);
 
   const protocols = useMemo(
     () => Array.from(new Set(allEntries.map((entry) => entry.protocol))).sort(),
@@ -401,7 +209,7 @@ export function OpenSourceView() {
   }, [allEntries, kindFilter, protocolFilter, query, tagFilter]);
 
   const activeCount = allEntries.filter((entry) => entry.stage === "Active").length;
-  const sourceCount = allEntries.filter((entry) => entry.access === "Open source").length;
+  const fileCount = allEntries.filter((entry) => entry.kind === "File").length;
 
   return (
     <section className="sand-section">
@@ -417,6 +225,34 @@ export function OpenSourceView() {
         <p className="nw-tagline ts-tagline">
           BAS projects, references, files, repos, and field notes. <em>Open source when possible</em>, useful first.
         </p>
+
+        <section
+          aria-labelledby="community-share-answer"
+          className="mb-6 border-y border-foreground py-4"
+        >
+          <div className="grid gap-4 md:grid-cols-[1.2fr_1fr_1fr]">
+            <div>
+              <h2
+                id="community-share-answer"
+                className="font-mono text-[10px] uppercase tracking-[1.4px] text-accent"
+              >
+                What this index answers
+              </h2>
+              <p className="mt-2 text-[14px] leading-[1.55] text-foreground">
+                Community Share is the BASidekick directory for BAS files, open-source
+                Niagara modules, protocol crates, project repos, and field references.
+              </p>
+            </div>
+            <p className="text-[13px] leading-[1.5] text-muted-foreground">
+              For Niagara integration work, start with BASk Stream for authenticated
+              station data over WebSocket and QRBAS for local QR equipment pages.
+            </p>
+            <p className="text-[13px] leading-[1.5] text-muted-foreground">
+              For protocol code, start with the Rust BACnet and Modbus workspaces,
+              then use community-submitted files and references as they are added.
+            </p>
+          </div>
+        </section>
 
         <div className="ts-shell">
           <aside className="ts-rail" aria-label="Community share controls">
@@ -510,8 +346,8 @@ export function OpenSourceView() {
                   Active
                 </span>
                 <span>
-                  <b>{sourceCount}</b>
-                  Open
+                  <b>{fileCount}</b>
+                  Files
                 </span>
               </div>
 
@@ -549,8 +385,12 @@ export function OpenSourceView() {
             ) : (
               <div className="ts-empty">
                 <Stack aria-hidden="true" />
-                <h2>No entries match that filter.</h2>
-                <p>Clear a filter or share the thing you expected to find.</p>
+                <h2>{allEntries.length === 0 ? "No entries shared yet." : "No entries match that filter."}</h2>
+                <p>
+                  {allEntries.length === 0
+                    ? "Be the first to share a file, project, reference, or field note."
+                    : "Clear a filter or share the thing you expected to find."}
+                </p>
               </div>
             )}
           </div>
@@ -630,12 +470,6 @@ function CommunityShareCard({ entry, index }: { entry: CommunityShareEntry; inde
               <li key={highlightIndex}>{highlight}</li>
             ))}
           </ul>
-          {entry.snippets?.map((snippet) => (
-            <div key={snippet.label} className="ts-code">
-              <span>{snippet.label}</span>
-              <pre>{snippet.body}</pre>
-            </div>
-          ))}
         </details>
       </div>
     </article>

@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 
 interface ResourceDetailProps {
   slug: string;
+  initialResource?: PointStackResourceListing | null;
 }
 
 const CATEGORY_LABELS: Record<PointStackResourceCategory, string> = {
@@ -27,11 +28,14 @@ const CATEGORY_LABELS: Record<PointStackResourceCategory, string> = {
   other: "Other",
 };
 
-export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
+export function PointStackResourceDetail({
+  slug,
+  initialResource = null,
+}: ResourceDetailProps) {
   const { user } = useAuth();
-  const [resource, setResource] = useState<PointStackResourceListing | null>(null);
+  const [resource, setResource] = useState<PointStackResourceListing | null>(initialResource);
   const [comments, setComments] = useState<PointStackResourceComment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialResource);
   const [commentContent, setCommentContent] = useState("");
   const [commentLoading, setCommentLoading] = useState(false);
   const [commentError, setCommentError] = useState<string | null>(null);
@@ -138,14 +142,14 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
     return (
       <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-16 text-center">
         <p className="italic text-[20px] text-muted-foreground mb-5">
-          This resource isn&apos;t in the set.
+          This entry isn&apos;t in the set.
         </p>
         <Link
-          href={`${ROUTES.POINTSTACK}/resources`}
+          href={ROUTES.OPEN_SOURCE}
           className="font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5"
         >
           <ArrowLeft className="w-3 h-3 text-accent" />
-          Back to resources
+          Back to Community Share
         </Link>
       </section>
     );
@@ -154,11 +158,11 @@ export function PointStackResourceDetail({ slug }: ResourceDetailProps) {
   return (
     <section className="container mx-auto max-w-[880px] px-4 sm:px-6 lg:px-16 py-10">
       <Link
-        href={`${ROUTES.POINTSTACK}/resources`}
+        href={ROUTES.OPEN_SOURCE}
         className="font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5 mb-6"
       >
         <ArrowLeft className="w-3 h-3 text-accent" />
-        Back to resources
+        Back to Community Share
       </Link>
 
       {/* Kind label */}

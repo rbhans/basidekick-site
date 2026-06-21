@@ -47,9 +47,6 @@ export const metadata: Metadata = {
     description:
       "Independent BAS reference, community, and shared resource hub.",
   },
-  alternates: {
-    canonical: "https://basidekick.com",
-  },
 };
 
 export default function RootLayout({

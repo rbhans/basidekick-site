@@ -60,6 +60,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
+      url: `${BASE_URL}/calculators`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/courses`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/open-source`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
       url: `${BASE_URL}/news`,
       lastModified: new Date(),
       changeFrequency: "daily",
@@ -76,6 +94,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/wiki/videos`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${BASE_URL}/experts`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.5,
+    },
+    {
+      url: `${BASE_URL}/llms.txt`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.4,
     },
   ];
 
@@ -211,6 +247,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // Fetch published news articles
+  const { data: newsArticles } = await supabase
+    .from("news_articles")
+    .select("slug, updated_at, published_at, created_at")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false });
+
+  const newsPages: MetadataRoute.Sitemap = (newsArticles || []).map((article) => ({
+    url: `${BASE_URL}/news/${article.slug}`,
+    lastModified: new Date(article.updated_at || article.published_at || article.created_at),
+    changeFrequency: "weekly" as const,
+    priority: 0.5,
+  }));
+
+  // Fetch active Community Share entries
+  const { data: communityShareEntries } = await supabase
+    .from("pointstack_resource_listings")
+    .select("slug, updated_at, created_at")
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
+
+  const communitySharePages: MetadataRoute.Sitemap = (communityShareEntries || []).map((entry) => ({
+    url: `${BASE_URL}/open-source/${entry.slug}`,
+    lastModified: new Date(entry.updated_at || entry.created_at),
+    changeFrequency: "weekly" as const,
+    priority: 0.5,
+  }));
+
   return [
     ...staticPages,
     ...atlasEntryPages,
@@ -220,5 +284,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...wikiPages,
     ...wikiFacetPages,
     ...wikiCollectionPages,
+    ...newsPages,
+    ...communitySharePages,
   ];
 }

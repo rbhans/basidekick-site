@@ -3,6 +3,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function WikiLoading() {
   return (
     <div className="min-h-full flex-1">
+      <h1 className="sr-only">BAS Wiki</h1>
+
       {/* Title block strip placeholder */}
       <div className="title-block">
         <div className="field">

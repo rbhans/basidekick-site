@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     description:
       "Open source Rust crates for BAS protocols, starting with rustbac for BACnet.",
   },
+  alternates: { canonical: "https://basidekick.com/resources/rust" },
 };
 
 export default function RustResourcesPage() {

@@ -7,7 +7,7 @@ import { useNewsStore } from "./news-store";
 import { NewsCard } from "./news-card";
 import { SubmitArticleDialog } from "./submit-article-dialog";
 import { useAuth } from "@/hooks/use-auth";
-import type { NewsSortBy } from "@/lib/types";
+import type { NewsArticle, NewsSortBy } from "@/lib/types";
 
 const SORT_TABS: { key: NewsSortBy; label: string }[] = [
   { key: "top", label: "Top" },
@@ -15,7 +15,11 @@ const SORT_TABS: { key: NewsSortBy; label: string }[] = [
   { key: "commented", label: "Discussed" },
 ];
 
-export function NewsList() {
+interface NewsListProps {
+  initialArticles?: NewsArticle[];
+}
+
+export function NewsList({ initialArticles = [] }: NewsListProps) {
   const { user } = useAuth();
   const {
     articles,
@@ -29,6 +33,7 @@ export function NewsList() {
   } = useNewsStore();
 
   const [searchQuery, setSearchQuery] = useState("");
+  const displayedArticles = articles.length > 0 ? articles : initialArticles;
 
   useEffect(() => {
     fetchFeed({ sortBy: "recent" });
@@ -38,23 +43,23 @@ export function NewsList() {
 
   // Client-side search filtering
   const filteredArticles = useMemo(() => {
-    if (!searchQuery.trim()) return articles;
+    if (!searchQuery.trim()) return displayedArticles;
     const q = searchQuery.toLowerCase();
-    return articles.filter(
+    return displayedArticles.filter(
       (a) =>
         a.title.toLowerCase().includes(q) ||
         (a.summary || "").toLowerCase().includes(q) ||
         a.source_domain.toLowerCase().includes(q) ||
         (a.tags || []).some((tag) => tag.toLowerCase().includes(q))
     );
-  }, [articles, searchQuery]);
+  }, [displayedArticles, searchQuery]);
 
   // Count unique sources (for the title block strip)
   const uniqueSources = useMemo(() => {
     const set = new Set<string>();
-    for (const a of articles) set.add(a.source_domain);
+    for (const a of displayedArticles) set.add(a.source_domain);
     return set.size;
-  }, [articles]);
+  }, [displayedArticles]);
 
   return (
     <section className="sand-section">
@@ -63,13 +68,40 @@ export function NewsList() {
           <span className="num">.04</span>
           <h1>News / Industry Feed</h1>
           <span className="id">
-            <span className="live-dot" /> LIVE · <b>{articles.length}</b> articles · <b>{uniqueSources}</b> sources
+            <span className="live-dot" /> LIVE · <b>{displayedArticles.length}</b> articles · <b>{uniqueSources}</b> sources
           </span>
         </div>
 
         <p className="nw-tagline">
           A daily-ish feed of what&apos;s moving in the industry. <em>Read the summary here</em>, read the original there.
         </p>
+        <section
+          aria-labelledby="news-answer-summary"
+          className="mb-6 border-y border-foreground py-4"
+        >
+          <div className="grid gap-4 md:grid-cols-[1.2fr_1fr_1fr]">
+            <div>
+              <h2
+                id="news-answer-summary"
+                className="font-mono text-[10px] uppercase tracking-[1.4px] text-accent"
+              >
+                What this feed answers
+              </h2>
+              <p className="mt-2 text-[14px] leading-[1.55] text-foreground">
+                BASidekick News tracks building automation, controls, facility operations,
+                Niagara, cybersecurity, and industry source updates worth reading.
+              </p>
+            </div>
+            <p className="text-[13px] leading-[1.5] text-muted-foreground">
+              Each article keeps the original source link attached so summaries point back
+              to the publication, advisory, vendor note, or community submission behind it.
+            </p>
+            <p className="text-[13px] leading-[1.5] text-muted-foreground">
+              Use the search and sort controls to find recent BAS industry news by source,
+              topic tag, article title, or discussion activity.
+            </p>
+          </div>
+        </section>
 
         {/* Submit box */}
         {user && (
@@ -106,7 +138,7 @@ export function NewsList() {
             <button
               key={tab.key}
               onClick={() => setFeedFilter({ ...feedFilter, sortBy: tab.key })}
-              aria-selected={currentSort === tab.key}
+              aria-pressed={currentSort === tab.key}
               className="nw-pill"
             >
               {tab.label}
@@ -132,7 +164,7 @@ export function NewsList() {
         )}
 
         {/* Loading state */}
-        {feedLoading && articles.length === 0 && (
+        {feedLoading && displayedArticles.length === 0 && (
           <div className="flex justify-center py-16">
             <Spinner className="w-5 h-5 animate-spin text-muted-foreground" />
           </div>
@@ -148,14 +180,14 @@ export function NewsList() {
         )}
 
         {/* Empty state (no articles) */}
-        {!feedLoading && !feedError && filteredArticles.length === 0 && articles.length === 0 && (
+        {!feedLoading && !feedError && filteredArticles.length === 0 && displayedArticles.length === 0 && (
           <div className="py-20 text-center italic text-[18px] text-muted-foreground">
             No articles yet. Check back soon or submit one.
           </div>
         )}
 
         {/* No search results */}
-        {!feedLoading && searchQuery && filteredArticles.length === 0 && articles.length > 0 && (
+        {!feedLoading && searchQuery && filteredArticles.length === 0 && displayedArticles.length > 0 && (
           <div className="py-20 text-center italic text-[18px] text-muted-foreground">
             <span className="block font-mono not-italic text-[28px] mb-3">⌕</span>
             Nothing matches &ldquo;{searchQuery}&rdquo;. Try a different term.

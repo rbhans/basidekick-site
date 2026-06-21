@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-import { getClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { ROUTES } from "@/lib/routes";
 import { EndorsementTopic } from "@/lib/schemas/endorsements";
 
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Experts — BASidekick",
   description:
     "Browse BAS experts ranked by peer endorsements across Niagara, BACnet, Metasys, and more.",
+  alternates: { canonical: "https://basidekick.com/experts" },
 };
 
 interface TopicWithCount extends EndorsementTopic {
@@ -18,7 +19,8 @@ interface TopicWithCount extends EndorsementTopic {
 }
 
 async function loadTopics(): Promise<TopicWithCount[]> {
-  const supabase = await getClient();
+  const supabase = await createClient();
+  if (!supabase) return [];
 
   const { data: topics, error } = await supabase
     .from("endorsement_topics")

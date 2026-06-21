@@ -12,7 +12,6 @@ const NAV_ITEMS: { href: string; label: string; exact?: boolean }[] = [
   { href: "/pointstack/people", label: "People" },
   { href: "/pointstack/companies", label: "Companies" },
   { href: "/pointstack/jobs", label: "Jobs" },
-  { href: "/pointstack/resources", label: "Resources" },
 ];
 
 const USER_NAV_ITEMS = [

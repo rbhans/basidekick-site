@@ -1,10 +1,11 @@
-import { PointStackResourcesView } from "@/components/pointstack/resources/resources-view";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/lib/routes";
 
 export const metadata = {
-  title: "Resources - PointStack",
-  description: "Download templates, scripts, and resources shared by the BAS community.",
+  title: "Community Share - BASidekick",
+  description: "Community BAS links, files, projects, and references.",
 };
 
 export default function ResourcesPage() {
-  return <PointStackResourcesView />;
+  redirect(ROUTES.OPEN_SOURCE);
 }

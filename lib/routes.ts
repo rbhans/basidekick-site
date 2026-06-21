@@ -15,6 +15,7 @@ export const ROUTES = {
   RESOURCES: "/resources",
   RESOURCES_RUST: "/resources/rust",
   OPEN_SOURCE: "/open-source",
+  COMMUNITY_SHARE_ENTRY: (slug: string) => `/open-source/${encodeURIComponent(slug)}`,
 
   // Atlas unified routes
   ATLAS: "/atlas",

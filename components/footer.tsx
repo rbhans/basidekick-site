@@ -29,7 +29,6 @@ export function Footer() {
           </FootCol>
           <FootCol heading="Build">
             <FootLink href={ROUTES.OPEN_SOURCE}>Community Share</FootLink>
-            <FootLink href={ROUTES.POINTSTACK_RESOURCES}>Community resources</FootLink>
             <FootLink href="/api/atlas">API</FootLink>
             <a
               href="https://github.com/rbhans"

@@ -12,6 +12,7 @@ import {
   CheckCircle,
 } from "@phosphor-icons/react";
 import { ROUTES } from "@/lib/routes";
+import type { NewsArticle } from "@/lib/types";
 import { useNewsStore } from "./news-store";
 import { useAuth } from "@/hooks/use-auth";
 import { CommentSection } from "./comment-section";
@@ -24,12 +25,13 @@ function getFaviconUrl(domain: string, size = 128) {
 
 interface NewsDetailProps {
   slug: string;
+  initialArticle?: NewsArticle | null;
 }
 
-export function NewsDetail({ slug }: NewsDetailProps) {
+export function NewsDetail({ slug, initialArticle = null }: NewsDetailProps) {
   const { user } = useAuth();
   const {
-    currentArticle: article,
+    currentArticle,
     currentArticleLoading: loading,
     fetchArticleBySlug,
     voteArticle,
@@ -43,6 +45,8 @@ export function NewsDetail({ slug }: NewsDetailProps) {
     return () => clearCurrentArticle();
   }, [slug, fetchArticleBySlug, clearCurrentArticle]);
 
+  const article = currentArticle ?? initialArticle;
+
   const lastUpdated = useMemo(
     () =>
       new Date().toLocaleDateString("en-US", {
@@ -53,7 +57,7 @@ export function NewsDetail({ slug }: NewsDetailProps) {
     [],
   );
 
-  if (loading) {
+  if (loading && !article) {
     return (
       <div className="flex justify-center py-24">
         <Spinner className="w-5 h-5 animate-spin text-muted-foreground" />
