@@ -19,11 +19,13 @@ import {
   CreatePointStackJobInput,
   CreatePointStackResourceInput,
   UpdatePointStackProfileInput,
-  ActivityItem,
   BabelContribution,
   EquipmentSubmission,
   EquipmentNote,
   WikiArticle,
+  WorkExperience,
+  CreateWorkExperienceInput,
+  UpdateWorkExperienceInput,
 } from "@/lib/types";
 import { ROUTES, getPointStackPostRoute } from "@/lib/routes";
 import { User } from "@supabase/supabase-js";
@@ -2114,88 +2116,6 @@ export async function fetchUserShowcaseProjects(userId: string): Promise<PointSt
 }
 
 // ============================================================
-// USER ACTIVITY API
-// ============================================================
-
-export async function fetchUserActivity(userId: string, limit = 20): Promise<ActivityItem[]> {
-  const supabase = getClient();
-  const activities: ActivityItem[] = [];
-
-  // Fetch posts
-  const { data: posts } = await supabase
-    .from("pointstack_posts")
-    .select("id, title, slug, post_type, created_at")
-    .eq("author_id", userId)
-    .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(limit);
-
-  if (posts) {
-    for (const post of posts) {
-      activities.push({
-        id: `post-${post.id}`,
-        type: "post",
-        title: post.title,
-        description: `Created a ${post.post_type}`,
-        link: getPointStackPostRoute(post.post_type, post.slug),
-        created_at: post.created_at,
-      });
-    }
-  }
-
-  // Fetch comments
-  const { data: comments } = await supabase
-    .from("pointstack_post_comments")
-    .select(`
-      id, content, created_at,
-      post:pointstack_posts!post_id(title, slug)
-    `)
-    .eq("author_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(limit);
-
-  if (comments) {
-    for (const comment of comments) {
-      const post = comment.post as { title: string; slug: string } | null;
-      activities.push({
-        id: `comment-${comment.id}`,
-        type: "comment",
-        title: `Commented on "${post?.title || "a post"}"`,
-        description: comment.content.slice(0, 100) + (comment.content.length > 100 ? "..." : ""),
-        link: post ? `/pointstack/posts/${post.slug}` : undefined,
-        created_at: comment.created_at,
-      });
-    }
-  }
-
-  // Fetch equipment notes
-  const { data: notes } = await supabase
-    .from("equipment_notes")
-    .select("id, equipment_id, content, created_at")
-    .eq("author_id", userId)
-    .order("created_at", { ascending: false })
-    .limit(limit);
-
-  if (notes) {
-    for (const note of notes) {
-      activities.push({
-        id: `note-${note.id}`,
-        type: "equipment_note",
-        title: "Added equipment note",
-        description: note.content.slice(0, 100) + (note.content.length > 100 ? "..." : ""),
-        created_at: note.created_at,
-        metadata: { equipment_id: note.equipment_id },
-      });
-    }
-  }
-
-  // Sort by created_at descending and take limit
-  return activities
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .slice(0, limit);
-}
-
-// ============================================================
 // USER CONTRIBUTIONS API
 // ============================================================
 
@@ -2487,4 +2407,195 @@ export async function fetchFollowing(userId: string, limit = 50): Promise<PointS
   return (data || [])
     .map((row: { following: unknown }) => row.following as PointStackProfile)
     .filter(Boolean);
+}
+
+// ============================================================
+// WORK EXPERIENCE API
+// ============================================================
+
+/** Public: fetch a user's work/education history, newest (and current) first. */
+export async function fetchUserWorkExperience(userId: string): Promise<WorkExperience[]> {
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("work_experience")
+    .select("*")
+    .eq("user_id", userId)
+    .order("is_current", { ascending: false })
+    .order("start_date", { ascending: false });
+
+  if (error) throw error;
+  return (data || []) as WorkExperience[];
+}
+
+export async function createWorkExperience(input: CreateWorkExperienceInput): Promise<WorkExperience> {
+  const user = await requireAuth();
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("work_experience")
+    .insert({
+      ...input,
+      user_id: user.id,
+      tags: input.tags || [],
+    })
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data as WorkExperience;
+}
+
+export async function updateWorkExperience(
+  id: string,
+  updates: UpdateWorkExperienceInput
+): Promise<WorkExperience> {
+  const user = await requireAuth();
+  const supabase = getClient();
+  const { data, error } = await supabase
+    .from("work_experience")
+    .update(updates)
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data as WorkExperience;
+}
+
+export async function deleteWorkExperience(id: string): Promise<void> {
+  const user = await requireAuth();
+  const supabase = getClient();
+  const { error } = await supabase
+    .from("work_experience")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) throw error;
+}
+
+// ============================================================
+// CONTRIBUTION FEED & STATS API
+// ============================================================
+
+/** Count of a user's accepted answers ("solutions"). */
+export async function getAcceptedAnswerCount(userId: string): Promise<number> {
+  const supabase = getClient();
+  const { count, error } = await supabase
+    .from("pointstack_post_comments")
+    .select("*", { count: "exact", head: true })
+    .eq("author_id", userId)
+    .eq("is_accepted", true);
+
+  if (error) return 0;
+  return count || 0;
+}
+
+export type ContributionSection = "pointstack" | "atlas" | "wiki" | "news";
+
+export interface ContributionFeedItem {
+  id: string;
+  section: ContributionSection;
+  label: string;
+  title: string;
+  href?: string;
+  created_at: string;
+  stat?: string;
+}
+
+/**
+ * Unified, real contribution feed for a profile. Composes the existing
+ * per-source fetchers (no new queries) into one date-sorted list tagged by
+ * section. Each source is fetched defensively so a missing table or RLS error
+ * just yields fewer items rather than breaking the page.
+ */
+export async function fetchUserContributionFeed(userId: string): Promise<ContributionFeedItem[]> {
+  const [posts, babel, equipment, wikiArticles, wikiContribs, news] = await Promise.all([
+    fetchUserPosts(userId, 50).catch(() => []),
+    fetchUserBabelContributions(userId, 50).catch(() => []),
+    fetchUserEquipmentSubmissions(userId, 50).catch(() => []),
+    fetchUserWikiArticles(userId, 50).catch(() => []),
+    fetchUserApprovedWikiContributions(userId, 50).catch(() => []),
+    fetchUserNewsSubmissions(userId, 50).catch(() => []),
+  ]);
+
+  const items: ContributionFeedItem[] = [];
+
+  for (const p of posts) {
+    items.push({
+      id: `post-${p.id}`,
+      section: "pointstack",
+      label:
+        p.post_type === "question"
+          ? "Asked a question"
+          : p.post_type === "project"
+          ? "Shared a project"
+          : "Posted a thread",
+      title: p.title,
+      href: p.slug ? getPointStackPostRoute(p.post_type || "discussion", p.slug) : undefined,
+      created_at: p.created_at,
+      stat: p.upvote_count ? `${p.upvote_count} ↑` : undefined,
+    });
+  }
+
+  for (const c of babel) {
+    if (c.status !== "approved") continue;
+    items.push({
+      id: `babel-${c.id}`,
+      section: "atlas",
+      label: "Added an Atlas term",
+      title: c.title,
+      created_at: c.created_at,
+    });
+  }
+
+  for (const s of equipment) {
+    if (s.review_status !== "approved") continue;
+    items.push({
+      id: `equip-${s.id}`,
+      section: "atlas",
+      label: "Added equipment",
+      title: s.model_name || s.brand_name || "Equipment submission",
+      created_at: s.created_at,
+    });
+  }
+
+  for (const a of wikiArticles) {
+    items.push({
+      id: `wiki-${a.id}`,
+      section: "wiki",
+      label: "Wrote an article",
+      title: a.title,
+      href: ROUTES.WIKI_ARTICLE(a.slug),
+      created_at: a.created_at,
+    });
+  }
+
+  for (const w of wikiContribs) {
+    const target = w.approved_article || w.target_article;
+    items.push({
+      id: `wikic-${w.id}`,
+      section: "wiki",
+      label: w.type === "edit" ? "Edited an article" : "Added a wiki entry",
+      title: target?.title || w.title,
+      href: target ? ROUTES.WIKI_ARTICLE(target.slug) : undefined,
+      created_at: w.created_at,
+    });
+  }
+
+  for (const n of news) {
+    items.push({
+      id: `news-${n.id}`,
+      section: "news",
+      label: "Submitted to News",
+      title: n.title,
+      href: ROUTES.NEWS_ARTICLE(n.slug),
+      created_at: n.created_at,
+      stat: n.upvote_count ? `${n.upvote_count} ↑` : undefined,
+    });
+  }
+
+  return items.sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
 }

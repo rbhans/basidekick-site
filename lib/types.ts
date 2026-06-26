@@ -55,6 +55,7 @@ export type ViewId = (typeof VIEW_IDS)[keyof typeof VIEW_IDS];
 export interface Profile {
   id: string;
   display_name: string | null;
+  username?: string | null;
   avatar_url: string | null;
   company: string | null;
   bio: string | null;
@@ -470,6 +471,41 @@ export interface PointStackProfile extends Profile {
 }
 
 export type PointStackAvailabilityStatus = "available" | "busy" | "not-looking";
+
+// Work / education history (user-entered, shown on profile timeline)
+export type WorkExperienceKind = "work" | "education";
+
+export interface WorkExperience {
+  id: string;
+  user_id: string;
+  kind: WorkExperienceKind;
+  title: string;
+  organization: string;
+  organization_url: string | null;
+  location: string | null;
+  start_date: string; // ISO date (YYYY-MM-DD)
+  end_date: string | null; // null => current / ongoing
+  is_current: boolean;
+  description: string | null;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateWorkExperienceInput {
+  kind: WorkExperienceKind;
+  title: string;
+  organization: string;
+  organization_url?: string | null;
+  location?: string | null;
+  start_date: string;
+  end_date?: string | null;
+  is_current?: boolean;
+  description?: string | null;
+  tags?: string[];
+}
+
+export type UpdateWorkExperienceInput = Partial<CreateWorkExperienceInput>;
 
 // Company
 export interface PointStackCompany {

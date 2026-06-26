@@ -2,36 +2,26 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import {
-  MapPin,
-  Globe,
-  LinkedinLogo,
-  GithubLogo,
-  UserPlus,
-  Check,
-  PencilSimple,
-} from "@phosphor-icons/react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAtlasAll } from "@/components/atlas/use-atlas-data";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserAvatar } from "../shared/user-avatar";
-import { FeedCard } from "../feed/feed-card";
+import { ProfileHero } from "./profile-hero";
+import { StatLedger } from "./stat-ledger";
+import { AboutSection } from "./about-section";
+import { ExperienceSection } from "./experience-section";
+import { ProjectsSection } from "./projects-section";
+import { ContributionsSection } from "./contributions-section";
+import { OwnerStrip } from "./owner-strip";
 import { ProfileEditDialog } from "./profile-edit-dialog";
 import { FollowersDialog } from "./followers-dialog";
-import { ActivityFeed } from "./activity-feed";
-import { ContributionsTab } from "./contributions-tab";
-import { CompletionsTab, type CompletionsCatalogEntry } from "./completions-tab";
-import { PendingTab } from "./pending-tab";
-import { BookmarksTab } from "./bookmarks-tab";
-import { ExpertiseSection } from "./expertise-section";
-import { PointStackProfile, PointStackPost } from "@/lib/types";
+import { WorkExperienceManager } from "./work-experience-manager";
+import type { CompletionsCatalogEntry } from "./completions-tab";
+import { PointStackProfile, PointStackPost, WorkExperience } from "@/lib/types";
 import { ROUTES } from "@/lib/routes";
 import { usePointStackStore } from "../pointstack-store";
 import * as api from "../pointstack-api";
+import type { ContributionFeedItem } from "../pointstack-api";
 import { toast } from "sonner";
 
 interface ProfileViewProps {
@@ -42,31 +32,34 @@ interface ProfileViewProps {
 export function PointStackProfileView({ username, coursesCatalog = [] }: ProfileViewProps) {
   const { user } = useAuth();
   const { messageUser } = usePointStackStore();
+  const { data: atlasData } = useAtlasAll();
+
   const [profile, setProfile] = useState<PointStackProfile | null>(null);
-  const [posts, setPosts] = useState<PointStackPost[]>([]);
   const [showcaseProjects, setShowcaseProjects] = useState<PointStackPost[]>([]);
+  const [equipmentIds, setEquipmentIds] = useState<string[]>([]);
+  const [workExperience, setWorkExperience] = useState<WorkExperience[]>([]);
+  const [contributionFeed, setContributionFeed] = useState<ContributionFeedItem[]>([]);
+  const [solutionsCount, setSolutionsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
-  const [equipmentIds, setEquipmentIds] = useState<string[]>([]);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [workManagerOpen, setWorkManagerOpen] = useState(false);
   const [followersDialogOpen, setFollowersDialogOpen] = useState(false);
   const [followersDialogTab, setFollowersDialogTab] = useState<"followers" | "following">("followers");
-  const { data: atlasData } = useAtlasAll();
 
-  const brandById = useMemo(() => new Map(atlasData?.brands.map((b) => [b.id, b]) || []), [atlasData]);
-  const typeById = useMemo(() => new Map(atlasData?.types.map((t) => [t.id, t]) || []), [atlasData]);
-  const modelById = useMemo(() => new Map(atlasData?.models.map((m) => [m.id, m]) || []), [atlasData]);
-
-  const isOwnProfile = user && profile && user.id === profile.id;
+  const isOwnProfile = Boolean(user && profile && user.id === profile.id);
 
   const equipmentByBrand = useMemo(() => {
     if (!atlasData || equipmentIds.length === 0) return [];
     const brandById = new Map(atlasData.brands.map((b) => [b.id, b]));
     const typeById = new Map(atlasData.types.map((t) => [t.id, t]));
 
-    const grouped = new Map<string, { brandName: string; brandSlug: string; items: { id: string; name: string; href: string }[] }>();
+    const grouped = new Map<
+      string,
+      { brandName: string; brandSlug: string; items: { id: string; name: string; href: string }[] }
+    >();
 
     for (const id of equipmentIds) {
       const model = atlasData.models.find((m) => m.id === id);
@@ -80,7 +73,6 @@ export function PointStackProfileView({ username, coursesCatalog = [] }: Profile
         brandSlug: brand.slug || brand.id,
         items: [],
       };
-
       entry.items.push({
         id: model.id,
         name: model.name,
@@ -89,78 +81,76 @@ export function PointStackProfileView({ username, coursesCatalog = [] }: Profile
       grouped.set(brand.id, entry);
     }
 
-    return Array.from(grouped.values()).map((group) => ({
-      ...group,
-      items: group.items.sort((a, b) => a.name.localeCompare(b.name)),
-    })).sort((a, b) => a.brandName.localeCompare(b.brandName));
+    return Array.from(grouped.values())
+      .map((group) => ({ ...group, items: group.items.sort((a, b) => a.name.localeCompare(b.name)) }))
+      .sort((a, b) => a.brandName.localeCompare(b.brandName));
   }, [atlasData, equipmentIds]);
 
-  const getEquipmentLinks = (ids: string[] = []) => {
-    if (!atlasData) return [];
-    return ids
-      .map((id) => {
-        const model = modelById.get(id);
-        if (!model) return null;
-        const brand = brandById.get(model.brand);
-        const type = typeById.get(model.type);
-        if (!brand || !type) return null;
-        return {
-          id,
-          name: model.name,
-          href: ROUTES.ATLAS_EQUIPMENT_MODEL(brand.slug || brand.id, type.slug || type.id, model.slug || model.id),
-        };
-      })
-      .filter(Boolean) as { id: string; name: string; href: string }[];
-  };
-
   useEffect(() => {
+    let cancelled = false;
+
     const fetchProfile = async () => {
       setLoading(true);
       try {
         const profileData = await api.fetchProfileByUsername(username);
+        if (cancelled) return;
         setProfile(profileData);
+        if (!profileData) return;
 
-        if (profileData) {
-          const [followers, following] = await Promise.all([
-            api.getFollowerCount(profileData.id),
-            api.getFollowingCount(profileData.id),
-          ]);
-          setFollowerCount(followers);
-          setFollowingCount(following);
+        const supabase = createClient();
+        const [followers, following, projects, equipment, work, feed, solutions, followingState] = await Promise.all([
+          api.getFollowerCount(profileData.id).catch(() => 0),
+          api.getFollowingCount(profileData.id).catch(() => 0),
+          api.fetchUserShowcaseProjects(profileData.id).catch(() => []),
+          supabase
+            ? supabase
+                .from("equipment_experience")
+                .select("equipment_id")
+                .eq("user_id", profileData.id)
+                .then(({ data }: { data: { equipment_id: string }[] | null }) =>
+                  (data || []).map((r) => r.equipment_id)
+                )
+                .catch(() => [] as string[])
+            : Promise.resolve<string[]>([]),
+          api.fetchUserWorkExperience(profileData.id).catch(() => []),
+          api.fetchUserContributionFeed(profileData.id).catch(() => []),
+          api.getAcceptedAnswerCount(profileData.id).catch(() => 0),
+          user && user.id !== profileData.id
+            ? api.isFollowing(profileData.id).catch(() => false)
+            : Promise.resolve(false),
+        ]);
 
-          if (user && user.id !== profileData.id) {
-            const following = await api.isFollowing(profileData.id);
-            setIsFollowing(following);
-          }
-
-          // Fetch user's posts
-          const userPosts = await api.fetchUserPosts(profileData.id);
-          setPosts(userPosts);
-
-          // Fetch showcase projects
-          const projects = await api.fetchUserShowcaseProjects(profileData.id);
-          setShowcaseProjects(projects);
-
-          // Fetch equipment experience
-          const supabase = createClient();
-          if (supabase) {
-            const { data: experienceRows } = await supabase
-              .from("equipment_experience")
-              .select("equipment_id")
-              .eq("user_id", profileData.id);
-
-            setEquipmentIds((experienceRows || []).map((row: { equipment_id: string }) => row.equipment_id));
-          }
-        }
+        if (cancelled) return;
+        setFollowerCount(followers);
+        setFollowingCount(following);
+        setShowcaseProjects(projects);
+        setEquipmentIds(equipment);
+        setWorkExperience(work);
+        setContributionFeed(feed);
+        setSolutionsCount(solutions);
+        setIsFollowing(followingState);
       } catch (error) {
         console.error("Error fetching profile:", error);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchProfile();
+    return () => {
+      cancelled = true;
+    };
   }, [username, user]);
+
+  const refreshWorkExperience = async () => {
+    if (!profile) return;
+    try {
+      const work = await api.fetchUserWorkExperience(profile.id);
+      setWorkExperience(work);
+    } catch (error) {
+      console.error("Error refreshing work experience:", error);
+    }
+  };
 
   const handleFollow = async () => {
     if (!profile) return;
@@ -190,13 +180,11 @@ export function PointStackProfileView({ username, coursesCatalog = [] }: Profile
 
   if (!profile) {
     return (
-      <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-16 text-center">
-        <p className="italic text-[20px] text-muted-foreground mb-5">
-          This person isn&apos;t in the set.
-        </p>
+      <section className="mx-auto max-w-[1060px] px-4 py-16 text-center sm:px-6 lg:px-14">
+        <p className="mb-5 text-[20px] italic text-muted-foreground">This person isn&apos;t in the set.</p>
         <Link
           href={ROUTES.POINTSTACK}
-          className="font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:text-accent transition-colors"
+          className="font-mono text-[11px] uppercase tracking-[1.2px] text-foreground transition-colors hover:text-accent"
         >
           ← Back to PointStack
         </Link>
@@ -205,342 +193,63 @@ export function PointStackProfileView({ username, coursesCatalog = [] }: Profile
   }
 
   return (
-    <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
-      {/* Profile header */}
-      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-6 items-start pb-6 mb-8 border-b border-foreground">
-        {/* Avatar */}
-        <UserAvatar
-          displayName={profile.display_name}
-          avatarUrl={profile.avatar_url}
-          size="xl"
-        />
+    <section className="mx-auto max-w-[1060px] px-4 pb-20 pt-7 sm:px-6 lg:px-14">
+      <ProfileHero
+        profile={profile}
+        isOwnProfile={isOwnProfile}
+        viewerLoggedIn={Boolean(user)}
+        isFollowing={isFollowing}
+        onFollow={handleFollow}
+        onMessage={() => messageUser(profile.id)}
+        onEdit={() => setEditDialogOpen(true)}
+      />
 
-        {/* Info */}
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 flex-wrap mb-1">
-            <h1 className="font-heading font-semibold text-[30px] md:text-[36px] leading-[1.1] tracking-[-0.015em] text-foreground">
-              {profile.display_name || "Anonymous"}
-            </h1>
-            {profile.is_verified && (
-              <span className="font-mono text-[9px] uppercase tracking-[1px] text-accent border border-accent px-1.5 py-0.5 rounded-sm inline-flex items-center gap-1">
-                <Check className="w-2.5 h-2.5" weight="bold" />
-                Verified
-              </span>
-            )}
-            {profile.availability_status === "available" && (
-              <span className="font-mono text-[9px] uppercase tracking-[1px] text-accent border border-accent px-1.5 py-0.5 rounded-sm">
-                Available for work
-              </span>
-            )}
-          </div>
+      <StatLedger
+        reputation={profile.reputation_score || 0}
+        contributions={contributionFeed.length}
+        solutions={solutionsCount}
+        followers={followerCount}
+        following={followingCount}
+        onShowFollowers={() => {
+          setFollowersDialogTab("followers");
+          setFollowersDialogOpen(true);
+        }}
+        onShowFollowing={() => {
+          setFollowersDialogTab("following");
+          setFollowersDialogOpen(true);
+        }}
+      />
 
-          {profile.headline && (
-            <p className="italic text-[17px] text-muted-foreground leading-[1.4] mb-3 max-w-[620px]">
-              {profile.headline}
-            </p>
-          )}
+      <AboutSection profile={profile} isOwnProfile={isOwnProfile} />
 
-          {profile.bio && (
-            <p className="text-[14px] text-foreground/85 leading-[1.55] mb-4 max-w-[620px] whitespace-pre-wrap">
-              {profile.bio}
-            </p>
-          )}
+      <ExperienceSection
+        entries={workExperience}
+        equipmentByBrand={equipmentByBrand}
+        isOwnProfile={isOwnProfile}
+        onManage={() => setWorkManagerOpen(true)}
+      />
 
-          <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] uppercase tracking-[1.2px] text-muted-foreground mb-4">
-            {profile.location && (
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="w-3 h-3" />
-                {profile.location}
-              </span>
-            )}
-            <span className="tabular-nums">
-              <span className="text-foreground font-bold">{profile.reputation_score}</span> rep
-            </span>
-            <button
-              onClick={() => {
-                setFollowersDialogTab("followers");
-                setFollowersDialogOpen(true);
-              }}
-              className="hover:text-accent transition-colors"
-            >
-              <span className="text-foreground font-bold tabular-nums">{followerCount}</span> followers
-            </button>
-            <button
-              onClick={() => {
-                setFollowersDialogTab("following");
-                setFollowersDialogOpen(true);
-              }}
-              className="hover:text-accent transition-colors"
-            >
-              <span className="text-foreground font-bold tabular-nums">{followingCount}</span> following
-            </button>
-          </div>
+      <ProjectsSection projects={showcaseProjects} />
 
-          {/* Social links */}
-          {(profile.website_url || profile.linkedin_url || profile.github_url) && (
-            <div className="flex items-center gap-3">
-              {profile.website_url && (
-                <a
-                  href={profile.website_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 border border-border rounded-sm flex items-center justify-center text-muted-foreground hover:border-foreground hover:text-accent transition-colors"
-                  aria-label="Visit website"
-                >
-                  <Globe className="w-4 h-4" />
-                </a>
-              )}
-              {profile.linkedin_url && (
-                <a
-                  href={profile.linkedin_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 border border-border rounded-sm flex items-center justify-center text-muted-foreground hover:border-foreground hover:text-accent transition-colors"
-                  aria-label="LinkedIn profile"
-                >
-                  <LinkedinLogo className="w-4 h-4" />
-                </a>
-              )}
-              {profile.github_url && (
-                <a
-                  href={profile.github_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 border border-border rounded-sm flex items-center justify-center text-muted-foreground hover:border-foreground hover:text-accent transition-colors"
-                  aria-label="GitHub profile"
-                >
-                  <GithubLogo className="w-4 h-4" />
-                </a>
-              )}
-            </div>
-          )}
-        </div>
+      <ContributionsSection items={contributionFeed} />
 
-        {/* Actions */}
-        <div className="flex flex-col gap-2 shrink-0">
-          {isOwnProfile ? (
-            <button
-              onClick={() => setEditDialogOpen(true)}
-              className="inline-flex items-center gap-2 border-[1.5px] border-foreground px-4 py-2.5 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:border-accent hover:text-accent transition-colors"
-            >
-              <PencilSimple className="w-3 h-3" />
-              Edit profile
-            </button>
-          ) : user ? (
-            <>
-              <button
-                onClick={handleFollow}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] transition-colors ${
-                  isFollowing
-                    ? "border-[1.5px] border-foreground text-foreground hover:border-accent hover:text-accent"
-                    : "bg-primary text-primary-foreground hover:bg-primary/90"
-                }`}
-              >
-                {isFollowing ? (
-                  <>
-                    <Check className="w-3 h-3" />
-                    Following
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="w-3 h-3" />
-                    Follow
-                  </>
-                )}
-              </button>
-              <button
-                onClick={() => profile && messageUser(profile.id)}
-                className="border-[1.5px] border-foreground px-4 py-2.5 rounded-md font-mono text-[11px] uppercase tracking-[1.2px] text-foreground hover:border-accent hover:text-accent transition-colors"
-              >
-                Message
-              </button>
-            </>
-          ) : null}
-        </div>
-      </div>
+      {isOwnProfile && <OwnerStrip userId={profile.id} coursesCatalog={coursesCatalog} />}
 
-      {/* Expertise (peer endorsements) */}
-      <ExpertiseSection profileId={profile.id} isOwnProfile={Boolean(isOwnProfile)} />
-
-      {/* Skills */}
-      {profile.skills && profile.skills.length > 0 && (
-        <div className="mb-10">
-          <div className="font-mono text-[10px] uppercase tracking-[1.4px] text-muted-foreground mb-3 pb-2.5 border-b border-border">
-            <span className="text-accent mr-1.5">·</span>
-            Skills
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {profile.skills.map((skill) => (
-              <span
-                key={skill}
-                className="font-mono text-[10px] uppercase tracking-[1.1px] text-foreground border border-border bg-card px-2 py-1 rounded-sm"
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Tabs */}
-      <Tabs defaultValue="posts">
-        <TabsList className="flex-wrap h-auto gap-1 bg-transparent border-b border-border rounded-none p-0 mb-6">
-          <TabsTrigger
-            value="posts"
-            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
-          >
-            Posts ({posts.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="equipment"
-            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
-          >
-            Equipment
-          </TabsTrigger>
-          <TabsTrigger
-            value="projects"
-            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
-          >
-            Projects ({showcaseProjects.length})
-          </TabsTrigger>
-          <TabsTrigger
-            value="contributions"
-            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
-          >
-            Contributions
-          </TabsTrigger>
-          <TabsTrigger
-            value="completions"
-            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
-          >
-            Completions
-          </TabsTrigger>
-          <TabsTrigger
-            value="activity"
-            className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
-          >
-            Activity
-          </TabsTrigger>
-          {isOwnProfile && (
-            <>
-              <TabsTrigger
-                value="pending"
-                className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
-              >
-                Pending
-              </TabsTrigger>
-              <TabsTrigger
-                value="bookmarks"
-                className="font-mono text-[11px] uppercase tracking-[1.2px] data-[state=active]:text-accent data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-accent data-[state=active]:-mb-px data-[state=active]:rounded-none rounded-none pb-2"
-              >
-                Bookmarks
-              </TabsTrigger>
-            </>
-          )}
-        </TabsList>
-
-        <TabsContent value="posts" className="mt-4">
-          {posts.length > 0 ? (
-            <div className="space-y-3">
-              {posts.map((post) => (
-                <FeedCard
-                  key={post.id}
-                  post={post}
-                  equipmentLinks={getEquipmentLinks(post.equipment_ids || [])}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="py-16 text-center italic text-[18px] text-muted-foreground">
-              No posts yet.
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="equipment" className="mt-4">
-          {equipmentByBrand.length === 0 ? (
-            <div className="py-16 text-center italic text-[18px] text-muted-foreground">
-              No equipment experience yet.
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {equipmentByBrand.map((group) => (
-                <div key={group.brandSlug}>
-                  <h3 className="font-mono text-[10px] uppercase tracking-[1.3px] text-muted-foreground mb-3 pb-2 border-b border-border">
-                    <span className="text-accent mr-1.5">·</span>
-                    {group.brandName}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {group.items.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={item.href}
-                        className="font-mono text-[10px] uppercase tracking-[1.1px] text-muted-foreground border border-border bg-card px-2 py-1 rounded-sm hover:border-accent hover:text-accent transition-colors"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="projects" className="mt-4">
-          {showcaseProjects.length > 0 ? (
-            <div className="space-y-3">
-              {showcaseProjects.map((project) => (
-                <FeedCard
-                  key={project.id}
-                  post={project}
-                  equipmentLinks={getEquipmentLinks(project.equipment_ids || [])}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="py-16 text-center italic text-[18px] text-muted-foreground">
-              No showcase projects yet.
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="contributions" className="mt-4">
-          <ContributionsTab userId={profile.id} />
-        </TabsContent>
-
-        <TabsContent value="completions" className="mt-4">
-          <CompletionsTab
-            userId={profile.id}
-            isOwner={Boolean(isOwnProfile)}
-            catalog={coursesCatalog}
-          />
-        </TabsContent>
-
-        <TabsContent value="activity" className="mt-4">
-          <ActivityFeed userId={profile.id} />
-        </TabsContent>
-
-        {isOwnProfile && (
-          <>
-            <TabsContent value="pending" className="mt-4">
-              <PendingTab userId={profile.id} />
-            </TabsContent>
-            <TabsContent value="bookmarks" className="mt-4">
-              <BookmarksTab />
-            </TabsContent>
-          </>
-        )}
-      </Tabs>
-
-      {/* Dialogs */}
       {isOwnProfile && (
-        <ProfileEditDialog
-          open={editDialogOpen}
-          onOpenChange={setEditDialogOpen}
-          profile={profile}
-          onSave={(updatedProfile) => setProfile(updatedProfile)}
-        />
+        <>
+          <ProfileEditDialog
+            open={editDialogOpen}
+            onOpenChange={setEditDialogOpen}
+            profile={profile}
+            onSave={(updatedProfile) => setProfile(updatedProfile)}
+          />
+          <WorkExperienceManager
+            open={workManagerOpen}
+            onOpenChange={setWorkManagerOpen}
+            entries={workExperience}
+            onChanged={refreshWorkExperience}
+          />
+        </>
       )}
 
       <FollowersDialog
@@ -557,17 +266,19 @@ export function PointStackProfileView({ username, coursesCatalog = [] }: Profile
 
 function ProfileSkeleton() {
   return (
-    <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
-      <div className="grid grid-cols-[auto_1fr] gap-6 pb-6 mb-8 border-b border-foreground">
-        <Skeleton className="h-20 w-20 rounded-full" />
-        <div>
-          <Skeleton className="h-9 w-60 mb-2" />
-          <Skeleton className="h-5 w-80 mb-3" />
-          <Skeleton className="h-3 w-60" />
+    <section className="mx-auto max-w-[1060px] px-4 pb-20 pt-7 sm:px-6 lg:px-14">
+      <Skeleton className="h-[150px] w-full rounded-t-lg" />
+      <div className="rounded-b-lg border border-t-0 border-[var(--sand-line-2)] px-7 pb-6">
+        <div className="-mt-[46px] flex items-end gap-5">
+          <Skeleton className="h-[104px] w-[104px] rounded-lg" />
+          <div className="flex-1 pb-2">
+            <Skeleton className="mb-2 h-8 w-60" />
+            <Skeleton className="h-4 w-80" />
+          </div>
         </div>
       </div>
-      <Skeleton className="h-10 w-full mb-4" />
-      <Skeleton className="h-32 w-full" />
+      <Skeleton className="mt-4 h-16 w-full rounded-md" />
+      <Skeleton className="mt-11 h-40 w-full" />
     </section>
   );
 }
