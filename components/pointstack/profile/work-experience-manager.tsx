@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Plus, PencilSimple, Trash, X } from "@phosphor-icons/react";
+import { Plus, PencilSimple, Trash, X, LinkedinLogo } from "@phosphor-icons/react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,7 @@ import {
   WORK_EXPERIENCE_YEARS,
 } from "@/lib/schemas/work-experience";
 import * as api from "../pointstack-api";
+import { LinkedInImport } from "./linkedin-import";
 
 interface WorkExperienceManagerProps {
   open: boolean;
@@ -68,6 +69,7 @@ export function WorkExperienceManager({
 }: WorkExperienceManagerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [importMode, setImportMode] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const form = useForm<WorkExperienceFormValues>({
@@ -80,6 +82,7 @@ export function WorkExperienceManager({
   useEffect(() => {
     if (!open) {
       setShowForm(false);
+      setImportMode(false);
       setEditingId(null);
       reset(EMPTY);
     }
@@ -182,11 +185,16 @@ export function WorkExperienceManager({
           </ul>
         )}
 
-        {!showForm ? (
-          <Button type="button" variant="outline" onClick={startAdd} className="gap-1.5">
-            <Plus className="h-4 w-4" /> Add entry
-          </Button>
-        ) : (
+        {importMode ? (
+          <LinkedInImport
+            existing={entries}
+            onImported={() => {
+              setImportMode(false);
+              onChanged();
+            }}
+            onCancel={() => setImportMode(false)}
+          />
+        ) : showForm ? (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 rounded-md border border-border p-4">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-medium">{editingId ? "Edit entry" : "New entry"}</h4>
@@ -304,6 +312,15 @@ export function WorkExperienceManager({
               </Button>
             </div>
           </form>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" onClick={startAdd} className="gap-1.5">
+              <Plus className="h-4 w-4" /> Add entry
+            </Button>
+            <Button type="button" variant="ghost" onClick={() => setImportMode(true)} className="gap-1.5">
+              <LinkedinLogo className="h-4 w-4" /> Import from LinkedIn
+            </Button>
+          </div>
         )}
       </DialogContent>
     </Dialog>

@@ -28,6 +28,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { TagInput } from "../shared/tag-input";
+import { CoverBannerControl } from "./cover-banner-control";
 import { PointStackProfile, PointStackAvailabilityStatus } from "@/lib/types";
 import {
   profileEditFormSchema,
@@ -79,6 +80,8 @@ function getDefaultValues(profile: PointStackProfile): ProfileEditFormValues {
     linkedinUrl: profile.linkedin_url || "",
     githubUrl: profile.github_url || "",
     availabilityStatus: profile.availability_status || "not-looking",
+    coverImageUrl: profile.cover_image_url || "",
+    coverColor: profile.cover_color || "",
   };
 }
 
@@ -112,6 +115,9 @@ export function ProfileEditDialog({
     defaultValue: [],
   });
 
+  const coverImageUrl = useWatch({ control: form.control, name: "coverImageUrl", defaultValue: "" });
+  const coverColor = useWatch({ control: form.control, name: "coverColor", defaultValue: "" });
+
   const onSubmit = async (values: ProfileEditFormValues) => {
     setSubmitError(null);
 
@@ -126,6 +132,8 @@ export function ProfileEditDialog({
         linkedin_url: values.linkedinUrl.trim() || undefined,
         github_url: values.githubUrl.trim() || undefined,
         availability_status: values.availabilityStatus,
+        cover_image_url: values.coverImageUrl.trim() || null,
+        cover_color: values.coverColor.trim() || null,
       });
 
       onSave(updatedProfile);
@@ -254,6 +262,18 @@ export function ProfileEditDialog({
                 </FormItem>
               )}
             />
+
+            <div className="mt-4 border-t border-border pt-4">
+              <CoverBannerControl
+                userId={profile.id}
+                coverImageUrl={coverImageUrl}
+                coverColor={coverColor}
+                onChange={(v) => {
+                  form.setValue("coverImageUrl", v.coverImageUrl, { shouldDirty: true });
+                  form.setValue("coverColor", v.coverColor, { shouldDirty: true });
+                }}
+              />
+            </div>
 
             <div className="mt-4 border-t border-border pt-4">
               <h4 className="mb-3 text-sm font-medium">Social Links</h4>

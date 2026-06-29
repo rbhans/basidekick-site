@@ -51,11 +51,32 @@ export function ProfileHero({
   const memberSince = profile.created_at ? format(new Date(profile.created_at), "MMM yyyy") : null;
   const hasSocial = Boolean(profile.website_url || profile.linkedin_url || profile.github_url);
 
+  const coverImage = profile.cover_image_url || null;
+  const coverColor = profile.cover_color || null;
+  const hasCoverImage = Boolean(coverImage);
+  const bandStyle: React.CSSProperties = hasCoverImage
+    ? { backgroundImage: `url("${coverImage}")`, backgroundSize: "cover", backgroundPosition: "center" }
+    : coverColor
+    ? { backgroundColor: coverColor }
+    : {};
+
   return (
     <div>
       {/* Cover band */}
-      <div className="relative h-[120px] overflow-hidden rounded-t-lg border border-[var(--char-line-2)] bg-char sm:h-[150px]">
-        <div aria-hidden className="absolute inset-0" style={WATERMARK_STYLE} />
+      <div
+        className={`relative h-[120px] overflow-hidden rounded-t-lg border border-[var(--char-line-2)] sm:h-[150px] ${
+          !hasCoverImage && !coverColor ? "bg-char" : ""
+        }`}
+        style={bandStyle}
+      >
+        {!hasCoverImage && <div aria-hidden className="absolute inset-0" style={WATERMARK_STYLE} />}
+        {(hasCoverImage || coverColor) && (
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{ background: "linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.3))" }}
+          />
+        )}
         <div className="relative z-[1] flex items-start justify-between gap-4 px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.18em]">
           <span className="inline-flex items-center gap-2 text-cream-2">
             <span className="text-punch">▸</span> Member

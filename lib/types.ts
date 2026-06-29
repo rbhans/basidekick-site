@@ -57,6 +57,8 @@ export interface Profile {
   display_name: string | null;
   username?: string | null;
   avatar_url: string | null;
+  cover_image_url?: string | null;
+  cover_color?: string | null;
   company: string | null;
   bio: string | null;
   show_completions: boolean;
@@ -915,6 +917,8 @@ export interface UpdatePointStackProfileInput {
   linkedin_url?: string;
   github_url?: string;
   availability_status?: PointStackAvailabilityStatus;
+  cover_image_url?: string | null;
+  cover_color?: string | null;
   show_completions?: boolean;
 }
 

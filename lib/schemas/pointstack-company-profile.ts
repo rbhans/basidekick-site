@@ -74,6 +74,13 @@ export const profileEditFormSchema = z.object({
   linkedinUrl: optionalHttpUrlSchema,
   githubUrl: optionalHttpUrlSchema,
   availabilityStatus: z.enum(AVAILABILITY_OPTIONS),
+  coverImageUrl: z.string(),
+  coverColor: z
+    .string()
+    .refine(
+      (v) => v === "" || /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v),
+      "Enter a valid hex color (e.g. #1a1a1a)."
+    ),
 });
 
 export type ProfileEditFormValues = z.infer<typeof profileEditFormSchema>;

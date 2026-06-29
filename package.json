@@ -14,6 +14,7 @@
     "wiki:audit": "node scripts/wiki-bulk-curate.mjs",
     "wiki:import": "node scripts/wiki-bulk-curate.mjs --apply --fix-weak",
     "test:curate-news": "node --test scripts/curate-news.test.mjs",
+    "test:linkedin-csv": "node --test scripts/linkedin-csv.test.mjs",
     "validate:atlas-brand-logos": "node scripts/validate-atlas-brand-logos.mjs",
     "lint": "pnpm validate:atlas-brand-logos && eslint",
     "analyze": "ANALYZE=true next build"
