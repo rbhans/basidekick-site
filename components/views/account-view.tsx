@@ -129,6 +129,8 @@ export function AccountView() {
     );
   }
 
+  const ps = profile as unknown as PointStackProfile | null;
+
   return (
     <section className="container mx-auto max-w-[1000px] px-4 sm:px-6 lg:px-16 py-10">
       {/* Header */}
@@ -271,6 +273,10 @@ export function AccountView() {
           <DetailRow label="Display name" value={profile?.display_name || "—"} />
           <DetailRow label="Headline" value={profile && "headline" in profile ? ((profile as Profile & { headline?: string }).headline || "—") : "—"} />
           <DetailRow label="Bio" value={profile?.bio ? <span className="whitespace-pre-wrap">{profile.bio}</span> : "—"} />
+          <DetailRow label="Location" value={ps?.location || "—"} />
+          <DetailRow label="Website" value={ps?.website_url ? <ExternalLink href={ps.website_url} /> : "—"} />
+          <DetailRow label="LinkedIn" value={ps?.linkedin_url ? <ExternalLink href={ps.linkedin_url} /> : "—"} />
+          <DetailRow label="GitHub" value={ps?.github_url ? <ExternalLink href={ps.github_url} /> : "—"} />
           <DetailRow
             label="Company"
             value={
@@ -379,5 +385,20 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
       </dt>
       <dd className="text-[14px] text-foreground">{value}</dd>
     </div>
+  );
+}
+
+function ExternalLink({ href }: { href: string }) {
+  const label = href.replace(/^https?:\/\/(www\.)?/, "").replace(/\/+$/, "");
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 break-all text-foreground underline decoration-accent underline-offset-[3px] transition-colors hover:text-accent"
+    >
+      {label}
+      <ArrowSquareOut className="w-3 h-3 shrink-0" />
+    </a>
   );
 }
