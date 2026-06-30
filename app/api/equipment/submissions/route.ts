@@ -5,20 +5,24 @@ import { checkRateLimit } from "@/lib/rate-limit";
 
 const createSubmissionSchema = z.object({
   type: z.enum(["error", "edit", "new_entry"]),
-  entry_id: z.string().nullable().optional(),
-  brand_id: z.string().nullable().optional(),
-  brand_name: z.string().nullable().optional(),
-  brand_logo_url: z.string().nullable().optional(),
-  type_id: z.string().nullable().optional(),
-  type_name: z.string().nullable().optional(),
-  model_name: z.string().nullable().optional(),
-  model_numbers: z.array(z.string()).nullable().optional(),
-  protocols: z.array(z.string()).nullable().optional(),
+  entry_id: z.string().max(200).nullable().optional(),
+  brand_id: z.string().max(200).nullable().optional(),
+  brand_name: z.string().max(200).nullable().optional(),
+  brand_logo_url: z.string().max(2000).nullable().optional(),
+  type_id: z.string().max(200).nullable().optional(),
+  type_name: z.string().max(200).nullable().optional(),
+  model_name: z.string().max(200).nullable().optional(),
+  model_numbers: z.array(z.string().max(100)).max(100).nullable().optional(),
+  protocols: z.array(z.string().max(100)).max(100).nullable().optional(),
   model_status: z.enum(["current", "discontinued"]).nullable().optional(),
-  description: z.string().nullable().optional(),
-  manufacturer_url: z.string().url().nullable().optional(),
-  image_url: z.string().url().nullable().optional(),
-  suggested_changes: z.record(z.string(), z.unknown()).nullable().optional(),
+  description: z.string().max(5000).nullable().optional(),
+  manufacturer_url: z.string().url().max(2000).nullable().optional(),
+  image_url: z.string().url().max(2000).nullable().optional(),
+  suggested_changes: z
+    .record(z.string(), z.unknown())
+    .refine((v) => JSON.stringify(v).length <= 20000, "suggested_changes too large")
+    .nullable()
+    .optional(),
 });
 
 function getServiceClient() {

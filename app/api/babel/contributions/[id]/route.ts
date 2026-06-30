@@ -106,7 +106,9 @@ async function createGitHubIssue(contribution: {
   body += `\n### Description\n${contribution.description}\n`;
 
   if (contribution.suggested_changes && Object.keys(contribution.suggested_changes).length > 0) {
-    body += `\n### Suggested Changes\n\`\`\`json\n${JSON.stringify(contribution.suggested_changes, null, 2)}\n\`\`\`\n`;
+    // Strip backticks so user-supplied values cannot break out of the code fence
+    const safeChanges = JSON.stringify(contribution.suggested_changes, null, 2).replace(/`/g, "'");
+    body += `\n### Suggested Changes\n\`\`\`json\n${safeChanges}\n\`\`\`\n`;
   }
 
   body += `\n---\n*Submitted via BASidekick contribution system*\n`;

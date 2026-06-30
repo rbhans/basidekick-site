@@ -70,6 +70,31 @@ export async function PATCH(
 
     const { action, admin_notes } = parseResult.data;
 
+    // Fetch the report first so we can 404 on missing rows and guard transitions
+    const { data: existing, error: fetchError } = await supabase
+      .from("content_reports")
+      .select("status")
+      .eq("id", id)
+      .single();
+
+    if (fetchError || !existing) {
+      return NextResponse.json({ error: "Report not found" }, { status: 404 });
+    }
+
+    const isClosing = action !== "reopen";
+    // Closing actions apply only to open (pending) reports; reopen applies only
+    // to closed (resolved/dismissed) ones. Prevents redundant/conflicting writes.
+    const validTransition = isClosing
+      ? existing.status === "pending"
+      : existing.status !== "pending";
+
+    if (!validTransition) {
+      return NextResponse.json(
+        { error: `Cannot ${action} a report that is already ${existing.status}` },
+        { status: 409 }
+      );
+    }
+
     const statusByAction = {
       resolve: "resolved",
       dismiss: "dismissed",
@@ -77,7 +102,6 @@ export async function PATCH(
     } as const;
 
     const newStatus = statusByAction[action];
-    const isClosing = action !== "reopen";
 
     const { data: updated, error: updateError } = await supabase
       .from("content_reports")
@@ -88,6 +112,7 @@ export async function PATCH(
         resolved_at: isClosing ? new Date().toISOString() : null,
       })
       .eq("id", id)
+      .eq("status", existing.status) // optimistic concurrency: only update if unchanged
       .select()
       .single();
 

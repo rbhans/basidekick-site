@@ -133,10 +133,12 @@ ${submission.description}
   }
 
   if (submission.suggested_changes && Object.keys(submission.suggested_changes).length > 0) {
+    // Strip backticks so user-supplied values cannot break out of the code fence
+    const safeChanges = JSON.stringify(submission.suggested_changes, null, 2).replace(/`/g, "'");
     body += `
 ### Suggested Changes
 \`\`\`json
-${JSON.stringify(submission.suggested_changes, null, 2)}
+${safeChanges}
 \`\`\`
 `;
   }
