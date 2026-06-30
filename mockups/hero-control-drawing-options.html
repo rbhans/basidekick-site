@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BASidekick Hero Drawing Options</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sand: #fafaf8;
+      --sand-2: #ededeb;
+      --sand-3: #d8d8d4;
+      --ink: #0a0a0a;
+      --ink-2: rgba(10, 10, 10, 0.64);
+      --ink-3: rgba(10, 10, 10, 0.44);
+      --ink-4: rgba(10, 10, 10, 0.22);
+      --line: rgba(10, 10, 10, 0.08);
+      --line-2: rgba(10, 10, 10, 0.18);
+      --card: #ffffff;
+      --char: #0d0d0d;
+      --cream: #f5f5f5;
+      --cream-2: rgba(245, 245, 245, 0.66);
+      --cream-3: rgba(245, 245, 245, 0.44);
+      --punch: #d11a36;
+      --punch-2: #e8344e;
+      --punch-soft: rgba(209, 26, 54, 0.12);
+      --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+      --shadow-md: 0 1px 3px rgb(0 0 0 / 0.06), 0 4px 12px -2px rgb(0 0 0 / 0.08);
+      --pad-x: clamp(20px, 4vw, 56px);
+      --maxw: 1100px;
+      --rad: 6px;
+      --rad-lg: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--sand);
+      color: var(--ink);
+      font-family: Archivo, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    img { display: block; max-width: 100%; }
+
+    .page-note {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px var(--pad-x) 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .page-note .eyebrow,
+    .option-label,
+    .pulse,
+    .mono,
+    .metric .delta,
+    .metric .tag {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .page-note .eyebrow {
+      color: var(--punch);
+      margin-bottom: 10px;
+    }
+
+    .page-note h1 {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.04;
+      letter-spacing: -0.018em;
+      font-weight: 700;
+    }
+
+    .page-note p {
+      max-width: 720px;
+      margin: 16px 0 0;
+      color: var(--ink-2);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .option {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .option-label {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px var(--pad-x) 0;
+      color: var(--ink-3);
+    }
+
+    .option-label b {
+      color: var(--ink);
+      font-family: Archivo, system-ui, sans-serif;
+      font-size: 17px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .mock-nav {
+      height: 66px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 28px;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 0 var(--pad-x);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: -0.005em;
+    }
+
+    .brand-mark-img {
+      width: 38px;
+      height: 22px;
+      flex: none;
+    }
+
+    .tagline {
+      margin-left: 14px;
+      padding-left: 14px;
+      border-left: 1px solid var(--line-2);
+      color: var(--ink-3);
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .search {
+      justify-self: center;
+      width: min(380px, 100%);
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: var(--rad);
+      background: var(--card);
+      color: var(--ink-2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 14px;
+      font-size: 14px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      color: var(--ink-2);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .signin {
+      background: var(--ink);
+      color: var(--sand);
+      border-radius: 0;
+      padding: 8px 13px;
+      font-size: 13px;
+    }
+
+    .hero {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 88px var(--pad-x) 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink-3);
+      margin-bottom: 32px;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--punch);
+      box-shadow: 0 0 0 4px var(--punch-soft);
+      flex: none;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h2 {
+      margin: 0;
+      max-width: 22ch;
+      font-size: clamp(32px, 4.4vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.018em;
+      font-weight: 600;
+      text-wrap: balance;
+    }
+
+    .hero h2 em {
+      color: var(--punch);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .hero .lede {
+      max-width: 56ch;
+      margin: 28px 0 0;
+      color: var(--ink);
+      font-size: clamp(15px, 1.3vw, 17px);
+      line-height: 1.55;
+    }
+
+    .signoff {
+      margin: 32px 0 0;
+      color: var(--ink-2);
+      font-size: 15.5px;
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .metrics {
+      position: relative;
+      z-index: 2;
+      margin-top: 56px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .metric {
+      min-height: 150px;
+      padding: 22px 24px 20px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--rad);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .metric .head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .metric .tag {
+      padding: 3px 7px;
+      border: 1px solid var(--line-2);
+      border-radius: 4px;
+      background: var(--sand-2);
+      color: var(--ink);
+      letter-spacing: 0.08em;
+    }
+
+    .metric strong {
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric .delta {
+      margin-left: 10px;
+      color: var(--punch);
+      letter-spacing: 0.14em;
+    }
+
+    .metric p {
+      margin: 14px 0 18px;
+      color: var(--ink-2);
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .metric .bar {
+      height: 4px;
+      background: var(--sand-2);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .metric .bar::after {
+      content: "";
+      display: block;
+      width: var(--w, 60%);
+      height: 100%;
+      background: var(--punch);
+    }
+
+    .option-a .hero {
+      min-height: 660px;
+    }
+
+    .option-a .hero::before {
+      content: "";
+      position: absolute;
+      inset: 36px max(-80px, -6vw) 100px 40%;
+      background: url("../public/hero4.png") center / cover no-repeat;
+      opacity: 0.17;
+      filter: grayscale(1) contrast(1.08);
+      transform: rotate(-1deg);
+      border-left: 1px solid var(--line);
+      mask-image: linear-gradient(90deg, transparent 0%, black 16%, black 84%, transparent 100%);
+    }
+
+    .option-a .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, var(--sand) 0%, rgba(250, 250, 248, 0.92) 39%, rgba(250, 250, 248, 0.38) 70%, var(--sand) 100%),
+        repeating-linear-gradient(0deg, transparent 0 47px, rgba(10, 10, 10, 0.035) 48px),
+        repeating-linear-gradient(90deg, transparent 0 47px, rgba(10, 10, 10, 0.03) 48px);
+      pointer-events: none;
+    }
+
+    .option-a .drawing-tabs {
+      position: absolute;
+      z-index: 1;
+      right: clamp(22px, 5vw, 76px);
+      top: 120px;
+      width: min(380px, 32vw);
+      display: grid;
+      gap: 14px;
+      opacity: 0.88;
+    }
+
+    .option-a .tab-sheet {
+      height: 108px;
+      border: 1px solid var(--line-2);
+      background: var(--card);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transform: rotate(var(--r));
+    }
+
+    .option-a .tab-sheet img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.72) contrast(0.94);
+      opacity: 0.7;
+    }
+
+    .option-b .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.93fr) minmax(360px, 1fr);
+      gap: 54px;
+      align-items: center;
+      min-height: 690px;
+    }
+
+    .desk-stack {
+      position: relative;
+      height: 440px;
+      z-index: 2;
+      transform: translateY(-6px);
+    }
+
+    .desk-stack .sheet {
+      position: absolute;
+      background: var(--card);
+      border: 1px solid var(--line-2);
+      box-shadow: 0 18px 45px rgba(10, 10, 10, 0.08);
+      overflow: hidden;
+    }
+
+    .desk-stack .sheet img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.82) contrast(0.97);
+    }
+
+    .desk-stack .sheet-main {
+      inset: 16px 20px 36px 36px;
+      transform: rotate(1.2deg);
+      z-index: 3;
+    }
+
+    .desk-stack .sheet-back {
+      inset: 0 64px 78px 0;
+      transform: rotate(-5deg);
+      opacity: 0.58;
+      z-index: 1;
+    }
+
+    .desk-stack .sheet-side {
+      inset: 206px 0 0 118px;
+      transform: rotate(4deg);
+      opacity: 0.72;
+      z-index: 2;
+    }
+
+    .desk-stack .tape {
+      position: absolute;
+      z-index: 4;
+      width: 74px;
+      height: 18px;
+      background: rgba(250, 250, 248, 0.82);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+      transform: rotate(-7deg);
+    }
+
+    .desk-stack .tape.one { top: 28px; left: 58px; }
+    .desk-stack .tape.two { right: 64px; bottom: 62px; transform: rotate(8deg); }
+
+    .option-b .metrics {
+      grid-column: 1 / -1;
+    }
+
+    .option-c .hero {
+      min-height: 700px;
+      padding-top: 82px;
+    }
+
+    .option-c .hero-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.96fr) minmax(300px, 0.8fr);
+      gap: 50px;
+      align-items: start;
+    }
+
+    .fragment-field {
+      position: relative;
+      z-index: 1;
+      min-height: 460px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding-top: 24px;
+    }
+
+    .fragment {
+      position: relative;
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--line);
+      min-height: 390px;
+      opacity: 0.74;
+      filter: grayscale(0.28) saturate(0.78);
+    }
+
+    .fragment:nth-child(1) { transform: translateY(38px); }
+    .fragment:nth-child(2) { transform: translateY(-6px); }
+    .fragment:nth-child(3) { transform: translateY(58px); }
+
+    .fragment img {
+      position: absolute;
+      inset: 0;
+      width: 210%;
+      height: 100%;
+      max-width: none;
+      object-fit: cover;
+      transform: translateX(var(--x));
+    }
+
+    .fragment::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(250, 250, 248, 0.1), rgba(250, 250, 248, 0.7));
+    }
+
+    .option-c .metrics {
+      margin-top: 44px;
+    }
+
+    @media (max-width: 920px) {
+      .mock-nav {
+        grid-template-columns: 1fr auto;
+      }
+
+      .search,
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 56px;
+      }
+
+      .metrics,
+      .option-b .hero,
+      .option-c .hero-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .option-a .hero::before {
+        inset: 310px 0 110px 0;
+      }
+
+      .option-a .hero::after {
+        background: linear-gradient(180deg, var(--sand) 0%, rgba(250, 250, 248, 0.92) 55%, rgba(250, 250, 248, 0.54) 100%);
+      }
+
+      .option-a .drawing-tabs {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        margin-top: 42px;
+      }
+
+      .desk-stack,
+      .fragment-field {
+        min-height: 360px;
+        height: 360px;
+      }
+
+      .tagline {
+        display: none;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .metrics {
+        gap: 12px;
+      }
+
+      .hero h2 {
+        font-size: 34px;
+      }
+
+      .fragment-field {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .fragment {
+        min-height: 160px;
+      }
+
+      .fragment:nth-child(n) {
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="page-note">
+      <div class="eyebrow">Hero drawing treatment study</div>
+      <h1>Three ways to keep the control drawings without making them read as a product module.</h1>
+      <p>All three use the existing drawing assets and preserve the current BASidekick voice: cream paper, near-black ink, sparse crimson, and field-manual specificity.</p>
+    </section>
+
+    <section class="option option-a">
+      <div class="option-label"><b>Option 1: Blueprint Wash</b> · drawing as paper texture behind the message</div>
+      <div class="mock-nav" aria-hidden="true">
+        <div class="brand">
+          <img class="brand-mark-img" src="../public/brand/brandmark.svg" alt="">
+          <span>BASidekick</span>
+          <span class="tagline">Independent BAS Toolkit</span>
+        </div>
+        <div class="search">⌕ Search...</div>
+        <div class="nav-links"><span>Learn⌄</span><span>Community⌄</span><span>Build⌄</span><span class="signin">Sign in</span></div>
+      </div>
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="pulse"><span class="pulse-dot"></span>Updated this week · <b>0</b> new wiki entries · <b>0</b> new atlas points · <b>0</b> new PointStack posts</div>
+          <h2>BAS info, community, and resources — <em>built by a working engineer</em>, independent of any vendor.</h2>
+          <p class="lede">A growing reference for the people who build, integrate, and operate building automation systems. Open data, open source, and a small community that actually answers questions.</p>
+          <p class="signoff">— Rob, Tucson</p>
+        </div>
+        <div class="drawing-tabs" aria-hidden="true">
+          <div class="tab-sheet" style="--r: -1.5deg"><img src="../public/hero1.png" alt=""></div>
+          <div class="tab-sheet" style="--r: 1deg"><img src="../public/hero3.png" alt=""></div>
+          <div class="tab-sheet" style="--r: -0.5deg"><img src="../public/hero2.png" alt=""></div>
+        </div>
+        <div class="metrics">
+          <article class="metric"><div class="head">Atlas <span class="tag">.01</span></div><strong>501</strong><span class="delta">▲ 0 this week</span><p>Points indexed across <b>101</b> equipment templates</p><div class="bar" style="--w:78%"></div></article>
+          <article class="metric"><div class="head">PointStack <span class="tag">.02</span></div><strong>2</strong><span class="delta">● 0 online</span><p>Members · moderated · BAS-only forum</p><div class="bar" style="--w:52%"></div></article>
+          <article class="metric"><div class="head">Wiki <span class="tag">.03</span></div><strong>446</strong><span class="delta">0 this week</span><p>Field-tested articles from <b>23</b> contributors</p><div class="bar" style="--w:36%"></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="option option-b">
+      <div class="option-label"><b>Option 2: Pinned Desk</b> · drawings as loose working papers, not a framed viewer</div>
+      <div class="mock-nav" aria-hidden="true">
+        <div class="brand">
+          <img class="brand-mark-img" src="../public/brand/brandmark.svg" alt="">
+          <span>BASidekick</span>
+          <span class="tagline">Independent BAS Toolkit</span>
+        </div>
+        <div class="search">⌕ Search...</div>
+        <div class="nav-links"><span>Learn⌄</span><span>Community⌄</span><span>Build⌄</span><span class="signin">Sign in</span></div>
+      </div>
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="pulse"><span class="pulse-dot"></span>Updated this week · <b>0</b> new wiki entries · <b>0</b> new atlas points · <b>0</b> new PointStack posts</div>
+          <h2>BAS info, community, and resources — <em>built by a working engineer</em>, independent of any vendor.</h2>
+          <p class="lede">A growing reference for the people who build, integrate, and operate building automation systems. Open data, open source, and a small community that actually answers questions.</p>
+          <p class="signoff">— Rob, Tucson</p>
+        </div>
+        <div class="desk-stack" aria-hidden="true">
+          <span class="tape one"></span>
+          <span class="tape two"></span>
+          <div class="sheet sheet-back"><img src="../public/hero4.png" alt=""></div>
+          <div class="sheet sheet-main"><img src="../public/hero1.png" alt=""></div>
+          <div class="sheet sheet-side"><img src="../public/hero3.png" alt=""></div>
+        </div>
+        <div class="metrics">
+          <article class="metric"><div class="head">Atlas <span class="tag">.01</span></div><strong>501</strong><span class="delta">▲ 0 this week</span><p>Points indexed across <b>101</b> equipment templates</p><div class="bar" style="--w:78%"></div></article>
+          <article class="metric"><div class="head">PointStack <span class="tag">.02</span></div><strong>2</strong><span class="delta">● 0 online</span><p>Members · moderated · BAS-only forum</p><div class="bar" style="--w:52%"></div></article>
+          <article class="metric"><div class="head">Wiki <span class="tag">.03</span></div><strong>446</strong><span class="delta">0 this week</span><p>Field-tested articles from <b>23</b> contributors</p><div class="bar" style="--w:36%"></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="option option-c">
+      <div class="option-label"><b>Option 3: Margin Fragments</b> · drawings reduced to cropped reference strips</div>
+      <div class="mock-nav" aria-hidden="true">
+        <div class="brand">
+          <img class="brand-mark-img" src="../public/brand/brandmark.svg" alt="">
+          <span>BASidekick</span>
+          <span class="tagline">Independent BAS Toolkit</span>
+        </div>
+        <div class="search">⌕ Search...</div>
+        <div class="nav-links"><span>Learn⌄</span><span>Community⌄</span><span>Build⌄</span><span class="signin">Sign in</span></div>
+      </div>
+      <div class="hero">
+        <div class="hero-layout">
+          <div class="hero-copy">
+            <div class="pulse"><span class="pulse-dot"></span>Updated this week · <b>0</b> new wiki entries · <b>0</b> new atlas points · <b>0</b> new PointStack posts</div>
+            <h2>BAS info, community, and resources — <em>built by a working engineer</em>, independent of any vendor.</h2>
+            <p class="lede">A growing reference for the people who build, integrate, and operate building automation systems. Open data, open source, and a small community that actually answers questions.</p>
+            <p class="signoff">— Rob, Tucson</p>
+          </div>
+          <div class="fragment-field" aria-hidden="true">
+            <div class="fragment"><img src="../public/hero4.png" alt="" style="--x:-18%"></div>
+            <div class="fragment"><img src="../public/hero1.png" alt="" style="--x:-48%"></div>
+            <div class="fragment"><img src="../public/hero3.png" alt="" style="--x:-88%"></div>
+          </div>
+        </div>
+        <div class="metrics">
+          <article class="metric"><div class="head">Atlas <span class="tag">.01</span></div><strong>501</strong><span class="delta">▲ 0 this week</span><p>Points indexed across <b>101</b> equipment templates</p><div class="bar" style="--w:78%"></div></article>
+          <article class="metric"><div class="head">PointStack <span class="tag">.02</span></div><strong>2</strong><span class="delta">● 0 online</span><p>Members · moderated · BAS-only forum</p><div class="bar" style="--w:52%"></div></article>
+          <article class="metric"><div class="head">Wiki <span class="tag">.03</span></div><strong>446</strong><span class="delta">0 this week</span><p>Field-tested articles from <b>23</b> contributors</p><div class="bar" style="--w:36%"></div></article>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

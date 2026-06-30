@@ -2,7 +2,13 @@
 
 **Version:** 2026-05-25 (post-design-system canonical)
 **Supersedes:** `brand-review-2026-04-16.md` (audit of the prior parchment/sage/gold + Fraunces system)
-**Companion:** [design.md](../design.md) at repo root — engineering-facing token reference (YAML frontmatter + Google Labs `design.md` format). Both docs must stay in sync; when in doubt, this file owns *rationale*, `design.md` owns *tokens*.
+**Companions:**
+- [design.md](../design.md) at repo root — engineering-facing token reference (YAML frontmatter + Google Labs `design.md` format).
+- [style-guide.md](./style-guide.md) — short operational guide for applying the brand.
+- [brand-architecture.md](./brand-architecture.md) — BASidekick / QA Graphics / Personal category model.
+- [brand-materials.md](./brand-materials.md) — repo-local brand asset and source-material inventory.
+
+These docs must stay in sync. When in doubt, this file owns *rationale*, `design.md` owns *tokens*, and `brand-architecture.md` owns cross-project category classification.
 
 This document is the source of truth for the BASidekick visual + verbal identity. If a component or asset disagrees with this file, the component is wrong — fix it, don't fork the rules.
 
@@ -15,6 +21,18 @@ This document is the source of truth for the BASidekick visual + verbal identity
 **Why we look the way we look:** Most BAS sites read like trade-show booths. We look like a working drawing — editorial, instrument-panel calm, opinionated but plainspoken. Crimson is the only loud thing on the page, and it earns that role by being scarce.
 
 **Audience:** BAS integrators, controls techs, balancers, FDD engineers, MSI shop owners. People who already know the field. Don't talk down. Don't oversell. Don't use stock photos.
+
+### 1.1 Category architecture
+
+Related work is organized into three top-level families:
+
+| Category | Role | Style posture |
+|---|---|---|
+| BASidekick | Solo BAS tools business and independent BAS resource platform | Alias Cartography + Field Instrument |
+| QA Graphics | Employer/work context and QA Graphics products | Practical production-tool clarity |
+| Personal | Personal portfolio, experiments, and non-work/non-BASidekick projects | Quiet portfolio clarity |
+
+Use [brand-architecture.md](./brand-architecture.md) for classification rules. Do not silently merge employer work, personal experiments, and BASidekick products into one visible brand.
 
 ---
 
@@ -183,7 +201,7 @@ These exist so that ontology badges, status dots, code syntax, and wiki category
 - `--tok-keyword`, `--tok-string`, `--tok-key`, `--tok-fn`, `--tok-comment`, `--tok-dim`
 - `--wiki-troubleshooting`, `--wiki-how-to`, `--wiki-best-practices`, `--wiki-documentation`, `--wiki-reference`
 
-If you need a new semantic role, add the alias to [app/globals.css](app/globals.css) — don't drop a raw hex into a component.
+If you need a new semantic role, add the alias to [app/globals.css](../app/globals.css) — don't drop a raw hex into a component.
 
 ### 4.3 Don't
 
@@ -300,7 +318,7 @@ When working in the codebase, follow these rules so the system stays coherent:
 3. **No new fonts.** Archivo + JetBrains Mono only.
 4. **Tokenize semantics, not surfaces.** Prefer `--status-live` over `--moss` in a component; the alias is allowed to change.
 5. **Wordmark = Archivo Black, no italic.** Site code already does this — don't override.
-6. **Site-redesign HTML mockups** in [site-redesign/](site-redesign/) are reference snapshots, not living source. Treat them as read-only.
+6. **Historical redesign mockups** are reference snapshots, not living source. Treat them as read-only if present in an archive or prior branch.
 
 ---
 

@@ -1,0 +1,1364 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atlas Specimen Mockups - BASidekick</title>
+  <style>
+    :root {
+      --sand: #fafaf8;
+      --sand-2: #ededeb;
+      --sand-line: rgba(10, 10, 10, 0.1);
+      --ink: #0a0a0a;
+      --ink-2: rgba(10, 10, 10, 0.64);
+      --ink-3: rgba(10, 10, 10, 0.44);
+      --char: #0d0d0d;
+      --char-2: #151515;
+      --char-3: #202020;
+      --char-card: #141414;
+      --char-line: rgba(255, 255, 255, 0.08);
+      --char-line-2: rgba(255, 255, 255, 0.18);
+      --cream: #f5f5f5;
+      --cream-2: rgba(245, 245, 245, 0.68);
+      --cream-3: rgba(245, 245, 245, 0.42);
+      --punch: #d11a36;
+      --punch-2: #e8344e;
+      --punch-soft: rgba(209, 26, 54, 0.14);
+      --moss: #9ec79a;
+      --ochre: #d99a5d;
+      --rad: 6px;
+      --rad-lg: 8px;
+      --font-sans: Archivo, Arial, sans-serif;
+      --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+      --shadow-dark: 0 2px 4px rgba(0, 0, 0, 0.5), 0 8px 24px -4px rgba(0, 0, 0, 0.6);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--sand);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mock-shell {
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 34px clamp(18px, 4vw, 58px) 80px;
+    }
+
+    .mock-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 28px;
+      align-items: end;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--sand-line);
+    }
+    .mock-kicker,
+    .section-kicker,
+    .mono {
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 11px;
+    }
+    .mock-kicker { color: var(--ink-3); }
+    .mock-kicker b { color: var(--punch); }
+    h1 {
+      margin: 10px 0 0;
+      max-width: 780px;
+      font-size: clamp(36px, 5vw, 72px);
+      line-height: 0.96;
+      letter-spacing: -0.035em;
+    }
+    .mock-head p {
+      max-width: 54ch;
+      color: var(--ink-2);
+      line-height: 1.55;
+      margin: 12px 0 0;
+      font-size: 15px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .tab {
+      border: 1px solid var(--sand-line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: var(--rad);
+      min-height: 38px;
+      padding: 0 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    .tab[aria-selected="true"] {
+      background: var(--ink);
+      color: var(--cream);
+      border-color: var(--ink);
+    }
+
+    .research-notes {
+      margin: 22px 0 32px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .note {
+      border: 1px solid var(--sand-line);
+      border-radius: var(--rad);
+      background: #fff;
+      padding: 14px 16px;
+      min-height: 88px;
+    }
+    .note b {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--punch);
+      margin-bottom: 7px;
+    }
+    .note span {
+      color: var(--ink-2);
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .option {
+      display: none;
+      margin-top: 22px;
+    }
+    .option.is-active { display: block; }
+    .option-label {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+    .option-label h2 {
+      margin: 0;
+      font-size: clamp(22px, 3vw, 34px);
+      letter-spacing: -0.02em;
+    }
+    .option-label p {
+      margin: 8px 0 0;
+      color: var(--ink-2);
+      line-height: 1.5;
+      max-width: 72ch;
+    }
+    .fit {
+      color: var(--ink-3);
+      text-align: right;
+      white-space: nowrap;
+    }
+    .fit b { color: var(--punch); }
+
+    .atlas-stage {
+      position: relative;
+      min-height: 760px;
+      overflow: hidden;
+      background: var(--char);
+      border: 1px solid var(--char-line);
+      border-radius: var(--rad-lg);
+      color: var(--cream);
+      box-shadow: var(--shadow-dark);
+    }
+    .stage-inner {
+      position: relative;
+      z-index: 1;
+      padding: clamp(24px, 4vw, 52px);
+    }
+    .section-bar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--char-line-2);
+      color: var(--cream-3);
+    }
+    .section-bar .num { color: var(--punch); }
+    .section-bar h3 {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.035em;
+      color: var(--cream);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      border-radius: var(--rad);
+      padding: 0 16px;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .btn-punch { background: var(--punch); color: white; }
+    .btn-ghost { border: 1px solid var(--char-line-2); color: var(--cream); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border: 1px solid var(--char-line-2);
+      border-radius: 4px;
+      padding: 0 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--cream-2);
+      background: rgba(255, 255, 255, 0.035);
+    }
+    .pin {
+      width: 5px;
+      height: 5px;
+      display: inline-block;
+      border-radius: 50%;
+      margin-right: 8px;
+      background: var(--punch);
+    }
+
+    /* Option 1 */
+    .tray-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(360px, 0.82fr);
+      gap: clamp(20px, 3vw, 40px);
+      margin-top: 32px;
+      align-items: stretch;
+    }
+    .specimen-tray {
+      position: relative;
+      min-height: 510px;
+      padding: clamp(24px, 4vw, 46px);
+      border: 1px solid var(--char-line-2);
+      border-radius: var(--rad-lg);
+      background: var(--char-card);
+      overflow: hidden;
+    }
+    .specimen-tray::before,
+    .specimen-tray::after {
+      content: "";
+      position: absolute;
+      inset: 44px auto auto 48%;
+      width: 1px;
+      height: 72%;
+      background: var(--char-line);
+      transform: rotate(18deg);
+    }
+    .specimen-tray::after {
+      inset: auto auto 36px 34%;
+      width: 58%;
+      height: 1px;
+      transform: rotate(-7deg);
+    }
+    .tray-id {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--cream-3);
+      margin-bottom: 34px;
+    }
+    .big-index {
+      position: absolute;
+      top: 28px;
+      right: 32px;
+      font-family: var(--font-mono);
+      color: rgba(245,245,245,0.08);
+      font-size: clamp(88px, 12vw, 168px);
+      line-height: 0.8;
+      letter-spacing: -0.08em;
+      pointer-events: none;
+    }
+    .tray-title {
+      max-width: 680px;
+      position: relative;
+      z-index: 2;
+    }
+    .tray-title h4 {
+      margin: 0;
+      color: var(--cream);
+      font-size: clamp(42px, 6vw, 82px);
+      line-height: 0.9;
+      letter-spacing: -0.045em;
+    }
+    .tray-title .slug {
+      margin: 12px 0 0;
+      color: var(--cream-2);
+      font-size: clamp(18px, 2vw, 26px);
+      letter-spacing: -0.015em;
+    }
+    .tray-title .desc {
+      margin: 26px 0 0;
+      max-width: 58ch;
+      color: var(--cream-2);
+      line-height: 1.65;
+      font-size: 15.5px;
+    }
+    .alias-ribbon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      border-top: 1px solid var(--char-line-2);
+      background: rgba(8,8,8,0.72);
+    }
+    .alias-ribbon .label {
+      padding: 16px 18px;
+      color: var(--punch);
+      border-right: 1px solid var(--char-line-2);
+    }
+    .alias-ribbon .items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 13px 16px;
+    }
+    .taxonomy-board {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+    }
+    .taxonomy-head {
+      border: 1px solid var(--char-line-2);
+      border-radius: var(--rad);
+      padding: 18px;
+      background: rgba(255,255,255,0.035);
+    }
+    .taxonomy-head .sheet {
+      color: var(--punch);
+      margin-bottom: 12px;
+    }
+    .taxonomy-head strong {
+      display: block;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+    .tax-rows {
+      display: grid;
+      gap: 10px;
+    }
+    .tax-row {
+      border: 1px solid var(--char-line);
+      border-radius: var(--rad);
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.035);
+    }
+    .tax-row .k {
+      color: var(--cream-3);
+      margin-bottom: 9px;
+    }
+    .tax-row .v {
+      font-size: 17px;
+      line-height: 1.35;
+      color: var(--cream);
+    }
+    .tax-row .sub {
+      display: block;
+      color: var(--cream-3);
+      margin-top: 7px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+    .mini-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .mini-controls button {
+      height: 40px;
+      border-radius: var(--rad);
+      border: 1px solid var(--char-line-2);
+      background: transparent;
+      color: var(--cream);
+      font-weight: 700;
+    }
+
+    /* Option 2 */
+    .crosswalk-layout {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: minmax(0, 0.84fr) minmax(520px, 1.16fr);
+      gap: clamp(20px, 3vw, 34px);
+      align-items: stretch;
+    }
+    .cross-title {
+      border: 1px solid var(--char-line-2);
+      border-radius: var(--rad-lg);
+      background: var(--char-card);
+      padding: clamp(26px, 4vw, 42px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 510px;
+    }
+    .cross-title .type {
+      margin-bottom: 18px;
+      color: var(--cream-3);
+    }
+    .cross-title h4 {
+      margin: 0;
+      font-size: clamp(40px, 5vw, 72px);
+      line-height: 0.92;
+      letter-spacing: -0.045em;
+    }
+    .cross-title .slug {
+      color: var(--cream-2);
+      margin: 14px 0 0;
+      font-size: 20px;
+      overflow-wrap: anywhere;
+    }
+    .cross-title .desc {
+      max-width: 48ch;
+      color: var(--cream-2);
+      line-height: 1.65;
+      margin-top: 24px;
+    }
+    .crosswalk-card {
+      border: 1px solid var(--char-line-2);
+      border-radius: var(--rad-lg);
+      background: var(--char-card);
+      min-height: 510px;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+    .crosswalk-head {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--char-line-2);
+    }
+    .crosswalk-head .num { color: var(--punch); }
+    .crosswalk-head .label { color: var(--cream); }
+    .crosswalk-head .sheet { color: var(--cream-3); }
+    .crosswalk-table {
+      display: grid;
+      align-content: start;
+    }
+    .crosswalk-row {
+      display: grid;
+      grid-template-columns: 136px minmax(220px, 1fr) 104px;
+      gap: 14px;
+      align-items: start;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--char-line);
+    }
+    .crosswalk-row.is-canonical {
+      background: rgba(209, 26, 54, 0.08);
+      border-bottom-color: rgba(209, 26, 54, 0.32);
+    }
+    .crosswalk-row .source {
+      color: var(--cream-3);
+      letter-spacing: 0.1em;
+    }
+    .crosswalk-row .value {
+      color: var(--cream);
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 700;
+      min-width: 0;
+      overflow-wrap: normal;
+    }
+    .crosswalk-row.is-canonical .value {
+      font-size: 26px;
+      letter-spacing: -0.025em;
+    }
+    .crosswalk-row .value-code {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      letter-spacing: 0;
+      line-height: 1.45;
+    }
+    .crosswalk-row .note {
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--cream-3);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.45;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .alias-strip {
+      padding: 16px 20px;
+      border-top: 1px solid var(--char-line-2);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .alias-strip .count {
+      color: var(--punch);
+      margin-right: 4px;
+    }
+
+    /* Option 3 */
+    .ledger-layout {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 0.58fr);
+      gap: 22px;
+    }
+    .ledger-sheet {
+      position: relative;
+      min-height: 570px;
+      border: 1px solid var(--char-line-2);
+      border-radius: var(--rad-lg);
+      overflow: hidden;
+      background: rgba(255,255,255,0.035);
+    }
+    .ledger-sheet::before {
+      content: "";
+      position: absolute;
+      inset: 0 42% 0 auto;
+      width: 1px;
+      background: var(--char-line);
+    }
+    .ledger-sheet::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 128px;
+      height: 1px;
+      background: var(--char-line);
+      box-shadow:
+        0 56px 0 var(--char-line),
+        0 112px 0 var(--char-line),
+        0 168px 0 var(--char-line),
+        0 224px 0 var(--char-line),
+        0 280px 0 var(--char-line);
+    }
+    .ledger-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 58% 42%;
+      min-height: inherit;
+    }
+    .ledger-primary {
+      padding: clamp(28px, 4vw, 52px);
+    }
+    .ledger-primary .label-card {
+      max-width: 430px;
+      background: var(--sand);
+      color: var(--ink);
+      border-radius: 4px;
+      padding: 16px 18px;
+      transform: rotate(-1.2deg);
+      box-shadow: 0 18px 42px rgba(0,0,0,0.36);
+      margin-bottom: 42px;
+    }
+    .label-card .top {
+      color: var(--punch);
+      margin-bottom: 10px;
+    }
+    .label-card strong {
+      display: block;
+      font-size: 26px;
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+    }
+    .label-card span {
+      color: var(--ink-2);
+      display: block;
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .ledger-primary h4 {
+      margin: 0;
+      font-size: clamp(42px, 5.5vw, 80px);
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+    }
+    .ledger-primary .slug {
+      margin: 14px 0 0;
+      color: var(--cream-2);
+      font-size: 21px;
+    }
+    .ledger-primary .desc {
+      max-width: 52ch;
+      color: var(--cream-2);
+      line-height: 1.65;
+      margin-top: 26px;
+    }
+    .ledger-side {
+      padding: 28px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+      background: rgba(0,0,0,0.14);
+    }
+    .sample-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .sample {
+      min-height: 74px;
+      border: 1px solid var(--char-line);
+      border-radius: 4px;
+      padding: 9px;
+      color: var(--cream-3);
+      background: rgba(255,255,255,0.025);
+    }
+    .sample.is-on {
+      border-color: rgba(209, 26, 54, 0.55);
+      color: var(--cream);
+      background: rgba(209,26,54,0.08);
+    }
+    .ledger-cell {
+      border: 1px solid var(--char-line);
+      border-radius: var(--rad);
+      padding: 16px;
+      background: rgba(255,255,255,0.035);
+    }
+    .ledger-cell .k {
+      color: var(--cream-3);
+      margin-bottom: 9px;
+    }
+    .ledger-cell .v {
+      color: var(--cream);
+      font-size: 18px;
+      line-height: 1.35;
+      font-weight: 700;
+    }
+    .ledger-cell .sub {
+      display: block;
+      color: var(--cream-3);
+      margin-top: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      font-weight: 400;
+    }
+
+    /* Option 4 */
+    .magic-stage {
+      position: relative;
+      min-height: 720px;
+      overflow: hidden;
+      background: var(--char);
+      border: 1px solid var(--char-line-2);
+      border-left: 0;
+      border-right: 0;
+      border-radius: 0;
+      color: var(--cream);
+      box-shadow: none;
+      padding: clamp(28px, 4vw, 54px);
+    }
+    .magic-stage::before,
+    .magic-stage::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      background: var(--char-line);
+    }
+    .magic-stage::before {
+      left: clamp(28px, 4vw, 54px);
+      right: clamp(28px, 4vw, 54px);
+      top: 130px;
+      height: 1px;
+    }
+    .magic-stage::after {
+      top: 130px;
+      bottom: clamp(28px, 4vw, 54px);
+      left: clamp(28px, 4vw, 54px);
+      width: 1px;
+      box-shadow:
+        304px 0 0 rgba(255,255,255,0.06),
+        608px 0 0 rgba(255,255,255,0.06),
+        912px 0 0 rgba(255,255,255,0.06);
+    }
+    .magic-topline {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      border-bottom: 1px solid var(--char-line-2);
+      padding-bottom: 20px;
+      color: var(--cream-3);
+    }
+    .magic-topline span,
+    .magic-index-head span {
+      color: var(--punch);
+    }
+    .magic-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(190px, 0.34fr) minmax(0, 0.88fr) minmax(360px, 0.62fr);
+      gap: 0;
+      margin-top: 0;
+      min-height: 430px;
+    }
+    .magic-record,
+    .magic-index,
+    .magic-alias-drawer {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+    }
+    .magic-record {
+      min-height: 430px;
+      padding: 34px 38px 30px 34px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      border-right: 1px solid var(--char-line-2);
+      position: relative;
+      overflow: hidden;
+    }
+    .magic-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cream-3);
+    }
+    .magic-meta strong {
+      color: var(--cream);
+      margin-left: auto;
+      font-weight: 600;
+    }
+    .magic-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+      align-items: center;
+      padding: 34px 0 30px;
+      position: relative;
+      z-index: 1;
+    }
+    .magic-number {
+      position: absolute;
+      right: 18px;
+      top: 126px;
+      font-family: var(--font-mono);
+      color: rgba(245,245,245,0.055);
+      font-size: 132px;
+      line-height: 1;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      pointer-events: none;
+    }
+    .magic-tag {
+      color: var(--cream-3);
+      margin-bottom: 20px;
+    }
+    .magic-body h4 {
+      margin: 0;
+      font-size: 68px;
+      line-height: 0.95;
+      letter-spacing: 0;
+      max-width: 620px;
+    }
+    .magic-slug {
+      color: var(--cream-2);
+      font-size: 21px;
+      margin: 18px 0 0;
+      overflow-wrap: anywhere;
+    }
+    .magic-copy {
+      max-width: 58ch;
+      color: var(--cream-2);
+      line-height: 1.65;
+      font-size: 15px;
+      margin: 26px 0 0;
+    }
+    .magic-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .magic-actions button,
+    .magic-pager button {
+      height: 40px;
+      border-radius: var(--rad);
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .magic-primary {
+      border: 1px solid var(--punch);
+      background: var(--punch);
+      color: #fff;
+      padding: 0 18px;
+    }
+    .magic-secondary,
+    .magic-pager button {
+      border: 1px solid var(--char-line-2);
+      background: transparent;
+      color: var(--cream);
+      padding: 0 16px;
+    }
+    .magic-index {
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 430px;
+    }
+    .magic-index-head {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 20px 0 20px 34px;
+      border-bottom: 1px solid var(--char-line-2);
+    }
+    .magic-index-head small {
+      color: var(--cream-3);
+    }
+    .magic-index-row {
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr);
+      column-gap: 18px;
+      row-gap: 8px;
+      padding: 24px 0 24px 34px;
+      border-bottom: 1px solid var(--char-line);
+    }
+    .magic-index-row:last-child {
+      border-bottom: 0;
+    }
+    .magic-row-label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--cream-3);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 10px;
+    }
+    .magic-row-value {
+      color: var(--cream);
+      font-size: 20px;
+      line-height: 1.3;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+    .magic-row-note {
+      grid-column: 2;
+      color: var(--cream-3);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 10px;
+    }
+    .magic-alias-drawer {
+      position: relative;
+      z-index: 1;
+      margin-top: 0;
+      min-height: 430px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 22px;
+      align-items: stretch;
+      padding: 34px 26px 30px 0;
+      border-right: 1px solid var(--char-line-2);
+      border-bottom: 0;
+    }
+    .magic-alias-title {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 9px;
+      color: var(--cream);
+      align-content: start;
+    }
+    .magic-alias-title small {
+      grid-column: 2;
+      color: var(--punch);
+      margin-top: 5px;
+    }
+    .magic-alias-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      border-top: 1px solid var(--char-line);
+      border-bottom: 1px solid var(--char-line);
+    }
+    .magic-alias-list span {
+      border: 0;
+      border-bottom: 1px solid var(--char-line);
+      border-radius: 0;
+      background: transparent;
+      color: var(--cream);
+      padding: 14px 0;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+      line-height: 1.45;
+      display: grid;
+      gap: 5px;
+      align-content: center;
+    }
+    .magic-alias-list span:first-child {
+      padding-left: 0;
+    }
+    .magic-alias-list span:last-child {
+      border-bottom: 0;
+    }
+    .magic-alias-list b {
+      color: var(--cream);
+      font-size: 13px;
+      letter-spacing: 0.07em;
+    }
+    .magic-alias-list em {
+      color: var(--cream-3);
+      font-style: normal;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+    }
+    .magic-pager {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    @media (max-width: 980px) {
+      .mock-head,
+      .option-label,
+      .tray-grid,
+      .crosswalk-layout,
+      .ledger-layout,
+      .ledger-content,
+      .magic-grid,
+      .magic-alias-drawer {
+        grid-template-columns: 1fr;
+      }
+      .tabs { justify-content: flex-start; }
+      .research-notes { grid-template-columns: 1fr; }
+      .fit { text-align: left; white-space: normal; }
+      .atlas-stage { min-height: 0; }
+      .crosswalk-layout { grid-template-columns: 1fr; }
+      .cross-title { min-height: 0; }
+      .ledger-side { padding: 22px; }
+      .alias-ribbon { position: static; margin: 32px -46px -46px; }
+      .magic-body { grid-template-columns: 1fr; }
+      .magic-alias-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .magic-number {
+        writing-mode: horizontal-tb;
+        transform: none;
+        font-size: 64px;
+      }
+    }
+    @media (max-width: 680px) {
+      .mock-shell { padding-inline: 14px; }
+      .stage-inner { padding: 20px; }
+      .section-bar { grid-template-columns: 1fr; }
+      .tray-title h4,
+      .cross-title h4,
+      .ledger-primary h4,
+      .magic-body h4 { font-size: 42px; }
+      .alias-ribbon { grid-template-columns: 1fr; }
+      .alias-ribbon .label { border-right: 0; border-bottom: 1px solid var(--char-line-2); }
+      .crosswalk-head,
+      .crosswalk-row {
+        grid-template-columns: 1fr;
+      }
+      .crosswalk-row {
+        gap: 8px;
+      }
+      .magic-alias-list { grid-template-columns: 1fr; }
+      .magic-alias-list span {
+        border-right: 0;
+        border-bottom: 1px solid var(--char-line-2);
+      }
+      .magic-alias-list span:last-child {
+        border-bottom: 0;
+      }
+      .sample-strip { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main class="mock-shell">
+    <header class="mock-head">
+      <div>
+        <div class="mock-kicker"><b>.04</b> Atlas specimen section / exploration</div>
+        <h1>Four ways to make the specimen feel collected, indexed, and alive.</h1>
+        <p>The current home section already has useful data. These options preserve the BASidekick dark instrument-panel feel while giving the Atlas specimen more visual identity.</p>
+      </div>
+      <nav class="tabs" aria-label="Mockup options">
+        <button class="tab" type="button" aria-selected="false" data-target="option-1">Option 1</button>
+        <button class="tab" type="button" aria-selected="false" data-target="option-2">Option 2</button>
+        <button class="tab" type="button" aria-selected="false" data-target="option-3">Option 3</button>
+        <button class="tab" type="button" aria-selected="true" data-target="option-4">Option 4</button>
+      </nav>
+    </header>
+
+    <section class="research-notes" aria-label="Research notes">
+      <div class="note">
+        <b>Specimen cue</b>
+        <span>Real specimen systems lean on unique IDs, labels, taxonomy, location, and supporting data. The Atlas card should feel like an indexed record, not just a promo card.</span>
+      </div>
+      <div class="note">
+        <b>Dashboard cue</b>
+        <span>The section should use the card as a navigation and compact information hub, with only the most relevant data visible first.</span>
+      </div>
+      <div class="note">
+        <b>Dark UI cue</b>
+        <span>Keep depth through dark grays, ruled lines, contrast, and negative space. Avoid turning it into a heavy black box full of tiny text.</span>
+      </div>
+    </section>
+
+    <section class="option" id="option-1">
+      <div class="option-label">
+        <div>
+          <div class="mock-kicker"><b>Option 1</b> / Specimen tray</div>
+          <h2>Best fit if the home page should still feel calm and editorial.</h2>
+          <p>A larger specimen surface gives the point name room to breathe. The right side stays practical: sheet number, taxonomy, Haystack, Brick, aliases, and controls.</p>
+        </div>
+        <div class="fit mono">recommended <b>first pass</b></div>
+      </div>
+
+      <div class="atlas-stage">
+        <div class="stage-inner">
+          <div class="section-bar mono">
+            <span class="num">.04</span>
+            <h3>Atlas / Today's Specimen</h3>
+            <span>CRG <b>003 / 501</b></span>
+          </div>
+
+          <div class="tray-grid">
+            <div class="specimen-tray">
+              <div class="big-index mono">003</div>
+              <div class="tray-id mono"><span class="pin"></span>Number - Sensor</div>
+              <div class="tray-title">
+                <h4>Return Air Pressure</h4>
+                <p class="slug">Return_Air_Static_Pressure_Sensor</p>
+                <p class="desc">Return Air Pressure point. Indexed with crosswalks for Haystack, Brick, and common field aliases so the same BAS concept can be found no matter what a vendor called it.</p>
+                <div class="btn-row">
+                  <a class="btn btn-punch" href="#">Open in Atlas -></a>
+                  <a class="btn btn-ghost" href="#">Suggest a point</a>
+                </div>
+              </div>
+              <div class="alias-ribbon">
+                <div class="label mono">31 aliases</div>
+                <div class="items">
+                  <span class="pill">RA static</span>
+                  <span class="pill">RASP</span>
+                  <span class="pill">Return SP</span>
+                  <span class="pill">Duct pressure</span>
+                  <span class="pill">RA pressure sensor</span>
+                </div>
+              </div>
+            </div>
+
+            <aside class="taxonomy-board">
+              <div class="taxonomy-head">
+                <div class="sheet mono">Sheet 003 of 501</div>
+                <strong>Cross-system record</strong>
+              </div>
+              <div class="tax-rows">
+                <div class="tax-row">
+                  <div class="k mono"><span class="pin"></span>Kind</div>
+                  <div class="v">Number - sensor<span class="sub">As classified in the atlas</span></div>
+                </div>
+                <div class="tax-row">
+                  <div class="k mono"><span class="pin"></span>Haystack</div>
+                  <div class="v">return air pressure sensor point<span class="sub">Project Haystack tag string</span></div>
+                </div>
+                <div class="tax-row">
+                  <div class="k mono"><span class="pin"></span>Brick</div>
+                  <div class="v">Return_Air_Static_Pressure_Sensor<span class="sub">Brick Schema class</span></div>
+                </div>
+                <div class="tax-row">
+                  <div class="k mono"><span class="pin"></span>Source shape</div>
+                  <div class="v">Aliases, tags, class, field label<span class="sub">What the card exposes first</span></div>
+                </div>
+              </div>
+              <div class="mini-controls">
+                <button type="button">Prev</button>
+                <button type="button">Next</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="option" id="option-2">
+      <div class="option-label">
+        <div>
+          <div class="mock-kicker"><b>Option 2</b> / Crosswalk board</div>
+          <h2>Best if the section should explain what Atlas is at a glance.</h2>
+          <p>This makes the core product idea visible: vendor names, field aliases, Haystack tags, and Brick classes all route toward one canonical BAS concept.</p>
+        </div>
+        <div class="fit mono">highest <b>concept clarity</b></div>
+      </div>
+
+      <div class="atlas-stage">
+        <div class="stage-inner">
+          <div class="section-bar mono">
+            <span class="num">.04</span>
+            <h3>Atlas / Today's Specimen</h3>
+            <span>MAP <b>003 / 501</b></span>
+          </div>
+
+          <div class="crosswalk-layout">
+            <div class="cross-title">
+              <div class="type mono"><span class="pin"></span>Number - Sensor</div>
+              <h4>Return Air Pressure</h4>
+              <p class="slug">Return_Air_Static_Pressure_Sensor</p>
+              <p class="desc">A specimen card that shows the translation problem directly. The Atlas becomes a crosswalk, not just a database count.</p>
+              <div class="btn-row">
+                <a class="btn btn-punch" href="#">Open in Atlas -></a>
+                <a class="btn btn-ghost" href="#">Suggest a point</a>
+              </div>
+            </div>
+
+            <div class="crosswalk-card">
+              <div class="crosswalk-head mono">
+                <span class="num">A</span>
+                <span class="label">Crosswalk / canonical record</span>
+                <span class="sheet">003 of 501</span>
+              </div>
+              <div class="crosswalk-table">
+                <div class="crosswalk-row">
+                  <div class="source mono"><span class="pin"></span>Field alias</div>
+                  <div class="value">RA static</div>
+                  <div class="note">Common field shorthand</div>
+                </div>
+                <div class="crosswalk-row">
+                  <div class="source mono"><span class="pin"></span>Vendor label</div>
+                  <div class="value">RASP</div>
+                  <div class="note">Seen in point lists</div>
+                </div>
+                <div class="crosswalk-row is-canonical">
+                  <div class="source mono"><span class="pin"></span>Canonical</div>
+                  <div class="value">Return Air Pressure</div>
+                  <div class="note">Atlas display name</div>
+                </div>
+                <div class="crosswalk-row">
+                  <div class="source mono"><span class="pin"></span>Haystack</div>
+                  <div class="value">return air pressure sensor point</div>
+                  <div class="note">Tag string</div>
+                </div>
+                <div class="crosswalk-row">
+                  <div class="source mono"><span class="pin"></span>Brick</div>
+                  <div class="value value-code">Return_Air_Static_<wbr>Pressure_Sensor</div>
+                  <div class="note">Schema class</div>
+                </div>
+              </div>
+              <div class="alias-strip">
+                <span class="count mono">31 aliases</span>
+                <span class="pill">RA static</span>
+                <span class="pill">RASP</span>
+                <span class="pill">Return SP</span>
+                <span class="pill">Duct pressure</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="option" id="option-3">
+      <div class="option-label">
+        <div>
+          <div class="mock-kicker"><b>Option 3</b> / Ledger sheet</div>
+          <h2>Best if you want a stronger specimen-label metaphor.</h2>
+          <p>This leans into collection records: a paper specimen label pinned into a dark Atlas ledger, with nearby samples showing that the card rotates through the collection.</p>
+        </div>
+        <div class="fit mono">most <b>distinctive</b></div>
+      </div>
+
+      <div class="atlas-stage">
+        <div class="stage-inner">
+          <div class="section-bar mono">
+            <span class="num">.04</span>
+            <h3>Atlas / Today's Specimen</h3>
+            <span>LEDGER <b>003 / 501</b></span>
+          </div>
+
+          <div class="ledger-layout">
+            <div class="ledger-sheet">
+              <div class="ledger-content">
+                <div class="ledger-primary">
+                  <div class="label-card">
+                    <div class="top mono">Specimen label / BAS Atlas</div>
+                    <strong>Return Air Pressure</strong>
+                    <span>Kind: Number - sensor<br>Aliases: 31 variants<br>Sheet: 003 of 501</span>
+                  </div>
+                  <h4>Return Air Pressure</h4>
+                  <p class="slug">Return_Air_Static_Pressure_Sensor</p>
+                  <p class="desc">Return Air Pressure point. The sheet preserves the human label, the machine tags, and the ontology links in one compact record.</p>
+                  <div class="btn-row">
+                    <a class="btn btn-punch" href="#">Open in Atlas -></a>
+                    <a class="btn btn-ghost" href="#">Suggest a point</a>
+                  </div>
+                </div>
+                <aside class="ledger-side">
+                  <div class="sample-strip">
+                    <div class="sample mono">001<br>Supply Air Temp</div>
+                    <div class="sample mono">002<br>Zone Humidity</div>
+                    <div class="sample mono is-on">003<br>Return Air Pressure</div>
+                    <div class="sample mono">004<br>Discharge Air</div>
+                    <div class="sample mono">005<br>Fan Status</div>
+                  </div>
+                  <div class="ledger-cell">
+                    <div class="k mono"><span class="pin"></span>Haystack</div>
+                    <div class="v">return air pressure sensor point<span class="sub">tag string</span></div>
+                  </div>
+                  <div class="ledger-cell">
+                    <div class="k mono"><span class="pin"></span>Brick</div>
+                    <div class="v">Return_Air_Static_Pressure_Sensor<span class="sub">schema class</span></div>
+                  </div>
+                  <div class="ledger-cell">
+                    <div class="k mono"><span class="pin"></span>Common aliases</div>
+                    <div class="v">RA static - RASP - Return SP<span class="sub">see 31 variants</span></div>
+                  </div>
+                  <div class="mini-controls">
+                    <button type="button">Prev</button>
+                    <button type="button">Next</button>
+                  </div>
+                </aside>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="option is-active" id="option-4">
+      <div class="option-label">
+        <div>
+          <div class="mock-kicker"><b>Option 4</b> / Indexed specimen board</div>
+          <h2>Best if the section needs one stronger Atlas record instead of more small panels.</h2>
+          <p>This pass makes field aliases the left-side input register: the names people actually see first, then the canonical Atlas record and cross-system references beside them.</p>
+        </div>
+        <div class="fit mono">strongest <b>single record</b></div>
+      </div>
+
+      <div class="magic-stage">
+        <header class="magic-topline mono">
+          <div><span>.04</span> Atlas / Today's Specimen</div>
+          <div>CRG 003 / 501</div>
+        </header>
+
+        <div class="magic-grid">
+          <section class="magic-alias-drawer" aria-label="Common aliases">
+            <div class="magic-alias-title mono">
+              <span class="pin"></span>
+              <strong>Alias register</strong>
+              <small>31 total</small>
+            </div>
+            <div class="magic-alias-list">
+              <span><b>RA static</b><em>field shorthand</em></span>
+              <span><b>RASP</b><em>vendor label</em></span>
+              <span><b>Return SP</b><em>panel text</em></span>
+              <span><b>Return duct pressure</b><em>plain language</em></span>
+              <span><b>RA pressure sensor</b><em>expanded label</em></span>
+            </div>
+            <div class="magic-pager">
+              <button type="button">Prev</button>
+              <button type="button">Next</button>
+            </div>
+          </section>
+
+          <article class="magic-record" aria-label="Atlas specimen record">
+            <div class="magic-meta mono">
+              <span class="pin"></span>
+              <span>Specimen record</span>
+              <strong>Indexed concept</strong>
+            </div>
+
+            <div class="magic-body">
+              <div class="magic-number">003</div>
+              <div>
+                <div class="magic-tag mono">Number - Sensor</div>
+                <h4>Return Air Pressure</h4>
+                <p class="magic-slug">Return_Air_Static_Pressure_Sensor</p>
+                <p class="magic-copy">A canonical BAS point record with enough context to recognize it across field labels, vendor naming, Haystack tags, and Brick classes.</p>
+              </div>
+            </div>
+
+            <div class="magic-actions">
+              <button type="button" class="magic-primary">Open in Atlas</button>
+              <button type="button" class="magic-secondary">Suggest a point</button>
+            </div>
+          </article>
+
+          <aside class="magic-index" aria-label="Atlas cross references">
+            <div class="magic-index-head mono">
+              <span>A</span>
+              <strong>Cross-reference drawer</strong>
+              <small>Live sheet</small>
+            </div>
+            <div>
+              <div class="magic-index-row">
+                <div class="magic-row-label"><span class="pin"></span>Kind</div>
+                <div class="magic-row-value">Number - sensor</div>
+                <div class="magic-row-note">Atlas classification</div>
+              </div>
+              <div class="magic-index-row">
+                <div class="magic-row-label"><span class="pin"></span>Haystack</div>
+                <div class="magic-row-value">return air pressure sensor point</div>
+                <div class="magic-row-note">Tag string</div>
+              </div>
+              <div class="magic-index-row">
+                <div class="magic-row-label"><span class="pin"></span>Brick</div>
+                <div class="magic-row-value">Return_Air_Static_<wbr>Pressure_Sensor</div>
+                <div class="magic-row-note">Schema class</div>
+              </div>
+              <div class="magic-index-row">
+                <div class="magic-row-label"><span class="pin"></span>Aliases</div>
+                <div class="magic-row-value">31 variants</div>
+                <div class="magic-row-note">Field names and shorthand</div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+    const options = Array.from(document.querySelectorAll(".option"));
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.getAttribute("data-target");
+        tabs.forEach((item) => item.setAttribute("aria-selected", String(item === tab)));
+        options.forEach((option) => option.classList.toggle("is-active", option.id === target));
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BASidekick Hero Background Drawing Options</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sand: #fafaf8;
+      --sand-2: #ededeb;
+      --ink: #0a0a0a;
+      --ink-2: rgba(10, 10, 10, 0.64);
+      --ink-3: rgba(10, 10, 10, 0.44);
+      --line: rgba(10, 10, 10, 0.08);
+      --line-2: rgba(10, 10, 10, 0.18);
+      --card: #ffffff;
+      --punch: #d11a36;
+      --punch-soft: rgba(209, 26, 54, 0.12);
+      --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+      --pad-x: clamp(20px, 4vw, 56px);
+      --maxw: 1100px;
+      --rad: 6px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--sand);
+      color: var(--ink);
+      font-family: Archivo, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    img { display: block; max-width: 100%; }
+
+    .page-note {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px var(--pad-x) 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow,
+    .option-label,
+    .pulse,
+    .metric .delta,
+    .metric .tag {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      color: var(--punch);
+      margin-bottom: 10px;
+    }
+
+    .page-note h1 {
+      margin: 0;
+      max-width: 800px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.04;
+      letter-spacing: -0.018em;
+      font-weight: 700;
+    }
+
+    .page-note p {
+      max-width: 720px;
+      margin: 16px 0 0;
+      color: var(--ink-2);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    .option {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .option-label {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 30px var(--pad-x) 0;
+      color: var(--ink-3);
+    }
+
+    .option-label b {
+      color: var(--ink);
+      font-family: Archivo, system-ui, sans-serif;
+      font-size: 17px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .mock-nav {
+      height: 66px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 28px;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 0 var(--pad-x);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: -0.005em;
+    }
+
+    .brand img {
+      width: 38px;
+      height: 22px;
+      flex: none;
+    }
+
+    .tagline {
+      margin-left: 14px;
+      padding-left: 14px;
+      border-left: 1px solid var(--line-2);
+      color: var(--ink-3);
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+
+    .search {
+      justify-self: center;
+      width: min(380px, 100%);
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: var(--rad);
+      background: var(--card);
+      color: var(--ink-2);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      font-size: 14px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      color: var(--ink-2);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .signin {
+      background: var(--ink);
+      color: var(--sand);
+      padding: 8px 13px;
+      font-size: 13px;
+    }
+
+    .hero {
+      max-width: var(--maxw);
+      min-height: 740px;
+      margin: 0 auto;
+      padding: 88px var(--pad-x) 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-copy,
+    .metrics {
+      position: relative;
+      z-index: 2;
+    }
+
+    .pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink-3);
+      margin-bottom: 32px;
+    }
+
+    .pulse b { color: var(--ink); font-weight: 500; }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--punch);
+      box-shadow: 0 0 0 4px var(--punch-soft);
+      flex: none;
+    }
+
+    .hero h2 {
+      margin: 0;
+      max-width: 22ch;
+      font-size: clamp(32px, 4.4vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.018em;
+      font-weight: 600;
+      text-wrap: balance;
+    }
+
+    .hero h2 em {
+      color: var(--punch);
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .hero .lede {
+      max-width: 56ch;
+      margin: 28px 0 0;
+      color: var(--ink);
+      font-size: clamp(15px, 1.3vw, 17px);
+      line-height: 1.55;
+    }
+
+    .signoff {
+      margin: 32px 0 0;
+      color: var(--ink-2);
+      font-size: 15.5px;
+      font-style: italic;
+      font-weight: 500;
+    }
+
+    .metrics {
+      margin-top: 56px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .metric {
+      min-height: 150px;
+      padding: 22px 24px 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+      border-radius: var(--rad);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(4px);
+    }
+
+    .metric .head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .metric .tag {
+      padding: 3px 7px;
+      border: 1px solid var(--line-2);
+      border-radius: 4px;
+      background: var(--sand-2);
+      color: var(--ink);
+      letter-spacing: 0.08em;
+    }
+
+    .metric strong {
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric .delta {
+      margin-left: 10px;
+      color: var(--punch);
+      letter-spacing: 0.14em;
+    }
+
+    .metric p {
+      margin: 14px 0 18px;
+      color: var(--ink-2);
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .metric .bar {
+      height: 4px;
+      background: var(--sand-2);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .metric .bar::after {
+      content: "";
+      display: block;
+      width: var(--w, 60%);
+      height: 100%;
+      background: var(--punch);
+    }
+
+    .drawing-bg {
+      position: absolute;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .drawing-bg img {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      object-fit: cover;
+      filter: grayscale(0.45) saturate(0.75) contrast(0.96);
+      mix-blend-mode: multiply;
+    }
+
+    .option-one .drawing-bg {
+      top: 88px;
+      right: clamp(20px, 5vw, 72px);
+      width: min(620px, 54vw);
+      height: 420px;
+      opacity: 0.48;
+      mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 90%, transparent 100%);
+    }
+
+    .option-one .hero::after {
+      background:
+        linear-gradient(90deg, var(--sand) 0%, rgba(250, 250, 248, 0.92) 38%, rgba(250, 250, 248, 0.12) 68%, rgba(250, 250, 248, 0.7) 100%),
+        linear-gradient(180deg, transparent 0%, var(--sand) 88%);
+    }
+
+    .option-two .drawing-bg.primary {
+      top: 58px;
+      right: -28px;
+      width: min(720px, 62vw);
+      height: 500px;
+      opacity: 0.36;
+      transform: rotate(-1.2deg);
+      mask-image: linear-gradient(90deg, transparent 0%, black 7%, black 90%, transparent 100%);
+    }
+
+    .option-two .drawing-bg.secondary {
+      top: 210px;
+      right: 210px;
+      width: 440px;
+      height: 290px;
+      opacity: 0.28;
+      transform: rotate(1deg);
+      mask-image: linear-gradient(90deg, transparent 0%, black 12%, black 88%, transparent 100%);
+    }
+
+    .option-two .hero::after {
+      background:
+        radial-gradient(circle at 78% 34%, rgba(209, 26, 54, 0.055), transparent 28%),
+        linear-gradient(90deg, var(--sand) 0%, rgba(250, 250, 248, 0.94) 38%, rgba(250, 250, 248, 0.2) 69%, rgba(250, 250, 248, 0.72) 100%);
+    }
+
+    .option-three .drawing-bg {
+      inset: 0;
+      width: auto;
+      height: auto;
+      opacity: 1;
+      --cycle-opacity: 0.58;
+      mask-image:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.18) 38%, rgba(0, 0, 0, 0.82) 62%, rgba(0, 0, 0, 0.92) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.88) 68%, rgba(0, 0, 0, 0.26) 100%);
+      mask-composite: intersect;
+    }
+
+    .option-three .drawing-bg img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      object-position: 42% 50%;
+      opacity: 0;
+      filter: grayscale(0.42) saturate(0.78) contrast(1.08);
+      animation-duration: 120s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      will-change: opacity, transform;
+    }
+
+    .option-three .drawing-bg img:nth-child(1) {
+      animation-name: option-three-frame-one;
+    }
+
+    .option-three .drawing-bg img:nth-child(2) {
+      animation-name: option-three-frame-two;
+      object-position: 50% 50%;
+    }
+
+    .option-three .drawing-bg img:nth-child(3) {
+      animation-name: option-three-frame-three;
+      object-position: 42% 50%;
+    }
+
+    .option-three .drawing-bg img:nth-child(4) {
+      animation-name: option-three-frame-four;
+      object-position: 50% 50%;
+    }
+
+    .option-three .hero::after {
+      background:
+        repeating-linear-gradient(0deg, transparent 0 47px, rgba(10, 10, 10, 0.028) 48px),
+        repeating-linear-gradient(90deg, transparent 0 47px, rgba(10, 10, 10, 0.024) 48px),
+        linear-gradient(90deg, rgba(250, 250, 248, 0.94) 0%, rgba(250, 250, 248, 0.88) 38%, rgba(250, 250, 248, 0.12) 64%, rgba(250, 250, 248, 0.24) 100%),
+        linear-gradient(180deg, transparent 0%, transparent 58%, rgba(250, 250, 248, 0.42) 78%, var(--sand) 100%);
+    }
+
+    @keyframes option-three-frame-one {
+      0%, 23% { opacity: var(--cycle-opacity); transform: scale(1.015) translate3d(0, 0, 0); }
+      26%, 97% { opacity: 0; transform: scale(1.045) translate3d(-1%, 0, 0); }
+      100% { opacity: var(--cycle-opacity); transform: scale(1.015) translate3d(0, 0, 0); }
+    }
+
+    @keyframes option-three-frame-two {
+      0%, 22% { opacity: 0; transform: scale(1.02) translate3d(1%, 0, 0); }
+      25%, 48% { opacity: var(--cycle-opacity); transform: scale(1.045) translate3d(0, -0.5%, 0); }
+      51%, 100% { opacity: 0; transform: scale(1.065) translate3d(-1%, -0.5%, 0); }
+    }
+
+    @keyframes option-three-frame-three {
+      0%, 47% { opacity: 0; transform: scale(1.015) translate3d(0, 0, 0); }
+      50%, 73% { opacity: var(--cycle-opacity); transform: scale(1.045) translate3d(-1%, 0, 0); }
+      76%, 100% { opacity: 0; transform: scale(1.065) translate3d(-1.5%, 0, 0); }
+    }
+
+    @keyframes option-three-frame-four {
+      0%, 72% { opacity: 0; transform: scale(1.02) translate3d(0, 0, 0); }
+      75%, 98% { opacity: var(--cycle-opacity); transform: scale(1.05) translate3d(1%, -0.5%, 0); }
+      100% { opacity: 0; transform: scale(1.06) translate3d(1%, -0.5%, 0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .option-three .drawing-bg img {
+        animation: none;
+        opacity: 0;
+        transform: none;
+      }
+
+      .option-three .drawing-bg img:first-child {
+        opacity: var(--cycle-opacity);
+      }
+    }
+
+    @media (max-width: 920px) {
+      .mock-nav {
+        grid-template-columns: 1fr auto;
+      }
+
+      .search,
+      .nav-links,
+      .tagline {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 56px;
+      }
+
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .drawing-bg,
+      .option-one .drawing-bg,
+      .option-two .drawing-bg.primary,
+      .option-two .drawing-bg.secondary,
+      .option-three .drawing-bg {
+        top: 420px;
+        right: -30px;
+        width: 440px;
+        height: 330px;
+        opacity: 0.28;
+        transform: none;
+      }
+
+      .option-two .drawing-bg.secondary {
+        display: none;
+      }
+
+      .hero::after,
+      .option-one .hero::after,
+      .option-two .hero::after,
+      .option-three .hero::after {
+        background:
+          linear-gradient(180deg, var(--sand) 0%, rgba(250, 250, 248, 0.98) 52%, rgba(250, 250, 248, 0.72) 72%, var(--sand) 100%);
+      }
+
+      .option-three .drawing-bg {
+        inset: 0;
+        width: auto;
+        height: auto;
+        opacity: 1;
+        --cycle-opacity: 0.36;
+      }
+
+      .option-three .drawing-bg img {
+        object-position: 50% 50%;
+      }
+
+      .option-three .hero::after {
+        background:
+          linear-gradient(90deg, rgba(250, 250, 248, 0.92) 0%, rgba(250, 250, 248, 0.82) 44%, rgba(250, 250, 248, 0.22) 76%, rgba(250, 250, 248, 0.64) 100%),
+          linear-gradient(180deg, transparent 0%, transparent 58%, rgba(250, 250, 248, 0.62) 82%, var(--sand) 100%);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page-note {
+        padding-top: 24px;
+      }
+
+      .page-note h1 {
+        font-size: 34px;
+      }
+
+      .option-label {
+        line-height: 1.45;
+      }
+
+      .mock-nav {
+        height: 58px;
+      }
+
+      .hero h2 {
+        font-size: 34px;
+      }
+
+      .pulse {
+        align-items: flex-start;
+        line-height: 1.45;
+        letter-spacing: 0.12em;
+      }
+
+      .drawing-bg,
+      .option-one .drawing-bg,
+      .option-two .drawing-bg.primary,
+      .option-three .drawing-bg {
+        top: 470px;
+        right: -120px;
+        width: 460px;
+        height: 320px;
+        opacity: 0.3;
+      }
+
+      .option-three .drawing-bg {
+        inset: 0;
+        width: auto;
+        height: auto;
+        opacity: 1;
+        --cycle-opacity: 0.36;
+      }
+
+      .option-three .drawing-bg img {
+        object-position: 50% 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="page-note">
+      <div class="eyebrow">Hero background study</div>
+      <h1>Three transparent background treatments for the control drawings.</h1>
+      <p>These keep the drawings in the same hero region, but remove the viewer chrome, stamps, controls, and product-like framing.</p>
+    </section>
+
+    <section class="option option-one">
+      <div class="option-label"><b>Option 1: Right-side Ghost</b> &middot; one large drawing, faded into the existing visual region</div>
+      <div class="mock-nav" aria-hidden="true">
+        <div class="brand">
+          <img src="../public/brand/brandmark.svg" alt="">
+          <span>BASidekick</span>
+          <span class="tagline">Independent BAS Toolkit</span>
+        </div>
+        <div class="search">Search...</div>
+        <div class="nav-links"><span>Learn</span><span>Community</span><span>Build</span><span class="signin">Sign in</span></div>
+      </div>
+      <div class="hero">
+        <div class="drawing-bg" aria-hidden="true"><img src="../public/hero4.png" alt=""></div>
+        <div class="hero-copy">
+          <div class="pulse"><span class="pulse-dot"></span>Updated this week &middot; <b>0</b> new wiki entries &middot; <b>0</b> new atlas points &middot; <b>0</b> new PointStack posts</div>
+          <h2>BAS info, community, and resources &mdash; <em>built by a working engineer</em>, independent of any vendor.</h2>
+          <p class="lede">A growing reference for the people who build, integrate, and operate building automation systems. Open data, open source, and a small community that actually answers questions.</p>
+          <p class="signoff">&mdash; Rob, Tucson</p>
+        </div>
+        <div class="metrics">
+          <article class="metric"><div class="head">Atlas <span class="tag">.01</span></div><strong>501</strong><span class="delta">0 this week</span><p>Points indexed across <b>101</b> equipment templates</p><div class="bar" style="--w:78%"></div></article>
+          <article class="metric"><div class="head">PointStack <span class="tag">.02</span></div><strong>2</strong><span class="delta">0 online</span><p>Members &middot; moderated &middot; BAS-only forum</p><div class="bar" style="--w:52%"></div></article>
+          <article class="metric"><div class="head">Wiki <span class="tag">.03</span></div><strong>446</strong><span class="delta">0 this week</span><p>Field-tested articles from <b>23</b> contributors</p><div class="bar" style="--w:36%"></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="option option-two">
+      <div class="option-label"><b>Option 2: Layered Background Sheets</b> &middot; two transparent drawings crossing behind the right side</div>
+      <div class="mock-nav" aria-hidden="true">
+        <div class="brand">
+          <img src="../public/brand/brandmark.svg" alt="">
+          <span>BASidekick</span>
+          <span class="tagline">Independent BAS Toolkit</span>
+        </div>
+        <div class="search">Search...</div>
+        <div class="nav-links"><span>Learn</span><span>Community</span><span>Build</span><span class="signin">Sign in</span></div>
+      </div>
+      <div class="hero">
+        <div class="drawing-bg primary" aria-hidden="true"><img src="../public/hero3.png" alt=""></div>
+        <div class="drawing-bg secondary" aria-hidden="true"><img src="../public/hero1.png" alt=""></div>
+        <div class="hero-copy">
+          <div class="pulse"><span class="pulse-dot"></span>Updated this week &middot; <b>0</b> new wiki entries &middot; <b>0</b> new atlas points &middot; <b>0</b> new PointStack posts</div>
+          <h2>BAS info, community, and resources &mdash; <em>built by a working engineer</em>, independent of any vendor.</h2>
+          <p class="lede">A growing reference for the people who build, integrate, and operate building automation systems. Open data, open source, and a small community that actually answers questions.</p>
+          <p class="signoff">&mdash; Rob, Tucson</p>
+        </div>
+        <div class="metrics">
+          <article class="metric"><div class="head">Atlas <span class="tag">.01</span></div><strong>501</strong><span class="delta">0 this week</span><p>Points indexed across <b>101</b> equipment templates</p><div class="bar" style="--w:78%"></div></article>
+          <article class="metric"><div class="head">PointStack <span class="tag">.02</span></div><strong>2</strong><span class="delta">0 online</span><p>Members &middot; moderated &middot; BAS-only forum</p><div class="bar" style="--w:52%"></div></article>
+          <article class="metric"><div class="head">Wiki <span class="tag">.03</span></div><strong>446</strong><span class="delta">0 this week</span><p>Field-tested articles from <b>23</b> contributors</p><div class="bar" style="--w:36%"></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="option option-three">
+      <div class="option-label"><b>Option 3: Full Hero Fade</b> &middot; drawing spans the hero and gets stronger in open space</div>
+      <div class="mock-nav" aria-hidden="true">
+        <div class="brand">
+          <img src="../public/brand/brandmark.svg" alt="">
+          <span>BASidekick</span>
+          <span class="tagline">Independent BAS Toolkit</span>
+        </div>
+        <div class="search">Search...</div>
+        <div class="nav-links"><span>Learn</span><span>Community</span><span>Build</span><span class="signin">Sign in</span></div>
+      </div>
+      <div class="hero">
+        <div class="drawing-bg drawing-cycle" aria-hidden="true">
+          <img src="../public/hero2.png" alt="">
+          <img src="../public/hero4.png" alt="">
+          <img src="../public/hero3.png" alt="">
+          <img src="../public/hero1.png" alt="">
+        </div>
+        <div class="hero-copy">
+          <div class="pulse"><span class="pulse-dot"></span>Updated this week &middot; <b>0</b> new wiki entries &middot; <b>0</b> new atlas points &middot; <b>0</b> new PointStack posts</div>
+          <h2>BAS info, community, and resources &mdash; <em>built by a working engineer</em>, independent of any vendor.</h2>
+          <p class="lede">A growing reference for the people who build, integrate, and operate building automation systems. Open data, open source, and a small community that actually answers questions.</p>
+          <p class="signoff">&mdash; Rob, Tucson</p>
+        </div>
+        <div class="metrics">
+          <article class="metric"><div class="head">Atlas <span class="tag">.01</span></div><strong>501</strong><span class="delta">0 this week</span><p>Points indexed across <b>101</b> equipment templates</p><div class="bar" style="--w:78%"></div></article>
+          <article class="metric"><div class="head">PointStack <span class="tag">.02</span></div><strong>2</strong><span class="delta">0 online</span><p>Members &middot; moderated &middot; BAS-only forum</p><div class="bar" style="--w:52%"></div></article>
+          <article class="metric"><div class="head">Wiki <span class="tag">.03</span></div><strong>446</strong><span class="delta">0 this week</span><p>Field-tested articles from <b>23</b> contributors</p><div class="bar" style="--w:36%"></div></article>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
