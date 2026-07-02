@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: ProfilePageProps) {
   const { username } = await params;
   const displayName = decodeURIComponent(username).replace(/^@/, "");
   return {
-    title: `${displayName} - PointStack`,
+    title: `${displayName}`,
     description: `View ${displayName}'s profile on PointStack`,
   };
 }

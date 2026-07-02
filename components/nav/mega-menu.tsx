@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Popover } from "radix-ui";
@@ -16,35 +16,59 @@ interface MegaMenuProps {
 export function MegaMenu({ group }: MegaMenuProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // Radix Popover assigns useId-based ids that diverge between the server and
+  // the first client render, producing an aria-controls hydration mismatch on
+  // every load. Render an identical plain trigger for SSR + first paint, then
+  // upgrade to the interactive Popover after mount so no useId is emitted during
+  // hydration.
+  const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional mount gate to avoid the Radix useId hydration mismatch
+  useEffect(() => setMounted(true), []);
 
   const isGroupActive = group.items.some(
     (item) => pathname === item.href || pathname.startsWith(`${item.href}/`)
   );
+
+  const triggerClassName = `relative px-3 py-2 rounded-sm font-sans text-[13.5px] font-medium transition-colors inline-flex items-center gap-1 ${
+    isGroupActive
+      ? "text-ink"
+      : "text-ink-2 hover:text-ink hover:bg-[var(--sand-2)]"
+  }`;
+
+  const triggerInner = (
+    <>
+      {group.label}
+      <CaretDown
+        className={`w-3 h-3 transition-transform duration-150 ${open ? "rotate-180" : ""}`}
+        weight="bold"
+      />
+      {isGroupActive && (
+        <motion.span
+          layoutId="nav-active"
+          className="absolute left-3 right-5 -bottom-px h-[2px] bg-punch rounded-[2px]"
+          transition={ease.spring}
+        />
+      )}
+    </>
+  );
+
+  if (!mounted) {
+    return (
+      <button type="button" className={triggerClassName} aria-label={`${group.label} menu`}>
+        {triggerInner}
+      </button>
+    );
+  }
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
         <button
           type="button"
-          className={`relative px-3 py-2 rounded-sm font-sans text-[13.5px] font-medium transition-colors inline-flex items-center gap-1 ${
-            isGroupActive
-              ? "text-ink"
-              : "text-ink-2 hover:text-ink hover:bg-[var(--sand-2)]"
-          }`}
+          className={triggerClassName}
           aria-label={`${group.label} menu`}
         >
-          {group.label}
-          <CaretDown
-            className={`w-3 h-3 transition-transform duration-150 ${open ? "rotate-180" : ""}`}
-            weight="bold"
-          />
-          {isGroupActive && (
-            <motion.span
-              layoutId="nav-active"
-              className="absolute left-3 right-5 -bottom-px h-[2px] bg-punch rounded-[2px]"
-              transition={ease.spring}
-            />
-          )}
+          {triggerInner}
         </button>
       </Popover.Trigger>
 

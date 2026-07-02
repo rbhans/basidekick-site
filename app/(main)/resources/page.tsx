@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ResourcesView } from "@/components/views/resources-view";
 
 export const metadata: Metadata = {
-  title: "BAS Resources — BASidekick",
+  title: "BAS Resources",
   description:
     "Free BASidekick resources for building automation references, calculators, Atlas data, wiki guides, and open source tools.",
   alternates: { canonical: "https://basidekick.com/resources" },

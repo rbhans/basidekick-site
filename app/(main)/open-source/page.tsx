@@ -5,7 +5,7 @@ import type { PointStackResourceListing } from "@/lib/types";
 import { createClient } from "@supabase/supabase-js";
 
 export const metadata = {
-  title: "Community Share: BAS Files, Modules & Repos | BASidekick",
+  title: "Community Share: BAS Files, Modules & Repos",
   description:
     "Find BAS community files, open-source Niagara modules like BASk Stream, Rust BACnet and Modbus crates, project repos, and field references.",
   alternates: { canonical: "https://basidekick.com/open-source" },

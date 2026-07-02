@@ -44,17 +44,17 @@ interface FacetPageProps {
 export async function generateMetadata({ params }: FacetPageProps): Promise<Metadata> {
   const { slug } = await params;
   const supabase = getSupabaseClient();
-  if (!supabase) return { title: "Not Found — BASidekick Wiki" };
+  if (!supabase) return { title: "Not Found" };
 
   const result = await findFacet(supabase, slug);
-  if (!result) return { title: "Not Found — BASidekick Wiki" };
+  if (!result) return { title: "Not Found" };
 
   const description = `Browse BAS knowledge articles about ${result.facet.name}`;
   return {
-    title: `${result.facet.name} Articles — BASidekick Wiki`,
+    title: `${result.facet.name} Articles`,
     description,
     openGraph: {
-      title: `${result.facet.name} — BASidekick Wiki`,
+      title: `${result.facet.name}`,
       description,
       type: "website",
       siteName: "BASidekick",

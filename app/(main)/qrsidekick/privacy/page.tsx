@@ -2,7 +2,7 @@ import { QRSidekickPrivacyView } from "@/components/views/qrsidekick-privacy-vie
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — BASidekick",
+  title: "Privacy Policy",
   description: "Privacy policy for QR Sidekick app. Learn how we protect your privacy - no data collection, camera access for QR scanning only.",
 };
 

@@ -42,7 +42,7 @@ const referenceSections = [
 ];
 
 export const metadata: Metadata = {
-  title: "BAS References — BASidekick",
+  title: "BAS References",
   description:
     "Quick building automation reference sheets for BAS terms, protocols, wiring, electrical concepts, and field work.",
   alternates: { canonical: canonicalUrl },

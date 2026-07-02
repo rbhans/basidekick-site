@@ -111,6 +111,37 @@ function YouTubeEmbed({ videoId, title }: { videoId: string; title?: string }) {
   );
 }
 
+// Minimal shape of the hast nodes react-markdown passes as `node`.
+type HastNode = {
+  type: string;
+  tagName?: string;
+  value?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+};
+
+/** True when a paragraph wraps only a YouTube link (which renders as a block <div>). */
+function paragraphIsYouTubeOnly(node: HastNode | undefined): boolean {
+  const meaningful = (node?.children ?? []).filter(
+    (c) => !(c.type === "text" && (c.value ?? "").trim() === "")
+  );
+  if (meaningful.length !== 1) return false;
+  const only = meaningful[0];
+  if (only.type !== "element" || only.tagName !== "a") return false;
+  const href = only.properties?.href;
+  return typeof href === "string" && getYouTubeVideoId(href) !== null;
+}
+
+/** True when a <pre> wraps a mermaid code block (which renders as a block <div>). */
+function preIsMermaid(node: HastNode | undefined): boolean {
+  const code = (node?.children ?? []).find(
+    (c) => c.type === "element" && c.tagName === "code"
+  );
+  const cls = code?.properties?.className;
+  const classes = Array.isArray(cls) ? cls : typeof cls === "string" ? [cls] : [];
+  return classes.some((c) => String(c).includes("language-mermaid"));
+}
+
 /**
  * Custom components for react-markdown
  */
@@ -167,10 +198,15 @@ const markdownComponents: Components = {
       {children}
     </h4>
   ),
-  // Style paragraphs
-  p: ({ children }) => (
-    <p className="mb-5 text-[15px] leading-[1.7] text-foreground">{children}</p>
-  ),
+  // Style paragraphs. A paragraph containing only a YouTube link renders a
+  // block <div> embed, which is invalid inside <p> and breaks hydration — drop
+  // the <p> wrapper in that case.
+  p: ({ node, children }) => {
+    if (paragraphIsYouTubeOnly(node as HastNode | undefined)) {
+      return <>{children}</>;
+    }
+    return <p className="mb-5 text-[15px] leading-[1.7] text-foreground">{children}</p>;
+  },
   // Style lists
   ul: ({ children }) => (
     <ul className="mb-5 pl-5 list-disc marker:text-accent space-y-1.5 text-[15px] leading-[1.7] text-foreground">
@@ -208,7 +244,13 @@ const markdownComponents: Components = {
       </code>
     );
   },
-  pre: ({ children }) => <pre className="mb-5 overflow-hidden">{children}</pre>,
+  // A mermaid code block renders a block <div>, invalid inside <pre> — unwrap it.
+  pre: ({ node, children }) => {
+    if (preIsMermaid(node as HastNode | undefined)) {
+      return <>{children}</>;
+    }
+    return <pre className="mb-5 overflow-hidden">{children}</pre>;
+  },
   // Style blockquotes
   blockquote: ({ children }) => (
     <blockquote className="border-l-[3px] border-accent pl-5 my-6 italic text-[16px] leading-[1.6] text-muted-foreground">

@@ -49,13 +49,13 @@ interface WikiTagPageProps {
 export async function generateMetadata({ params }: WikiTagPageProps): Promise<Metadata> {
   const { tagSlug } = await params;
   const supabase = getSupabaseClient();
-  if (!supabase) return { title: "Tag Not Found — BASidekick Wiki" };
+  if (!supabase) return { title: "Tag Not Found" };
 
   const result = await findFacetRoute(supabase, tagSlug);
-  if (!result) return { title: "Tag Not Found — BASidekick Wiki" };
+  if (!result) return { title: "Tag Not Found" };
 
   return {
-    title: `${result.name} Articles — BASidekick Wiki`,
+    title: `${result.name} Articles`,
     alternates: { canonical: `https://basidekick.com/wiki/${result.routePrefix}/${tagSlug}` },
   };
 }

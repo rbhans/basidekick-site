@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { dbAll, dbGet } from "@/lib/data/atlas-db";
+import { dbAll, dbGet, parseLimit, parseOffset } from "@/lib/data/atlas-db";
 
 interface PointRow {
   id: string;
@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
   const kind = searchParams.get("kind");
   const pointFunction = searchParams.get("point_function");
   const q = searchParams.get("q");
-  const limit = Math.min(parseInt(searchParams.get("limit") || "500"), 1000);
-  const offset = parseInt(searchParams.get("offset") || "0");
+  const limit = parseLimit(searchParams.get("limit"), 500, 1000);
+  const offset = parseOffset(searchParams.get("offset"));
 
   let sql = "SELECT *, (SELECT COUNT(*) FROM point_aliases WHERE point_id = points.id) AS alias_count FROM points WHERE 1=1";
   const params: unknown[] = [];

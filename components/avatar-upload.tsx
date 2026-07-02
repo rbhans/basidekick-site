@@ -61,15 +61,7 @@ export function AvatarUpload({
       const supabase = createClient();
       if (!supabase) throw new Error("Supabase not available");
 
-      // Delete old avatar if exists
-      if (currentAvatarUrl) {
-        const oldPath = currentAvatarUrl.split("/avatars/")[1];
-        if (oldPath) {
-          await supabase.storage.from("avatars").remove([oldPath]);
-        }
-      }
-
-      // Generate unique filename
+      // Generate unique filename (timestamped, so it never clobbers the old one)
       const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg";
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
@@ -91,6 +83,20 @@ export function AvatarUpload({
         .eq("id", user.id);
 
       if (updateError) throw updateError;
+
+      // New avatar is live — now best-effort delete the old one. A failure here
+      // just leaves an orphaned file, not a broken avatar.
+      if (currentAvatarUrl) {
+        const oldPath = currentAvatarUrl.split("/avatars/")[1];
+        if (oldPath) {
+          const { error: removeError } = await supabase.storage
+            .from("avatars")
+            .remove([oldPath]);
+          if (removeError) {
+            console.warn("Failed to remove old avatar:", removeError);
+          }
+        }
+      }
 
       onAvatarChange(publicUrl);
     } catch (err) {

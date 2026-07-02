@@ -198,27 +198,34 @@ export function HeaderSearch() {
           );
         }
 
-        // Search wiki articles (using is_published boolean)
-        const { data: articles, error: articlesError } = await supabase
-          .from("wiki_articles")
-          .select("id, title, slug, summary, category:wiki_categories(name)")
-          .ilike("title", `%${searchQuery}%`)
-          .eq("is_published", true)
-          .limit(5);
+        // Search wiki articles (using is_published boolean). Isolate this in its
+        // own try/catch so a rejected query degrades to a partial result set
+        // instead of discarding the Atlas results already gathered above.
+        try {
+          const { data: articles, error: articlesError } = await supabase
+            .from("wiki_articles")
+            .select("id, title, slug, summary, category:wiki_categories(name)")
+            .ilike("title", `%${searchQuery}%`)
+            .eq("is_published", true)
+            .limit(5);
 
-        if (articlesError) {
-          console.error("[Search] Wiki articles error:", articlesError);
+          if (articlesError) {
+            console.error("[Search] Wiki articles error:", articlesError);
+            hasError = true;
+          } else if (articles) {
+            searchResults.push(
+              ...articles.map((a: { id: string; title: string; slug: string; summary: string | null; category: { name: string } | null }) => ({
+                id: a.id,
+                title: a.title,
+                type: "article" as const,
+                href: ROUTES.WIKI_ARTICLE(a.slug),
+                subtitle: a.category?.name || (a.summary ? a.summary.slice(0, 50) + (a.summary.length > 50 ? "..." : "") : undefined),
+              }))
+            );
+          }
+        } catch (wikiError) {
+          console.error("[Search] Wiki articles request failed:", wikiError);
           hasError = true;
-        } else if (articles) {
-          searchResults.push(
-            ...articles.map((a: { id: string; title: string; slug: string; summary: string | null; category: { name: string } | null }) => ({
-              id: a.id,
-              title: a.title,
-              type: "article" as const,
-              href: ROUTES.WIKI_ARTICLE(a.slug),
-              subtitle: a.category?.name || (a.summary ? a.summary.slice(0, 50) + (a.summary.length > 50 ? "..." : "") : undefined),
-            }))
-          );
         }
 
         // Only update if query hasn't changed (prevent race condition)
@@ -229,7 +236,14 @@ export function HeaderSearch() {
       } catch (error) {
         console.error("[Search] Search error:", error);
         if (query.trim() === searchQuery) {
-          setSearchError("Search failed. Please try again.");
+          // Preserve whatever was gathered before the failure rather than wiping
+          // the dropdown to a bare error.
+          setResults(searchResults);
+          setSearchError(
+            searchResults.length > 0
+              ? "Some results may be incomplete"
+              : "Search failed. Please try again.",
+          );
         }
       } finally {
         if (query.trim() === searchQuery) {

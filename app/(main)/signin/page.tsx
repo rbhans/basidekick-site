@@ -1,15 +1,12 @@
-"use client";
+import type { Metadata } from "next";
+import { SignInClient } from "@/components/auth/sign-in-client";
 
-import { useRouter } from "next/navigation";
-import { SignInForm } from "@/components/auth/sign-in-form";
-import { ROUTES } from "@/lib/routes";
+export const metadata: Metadata = {
+  title: "Sign in",
+  description: "Sign in to your BASidekick account.",
+  robots: { index: false, follow: false },
+};
 
 export default function SignInPage() {
-  const router = useRouter();
-
-  const handleSuccess = () => {
-    router.push(ROUTES.HOME);
-  };
-
-  return <SignInForm onSuccess={handleSuccess} />;
+  return <SignInClient />;
 }

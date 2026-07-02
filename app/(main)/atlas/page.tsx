@@ -21,7 +21,7 @@ const atlasSources = [
 ];
 
 export const metadata: Metadata = {
-  title: "BAS Atlas — Points & Equipment — BASidekick",
+  title: "BAS Atlas — Points & Equipment",
   description:
     "Open source, community-driven BAS Atlas for point naming standards and equipment catalog browsing. Actively growing with contributions.",
   openGraph: {

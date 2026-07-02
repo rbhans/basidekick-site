@@ -7,7 +7,7 @@ interface PostPageProps {
 export async function generateMetadata({ params }: PostPageProps) {
   const { slug } = await params;
   return {
-    title: `Post - PointStack`,
+    title: `Post`,
     description: `View post on PointStack`,
   };
 }

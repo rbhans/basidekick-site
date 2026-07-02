@@ -8,7 +8,7 @@ import { ROUTES } from "@/lib/routes";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Propose a new wiki article — BASidekick",
+  title: "Propose a new wiki article",
   description: "Submit a new article to the BASidekick wiki for admin review.",
 };
 

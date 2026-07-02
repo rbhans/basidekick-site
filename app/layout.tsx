@@ -30,7 +30,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BASidekick — BAS info, community, and resources",
+  title: {
+    default: "BASidekick — BAS info, community, and resources",
+    template: "%s — BASidekick",
+  },
   description:
     "Independent BAS reference, community, and shared resource hub. Maintained by Rob in Tucson.",
   metadataBase: new URL("https://basidekick.com"),

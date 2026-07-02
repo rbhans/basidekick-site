@@ -72,7 +72,7 @@ const calculatorFaq = [
 ];
 
 export const metadata: Metadata = {
-  title: "BAS Calculators for CFM, BTU, Duct Static | BASidekick",
+  title: "BAS Calculators for CFM, BTU, Duct Static",
   description:
     "Free HVAC and building automation calculators for CFM, ACH, hydronic BTU, duct static reset, sensor scaling, subnet planning, and field checks.",
   alternates: { canonical: canonicalUrl },

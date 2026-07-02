@@ -69,3 +69,21 @@ export function dbAll<T>(sql: string, ...params: unknown[]): T[] {
 export function dbGet<T>(sql: string, ...params: unknown[]): T | undefined {
   return getAtlasDb().prepare(sql).get(...params) as T | undefined;
 }
+
+/**
+ * Parse a `limit` query param into a bounded positive integer. Guards against
+ * non-numeric input (NaN would crash better-sqlite3 with a datatype mismatch)
+ * and negative values (LIMIT -1 means "unlimited" in SQLite, bypassing the cap).
+ */
+export function parseLimit(raw: string | null, fallback: number, max: number): number {
+  const n = Number.parseInt(raw ?? "", 10);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(Math.max(n, 1), max);
+}
+
+/** Parse an `offset` query param into a non-negative integer. */
+export function parseOffset(raw: string | null): number {
+  const n = Number.parseInt(raw ?? "", 10);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(n, 0);
+}

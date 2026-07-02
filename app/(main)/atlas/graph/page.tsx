@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { AtlasGraph } from "@/components/atlas/atlas-graph";
 
 export const metadata: Metadata = {
-  title: "Atlas Graph — BASidekick",
+  title: "Atlas Graph",
   description: "Interactive graph visualization of BAS equipment and their typical points",
 };
 

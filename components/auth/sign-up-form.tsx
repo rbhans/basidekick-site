@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { signUpSchema, type SignUpValues } from "@/lib/schemas/auth";
+import { friendlyAuthError } from "@/lib/auth-errors";
 
 interface SignUpFormProps {
   onSuccess?: () => void;
@@ -47,11 +49,13 @@ const defaultValues: SignUpValues = {
 };
 
 export function SignUpForm({ onSuccess }: SignUpFormProps) {
+  const router = useRouter();
   const [oauthLoading, setOauthLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmationEmail, setConfirmationEmail] = useState<string | null>(null);
 
   const supabase = useMemo(() => createClient(), []);
+  const handleSuccess = onSuccess ?? (() => router.push(ROUTES.HOME));
 
   const form = useForm<SignUpValues>({
     resolver: zodResolver(signUpSchema),
@@ -75,12 +79,12 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
     });
 
     if (signUpError) {
-      setError(signUpError.message);
+      setError(friendlyAuthError(signUpError.message));
       return;
     }
 
     if (data.session) {
-      onSuccess?.();
+      handleSuccess();
       return;
     }
 
@@ -105,7 +109,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
     });
 
     if (oauthError) {
-      setError(oauthError.message);
+      setError(friendlyAuthError(oauthError.message));
       setOauthLoading(false);
     }
   };
@@ -118,9 +122,12 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
 
   return (
     <div className="mx-auto max-w-sm p-8">
-      <h1 className="mb-4 text-2xl font-semibold">Sign Up</h1>
+      <div className="mb-2 font-mono text-[11px] uppercase tracking-[1.5px] text-ink-3">
+        <span className="text-punch">Account</span> / Create
+      </div>
+      <h1 className="mb-3 font-heading text-2xl font-semibold">Create an account</h1>
       <p className="mb-6 text-muted-foreground">
-        Create an account for wiki editing, PointStack access, and project management.
+        For wiki editing, PointStack access, and project management.
       </p>
 
       {error && (
@@ -181,7 +188,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>Confirm password</FormLabel>
                 <FormControl>
                   <Input
                     id="confirmPassword"
@@ -198,7 +205,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
           />
 
           <Button type="submit" className="w-full" disabled={isBusy}>
-            {form.formState.isSubmitting ? "Creating account..." : "Create Account"}
+            {form.formState.isSubmitting ? "Creating account…" : "Create account"}
           </Button>
         </form>
       </Form>

@@ -109,11 +109,13 @@
 
   --ink: #0a0a0a;
   --ink-2: rgba(10, 10, 10, 0.64);
-  --ink-3: rgba(10, 10, 10, 0.44);
+  /* 0.56 keeps small muted labels (eyebrows, meta) at ~4.5:1 on sand for WCAG AA. */
+  --ink-3: rgba(10, 10, 10, 0.56);
   --ink-4: rgba(10, 10, 10, 0.22);
   --cream: #f5f5f5;
   --cream-2: rgba(245, 245, 245, 0.66);
-  --cream-3: rgba(245, 245, 245, 0.44);
+  /* 0.52 keeps small muted labels at ~5:1 on the char/dark surfaces for WCAG AA. */
+  --cream-3: rgba(245, 245, 245, 0.52);
   --cream-4: rgba(245, 245, 245, 0.22);
 
   --punch: #d11a36;
@@ -1122,6 +1124,22 @@
   .home-hero-drawing-frame:first-of-type {
     opacity: var(--hero-cycle-opacity);
   }
+  /* Global fallback: neutralize looping/transition motion (pulse dots, shimmer,
+     hover transforms) for users who ask for reduced motion. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Visible keyboard focus ring, sitewide. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
 .home-hero-text,
 .home-hero-metrics {

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { dbAll, dbGet } from "@/lib/data/atlas-db";
+import { dbAll, dbGet, parseLimit } from "@/lib/data/atlas-db";
 
 export async function GET(request: NextRequest) {
   const q = request.nextUrl.searchParams.get("q");
   const type = request.nextUrl.searchParams.get("type");
-  const limit = Math.min(parseInt(request.nextUrl.searchParams.get("limit") || "50"), 200);
+  const limit = parseLimit(request.nextUrl.searchParams.get("limit"), 50, 200);
   if (!q || q.length < 2) {
     return NextResponse.json({ results: [] });
   }

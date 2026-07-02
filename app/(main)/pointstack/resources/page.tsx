@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { ROUTES } from "@/lib/routes";
 
 export const metadata = {
-  title: "Community Share - BASidekick",
+  title: "Community Share",
   description: "Community BAS links, files, projects, and references.",
 };
 

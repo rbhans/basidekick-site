@@ -5,7 +5,7 @@ interface ConversationPageProps {
 }
 
 export const metadata = {
-  title: "Conversation - PointStack",
+  title: "Conversation",
   description: "Direct message conversation on PointStack.",
 };
 

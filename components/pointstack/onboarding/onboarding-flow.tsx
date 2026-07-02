@@ -85,9 +85,9 @@ export function PointStackOnboardingView() {
     try {
       await api.updateProfile({
         display_name: values.displayName.trim() || undefined,
-        headline: values.headline.trim() || undefined,
-        location: values.location.trim() || undefined,
-        skills: values.skills.length > 0 ? values.skills : undefined,
+        headline: values.headline.trim() || null,
+        location: values.location.trim() || null,
+        skills: values.skills,
       });
       await api.completeOnboarding();
       setCurrentStep(3);

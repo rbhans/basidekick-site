@@ -1,7 +1,7 @@
 import { PointStackPeopleView } from "@/components/pointstack/profile/people-view";
 
 export const metadata = {
-  title: "People - PointStack",
+  title: "People",
   description: "Discover and connect with BAS professionals in the PointStack community.",
 };
 

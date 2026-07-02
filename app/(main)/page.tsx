@@ -7,7 +7,8 @@ import { ROUTES } from "@/lib/routes";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "BASidekick — BAS info, community, and resources",
+  // Absolute so the root title template doesn't append a second "— BASidekick".
+  title: { absolute: "BASidekick — BAS info, community, and resources" },
   description:
     "Independent BAS reference, community, and shared resource hub. Maintained by Rob in Tucson.",
   alternates: { canonical: "https://basidekick.com" },

@@ -18,9 +18,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { signInSchema, type SignInValues } from "@/lib/schemas/auth";
+import { friendlyAuthError } from "@/lib/auth-errors";
 
 interface SignInFormProps {
   onSuccess?: () => void;
+  /** Same-origin path to return to after OAuth sign-in. */
+  redirectPath?: string;
 }
 
 const defaultValues: SignInValues = {
@@ -28,7 +31,7 @@ const defaultValues: SignInValues = {
   password: "",
 };
 
-export function SignInForm({ onSuccess }: SignInFormProps) {
+export function SignInForm({ onSuccess, redirectPath }: SignInFormProps) {
   const [oauthLoading, setOauthLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -55,11 +58,11 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
     });
 
     if (signInError) {
-      setError(signInError.message);
+      setError(friendlyAuthError(signInError.message));
       return;
     }
 
-    setMessage("Signed in successfully!");
+    setMessage("Signed in. Taking you through…");
     onSuccess?.();
   };
 
@@ -74,15 +77,20 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
       return;
     }
 
+    const callbackUrl = new URL("/auth/callback", window.location.origin);
+    if (redirectPath && redirectPath !== "/") {
+      callbackUrl.searchParams.set("next", redirectPath);
+    }
+
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: callbackUrl.toString(),
       },
     });
 
     if (oauthError) {
-      setError(oauthError.message);
+      setError(friendlyAuthError(oauthError.message));
       setOauthLoading(false);
     }
   };
@@ -91,7 +99,10 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
 
   return (
     <div className="mx-auto max-w-sm p-8">
-      <h1 className="mb-4 text-2xl font-semibold">Sign In</h1>
+      <div className="mb-2 font-mono text-[11px] uppercase tracking-[1.5px] text-ink-3">
+        <span className="text-punch">Account</span> / Sign in
+      </div>
+      <h1 className="mb-6 font-heading text-2xl font-semibold">Sign in</h1>
 
       {error && (
         <div className="mb-4 border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
@@ -158,7 +169,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
           />
 
           <Button type="submit" className="w-full" disabled={isBusy}>
-            {form.formState.isSubmitting ? "Signing in..." : "Sign In"}
+            {form.formState.isSubmitting ? "Signing in…" : "Sign in"}
           </Button>
         </form>
       </Form>

@@ -82,8 +82,8 @@ export async function generateMetadata({
   const { slug } = await params;
   const entry = await getCommunityShareEntry(slug);
   const title = entry?.title
-    ? `${entry.title} — Community Share — BASidekick`
-    : "Community Share Entry — BASidekick";
+    ? `${entry.title} — Community Share`
+    : "Community Share Entry";
   const description =
     entry?.description?.slice(0, 160) || "View a shared BAS community entry.";
   const canonical = `https://basidekick.com/open-source/${encodeURIComponent(slug)}`;

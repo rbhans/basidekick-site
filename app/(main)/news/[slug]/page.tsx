@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   const fallbackTitle = slug
     .replace(/-/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
-  const title = `${article?.title || fallbackTitle} — BASidekick`;
+  const title = `${article?.title || fallbackTitle}`;
   const description =
     article?.summary?.slice(0, 160) ||
     (article?.source_domain

@@ -2,11 +2,11 @@ import { Metadata } from "next";
 import { WikiView } from "@/components/views/wiki-view";
 
 export const metadata: Metadata = {
-  title: "Wiki — BASidekick",
+  title: "Wiki",
   description:
     "Community-driven knowledge base for building automation professionals. Articles on BACnet, Niagara, Metasys, and more.",
   openGraph: {
-    title: "Wiki — BASidekick",
+    title: "Wiki",
     description:
       "Community-driven knowledge base for building automation professionals.",
     type: "website",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Wiki — BASidekick",
+    title: "Wiki",
     description:
       "Community-driven knowledge base for building automation professionals.",
   },

@@ -908,14 +908,14 @@ export interface CreatePointStackResourceInput {
 
 export interface UpdatePointStackProfileInput {
   display_name?: string;
-  avatar_url?: string;
-  headline?: string;
-  bio?: string;
-  location?: string;
+  avatar_url?: string | null;
+  headline?: string | null;
+  bio?: string | null;
+  location?: string | null;
   skills?: string[];
-  website_url?: string;
-  linkedin_url?: string;
-  github_url?: string;
+  website_url?: string | null;
+  linkedin_url?: string | null;
+  github_url?: string | null;
   availability_status?: PointStackAvailabilityStatus;
   cover_image_url?: string | null;
   cover_color?: string | null;

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { EquipmentTypeView } from "@/components/atlas/equipment-type-view";
 import { escapeJsonLd } from "@/lib/security";
 import { getAllTypeSlugs, getAtlasBrand, getAtlasType } from "@/lib/data/atlas";
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: TypePageProps): Promise<Metad
 
   if (!brandEntry || !typeEntry) {
     return {
-      title: "Type not found — BASidekick",
+      title: "Type not found",
     };
   }
 
@@ -34,10 +35,10 @@ export async function generateMetadata({ params }: TypePageProps): Promise<Metad
   const canonical = `https://basidekick.com/atlas/equipment/${brandSlug}/${typeSlug}`;
 
   return {
-    title: `${brandEntry.name} ${typeEntry.name} — BASidekick`,
+    title: `${brandEntry.name} ${typeEntry.name}`,
     description,
     openGraph: {
-      title: `${brandEntry.name} ${typeEntry.name} — BASidekick`,
+      title: `${brandEntry.name} ${typeEntry.name}`,
       description,
       type: "website",
       siteName: "BASidekick",
@@ -56,47 +57,47 @@ export default async function TypePage({ params }: TypePageProps) {
     getAtlasType(brand, type),
   ]);
 
-  const breadcrumbJsonLd = brandEntry && typeEntry
-    ? {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://basidekick.com",
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "BAS Atlas",
-            item: "https://basidekick.com/atlas?tab=equipment",
-          },
-          {
-            "@type": "ListItem",
-            position: 3,
-            name: brandEntry.name,
-            item: `https://basidekick.com/atlas/equipment/${brandEntry.slug || brandEntry.id}`,
-          },
-          {
-            "@type": "ListItem",
-            position: 4,
-            name: typeEntry.name,
-            item: `https://basidekick.com/atlas/equipment/${brandEntry.slug || brandEntry.id}/${typeEntry.slug || typeEntry.id}`,
-          },
-        ],
-      }
-    : null;
+  if (!brandEntry || !typeEntry) {
+    notFound();
+  }
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://basidekick.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "BAS Atlas",
+        item: "https://basidekick.com/atlas?tab=equipment",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: brandEntry.name,
+        item: `https://basidekick.com/atlas/equipment/${brandEntry.slug || brandEntry.id}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: typeEntry.name,
+        item: `https://basidekick.com/atlas/equipment/${brandEntry.slug || brandEntry.id}/${typeEntry.slug || typeEntry.id}`,
+      },
+    ],
+  };
 
   return (
     <>
-      {breadcrumbJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: escapeJsonLd(breadcrumbJsonLd) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: escapeJsonLd(breadcrumbJsonLd) }}
+      />
       <EquipmentTypeView brandSlug={brand} typeSlug={type} />
     </>
   );

@@ -1,7 +1,7 @@
 import { PointStackCompaniesView } from "@/components/pointstack/company/companies-view";
 
 export const metadata = {
-  title: "Companies — BASidekick",
+  title: "Companies",
   description: "Discover BAS companies and organizations in the PointStack community.",
 };
 

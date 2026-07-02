@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useReducedMotion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
@@ -67,10 +68,11 @@ export function HomeView({
   pointStackStats,
   alsoHere,
 }: HomeViewProps) {
+  const prefersReducedMotion = useReducedMotion();
   const [specimens, setSpecimens] = useState<FeaturedAtlasEntry[]>(featuredAtlas ? [featuredAtlas] : []);
   const [specimenIndex, setSpecimenIndex] = useState(0);
   const [atlasTotal, setAtlasTotal] = useState<number | null>(null);
-  const [equipmentCount, setEquipmentCount] = useState<number>(147);
+  const [equipmentCount, setEquipmentCount] = useState<number | null>(null);
   const currentSpecimen = specimens[specimenIndex] || featuredAtlas;
 
   useEffect(() => {
@@ -125,16 +127,15 @@ export function HomeView({
   }, [specimens.length]);
 
   useEffect(() => {
-    if (specimens.length <= 1) return;
+    if (specimens.length <= 1 || prefersReducedMotion) return;
     const timer = setInterval(advanceSpecimen, 22000);
     return () => clearInterval(timer);
-  }, [advanceSpecimen, specimens.length]);
+  }, [advanceSpecimen, specimens.length, prefersReducedMotion]);
 
   const atlasCount = atlasTotal ?? specimens.length;
   const sheetLabel = useMemo(() => {
-    const total = atlasCount || 812;
     const idx = String(specimenIndex + 1).padStart(3, "0");
-    return `${idx} / ${total}`;
+    return `${idx} / ${atlasCount}`;
   }, [specimenIndex, atlasCount]);
 
   return (
@@ -184,48 +185,50 @@ export function HomeView({
               <div className="head">
                 <h3 className="title">Atlas</h3>
                 <span className="badge badge-secondary">.01</span>
-                <span className="num" />
               </div>
               <div className="value">
                 <strong className="tabular-nums">{atlasCount.toLocaleString()}</strong>
-                <span className="delta">▲ {pulse.newAtlasThisWeek} this week</span>
+                {pulse.newAtlasThisWeek > 0 && (
+                  <span className="delta">▲ {pulse.newAtlasThisWeek} this week</span>
+                )}
               </div>
               <p className="sub">
-                Points indexed across <b>{equipmentCount}</b> equipment templates
+                {equipmentCount != null ? (
+                  <>Points indexed across <b>{equipmentCount}</b> equipment templates</>
+                ) : (
+                  <>Points indexed across the equipment templates</>
+                )}
               </p>
-              <div className="bar" style={{ ["--w" as string]: "78%" }} />
             </article>
 
             <article className="card-light card-hover metric">
               <div className="head">
                 <h3 className="title">PointStack</h3>
                 <span className="badge badge-secondary">.02</span>
-                <span className="num" />
               </div>
               <div className="value">
                 <strong className="tabular-nums">{pointStackStats.members.toLocaleString()}</strong>
-                <span className="delta">● {pointStackStats.onlineNow} online</span>
+                {pointStackStats.onlineNow > 0 && (
+                  <span className="delta">● {pointStackStats.onlineNow} online</span>
+                )}
               </div>
               <p className="sub">
                 Members <b>·</b> moderated · BAS-only forum
               </p>
-              <div className="bar" style={{ ["--w" as string]: "52%" }} />
             </article>
 
             <article className="card-light card-hover metric">
               <div className="head">
                 <h3 className="title">Wiki</h3>
                 <span className="badge badge-secondary">.03</span>
-                <span className="num" />
               </div>
               <div className="value">
                 <strong className="tabular-nums">{alsoHere.wikiCount.toLocaleString()}</strong>
-                <span className="delta">▲ {pulse.newWikiThisWeek} this week</span>
+                {pulse.newWikiThisWeek > 0 && (
+                  <span className="delta">▲ {pulse.newWikiThisWeek} this week</span>
+                )}
               </div>
-              <p className="sub">
-                Field-tested articles from <b>23</b> contributors
-              </p>
-              <div className="bar" style={{ ["--w" as string]: "36%" }} />
+              <p className="sub">Field-tested articles from the community</p>
             </article>
           </div>
         </div>
@@ -325,11 +328,6 @@ export function HomeView({
             <span className="num">.05</span>
             <h2>PointStack / Feed</h2>
             <div className="controls">
-              <div className="bsk-tabs" role="tablist">
-                <button className="bsk-tab" aria-selected="true" role="tab">All</button>
-                <button className="bsk-tab" aria-selected="false" role="tab">Questions</button>
-                <button className="bsk-tab" aria-selected="false" role="tab">Projects</button>
-              </div>
               <span className="id">
                 ONLINE <b>{pointStackStats.onlineNow}</b> · OPEN <b>{pointStackStats.openJobs}</b>
               </span>
@@ -355,12 +353,12 @@ export function HomeView({
                       {post.kind === "question" ? "Question" : post.kind === "project" ? "Project" : "Job"}
                     </span>
                   </span>
-                  <span className="ts">
+                  <span className="ts" suppressHydrationWarning>
                     {new Date(post.createdAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}
                   </span>
                   <span className="title">
                     {post.title}
-                    <span className="meta">
+                    <span className="meta" suppressHydrationWarning>
                       by <b>@{post.authorHandle}</b> · {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
                       {post.meta[0] && ` · ${post.meta[0].value} ${post.meta[0].label}`}
                     </span>

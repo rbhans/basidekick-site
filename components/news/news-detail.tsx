@@ -151,7 +151,7 @@ export function NewsDetail({ slug, initialArticle = null }: NewsDetailProps) {
         </div>
         <div className="field">
           <span className="field-label">Rev</span>
-          <span className="field-value">{fullTimestamp}</span>
+          <span className="field-value" suppressHydrationWarning>{fullTimestamp}</span>
         </div>
         <div className="field">
           <span className="field-label">Replies</span>
@@ -197,7 +197,7 @@ export function NewsDetail({ slug, initialArticle = null }: NewsDetailProps) {
           <div className="font-mono text-[11px] uppercase tracking-[1.3px] text-muted-foreground">
             {article.source_domain}
             <span className="text-accent mx-2">·</span>
-            <span>{fullTimestamp}</span>
+            <span suppressHydrationWarning>{fullTimestamp}</span>
             {article.submitter?.display_name && (
               <>
                 <span className="text-accent mx-2">·</span>
@@ -302,7 +302,7 @@ export function NewsDetail({ slug, initialArticle = null }: NewsDetailProps) {
               {article.tags.join(" · ")}
             </span>
           )}
-          <time dateTime={article.created_at}>{relativeTime}</time>
+          <time dateTime={article.created_at} suppressHydrationWarning>{relativeTime}</time>
         </div>
       </article>
 
@@ -336,7 +336,7 @@ export function NewsDetail({ slug, initialArticle = null }: NewsDetailProps) {
             <div>
               No hot takes. This is a paraphrase, not the full article — always verify against the source.
             </div>
-            <div className="md:text-right">
+            <div className="md:text-right" suppressHydrationWarning>
               Last updated · {lastUpdated}
             </div>
           </div>

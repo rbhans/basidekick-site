@@ -11,6 +11,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TagInput } from "../shared/tag-input";
@@ -71,6 +81,7 @@ export function WorkExperienceManager({
   const [showForm, setShowForm] = useState(false);
   const [importMode, setImportMode] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<WorkExperience | null>(null);
 
   const form = useForm<WorkExperienceFormValues>({
     resolver: zodResolver(workExperienceFormSchema),
@@ -176,7 +187,7 @@ export function WorkExperienceManager({
                   size="icon-sm"
                   aria-label="Delete entry"
                   disabled={busyId === e.id}
-                  onClick={() => onDelete(e.id)}
+                  onClick={() => setConfirmDelete(e)}
                 >
                   <Trash className="h-4 w-4 text-destructive" />
                 </Button>
@@ -323,6 +334,34 @@ export function WorkExperienceManager({
           </div>
         )}
       </DialogContent>
+
+      <AlertDialog
+        open={!!confirmDelete}
+        onOpenChange={(o) => !o && setConfirmDelete(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove this entry?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmDelete
+                ? `"${confirmDelete.title}" at ${confirmDelete.organization} will be removed from your profile. This can't be undone.`
+                : ""}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                if (confirmDelete) onDelete(confirmDelete.id);
+                setConfirmDelete(null);
+              }}
+            >
+              Remove
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }

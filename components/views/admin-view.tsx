@@ -281,41 +281,50 @@ export function AdminView({
   ) => {
     setLoading(`babel-${contributionId}`);
     const supabase = createClient();
-    if (!supabase) return;
-
-    // Get the current user for reviewer_id
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    if (!supabase) {
       setLoading(null);
       return;
     }
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        alert("Session expired. Please sign in again.");
+        setLoading(null);
+        return;
+      }
+
       const response = await fetch(`/api/babel/contributions/${contributionId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action,
-          reviewer_id: user.id,
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ action }),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setBabelContributions((prev) =>
-          prev.map((c) =>
-            c.id === contributionId
-              ? {
-                  ...c,
-                  status: action === "approve" ? "approved" : "rejected",
-                  github_issue_url: result.github_issue_url || null,
-                }
-              : c
-          )
-        );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        alert(errorData.error || "Failed to update contribution");
+        setLoading(null);
+        return;
       }
+
+      const result = await response.json();
+      setBabelContributions((prev) =>
+        prev.map((c) =>
+          c.id === contributionId
+            ? {
+                ...c,
+                status: action === "approve" ? "approved" : "rejected",
+                github_issue_url: result.github_issue_url || null,
+              }
+            : c
+        )
+      );
     } catch (error) {
       console.error("Failed to update contribution:", error);
+      alert("Failed to update contribution. Please try again.");
     }
 
     setLoading(null);
@@ -326,10 +335,25 @@ export function AdminView({
     action: "approve" | "reject"
   ) => {
     setLoading(`equipment-${submissionId}`);
+    const supabase = createClient();
+    if (!supabase) {
+      setLoading(null);
+      return;
+    }
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        alert("Session expired. Please sign in again.");
+        setLoading(null);
+        return;
+      }
+
       const response = await fetch(`/api/equipment/submissions/${submissionId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({ action }),
       });
 

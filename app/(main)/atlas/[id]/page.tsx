@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { BabelEntryPageClient } from "@/components/babel/babel-entry-page-client";
 import { escapeJsonLd } from "@/lib/security";
 import { getAllBabelIds, getBabelEntry, type BabelEntryLookup } from "@/lib/data/babel";
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: BabelEntryPageProps): Promise
 
   if (!entry) {
     return {
-      title: "Entry not found — BASidekick",
+      title: "Entry not found",
     };
   }
 
@@ -37,10 +38,10 @@ export async function generateMetadata({ params }: BabelEntryPageProps): Promise
   const canonical = `${BASE_URL}/atlas/${id}`;
 
   return {
-    title: `${name} — BASidekick`,
+    title: `${name}`,
     description: description || fallbackDescription,
     openGraph: {
-      title: `${name} — BASidekick`,
+      title: `${name}`,
       description: description || fallbackDescription,
       type: "website",
       siteName: "BASidekick",
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: BabelEntryPageProps): Promise
     },
     twitter: {
       card: "summary_large_image",
-      title: `${name} — BASidekick`,
+      title: `${name}`,
       description: description || fallbackDescription,
     },
     alternates: {
@@ -124,16 +125,7 @@ export default async function BabelEntryPage({ params }: BabelEntryPageProps) {
   const entry = await getBabelEntry(id);
 
   if (!entry) {
-    return (
-      <div className="min-h-full flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg font-semibold">Entry not found</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            The entry &quot;{id}&quot; doesn&apos;t exist in BAS Atlas.
-          </p>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   const canonical = `${BASE_URL}/atlas/${id}`;

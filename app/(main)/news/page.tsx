@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 const canonicalUrl = "https://basidekick.com/news";
 
 export const metadata = {
-  title: "News — BASidekick",
+  title: "News",
   description: "The latest building automation news, curated by AI and the community.",
   alternates: { canonical: canonicalUrl },
 };
