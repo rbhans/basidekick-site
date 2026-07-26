@@ -1,55 +1,38 @@
 import type { Metadata } from "next";
-import { Archivo, JetBrains_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react";
-import { AuthProvider } from "@/components/providers/auth-provider";
-import { ProgressProvider } from "@/lib/progress";
-import { Toaster } from "@/components/ui/sonner";
+import { Geist, Geist_Mono } from "next/font/google";
+import { JsonLd } from "@/components/json-ld";
+import { Providers } from "@/components/providers";
 import "./globals.css";
 
-const archivo = Archivo({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-sans",
-  display: "swap",
 });
 
-const archivoHeading = Archivo({
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["600", "700", "800", "900"],
-  variable: "--font-heading",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-mono",
-  display: "swap",
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://basidekick.com"),
   title: {
-    default: "BASidekick — BAS info, community, and resources",
+    default: "BASidekick — Building automation workspace",
     template: "%s — BASidekick",
   },
-  description:
-    "Independent BAS reference, community, and shared resource hub. Maintained by Rob in Tucson.",
-  metadataBase: new URL("https://basidekick.com"),
+  description: "Independent BAS reference, field tools, industry signal, and PointStack community for building automation practitioners.",
+  icons: {
+    icon: "/brand/favicon.svg",
+    shortcut: "/brand/favicon.svg",
+  },
   openGraph: {
-    title: "BASidekick — BAS info, community, and resources",
-    description:
-      "Independent BAS reference, community, and shared resource hub.",
+    title: "BASidekick — Building automation workspace",
+    description: "Knowledge, tools, signal, and community for the people who build and operate BAS.",
     siteName: "BASidekick",
     type: "website",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "BASidekick building automation workspace" }],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "BASidekick — BAS info, community, and resources",
-    description:
-      "Independent BAS reference, community, and shared resource hub.",
-  },
+  twitter: { card: "summary_large_image", images: ["/og.png"] },
 };
 
 export default function RootLayout({
@@ -58,46 +41,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${archivo.variable} ${archivoHeading.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@graph": [
-                {
-                  "@type": "Organization",
-                  "@id": "https://basidekick.com/#organization",
-                  name: "BASidekick",
-                  url: "https://basidekick.com",
-                  logo: "https://basidekick.com/brand/wordmark-light.svg",
-                  description:
-                    "Independent BAS reference, community, and shared resource hub. Maintained by Rob in Tucson.",
-                  founder: {
-                    "@type": "Person",
-                    name: "Rob",
-                  },
-                  sameAs: ["https://github.com/rbhans"],
-                },
-                {
-                  "@type": "WebSite",
-                  "@id": "https://basidekick.com/#website",
-                  url: "https://basidekick.com",
-                  name: "BASidekick",
-                  publisher: {
-                    "@id": "https://basidekick.com/#organization",
-                  },
-                },
-              ],
-            }),
-          }}
-        />
-        <AuthProvider>
-          <ProgressProvider>{children}</ProgressProvider>
-        </AuthProvider>
-        <Toaster />
-        <Analytics />
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <JsonLd data={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://basidekick.com/#organization",
+              name: "BASidekick",
+              url: "https://basidekick.com",
+              logo: "https://basidekick.com/brand/wordmark-light.svg",
+              description: "Independent building automation reference, tools, industry signal, and PointStack community.",
+              founder: { "@type": "Person", name: "Rob Hansen" },
+              sameAs: ["https://github.com/rbhans"],
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://basidekick.com/#website",
+              url: "https://basidekick.com",
+              name: "BASidekick",
+              publisher: { "@id": "https://basidekick.com/#organization" },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://basidekick.com/api/search?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }} />
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

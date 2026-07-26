@@ -6,9 +6,9 @@
   <g transform="translate(702, 165)">
     <svg viewBox="0 0 32 18" width="96" height="54" overflow="visible">
       <rect x="0" y="0" width="32" height="18" rx="2" fill="#d11a36"/>
-      <rect x="3" y="6" width="6" height="6" rx="1" fill="#fafaf8"/>
-      <path d="M10 9 H17 M15 6.5 L17.5 9 L15 11.5" stroke="#fafaf8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <rect x="19.5" y="2.5" width="10" height="13" rx="1.5" fill="none" stroke="#fafaf8" stroke-width="1.6"/>
+      <rect x="3.25" y="6.2" width="5.6" height="5.6" rx="0.9" fill="#fafaf8"/>
+      <path d="M10.1 9 H16.7 M14.45 6.8 L16.75 9 L14.45 11.2" stroke="#fafaf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <rect x="19.8" y="2.75" width="9.2" height="12.5" rx="1.3" fill="none" stroke="#fafaf8" stroke-width="1.5"/>
     </svg>
   </g>
 

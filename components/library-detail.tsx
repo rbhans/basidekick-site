@@ -1,0 +1,14 @@
+"use client";
+
+import Link from "next/link";
+import { ArrowSquareOut, ChatCircle, DownloadSimple, ThumbsUp } from "@phosphor-icons/react";
+import { EngagementPanel } from "@/components/engagement-panel";
+import { RecentViewTracker, SaveButton } from "@/components/personalization";
+import { Pill } from "@/components/ui";
+import type { CommunityShareEntry } from "@/lib/data/community-share";
+
+export function LibraryDetail({ entry }: { entry: CommunityShareEntry }) {
+  const primary = entry.links[0];
+  const entityId = entry.resourceId ?? entry.id;
+  return <article className="library-detail"><RecentViewTracker kind="library" entityId={entityId} title={entry.title} /><header><Link href="/library">← Back to Library</Link><div><span className="eyebrow">LIBRARY / {entry.kind.toUpperCase()}</span><h1>{entry.title}</h1><p>{entry.summary}</p><span className="tag-list"><Pill tone={entry.stage === "Active" ? "success" : "neutral"}>{entry.stage}</Pill><Pill tone="accent">{entry.access}</Pill>{entry.tags.map((tag) => <Pill key={tag}>{tag}</Pill>)}</span></div></header><div className="library-detail-grid"><section><h2>What it is</h2><p>{entry.description}</p><h2>Why it’s useful</h2><ul>{entry.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul><div className="external-notice"><strong>{entry.access === "Open source" ? "Published externally" : entry.access === "Paid externally" ? "External purchase" : "External destination"}</strong><p>{entry.access === "Paid externally" ? "BASidekick does not sell this resource or process its payment. Price, license, purchase, refunds, and support are handled entirely on the creator’s site." : "BASidekick indexes this resource. Downloads, licensing, and support are handled by its creator."}</p></div></section><aside><dl><div><dt>Owner</dt><dd>{entry.owner}</dd></div><div><dt>Topic</dt><dd>{entry.protocol}</dd></div><div><dt>Language</dt><dd>{entry.language}</dd></div><div><dt>License / access</dt><dd>{entry.license}</dd></div><div><dt>Verified</dt><dd>{entry.lastCommit}</dd></div></dl>{primary && <a className="button primary" href={primary.href} target="_blank" rel="noreferrer">{primary.type === "file" ? <DownloadSimple size={15} /> : <ArrowSquareOut size={15} />}{entry.access === "Paid externally" ? "Continue to creator site" : primary.label}</a>}<SaveButton kind="library" entityId={entityId} title={entry.title} />{entry.resourceId && <><button type="button" className="button quiet" onClick={() => document.getElementById("discussion")?.scrollIntoView({ behavior: "smooth" })}><ThumbsUp size={15} /> Vote</button><button type="button" className="button quiet" onClick={() => document.getElementById("discussion")?.scrollIntoView({ behavior: "smooth" })}><ChatCircle size={15} /> Comment</button></>}</aside></div>{entry.resourceId && <EngagementPanel kind="library" entityId={entry.resourceId} title={entry.title} />}</article>;
+}

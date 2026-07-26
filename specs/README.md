@@ -1,5 +1,3 @@
-# Specs
+# Specifications
 
-Use this folder for product specs, implementation specs, feature briefs, and handoff documents.
-
-Keep specs scoped and dated when useful.
+Feature specifications should be added here when they require more detail than the concise decisions in `context/`.

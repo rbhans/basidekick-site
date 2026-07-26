@@ -15,10 +15,8 @@
 
 # next.js
 /.next/
+/.vinext/
 /out/
-
-# production
-/build
 
 # misc
 .DS_Store
@@ -32,31 +30,15 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
 
 # typescript
-*.tsbuildinfo
 next-env.d.ts
-
-# Auto Claude data directory
-.auto-claude/
-
-# Superpowers brainstorm sessions
-.superpowers/
-
-# Auto Claude worktrees
-.worktrees/
-.claude_settings.json
-.claude/
-
-# Supabase CLI local state
-supabase/.temp/
-
-# Wiki audit/export working files
-.wiki-work/
-
-# Atlas database (fetched at build time)
-/data/
-.env*.local
+/dist/
+/.wrangler/
+/outputs/
+/work/
+/supabase/.temp/

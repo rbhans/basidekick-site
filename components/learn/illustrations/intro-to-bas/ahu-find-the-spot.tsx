@@ -101,9 +101,9 @@ export function AhuFindTheSpot({
         <motion.span
           key={i}
           aria-hidden="true"
-          initial={{ scale: 0, opacity: 0 }}
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
           style={{ left: `${click.x}%`, top: `${click.y}%` }}
           className={
             click.correct
@@ -117,8 +117,9 @@ export function AhuFindTheSpot({
       {state.submitted && lastCorrect !== true ? (
         <motion.span
           aria-hidden="true"
-          initial={{ scale: 0, opacity: 0 }}
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
           style={{
             left: `${targetXPct}%`,
             top: `${targetYPct}%`,

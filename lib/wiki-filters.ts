@@ -1,4 +1,8 @@
-import type { SortOption } from "@/components/wiki/wiki-filter-bar";
+// Ported verbatim from basidekick-site/lib/wiki-filters.ts.
+// SortOption was originally imported from components/wiki/wiki-filter-bar (not yet
+// ported); defined locally here instead — logic is otherwise unchanged.
+
+export type SortOption = "newest" | "oldest" | "popular" | "alphabetical";
 
 export interface WikiFilterState {
   category: string | null;

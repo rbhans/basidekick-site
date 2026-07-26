@@ -1,51 +1,45 @@
-// Wiki category accents. Each value is a CSS var resolved against the
-// supporting palette in app/globals.css. Edit the var, not the hex.
-const CATEGORY_COLORS = {
-  troubleshooting: "var(--wiki-troubleshooting)",
-  howTo: "var(--wiki-how-to)",
-  bestPractices: "var(--wiki-best-practices)",
-  documentation: "var(--wiki-documentation)",
-  reference: "var(--wiki-reference)",
-} as const;
+// Wiki category accents. Adapted from basidekick-site/lib/wiki-colors.ts:
+// the old CSS-var scheme (var(--wiki-*)) is replaced with the five semantic
+// accent tokens (slate/ochre/plum/moss/teal) exposed as Tailwind utility
+// classes in app/globals.css. Slug-prefix fallback resolution is preserved.
 
-const FALLBACK = "var(--punch)";
+interface CategoryColorClasses {
+  dot: string;
+  text: string;
+}
 
-const SLUG_PREFIX_COLORS: [string, string][] = [
-  ["troubleshooting", CATEGORY_COLORS.troubleshooting],
-  ["issues-solutions", CATEGORY_COLORS.troubleshooting],
-  ["how-to", CATEGORY_COLORS.howTo],
-  ["best-practices", CATEGORY_COLORS.bestPractices],
-  ["reference", CATEGORY_COLORS.reference],
-  ["basidekick-docs", CATEGORY_COLORS.documentation],
-  ["documentation", CATEGORY_COLORS.documentation],
-  ["docs-", CATEGORY_COLORS.documentation],
-];
-
-export const WIKI_CATEGORY_COLORS: Record<string, string> = {
-  "Troubleshooting": CATEGORY_COLORS.troubleshooting,
-  "How-To": CATEGORY_COLORS.howTo,
-  "Best Practices": CATEGORY_COLORS.bestPractices,
-  "Documentation": CATEGORY_COLORS.documentation,
-  "Reference": CATEGORY_COLORS.reference,
-  "Issues & Solutions": CATEGORY_COLORS.troubleshooting,
-  "How-To Guides": CATEGORY_COLORS.howTo,
-  "BASidekick Documentation": CATEGORY_COLORS.documentation,
+const CATEGORY_COLOR_CLASSES: Record<string, CategoryColorClasses> = {
+  // Live top-level slug is "how-to" (the old "how-to-niagara" subcategory was
+  // flattened away in the 2026-02-25 category simplification migration).
+  "how-to": { dot: "bg-slate", text: "text-slate" },
+  "troubleshooting": { dot: "bg-ochre", text: "text-ochre" },
+  "documentation": { dot: "bg-plum", text: "text-plum" },
+  "best-practices": { dot: "bg-moss", text: "text-moss" },
+  "reference": { dot: "bg-teal", text: "text-teal" },
 };
 
-export function getWikiCategoryColor(
-  categoryName: string | null | undefined,
-  categorySlug?: string | null,
-): string {
-  if (!categoryName && !categorySlug) return FALLBACK;
+const FALLBACK: CategoryColorClasses = { dot: "bg-fg-3", text: "text-fg-3" };
 
-  if (categoryName && WIKI_CATEGORY_COLORS[categoryName]) {
-    return WIKI_CATEGORY_COLORS[categoryName];
+const SLUG_PREFIX_COLORS: [string, CategoryColorClasses][] = [
+  ["troubleshooting", CATEGORY_COLOR_CLASSES.troubleshooting],
+  ["issues-solutions", CATEGORY_COLOR_CLASSES.troubleshooting],
+  ["how-to", CATEGORY_COLOR_CLASSES["how-to"]],
+  ["best-practices", CATEGORY_COLOR_CLASSES["best-practices"]],
+  ["reference", CATEGORY_COLOR_CLASSES.reference],
+  ["basidekick-docs", CATEGORY_COLOR_CLASSES.documentation],
+  ["documentation", CATEGORY_COLOR_CLASSES.documentation],
+  ["docs-", CATEGORY_COLOR_CLASSES.documentation],
+];
+
+export function getCategoryColorClasses(slug: string): CategoryColorClasses {
+  if (!slug) return FALLBACK;
+
+  if (CATEGORY_COLOR_CLASSES[slug]) {
+    return CATEGORY_COLOR_CLASSES[slug];
   }
 
-  if (categorySlug) {
-    for (const [prefix, color] of SLUG_PREFIX_COLORS) {
-      if (categorySlug.startsWith(prefix)) return color;
-    }
+  for (const [prefix, classes] of SLUG_PREFIX_COLORS) {
+    if (slug.startsWith(prefix)) return classes;
   }
 
   return FALLBACK;

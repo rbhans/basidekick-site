@@ -1,31 +1,14 @@
-import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import { createServerReadClient } from "@/lib/supabase/server";
 
-// Only allow same-origin path redirects, never protocol-relative or backslash targets.
-function safeNext(target: string | null): string {
-  if (target && /^\/(?!\/|\\)/.test(target)) return target;
-  return "/";
-}
-
-export async function GET(request: Request) {
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get("code");
-  const origin = requestUrl.origin;
-  const next = safeNext(requestUrl.searchParams.get("next"));
-
-  if (!code) {
-    return NextResponse.redirect(new URL("/signin?error=missing_code", origin));
+export async function GET(request: NextRequest) {
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+  const requested = url.searchParams.get("next") || "/dashboard";
+  const next = requested.startsWith("/") && !requested.startsWith("//") ? requested : "/dashboard";
+  if (code) {
+    const client = await createServerReadClient();
+    try { await client?.auth.exchangeCodeForSession(code); } catch { return NextResponse.redirect(new URL("/signin?error=callback", url.origin)); }
   }
-
-  const supabase = await createClient();
-  if (!supabase) {
-    return NextResponse.redirect(new URL("/signin?error=auth_unavailable", origin));
-  }
-
-  const { error } = await supabase.auth.exchangeCodeForSession(code);
-  if (error) {
-    return NextResponse.redirect(new URL("/signin?error=auth_failed", origin));
-  }
-
-  return NextResponse.redirect(new URL(next, origin));
+  return NextResponse.redirect(new URL(next, url.origin));
 }
