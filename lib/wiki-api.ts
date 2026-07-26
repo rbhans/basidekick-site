@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@/lib/supabase/client";
-import { WikiArticle, WikiCategory, WikiCollection, WikiFacet, WikiFacetGroup } from "@/lib/types";
+import { WikiArticle, WikiArticleListItem, WikiCategory, WikiCollection, WikiFacet, WikiFacetGroup } from "@/lib/types";
 import { sanitizeSearchInput } from "@/lib/security";
 import { WikiFilterState } from "@/lib/wiki-filters";
 
@@ -16,6 +16,18 @@ const ARTICLES_PER_PAGE = 20;
 const ARTICLE_SELECT = `
   *,
   author:profiles!wiki_articles_author_id_fkey(display_name),
+  category:wiki_categories!wiki_articles_category_id_fkey(name, slug)
+`;
+
+const ARTICLE_LIST_SELECT = `
+  id,
+  category_id,
+  title,
+  slug,
+  summary,
+  view_count,
+  created_at,
+  updated_at,
   category:wiki_categories!wiki_articles_category_id_fkey(name, slug)
 `;
 
@@ -89,16 +101,17 @@ export async function fetchFeaturedCollections(client: SupabaseClient | null): P
 export async function fetchWikiArticles(
   client: SupabaseClient | null,
   filters: WikiFilterState,
-  page: number
-): Promise<{ articles: WikiArticle[]; count: number }> {
+  page: number,
+  pageSize = ARTICLES_PER_PAGE
+): Promise<{ articles: WikiArticleListItem[]; count: number }> {
   if (!client) return { articles: [], count: 0 };
 
   const { column, ascending } = getSortConfig(filters.sort);
-  const offset = (page - 1) * ARTICLES_PER_PAGE;
+  const offset = (page - 1) * pageSize;
 
   let query = client
     .from("wiki_articles")
-    .select(ARTICLE_SELECT, { count: "exact" })
+    .select(ARTICLE_LIST_SELECT, { count: "exact" })
     .eq("is_published", true);
 
   // Filter by category slug -> id lookup
@@ -174,12 +187,12 @@ export async function fetchWikiArticles(
   }
 
   // Apply sorting and pagination
-  query = query.order(column, { ascending }).range(offset, offset + ARTICLES_PER_PAGE - 1);
+  query = query.order(column, { ascending }).range(offset, offset + pageSize - 1);
 
   const { data, count, error } = await query;
   if (error) throw error;
 
-  return { articles: (data as WikiArticle[]) || [], count: count || 0 };
+  return { articles: (data as unknown as WikiArticleListItem[]) || [], count: count || 0 };
 }
 
 // ============================================================
