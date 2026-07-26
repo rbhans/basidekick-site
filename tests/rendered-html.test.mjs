@@ -62,6 +62,9 @@ test("server-renders the public BASidekick landing page", async () => {
   assert.match(html, /returning soon/i);
   assert.match(html, /class="hero-art"/);
   assert.match(html, /class="feature-art"/);
+  assert.match(html, /data-art="wiki"/);
+  assert.match(html, /data-art="pointstack"/);
+  assert.match(html, /data-art="tools"/);
   assert.match(html, /class="brandmark"/);
   assert.match(html, /class="brandmark-source"/);
   assert.match(html, /class="brandmark-arrow"/);

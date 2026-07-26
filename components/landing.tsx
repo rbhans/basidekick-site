@@ -54,10 +54,18 @@ export function Landing() {
           <div className="landing-feature-grid">
             <Link className="feature-card-wide" href="/wiki">
               <span>FIELD KNOWLEDGE</span>
-              <div className="feature-card-body"><div><h3>Wiki + Courses</h3><p>Field-tested guides, troubleshooting, and a clear starting path for people entering BAS.</p><em>Explore knowledge <ArrowRight size={14} /></em></div><div className="feature-register"><span><b>BACnet/SC</b><small>Implementation guide</small></span><span><b>Network hardening</b><small>Field checklist</small></span><span><b>Niagara histories</b><small>Troubleshooting</small></span></div></div>
+              <div className="feature-card-body">
+                <div className="feature-card-copy">
+                  <h3>Wiki + Courses</h3>
+                  <p>Field-tested guides, troubleshooting, and a clear starting path for people entering BAS.</p>
+                  <div className="feature-register"><span><b>BACnet/SC</b><small>Implementation guide</small></span><span><b>Network hardening</b><small>Field checklist</small></span><span><b>Niagara histories</b><small>Troubleshooting</small></span></div>
+                  <em>Explore knowledge <ArrowRight size={14} /></em>
+                </div>
+                <div className="feature-art" data-art="wiki" aria-hidden="true" />
+              </div>
             </Link>
-            <Link href="/pointstack"><span>TRADE DESK</span><div className="feature-signal"><i /><i /><i /></div><h3>PointStack Social</h3><p>Projects, questions, people, companies, and jobs in a community scoped to building automation.</p><em>See the network <ArrowRight size={14} /></em></Link>
-            <Link href="/tools"><span>WORKBENCH</span><div className="feature-art" aria-hidden="true" /><h3>Tools + Library</h3><p>Calculators, quick references, software, modules, scripts, PDFs, and externally published resources.</p><em>Open tools <ArrowRight size={14} /></em></Link>
+            <Link href="/pointstack"><span>TRADE DESK</span><div className="feature-art" data-art="pointstack" aria-hidden="true" /><h3>PointStack Social</h3><p>Projects, questions, people, companies, and jobs in a community scoped to building automation.</p><em>See the network <ArrowRight size={14} /></em></Link>
+            <Link href="/tools"><span>WORKBENCH</span><div className="feature-art" data-art="tools" aria-hidden="true" /><h3>Tools + Library</h3><p>Calculators, quick references, software, modules, scripts, PDFs, and externally published resources.</p><em>Open tools <ArrowRight size={14} /></em></Link>
           </div>
         </section>
 
