@@ -31,6 +31,7 @@ export type PointStackListItem = { slug: string; kind: string; title: string; au
 export type PointStackPersonItem = { username: string; name: string; headline: string; location: string; verified: boolean };
 export type PointStackJobItem = { slug: string; title: string; meta: string; summary: string; tags: string[]; end: string };
 export type PointStackCompanyItem = { slug: string; name: string; description: string; location: string; industry: string; verified: boolean };
+const WIKI_BATCH_SIZE = 50;
 
 export function NewsView({ initialItems = FALLBACK_NEWS as unknown as NewsListItem[] }: { initialItems?: NewsListItem[] }) {
   const [query, setQuery] = useState("");
@@ -44,12 +45,15 @@ export function NewsView({ initialItems = FALLBACK_NEWS as unknown as NewsListIt
   return <><PageHeader eyebrow="WORKSPACE / SIGNAL" title="News" description="Standards updates, vendor news, cybersecurity advisories, and useful industry signal. No hot takes." /><ListToolbar value={query} onChange={setQuery} label="Filter industry news" placeholder="Filter this list…" end={<div className="segmented" aria-label="Sort news">{(["Top", "New", "Discussed"] as const).map((option) => <button type="button" className={sort === option ? "active" : ""} aria-pressed={sort === option} onClick={() => setSort(option)} key={option}>{option}</button>)}</div>} /><div className="dense-list bordered">{items.map((item) => <DenseRow key={item.slug} href={`/news/${item.slug}`} meta={`${item.source} · ${item.age}`} title={item.title} summary={item.summary} tags={item.tags} end={<span>{item.votes} ↑ · {item.comments} replies</span>} />)}</div>{items.length === 0 && <EmptyState label="No results">Try another filter or sort.</EmptyState>}</>;
 }
 
-export function WikiView({ initialItems = FALLBACK_WIKI as unknown as WikiListItem[] }: { initialItems?: WikiListItem[] }) {
+export function WikiView({ initialItems = FALLBACK_WIKI as unknown as WikiListItem[], totalCount = initialItems.length }: { initialItems?: WikiListItem[]; totalCount?: number }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(WIKI_BATCH_SIZE);
   const categories = useMemo(() => ["All", ...Array.from(new Set(initialItems.map((item) => item.category)))], [initialItems]);
-  const items = initialItems.filter((item) => (category === "All" || item.category === category) && (!query || JSON.stringify(item).toLowerCase().includes(query.toLowerCase())));
-  return <><PageHeader eyebrow="KNOWLEDGE / WIKI" title="Wiki" description="Source-backed field guides, explainers, troubleshooting, and documentation for working BAS practitioners." actions={<AuthAction label="Suggest an article" action="suggest a Wiki article" href="/wiki/contribute" />} /><ListToolbar value={query} onChange={setQuery} label="Filter Wiki articles" placeholder="Filter articles…" end={<div className="filter-pills" aria-label="Filter Wiki by category">{categories.map((option) => <button type="button" className={category === option ? "active" : ""} aria-pressed={category === option} onClick={() => setCategory(option)} key={option}>{option}</button>)}</div>} /><div className="dense-list bordered">{items.map((item) => <DenseRow key={item.slug} href={`/wiki/${item.slug}`} meta={item.category} title={item.title} summary={item.summary} end={item.updated} />)}</div>{items.length === 0 && <EmptyState label="No results">Try another filter or category.</EmptyState>}</>;
+  const items = useMemo(() => initialItems.filter((item) => (category === "All" || item.category === category) && (!query || JSON.stringify(item).toLowerCase().includes(query.toLowerCase()))), [category, initialItems, query]);
+  const visibleItems = items.slice(0, visibleCount);
+  const remaining = items.length - visibleItems.length;
+  return <><PageHeader eyebrow={`KNOWLEDGE / WIKI · ${totalCount.toLocaleString()} ARTICLES`} title="Wiki" description="Source-backed field guides, explainers, troubleshooting, and documentation for working BAS practitioners." actions={<AuthAction label="Suggest an article" action="suggest a Wiki article" href="/wiki/contribute" />} /><ListToolbar value={query} onChange={(value) => { setQuery(value); setVisibleCount(WIKI_BATCH_SIZE); }} label="Filter Wiki articles" placeholder="Filter articles…" end={<div className="filter-pills" aria-label="Filter Wiki by category">{categories.map((option) => <button type="button" className={category === option ? "active" : ""} aria-pressed={category === option} onClick={() => { setCategory(option); setVisibleCount(WIKI_BATCH_SIZE); }} key={option}>{option}</button>)}</div>} /><div className="dense-list bordered">{visibleItems.map((item) => <DenseRow key={item.slug} href={`/wiki/${item.slug}`} meta={item.category} title={item.title} summary={item.summary} end={item.updated} />)}</div>{items.length === 0 && <EmptyState label="No results">Try another filter or category.</EmptyState>}{remaining > 0 && <div className="list-load-more"><span aria-live="polite">Showing {visibleItems.length} of {items.length}</span><button className="button quiet" type="button" onClick={() => setVisibleCount((current) => current + WIKI_BATCH_SIZE)}>Show {Math.min(WIKI_BATCH_SIZE, remaining)} more</button></div>}</>;
 }
 
 export function CoursesView() {

@@ -83,6 +83,13 @@ export interface WikiArticle {
   facets?: WikiFacet[];
 }
 
+export type WikiArticleListItem = Pick<
+  WikiArticle,
+  "id" | "category_id" | "title" | "slug" | "summary" | "view_count" | "created_at" | "updated_at"
+> & {
+  category?: { name: string; slug: string };
+};
+
 export interface WikiComment {
   id: string;
   article_id: string;
