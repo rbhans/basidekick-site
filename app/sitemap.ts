@@ -8,8 +8,8 @@ const BASE_URL = "https://basidekick.com";
 const routes = ["", "/dashboard", "/atlas", "/wiki", "/courses", "/news", "/pointstack", "/pointstack/questions", "/pointstack/projects", "/pointstack/people", "/pointstack/companies", "/pointstack/jobs", "/tools", "/calculators", "/references", "/library", "/privacy", "/terms"];
 
 function supabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  const key = (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)?.trim();
   return url && key ? createClient(url, key) : null;
 }
 
