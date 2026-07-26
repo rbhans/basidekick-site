@@ -1,57 +1,29 @@
 import { createServerClient } from "@supabase/ssr";
+import type { SupabaseClient as SupabaseJsClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
-export type ServerSupabaseClient = ReturnType<typeof createServerClient>;
+export type SupabaseClient = SupabaseJsClient;
 
-/**
- * Creates a Supabase server client for use in Server Components and Route Handlers.
- * Returns null if credentials aren't configured.
- */
-export async function createClient(): Promise<ServerSupabaseClient | null> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function config() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return url && key ? { url, key } : null;
+}
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    // Return null when credentials aren't set
-    return null;
-  }
-
+export async function createServerReadClient(): Promise<SupabaseClient | null> {
+  const current = config();
+  if (!current) return null;
   const cookieStore = await cookies();
-
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
+  return createServerClient(current.url, current.key, {
     cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
+      getAll: () => cookieStore.getAll(),
+      setAll(values) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          );
-        } catch (error) {
-          // The `setAll` method was called from a Server Component.
-          // This can be ignored if you have middleware refreshing user sessions.
-          // Log in development for debugging
-          if (process.env.NODE_ENV === "development") {
-            console.debug("[Supabase] setAll called from Server Component:", error);
-          }
+          values.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+        } catch {
+          // Server component reads cannot always mutate response cookies.
         }
       },
     },
-  });
-}
-
-/**
- * Returns the Supabase server client or throws if not configured.
- * Use this in routes/components where Supabase is required.
- */
-export async function getClient(): Promise<ServerSupabaseClient> {
-  const client = await createClient();
-  if (!client) {
-    throw new Error(
-      "Supabase server client not configured. " +
-      "Ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set."
-    );
-  }
-  return client;
+  }) as SupabaseClient;
 }

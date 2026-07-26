@@ -1,25 +1,7 @@
 # Current State
 
-Last updated: 2026-05-26
+As of 2026-07-25, the zero-based Next.js implementation is consolidated into the original `rbhans/basidekick-site` repository on `codex/replacement-preview`, preserving the established GitHub-to-Vercel deployment path. The shell, technical-editorial landing page, field-instrument dashboard treatment, themes, keyboard-navigable global search, mobile navigation, primary content routes, live Supabase reads, account/profile/recovery flows, PointStack messaging, account-backed saves and recent views, moderation, Library submission, compatibility routes, Atlas rebuild status, and dynamic SEO surfaces are implemented. Courses presents one `Intro to BAS` course with ten connected lessons, the original lesson copy, BAS diagrams, and interactive assessments. Command search, mobile navigation, and reusable sign-in prompts use accessible Radix primitives while retaining the custom BASidekick appearance. Selected motion refinements add direct button feedback, preserve immediate command search, improve course marker entrances, and restrict geometric hover movement to precise pointers.
 
-## What Exists Now
-- Local path: `/Users/benhansen/github/basidekick-site`
-- Repository type: Git repository
-- Branch: `main`
-- Remote: `https://github.com/rbhans/basidekick-site`
-- Working tree changed/untracked count at scaffold time: `1`
-- Direct Obsidian project note: `/Users/benhansen/wiki/02-basidekick/projects/basidekick-site.md`
-- Node package evidence: package `basidekick`; version `0.1.0`; dependencies: `@ai-sdk/google`, `@base-ui/react`, `@dagrejs/dagre`, `@dnd-kit/core`, `@dnd-kit/sortable`, `@dnd-kit/utilities`, `@hookform/resolvers`, `@mdx-js/loader`; dev dependencies: `@next/bundle-analyzer`, `@tailwindcss/postcss`, `@types/better-sqlite3`, `@types/node`, `@types/react`, `@types/react-dom`, `eslint`, `eslint-config-next`.
+The retired presentation is preserved on the `archive/pre-rebuild-2026-07-25` branch, the `pre-rebuild-2026-07-25` tag, and a verified local Git bundle. The exact pre-cutover Vercel production commit is tagged `production-before-rebuild-2026-07-25`. Historical Supabase migrations remain in the repository alongside the replacement migrations.
 
-## In Progress
-- Not documented in current repo/wiki evidence.
-
-## Next Priorities
-- Not documented in current repo/wiki evidence.
-
-## Known Issues
-- Not documented in current repo/wiki evidence.
-
-## Notes for Agents
-- Start with `/context/README.md`, `PROJECT_OVERVIEW.md`, and this file before meaningful work.
-- Use repo-local files as the source of truth. Treat Obsidian as supporting context only when files, exports, links, or pasted notes are available.
+Validation target: `npm run validate`. Release target: verify the existing Vercel project's branch preview, then merge to `main` for the approved `basidekick.com` cutover.

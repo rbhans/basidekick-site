@@ -1,6 +1,10 @@
+// Hand-curated Community Share entries.
+// Ported verbatim from basidekick-site/lib/data/community-share.ts — keep every
+// entry and field as-is; this is real curated content, not placeholder data.
+
 export type CommunityShareKind = "Protocol" | "Project" | "Module" | "File";
 export type CommunityShareStage = "Active" | "Preview" | "Planned";
-export type CommunityShareAccess = "Open source" | "Project site" | "File" | "Planned";
+export type CommunityShareAccess = "Open source" | "Project site" | "File" | "Paid externally" | "Planned";
 export type CommunityShareLinkType = "github" | "file" | "site" | "external";
 
 export interface CommunityShareLink {
@@ -16,6 +20,7 @@ export interface CommunityShareImage {
 
 export interface CommunityShareEntry {
   id: string;
+  resourceId?: string;
   title: string;
   protocol: string;
   kind: CommunityShareKind;
