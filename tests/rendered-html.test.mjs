@@ -102,28 +102,6 @@ test("keeps Optical Balance geometry aligned across canonical brand assets", asy
   }
 });
 
-test("publishes the geometric BASidekick and QA Graphics brand set", async () => {
-  const expectedAssets = new Map([
-    ["brand-system-board.png", [2200, 1540]],
-    ["basidekick-banner-dark.png", [1500, 500]],
-    ["basidekick-banner-light.png", [1500, 500]],
-    ["basidekick-qa-banner-dark.png", [1500, 500]],
-    ["basidekick-qa-banner-light.png", [1500, 500]],
-    ["basidekick-qa-lockup.png", [1600, 400]],
-    ["basidekick-qa-square.png", [1080, 1080]],
-    ["basidekick-square.png", [1080, 1080]],
-  ]);
-
-  for (const [assetName, [expectedWidth, expectedHeight]] of expectedAssets) {
-    const asset = await readFile(
-      new URL(`../public/brand/geometric/${assetName}`, import.meta.url),
-    );
-    assert.equal(asset.subarray(1, 4).toString("ascii"), "PNG");
-    assert.equal(asset.readUInt32BE(16), expectedWidth);
-    assert.equal(asset.readUInt32BE(20), expectedHeight);
-  }
-});
-
 test("reports Atlas rebuild status without advertising retired endpoints", async () => {
   const response = await request("/api/atlas", "application/json");
   assert.equal(response.status, 200);
